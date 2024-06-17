@@ -11,6 +11,9 @@ import io.appium.java_client.AppiumDriver;
 
 public class Add2 {
 	public static AppiumDriver driver;
+	public static void blob(AppiumDriver driver){
+		System.out.println("checking the git");
+	}
 	public static void Fan(AppiumDriver driver) 
 	{
 
