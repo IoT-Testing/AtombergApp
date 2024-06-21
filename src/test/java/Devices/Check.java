@@ -20,6 +20,11 @@ public class Check {
 		Lock(driver);
 	}
 
+	public static void blob(AppiumDriver driver)
+	{
+		System.out.println("checking the git");
+	}
+
 	public static void Lock(AppiumDriver driver) {
 		/**
 		 * @author Rohit

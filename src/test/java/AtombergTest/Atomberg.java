@@ -21,7 +21,7 @@ public class Atomberg {
 		openAtomberg();
 		Email.Login(driver);
 		SO.Lock(driver);
-		driver.quit();
+
 	}
 
 
