@@ -16,20 +16,20 @@ public class SO {//Search Online Fan
 		try {
 			sleep(2500);
 			WebElement AddButton = null;
-			try {
+			try { // checks for the + buttons availability
 				AddButton = driver.findElement(By.xpath(
 						"//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]/android.widget.ImageView"));
 			} catch (Exception exp) {
 				exp.getCause();
 			}
 			if (AddButton != null) {
-			
-			CDO(driver);
+				CDO(driver);  // checks the Fan availability
 			}
 			else
 			{
+				// Fan addition process
 				Add2.Fan(driver);
-				CDO(driver);
+				CDO(driver); //checks fan availability
 			}
 		} catch (Exception exp) {
 			exp.printStackTrace();
@@ -50,26 +50,28 @@ public class SO {//Search Online Fan
 	private static void CDO(AppiumDriver driver)
 	{
 		WebElement Fans = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Fans\"]"));
-		Fans.click();
+		Fans.click();   // click on the fan tab
 		sleep(1500);
 		WebElement FO = null;
-		try {
+		try { //checks if the fan is online
 			FO = driver.findElement(By.xpath("(//android.widget.Button/android.widget.ImageView)"));
 		}catch(Exception e) {}	
 
 		if (FO != null)
 		{
 			System.out.println("Fan Online");
+
+			// checks the number of fans available
 			List<WebElement> Device = driver.findElements(By.xpath("(//android.widget.Button/android.widget.ImageView[1])"));
 			System.out.println(Device.size());
 			for(WebElement element : Device)
 			{
 				System.out.println(element);
-				element.click();
-				Method.FanControl(driver);
-				driver.navigate().back();			
+				element.click(); // Clicks on the for and opens device control
+				Method.FanControl(driver); // Controls the fan
+				driver.navigate().back();			// back
  			}
-			if(Device.size()>=4)
+			if(Device.size()>=4) // only 4 devices are visible on the screen
 			{
 				Scroll.Up(driver);	
 			}
@@ -80,23 +82,27 @@ public class SO {//Search Online Fan
 		}
 	}
 
+
 	public static void Lock(AppiumDriver driver)
 	{
 		driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Locks\"]")).click();
-		WebElement LO = null;
+		WebElement LO = null;  // checks Lock availability
 		try {
 			LO = driver.findElement(By.xpath("(//android.widget.Button/android.widget.Button)"));
 		} catch (Exception e) {
 		}
 
+		// To Do if lock is available
 		if (LO != null) {
+			// i
 			System.out.println("Lock Available");
 			List<WebElement> Device = driver
 					.findElements(By.xpath("//android.widget.Button/android.widget.ImageView[1]"));
-			System.out.println(Device.size());
+			System.out.println(Device.size());   // number of available locks
+
 			for (WebElement element : Device) {
 				System.out.println(element);
-				element.click();
+				element.click(); // click and open lock control
 				System.out.println("Element clicked");
 				LockControl(driver);
 			}
@@ -105,19 +111,23 @@ public class SO {//Search Online Fan
 
 		}
 	}
+
+
+	// inside the lock control
 	public static void LockControl(AppiumDriver driver) {
 		sleep(7500);
+		// click on the handle(tap to unlock)
 		driver.findElement(By.xpath("//android.view.View[@content-desc=\"Pull down to unlock\"]")).click();
 		System.out.println("Unlocking");
 		sleep(1000);
 		WebElement Unlocked = null;
 		WebElement NoLock = null;
 
-		try {
+		try {// checks if it is unlocked
 			Unlocked = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Unlocked\"]"));
 		} catch (Exception ignored) {
 		}
-		try {
+		try {// check if it could not unlock
 			NoLock = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Could not unlock\"]"));
 		} catch (Exception ignored) {
 		}
@@ -133,30 +143,30 @@ public class SO {//Search Online Fan
 			System.out.println("Error");
 			driver.navigate().back();
 		}
-//		history(driver);
+//		history(driver);  // history of lock
 //		sleep(5000);
 //		driver.navigate().back();
-		//AccessKeys(driver);
-		lockSettings(driver);
+		//AccessKeys(driver);  Access keys of lock
+		lockSettings(driver);   // lock settings
 //		driver.navigate().back();
 //		driver.navigate().back();
 
 	}
 	public static void history(AppiumDriver driver) {
 		WebElement history = null;
-		try {
+		try {// check in the history button is available
 			history = driver.findElement(By.xpath("//android.view.View[@content-desc=\"History\"]"));
 		} catch (Exception e) {
 			e.fillInStackTrace();
 		}
-		if (history != null) {
+		if (history != null) { // if available click on it
 			history.click();
 		}
 	}
 		public static void lockSettings(AppiumDriver driver){
 			WebElement settings = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Settings\"]"));
-			settings.click();
-			Passcode(driver);
+			settings.click();  // tap on the Setting button
+			Passcode(driver);  // entering the passcode. specific to one plus, poco and redmi
 			sleep(1000);
 			WebElement users = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Users\"]"));
 			users.click();
@@ -171,10 +181,12 @@ public class SO {//Search Online Fan
 		WebElement AccessKeys = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Access\nkeys\"]"));
 		AccessKeys.click();
 		Passcode(driver);
-		KeyType(driver);
+		KeyType(driver);  // for clicking on all the types of keys
 
 
 		}
+
+		// set for specific devices using the Coordinates
 		public static void Passcode(AppiumDriver driver)
 		{
 			Tap.withCoordinates(driver, 540, 880);
@@ -195,10 +207,9 @@ public class SO {//Search Online Fan
 			for (i=0; 1<total; i++){
 				List<WebElement> Keys = driver.findElements(By.className("android.widget.Button"));
 				WebElement key = Keys.get(i);
-				boolean OTP = key.getAttribute("content-desc").endsWith("OTP");
-				boolean New = key.getAttribute("content-desc").endsWith("NEW");
-				boolean pin = key.getAttribute("content-desc").startsWith("PIN");
-				System.out.println(OTP || New);
+				boolean OTP = key.getAttribute("content-desc").endsWith("OTP"); // checks if the last string is OTP
+				boolean New = key.getAttribute("content-desc").endsWith("NEW"); // checks if the last string is NEW
+				System.out.println(OTP || New); // When opened 1st time the last string is NEW while in the second attempt it is OTP
 				key.click();
 				if (OTP || New)
 				{
@@ -213,7 +224,7 @@ public class SO {//Search Online Fan
 				driver.navigate().back();
 
 				if (i < (total-1))
-				{
+				{ // to repeat the Access keys opening as once we go back it goes back to lock control screen
 					WebElement AccessKeys = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Access\nkeys\"]"));
 					AccessKeys.click();
 					Passcode(driver);
@@ -221,14 +232,14 @@ public class SO {//Search Online Fan
 			}
 		}
 		public static void PBCSettings(AppiumDriver driver){
-		WebElement PBC = null;
+		WebElement PBC = null; // Checks the availability on Pin, Biometrics & Cards in Lock Settings
 		try {
 			PBC = driver.findElement(By.xpath("//android.view.View[@content-desc=\"PINs, biometric and card settings\"]"));
 		}catch (Exception e){}
 		if (PBC != null) {
 			List<WebElement> TS = driver.findElements(By.className("android.widget.Switch"));
 			int i;
-			int total = TS.size();
+			int total = TS.size();  //
 			System.out.println(total);
 			for (i = 0; 1 < total; i++) {
 				List<WebElement> ts = driver.findElements(By.className("android.widget.Switch"));
@@ -244,11 +255,11 @@ public class SO {//Search Online Fan
 					FPEnable.click();
 					fingerprint(driver);
 				}
-//				if (i==2)
-//				{
-//					WebElement CardEnable = ts.get(i);
-//					CardEnable.click();
-//				}
+				if (i==2)
+				{
+					WebElement CardEnable = ts.get(i);
+					CardEnable.click();
+				}
 //				if (i==3)
 //				{
 //					WebElement Pins = ts.get(i);
@@ -315,6 +326,38 @@ public class SO {//Search Online Fan
 			}
 			else if (FPEnabled != null){
 				System.out.println("All Fingerprints Disabled Successfully");
+			}
+		}
+		public static void CardEnable(AppiumDriver driver)
+		{
+			WebElement CNotAvail = null;
+			WebElement CDisable = null;
+			WebElement CEnabled = null;
+
+			try {
+				CNotAvail = driver.findElement(By.xpath("//android.view.View[@content-desc=\"No Cards present for this Lock.\"]"));
+			}catch(Exception e){}
+			try {
+				CDisable = driver.findElement(By.xpath("//android.view.View[@content-desc=\"All Cards Disabled Successfully!\"]"));
+			}catch(Exception e){}
+			try {
+				CEnabled = driver.findElement(By.xpath("//android.view.View[@content-desc=\"All Cards Enabled Successfully!\"]"));
+
+			}catch(Exception e){}
+			if (CNotAvail != null)
+			{
+				System.out.println("No Cards present for this Lock. Please add one");
+			}
+			if (CDisable != null)
+			{
+				System.out.println("Cards Disabled, Enabling it ...");
+				List<WebElement> TS = driver.findElements(By.className("android.widget.Switch"));
+				WebElement CEnable = TS.get(2);
+				CEnable.click();
+			}
+			if (CEnabled != null)
+			{
+				System.out.println("Cards Enabled");
 			}
 		}
 }

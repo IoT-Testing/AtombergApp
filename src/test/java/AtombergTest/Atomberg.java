@@ -18,13 +18,12 @@ public class Atomberg {
 	public static AppiumDriver driver;
 
 	public static void main(String[] args) {
-		openAtomberg();
-		Email.Login(driver);
-		SO.Lock(driver);
-
+		openAtomberg(); // Open App through Appium
+		Email.Login(driver); // Login
+		SO.Lock(driver); // checks and controls locks
 	}
 
-
+// Sleep
 	private static void sleep(long millis) {
 		try {
 			Thread.sleep(millis);
@@ -34,6 +33,7 @@ public class Atomberg {
 		System.out.println("......");
 	}
 
+	// connecting with the appium server and opening the app
 	public static void openAtomberg() {
 		DesiredCapabilities cap = new DesiredCapabilities();
 		cap.setCapability("platformName", "Android");
@@ -51,10 +51,12 @@ public class Atomberg {
 			Method.captureScreenshot(driver);
 			e.fillInStackTrace();
 			return;
-		}// fillInStackTrace()
+		}
+		// fillInStackTrace()
+
 		System.out.println("Atomberg App Opened...");
 		sleep(6000);
-		Method.captureScreenshot(driver);
+		Method.captureScreenshot(driver); // captures screenshot
 
 	}
 }
