@@ -1,7 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0          http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atomberg.app</groupId>
     <artifactId>atombergapp</artifactId>
@@ -9,7 +6,10 @@
     <description>New Appium Project</description>
     <properties>
         <junit-bom-scope>import</junit-bom-scope>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
         <sonar.organization>apptesting</sonar.organization>
+        <surefire.plugin.version>3.0.0-M5</surefire.plugin.version>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
     <dependencies>
@@ -68,6 +68,12 @@
             <artifactId>sonar-scanner-api</artifactId>
             <version>2.15.0.2182</version>
         </dependency>
+        <dependency>
+      <groupId>com.browserstack</groupId>
+      <artifactId>browserstack-java-sdk</artifactId>
+      <version>LATEST</version>
+      <scope>compile</scope>
+    </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -79,6 +85,18 @@
                     <target>9</target>
                 </configuration>
             </plugin>
+            <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.3.0</version>
+        <executions>
+          <execution>
+            <id>getClasspathFilenames</id>
+            <goals>
+              <goal>properties</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
         </plugins>
     </build>
 </project>

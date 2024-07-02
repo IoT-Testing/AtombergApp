@@ -18,13 +18,13 @@ public class Select {
 			SixLED(driver);
 			Fans.SixLEDcolorSelect(driver);
 		} else {
-			WebElement element = null;
+			WebElement Others = null;
 			try {
-				element = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Select your fan color\"]"));
+				Others = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Select your device color\"]"));
 				System.out.println("Select your fan color");
 			} catch (Exception exp) {
 			}
-			if (element != null) {
+			if (Others != null) {
 				WebElement Aris = null;
 				WebElement Jaguar = null;
 				try {

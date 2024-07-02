@@ -1,0 +1,15 @@
+
+Q	java:S125"<This block of commented-out lines of code should be removed.(…ê¤Ü
+:
+java:S2925"$Remove this use of "Thread.sleep()".(™Š‹²
+p
+java:S1128"URemove this unused import 'net.bytebuddy.implementation.bind.MethodDelegationBinder'.(ÄÍ¥şÿÿÿÿ
+K
+java:S1128"0Remove this unused import 'org.openqa.selenium'.(–Öã½ûÿÿÿÿ
+D
+java:S1128	".Remove this unused import 'org.testng.Assert'.(Ø£ÿ§
+9
+java:S1128
+"$Remove this unused import 'Actions'.(äËq
+F
+java:S1128"+Remove this unused import 'java.util.List'.(Õë±Äøÿÿÿÿ

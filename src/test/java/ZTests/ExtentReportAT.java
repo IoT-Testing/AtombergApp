@@ -14,7 +14,7 @@ public class ExtentReportAT {
         ExtentSparkReporter reporter = new ExtentSparkReporter(path);
         reporter.config().setReportName("App Test Reports");
         reporter.config().setDocumentTitle("Test Reports");
-
+l
         ExtentReports extent = new ExtentReports();
         extent.attachReporter(reporter);
         extent.setSystemInfo("Tester", "Rohit Bhagat");

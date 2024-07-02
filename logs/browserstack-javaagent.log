@@ -1,0 +1,164 @@
+10:15:16.119 [main] INFO  c.browserstack.BrowserStackJavaAgent - Selenium version detected - 4.18.1
+10:15:16.123 [main] INFO  c.browserstack.BrowserStackJavaAgent - Appium version detected - 9.1.0
+10:15:16.390 [main] DEBUG c.b.config.BrowserStackConfig - Cli Config passed - {}
+10:15:16.391 [main] INFO  c.browserstack.utils.UtilityMethods - BrowserStack Yml Detected : C:\Users\Rohit\Desktop\Rohit\Eclipse\atombergapp\browserstack.yml
+10:15:16.480 [main] INFO  c.b.config.BrowserStackConfig - Detected Framework testng
+10:15:16.502 [main] INFO  c.b.config.BrowserStackConfig - Setting value of testObservability as specified in your browserstack.yml to true
+10:15:17.309 [main] INFO  c.browserstack.BrowserStackJavaAgent - Using app: [https://play.google.com/store/apps/details?id=com.atomberg.app&hl=en_IN&pli=1]
+10:15:17.309 [main] INFO  c.browserstack.BrowserStackJavaAgent - Framework set to junit5
+10:15:18.380 [main] INFO  c.browserstack.BrowserStackJavaAgent - Project and debug logs are captured by default. To disable, set disableAutoCaptureLogs: true in config.
+10:15:22.627 [main] INFO  c.browserstack.utils.LogReportingAPI - 
+[2024-07-01T04:45:22.626227400Z][ TESTHUB ] EXCEPTION IN BUILD START EVENT : com.browserstack.testOps.RequestException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at com.browserstack.testOps.RequestUtils.requestToTestOps(Unknown Source)
+	at com.browserstack.testOps.RequestUtils.requestToTestOpsString(Unknown Source)
+	at com.browserstack.testOps.RequestUtils.requestToTestOpsJson(Unknown Source)
+	at com.browserstack.testOps.RequestUtils.launch(Unknown Source)
+	at com.browserstack.testOps.Listener.onStart(Unknown Source)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at com.browserstack.utils.ConditionalInvocationHandler.invoke(Unknown Source)
+	at jdk.proxy2/jdk.proxy2.$Proxy6.onStart(Unknown Source)
+	at com.browserstack.BrowserStackJavaAgent.a(Unknown Source)
+	at com.browserstack.BrowserStackJavaAgent.premain(Unknown Source)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.instrument/sun.instrument.InstrumentationImpl.loadClassAndStartAgent(InstrumentationImpl.java:491)
+	at java.instrument/sun.instrument.InstrumentationImpl.loadClassAndCallPremain(InstrumentationImpl.java:503)
+Caused by: javax.net.ssl.SSLHandshakeException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.ssl.Alert.createSSLException(Alert.java:131)
+	at java.base/sun.security.ssl.TransportContext.fatal(TransportContext.java:371)
+	at java.base/sun.security.ssl.TransportContext.fatal(TransportContext.java:314)
+	at java.base/sun.security.ssl.TransportContext.fatal(TransportContext.java:309)
+	at java.base/sun.security.ssl.CertificateMessage$T12CertificateConsumer.checkServerCerts(CertificateMessage.java:654)
+	at java.base/sun.security.ssl.CertificateMessage$T12CertificateConsumer.onCertificate(CertificateMessage.java:473)
+	at java.base/sun.security.ssl.CertificateMessage$T12CertificateConsumer.consume(CertificateMessage.java:369)
+	at java.base/sun.security.ssl.SSLHandshake.consume(SSLHandshake.java:396)
+	at java.base/sun.security.ssl.HandshakeContext.dispatch(HandshakeContext.java:480)
+	at java.base/sun.security.ssl.HandshakeContext.dispatch(HandshakeContext.java:458)
+	at java.base/sun.security.ssl.TransportContext.dispatch(TransportContext.java:201)
+	at java.base/sun.security.ssl.SSLTransport.decode(SSLTransport.java:172)
+	at java.base/sun.security.ssl.SSLSocketImpl.decode(SSLSocketImpl.java:1505)
+	at java.base/sun.security.ssl.SSLSocketImpl.readHandshakeRecord(SSLSocketImpl.java:1420)
+	at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:455)
+	at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:426)
+	at browserstack.shaded.okhttp3.internal.connection.RealConnection.a(Unknown Source)
+	at browserstack.shaded.okhttp3.internal.connection.RealConnection.connect(Unknown Source)
+	at browserstack.shaded.okhttp3.internal.connection.ExchangeFinder.a(Unknown Source)
+	at browserstack.shaded.okhttp3.internal.connection.ExchangeFinder.a(Unknown Source)
+	at browserstack.shaded.okhttp3.internal.connection.ExchangeFinder.a(Unknown Source)
+	at browserstack.shaded.okhttp3.internal.connection.Transmitter.a(Unknown Source)
+	at browserstack.shaded.okhttp3.internal.connection.ConnectInterceptor.intercept(Unknown Source)
+	at browserstack.shaded.okhttp3.internal.http.RealInterceptorChain.proceed(Unknown Source)
+	at browserstack.shaded.okhttp3.internal.http.RealInterceptorChain.proceed(Unknown Source)
+	at browserstack.shaded.okhttp3.internal.cache.CacheInterceptor.intercept(Unknown Source)
+	at browserstack.shaded.okhttp3.internal.http.RealInterceptorChain.proceed(Unknown Source)
+	at browserstack.shaded.okhttp3.internal.http.RealInterceptorChain.proceed(Unknown Source)
+	at browserstack.shaded.okhttp3.internal.http.BridgeInterceptor.intercept(Unknown Source)
+	at browserstack.shaded.okhttp3.internal.http.RealInterceptorChain.proceed(Unknown Source)
+	at browserstack.shaded.okhttp3.internal.http.RetryAndFollowUpInterceptor.intercept(Unknown Source)
+	at browserstack.shaded.okhttp3.internal.http.RealInterceptorChain.proceed(Unknown Source)
+	at browserstack.shaded.okhttp3.internal.http.RealInterceptorChain.proceed(Unknown Source)
+	at browserstack.shaded.okhttp3.RealCall.getResponseWithInterceptorChain(Unknown Source)
+	at browserstack.shaded.okhttp3.RealCall.execute(Unknown Source)
+	... 19 more
+Caused by: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:439)
+	at java.base/sun.security.validator.PKIXValidator.engineValidate(PKIXValidator.java:306)
+	at java.base/sun.security.validator.Validator.validate(Validator.java:264)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.checkTrusted(X509TrustManagerImpl.java:231)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.checkServerTrusted(X509TrustManagerImpl.java:132)
+	at java.base/sun.security.ssl.CertificateMessage$T12CertificateConsumer.checkServerCerts(CertificateMessage.java:638)
+	... 49 more
+Caused by: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.provider.certpath.SunCertPathBuilder.build(SunCertPathBuilder.java:141)
+	at java.base/sun.security.provider.certpath.SunCertPathBuilder.engineBuild(SunCertPathBuilder.java:126)
+	at java.base/java.security.cert.CertPathBuilder.build(CertPathBuilder.java:297)
+	at java.base/sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:434)
+	... 54 more
+
+
+10:15:22.628 [main] INFO  c.b.config.BrowserStackConfig - INFO
+10:15:22.628 [main] INFO  c.browserstack.BrowserStackJavaAgent - Starting BrowserStack Local......
+10:15:22.727 [main] ERROR com.browserstack.LocalFactory - Initialization of BrowserStack Local failed com.browserstack.local.LocalException: Error trying to download BrowserStackLocal binary.
+10:15:22.727 [main] ERROR c.browserstack.BrowserStackJavaAgent - Something went wrong - com.browserstack.utils.BrowserStackSDKException: Initialization of BrowserStack Local failed Error trying to download BrowserStackLocal binary.
+	at com.browserstack.LocalFactory.<init>(Unknown Source)
+	at com.browserstack.LocalFactory.a(Unknown Source)
+	at com.browserstack.LocalFactory.createInstance(Unknown Source)
+	at com.browserstack.BrowserStackJavaAgent.d(Unknown Source)
+	at com.browserstack.BrowserStackJavaAgent.a(Unknown Source)
+	at com.browserstack.BrowserStackJavaAgent.premain(Unknown Source)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.instrument/sun.instrument.InstrumentationImpl.loadClassAndStartAgent(InstrumentationImpl.java:491)
+	at java.instrument/sun.instrument.InstrumentationImpl.loadClassAndCallPremain(InstrumentationImpl.java:503)
+
+10:16:40.558 [main] INFO  c.browserstack.BrowserStackJavaAgent - Selenium version detected - 4.18.1
+10:16:40.561 [main] INFO  c.browserstack.BrowserStackJavaAgent - Appium version detected - 9.1.0
+10:16:40.825 [main] DEBUG c.b.config.BrowserStackConfig - Cli Config passed - {}
+10:16:40.826 [main] INFO  c.browserstack.utils.UtilityMethods - BrowserStack Yml Detected : C:\Users\Rohit\Desktop\Rohit\Eclipse\atombergapp\browserstack.yml
+10:16:40.894 [main] INFO  c.b.config.BrowserStackConfig - Detected Framework testng
+10:16:40.906 [main] INFO  c.b.config.BrowserStackConfig - Setting value of testObservability as specified in your browserstack.yml to true
+10:16:41.748 [main] INFO  c.browserstack.BrowserStackJavaAgent - Using app: [https://play.google.com/store/apps/details?id=com.atomberg.app&hl=en_IN&pli=1]
+10:16:41.749 [main] INFO  c.browserstack.BrowserStackJavaAgent - Framework set to junit5
+10:16:43.756 [main] INFO  c.browserstack.BrowserStackJavaAgent - Project and debug logs are captured by default. To disable, set disableAutoCaptureLogs: true in config.
+10:16:45.471 [main] INFO  c.browserstack.BrowserStackJavaAgent - Starting BrowserStack Local......
+10:17:03.185 [main] ERROR com.browserstack.LocalFactory - Initialization of BrowserStack Local failed com.browserstack.local.LocalException: Looks like you have SSL inspection enabled. You can either bypass *.browserstack.com or disable SSL inspection entirely for BrowserStack local to connect.
+ Please contact your enterprise network administrator for more details. If the issue persists, please contact our support team.
+ Alternatively, you can pass root CA certificates to binary using the flags --use-ca-certificate <.pem file> for win and --use-system-installed-ca for mac/linux.
+10:17:03.186 [main] ERROR c.browserstack.BrowserStackJavaAgent - Something went wrong - com.browserstack.utils.BrowserStackSDKException: Initialization of BrowserStack Local failed Looks like you have SSL inspection enabled. You can either bypass *.browserstack.com or disable SSL inspection entirely for BrowserStack local to connect.
+ Please contact your enterprise network administrator for more details. If the issue persists, please contact our support team.
+ Alternatively, you can pass root CA certificates to binary using the flags --use-ca-certificate <.pem file> for win and --use-system-installed-ca for mac/linux.
+	at com.browserstack.LocalFactory.<init>(Unknown Source)
+	at com.browserstack.LocalFactory.a(Unknown Source)
+	at com.browserstack.LocalFactory.createInstance(Unknown Source)
+	at com.browserstack.BrowserStackJavaAgent.d(Unknown Source)
+	at com.browserstack.BrowserStackJavaAgent.a(Unknown Source)
+	at com.browserstack.BrowserStackJavaAgent.premain(Unknown Source)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.instrument/sun.instrument.InstrumentationImpl.loadClassAndStartAgent(InstrumentationImpl.java:491)
+	at java.instrument/sun.instrument.InstrumentationImpl.loadClassAndCallPremain(InstrumentationImpl.java:503)
+
+10:17:03.417 [Thread-0] INFO  c.browserstack.utils.LogReportingAPI - Visit https://observability.browserstack.com/builds/qr84ycjpcbzshzedsdal0prfntzcw1ibhhttjaqa to view build report, insights, and many more debugging information all at one place!
+
+10:17:03.417 [Thread-0] INFO  c.b.config.BrowserStackConfig - INFO
+10:17:31.855 [main] INFO  c.browserstack.BrowserStackJavaAgent - Selenium version detected - 4.18.1
+10:17:31.859 [main] INFO  c.browserstack.BrowserStackJavaAgent - Appium version detected - 9.1.0
+10:17:32.110 [main] DEBUG c.b.config.BrowserStackConfig - Cli Config passed - {}
+10:17:32.111 [main] INFO  c.browserstack.utils.UtilityMethods - BrowserStack Yml Detected : C:\Users\Rohit\Desktop\Rohit\Eclipse\atombergapp\browserstack.yml
+10:17:32.183 [main] INFO  c.b.config.BrowserStackConfig - Detected Framework testng
+10:17:32.195 [main] INFO  c.b.config.BrowserStackConfig - Setting value of testObservability as specified in your browserstack.yml to true
+10:17:32.943 [main] INFO  c.browserstack.BrowserStackJavaAgent - Using app: [https://play.google.com/store/apps/details?id=com.atomberg.app&hl=en_IN&pli=1]
+10:17:32.943 [main] INFO  c.browserstack.BrowserStackJavaAgent - Framework set to junit5
+10:17:38.904 [main] INFO  c.browserstack.BrowserStackJavaAgent - Project and debug logs are captured by default. To disable, set disableAutoCaptureLogs: true in config.
+10:17:41.763 [main] INFO  c.browserstack.BrowserStackJavaAgent - Starting BrowserStack Local......
+10:17:46.406 [main] ERROR com.browserstack.LocalFactory - Initialization of BrowserStack Local failed com.browserstack.local.LocalException: Looks like you have SSL inspection enabled. You can either bypass *.browserstack.com or disable SSL inspection entirely for BrowserStack local to connect.
+ Please contact your enterprise network administrator for more details. If the issue persists, please contact our support team.
+ Alternatively, you can pass root CA certificates to binary using the flags --use-ca-certificate <.pem file> for win and --use-system-installed-ca for mac/linux.
+10:17:46.408 [main] ERROR c.browserstack.BrowserStackJavaAgent - Something went wrong - com.browserstack.utils.BrowserStackSDKException: Initialization of BrowserStack Local failed Looks like you have SSL inspection enabled. You can either bypass *.browserstack.com or disable SSL inspection entirely for BrowserStack local to connect.
+ Please contact your enterprise network administrator for more details. If the issue persists, please contact our support team.
+ Alternatively, you can pass root CA certificates to binary using the flags --use-ca-certificate <.pem file> for win and --use-system-installed-ca for mac/linux.
+	at com.browserstack.LocalFactory.<init>(Unknown Source)
+	at com.browserstack.LocalFactory.a(Unknown Source)
+	at com.browserstack.LocalFactory.createInstance(Unknown Source)
+	at com.browserstack.BrowserStackJavaAgent.d(Unknown Source)
+	at com.browserstack.BrowserStackJavaAgent.a(Unknown Source)
+	at com.browserstack.BrowserStackJavaAgent.premain(Unknown Source)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.instrument/sun.instrument.InstrumentationImpl.loadClassAndStartAgent(InstrumentationImpl.java:491)
+	at java.instrument/sun.instrument.InstrumentationImpl.loadClassAndCallPremain(InstrumentationImpl.java:503)
+
+10:17:49.233 [Thread-0] INFO  c.browserstack.utils.LogReportingAPI - Visit https://observability.browserstack.com/builds/eipctksn42izwrsex9xl29qtq7a3hywcezxregvp to view build report, insights, and many more debugging information all at one place!
+
+10:17:49.234 [Thread-0] INFO  c.b.config.BrowserStackConfig - INFO

@@ -1,0 +1,22 @@
+userName: rohitbhagat_cLgwie
+accessKey: TT6yhPXqyrxyxLg4ZzFy
+framework: junit5
+app: https://play.google.com/store/apps/details?id=com.atomberg.app&hl=en_IN&pli=1
+platforms:
+  - platformName: android
+    deviceName: Samsung Galaxy S22 Ultra
+    platformVersion: 12.0
+  - platformName: android
+    deviceName: Google Pixel 7 Pro
+    platformVersion: 13.0
+  - platformName: android
+    deviceName: OnePlus 9
+    platformVersion: 11.0
+parallelsPerPlatform: 1
+browserstackLocal: true
+buildName: bstack-demo
+buildIdentifier: ${BUILD_NUMBER}
+projectName: BrowserStack Sample
+testObservability: true
+debug: true
+networkLogs: true

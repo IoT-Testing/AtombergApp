@@ -1,0 +1,308 @@
+10:15:16.119 [main] INFO  c.browserstack.BrowserStackJavaAgent - Selenium version detected - 4.18.1
+10:15:16.123 [main] INFO  c.browserstack.BrowserStackJavaAgent - Appium version detected - 9.1.0
+10:15:16.390 [main] DEBUG c.b.config.BrowserStackConfig - Cli Config passed - {}
+10:15:16.391 [main] INFO  c.browserstack.utils.UtilityMethods - BrowserStack Yml Detected : C:\Users\Rohit\Desktop\Rohit\Eclipse\atombergapp\browserstack.yml
+10:15:16.480 [main] INFO  c.b.config.BrowserStackConfig - Detected Framework testng
+10:15:16.502 [main] INFO  c.b.config.BrowserStackConfig - Setting value of testObservability as specified in your browserstack.yml to true
+10:15:16.885 [main] DEBUG c.b.logger.BrowserstackLoggerFactory - Log Level set to DEBUG
+10:15:16.885 [main] DEBUG c.b.logger.BrowserstackLoggerFactory - Log Level set to INFO
+10:15:17.161 [main] DEBUG c.b.utils.FrameworkDetectionUtils - Java command - com.intellij.rt.junit.JUnitStarter -ideVersion5 -junit5 ZTests.AppTest
+10:15:17.161 [main] DEBUG c.b.utils.FrameworkDetectionUtils - Test classes detected: ZTests.AppTest
+10:15:17.266 [main] DEBUG c.b.utils.FrameworkDetectionUtils - Runner: junit5, Engine: none
+10:15:17.306 [main] DEBUG c.b.utils.FrameworkDetectionUtils - Runner: junit5, Engine: none from dependencies
+10:15:17.306 [main] DEBUG c.b.utils.FrameworkDetectionUtils - Detected final framework as: junit5
+10:15:17.306 [main] DEBUG c.browserstack.BrowserStackJavaAgent - JavaAgent Version 1.19.2
+10:15:17.309 [main] INFO  c.browserstack.BrowserStackJavaAgent - Using app: [https://play.google.com/store/apps/details?id=com.atomberg.app&hl=en_IN&pli=1]
+10:15:17.309 [main] INFO  c.browserstack.BrowserStackJavaAgent - Framework set to junit5
+10:15:17.312 [main] DEBUG c.b.utils.ExitSignalHandler - Registered handler for INT
+10:15:17.315 [main] DEBUG c.b.utils.ExitSignalHandler - Registered handler for TERM
+10:15:17.315 [main] DEBUG c.b.utils.ExitSignalHandler - Unable to attach signal handler for HUP Unknown signal: HUP
+10:15:17.316 [main] DEBUG c.b.utils.ExitSignalHandler - Registered handler for ABRT
+10:15:17.642 [Thread-1] DEBUG c.browserstack.utils.UtilityMethods - NEXT HUBS NOT FOUND - javax.net.ssl.SSLHandshakeException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+10:15:17.645 [main] DEBUG c.browserstack.utils.UtilityMethods - NEAREST HUBS NOT ALLOCATED - java.util.NoSuchElementException
+10:15:17.661 [main] DEBUG c.b.utils.FunnelInstrumentation - Sending funnel data for SDKTestAttempted with data: {"event_type":"SDKTestAttempted","accessKey":"TT6yhPXqyrxyxLg4ZzFy","userName":"rohitbhagat_cLgwie","event_properties":{"product":"[automate]","buildName":"bstack-demo","os":"Windows 11","languageVersion":"17.0.5","appiumVersion":"9.1.0","frameworkDetectionInstrumentation":{"parseLoadClass":103,"parseDependencies":38},"language":"java","sdkRunId":"3877b8e1-7ed9-4682-a137-778a96d491b8","buildIdentifier":"1","userFramework":"junit5","testhub_uuid":"","detectedAppiumVersion":"null","detectedDependencies":"testng","productMap":{"app_automate":true,"accessibility":false,"automate":false,"percy":false,"observability":true},"referrer":"junit5-javaagent\/1.19.2","hostname":"1N1209056P","language_framework":"java_junit5","detectedFramework":"junit5","detectedSeleniumVersion":"4.18.1","seleniumVersion":"4.18.1"}}
+10:15:18.379 [main] DEBUG c.b.utils.FunnelInstrumentation - API Event SDKTestAttempted response - {"message":"SDK Event recorded successfully"}
+10:15:18.380 [main] INFO  c.browserstack.BrowserStackJavaAgent - Project and debug logs are captured by default. To disable, set disableAutoCaptureLogs: true in config.
+10:15:21.859 [main] DEBUG c.browserstack.testOps.RequestUtils - [ TESTHUB ] Processing Request Kind launchTestSession
+10:15:21.860 [main] DEBUG c.browserstack.testOps.RequestUtils - [requestToTestOps] Sending Observability request: POST api/v2/builds with request size 1169
+10:15:22.627 [main] INFO  c.browserstack.utils.LogReportingAPI - 
+[2024-07-01T04:45:22.626227400Z][ TESTHUB ] EXCEPTION IN BUILD START EVENT : com.browserstack.testOps.RequestException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at com.browserstack.testOps.RequestUtils.requestToTestOps(Unknown Source)
+	at com.browserstack.testOps.RequestUtils.requestToTestOpsString(Unknown Source)
+	at com.browserstack.testOps.RequestUtils.requestToTestOpsJson(Unknown Source)
+	at com.browserstack.testOps.RequestUtils.launch(Unknown Source)
+	at com.browserstack.testOps.Listener.onStart(Unknown Source)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at com.browserstack.utils.ConditionalInvocationHandler.invoke(Unknown Source)
+	at jdk.proxy2/jdk.proxy2.$Proxy6.onStart(Unknown Source)
+	at com.browserstack.BrowserStackJavaAgent.a(Unknown Source)
+	at com.browserstack.BrowserStackJavaAgent.premain(Unknown Source)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.instrument/sun.instrument.InstrumentationImpl.loadClassAndStartAgent(InstrumentationImpl.java:491)
+	at java.instrument/sun.instrument.InstrumentationImpl.loadClassAndCallPremain(InstrumentationImpl.java:503)
+Caused by: javax.net.ssl.SSLHandshakeException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.ssl.Alert.createSSLException(Alert.java:131)
+	at java.base/sun.security.ssl.TransportContext.fatal(TransportContext.java:371)
+	at java.base/sun.security.ssl.TransportContext.fatal(TransportContext.java:314)
+	at java.base/sun.security.ssl.TransportContext.fatal(TransportContext.java:309)
+	at java.base/sun.security.ssl.CertificateMessage$T12CertificateConsumer.checkServerCerts(CertificateMessage.java:654)
+	at java.base/sun.security.ssl.CertificateMessage$T12CertificateConsumer.onCertificate(CertificateMessage.java:473)
+	at java.base/sun.security.ssl.CertificateMessage$T12CertificateConsumer.consume(CertificateMessage.java:369)
+	at java.base/sun.security.ssl.SSLHandshake.consume(SSLHandshake.java:396)
+	at java.base/sun.security.ssl.HandshakeContext.dispatch(HandshakeContext.java:480)
+	at java.base/sun.security.ssl.HandshakeContext.dispatch(HandshakeContext.java:458)
+	at java.base/sun.security.ssl.TransportContext.dispatch(TransportContext.java:201)
+	at java.base/sun.security.ssl.SSLTransport.decode(SSLTransport.java:172)
+	at java.base/sun.security.ssl.SSLSocketImpl.decode(SSLSocketImpl.java:1505)
+	at java.base/sun.security.ssl.SSLSocketImpl.readHandshakeRecord(SSLSocketImpl.java:1420)
+	at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:455)
+	at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:426)
+	at browserstack.shaded.okhttp3.internal.connection.RealConnection.a(Unknown Source)
+	at browserstack.shaded.okhttp3.internal.connection.RealConnection.connect(Unknown Source)
+	at browserstack.shaded.okhttp3.internal.connection.ExchangeFinder.a(Unknown Source)
+	at browserstack.shaded.okhttp3.internal.connection.ExchangeFinder.a(Unknown Source)
+	at browserstack.shaded.okhttp3.internal.connection.ExchangeFinder.a(Unknown Source)
+	at browserstack.shaded.okhttp3.internal.connection.Transmitter.a(Unknown Source)
+	at browserstack.shaded.okhttp3.internal.connection.ConnectInterceptor.intercept(Unknown Source)
+	at browserstack.shaded.okhttp3.internal.http.RealInterceptorChain.proceed(Unknown Source)
+	at browserstack.shaded.okhttp3.internal.http.RealInterceptorChain.proceed(Unknown Source)
+	at browserstack.shaded.okhttp3.internal.cache.CacheInterceptor.intercept(Unknown Source)
+	at browserstack.shaded.okhttp3.internal.http.RealInterceptorChain.proceed(Unknown Source)
+	at browserstack.shaded.okhttp3.internal.http.RealInterceptorChain.proceed(Unknown Source)
+	at browserstack.shaded.okhttp3.internal.http.BridgeInterceptor.intercept(Unknown Source)
+	at browserstack.shaded.okhttp3.internal.http.RealInterceptorChain.proceed(Unknown Source)
+	at browserstack.shaded.okhttp3.internal.http.RetryAndFollowUpInterceptor.intercept(Unknown Source)
+	at browserstack.shaded.okhttp3.internal.http.RealInterceptorChain.proceed(Unknown Source)
+	at browserstack.shaded.okhttp3.internal.http.RealInterceptorChain.proceed(Unknown Source)
+	at browserstack.shaded.okhttp3.RealCall.getResponseWithInterceptorChain(Unknown Source)
+	at browserstack.shaded.okhttp3.RealCall.execute(Unknown Source)
+	... 19 more
+Caused by: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:439)
+	at java.base/sun.security.validator.PKIXValidator.engineValidate(PKIXValidator.java:306)
+	at java.base/sun.security.validator.Validator.validate(Validator.java:264)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.checkTrusted(X509TrustManagerImpl.java:231)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.checkServerTrusted(X509TrustManagerImpl.java:132)
+	at java.base/sun.security.ssl.CertificateMessage$T12CertificateConsumer.checkServerCerts(CertificateMessage.java:638)
+	... 49 more
+Caused by: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.provider.certpath.SunCertPathBuilder.build(SunCertPathBuilder.java:141)
+	at java.base/sun.security.provider.certpath.SunCertPathBuilder.engineBuild(SunCertPathBuilder.java:126)
+	at java.base/java.security.cert.CertPathBuilder.build(CertPathBuilder.java:297)
+	at java.base/sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:434)
+	... 54 more
+
+
+10:15:22.628 [main] INFO  c.b.config.BrowserStackConfig - INFO
+10:15:22.628 [main] INFO  c.browserstack.BrowserStackJavaAgent - Starting BrowserStack Local......
+10:15:22.632 [main] DEBUG com.browserstack.LocalFactory - Starting BrowserStack Local with identifier 01_Jul_1015_1N1209056P_GAeR
+10:15:22.727 [main] ERROR com.browserstack.LocalFactory - Initialization of BrowserStack Local failed com.browserstack.local.LocalException: Error trying to download BrowserStackLocal binary.
+10:15:22.727 [main] ERROR c.browserstack.BrowserStackJavaAgent - Something went wrong - com.browserstack.utils.BrowserStackSDKException: Initialization of BrowserStack Local failed Error trying to download BrowserStackLocal binary.
+	at com.browserstack.LocalFactory.<init>(Unknown Source)
+	at com.browserstack.LocalFactory.a(Unknown Source)
+	at com.browserstack.LocalFactory.createInstance(Unknown Source)
+	at com.browserstack.BrowserStackJavaAgent.d(Unknown Source)
+	at com.browserstack.BrowserStackJavaAgent.a(Unknown Source)
+	at com.browserstack.BrowserStackJavaAgent.premain(Unknown Source)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.instrument/sun.instrument.InstrumentationImpl.loadClassAndStartAgent(InstrumentationImpl.java:491)
+	at java.instrument/sun.instrument.InstrumentationImpl.loadClassAndCallPremain(InstrumentationImpl.java:503)
+
+10:15:22.728 [Thread-0] DEBUG c.browserstack.BrowserStackJavaAgent - Starting final execution
+10:15:22.730 [Thread-0] DEBUG c.b.u.ObservabilityUtilityMethods - Processing batch requests with type: Global
+10:15:22.731 [Thread-0] DEBUG c.browserstack.testOps.RequestUtils - [ TESTHUB ] Processing Request Kind stopBuildUpstream
+10:15:22.731 [Thread-0] DEBUG c.browserstack.testOps.RequestUtils - [requestToTestOps] Sending Observability request: PUT api/v1/builds//stop with request size 65
+10:15:24.031 [Thread-0] DEBUG c.browserstack.testOps.RequestUtils - requestToTestOps: Response code: 401
+10:15:24.031 [Thread-0] DEBUG c.browserstack.testOps.RequestUtils - [OBSERVABILITY] Non-200 Response 401
+10:15:24.031 [Thread-0] DEBUG c.browserstack.utils.LogReportingAPI - Observability Stop request failed. Retrying.. Exception: com.browserstack.testOps.RequestException: Non 200 response
+	at com.browserstack.testOps.RequestException.non200(Unknown Source)
+	at com.browserstack.testOps.RequestUtils.requestToTestOps(Unknown Source)
+	at com.browserstack.testOps.RequestUtils.requestToTestOpsString(Unknown Source)
+	at com.browserstack.testOps.RequestUtils.stop(Unknown Source)
+	at com.browserstack.testOps.Listener.onComplete(Unknown Source)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at com.browserstack.utils.ConditionalInvocationHandler.invoke(Unknown Source)
+	at jdk.proxy2/jdk.proxy2.$Proxy6.onComplete(Unknown Source)
+	at com.browserstack.BrowserStackJavaAgent$FinalExecution.run(Unknown Source)
+
+10:15:25.304 [Thread-0] DEBUG c.b.utils.FunnelInstrumentation - API Event Observability_Crash_Report_Upload response - OK
+10:15:25.304 [Thread-0] DEBUG c.browserstack.testOps.RequestUtils - [requestToTestOps] Sending Observability request: PUT api/v1/builds//stop with request size 65
+10:15:28.205 [Thread-0] DEBUG c.browserstack.testOps.RequestUtils - requestToTestOps: Response code: 401
+10:15:28.205 [Thread-0] DEBUG c.browserstack.testOps.RequestUtils - [OBSERVABILITY] Non-200 Response 401
+10:15:28.205 [Thread-0] DEBUG c.browserstack.utils.LogReportingAPI - 
+[2024-07-01T04:45:28.205389200Z][ TESTHUB ] Exception in stop build request : com.browserstack.testOps.RequestException: Non 200 response
+	at com.browserstack.testOps.RequestException.non200(Unknown Source)
+	at com.browserstack.testOps.RequestUtils.requestToTestOps(Unknown Source)
+	at com.browserstack.testOps.RequestUtils.requestToTestOpsString(Unknown Source)
+	at com.browserstack.testOps.RequestUtils.stop(Unknown Source)
+	at com.browserstack.testOps.Listener.onComplete(Unknown Source)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at com.browserstack.utils.ConditionalInvocationHandler.invoke(Unknown Source)
+	at jdk.proxy2/jdk.proxy2.$Proxy6.onComplete(Unknown Source)
+	at com.browserstack.BrowserStackJavaAgent$FinalExecution.run(Unknown Source)
+
+
+10:15:29.440 [Thread-0] DEBUG c.b.utils.FunnelInstrumentation - API Event Observability_Crash_Report_Upload response - OK
+10:15:29.444 [Thread-0] DEBUG com.browserstack.testOps.UsageStats - getFormattedData: Collecting data for TestObservability
+10:15:29.444 [Thread-0] DEBUG com.browserstack.testOps.UsageStats - getEventStats: Getting event data for TestObservability
+10:15:29.446 [Thread-0] DEBUG com.browserstack.testOps.UsageStats - [OBSERVABILITY] Failed to parse data from workers
+10:15:29.490 [Thread-0] DEBUG c.b.utils.FunnelInstrumentation - Sending funnel data for SDKTestSuccessful with data: {"event_type":"SDKTestSuccessful","accessKey":"TT6yhPXqyrxyxLg4ZzFy","userName":"rohitbhagat_cLgwie","event_properties":{"product":"[automate]","buildName":"bstack-demo","globalException":"Initialization of BrowserStack Local failed Error trying to download BrowserStackLocal binary.","os":"Windows 11","languageVersion":"17.0.5","appiumVersion":"9.1.0","frameworkDetectionInstrumentation":{"parseLoadClass":103,"parseDependencies":38},"language":"java","sdkRunId":"3877b8e1-7ed9-4682-a137-778a96d491b8","buildIdentifier":"1","userFramework":"junit5","testhub_uuid":"","detectedAppiumVersion":"null","detectedDependencies":"testng","productMap":{"app_automate":true,"accessibility":false,"automate":false,"percy":false,"observability":true},"referrer":"junit5-javaagent\/1.19.2","hostname":"1N1209056P","language_framework":"java_junit5","detectedFramework":"junit5","productUsage":{"testObservability":{"buildHashedId":"","manuallySet":true,"enabled":true,"events":{"hookEvents":{"started":{"errors":[],"failedCount":0,"sentCount":0,"triggeredCount":0},"finished":{"triggeredCount":0,"failedCount":0,"errors":[],"sentCount":0}},"logEvents":{"errors":[],"failedCount":0,"sentCount":0,"triggeredCount":0},"testEvents":{"started":{"errors":[],"failedCount":0,"sentCount":0,"triggeredCount":0},"finished":{"triggeredCount":0,"failedCount":0,"errors":[],"sentCount":0}},"batchEvents":{"triggeredCount":0,"failedCount":0,"errors":[],"sentCount":0},"cbtSessionEvents":{"errors":[],"failedCount":0,"sentCount":0,"triggeredCount":0},"buildEvents":{"started":{"error":"com.browserstack.testOps.RequestException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target Caused By javax.net.ssl.SSLHandshakeException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target","status":"failed","triggered":true},"finished":{"error":"com.browserstack.testOps.RequestException: Non 200 response","status":"failed","triggered":true}}}}},"detectedSeleniumVersion":"4.18.1","seleniumVersion":"4.18.1"}}
+10:15:29.820 [Thread-0] DEBUG c.b.utils.FunnelInstrumentation - API Event SDKTestSuccessful response - {"message":"SDK Event recorded successfully"}
+10:15:29.934 [Thread-0] DEBUG c.browserstack.utils.UtilityMethods - Execute API call to get build details failed - javax.net.ssl.SSLHandshakeException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+10:15:29.936 [Thread-0] DEBUG c.browserstack.utils.UtilityMethods - Browserstack Gradle-M Config File does not exist.
+10:16:40.558 [main] INFO  c.browserstack.BrowserStackJavaAgent - Selenium version detected - 4.18.1
+10:16:40.561 [main] INFO  c.browserstack.BrowserStackJavaAgent - Appium version detected - 9.1.0
+10:16:40.825 [main] DEBUG c.b.config.BrowserStackConfig - Cli Config passed - {}
+10:16:40.826 [main] INFO  c.browserstack.utils.UtilityMethods - BrowserStack Yml Detected : C:\Users\Rohit\Desktop\Rohit\Eclipse\atombergapp\browserstack.yml
+10:16:40.894 [main] INFO  c.b.config.BrowserStackConfig - Detected Framework testng
+10:16:40.906 [main] INFO  c.b.config.BrowserStackConfig - Setting value of testObservability as specified in your browserstack.yml to true
+10:16:41.304 [main] DEBUG c.b.logger.BrowserstackLoggerFactory - Log Level set to DEBUG
+10:16:41.304 [main] DEBUG c.b.logger.BrowserstackLoggerFactory - Log Level set to INFO
+10:16:41.613 [main] DEBUG c.b.utils.FrameworkDetectionUtils - Java command - com.intellij.rt.junit.JUnitStarter -ideVersion5 -junit5 ZTests.AppTest
+10:16:41.613 [main] DEBUG c.b.utils.FrameworkDetectionUtils - Test classes detected: ZTests.AppTest
+10:16:41.708 [main] DEBUG c.b.utils.FrameworkDetectionUtils - Runner: junit5, Engine: none
+10:16:41.744 [main] DEBUG c.b.utils.FrameworkDetectionUtils - Runner: junit5, Engine: none from dependencies
+10:16:41.745 [main] DEBUG c.b.utils.FrameworkDetectionUtils - Detected final framework as: junit5
+10:16:41.745 [main] DEBUG c.browserstack.BrowserStackJavaAgent - JavaAgent Version 1.19.2
+10:16:41.748 [main] INFO  c.browserstack.BrowserStackJavaAgent - Using app: [https://play.google.com/store/apps/details?id=com.atomberg.app&hl=en_IN&pli=1]
+10:16:41.749 [main] INFO  c.browserstack.BrowserStackJavaAgent - Framework set to junit5
+10:16:41.751 [main] DEBUG c.b.utils.ExitSignalHandler - Registered handler for INT
+10:16:41.753 [main] DEBUG c.b.utils.ExitSignalHandler - Registered handler for TERM
+10:16:41.753 [main] DEBUG c.b.utils.ExitSignalHandler - Unable to attach signal handler for HUP Unknown signal: HUP
+10:16:41.753 [main] DEBUG c.b.utils.ExitSignalHandler - Registered handler for ABRT
+10:16:42.196 [Thread-1] DEBUG c.browserstack.utils.UtilityMethods - NEXT HUBS ARE: ["hub-aps.browserstack.com","hub-euw.browserstack.com","hub-apse.browserstack.com"]
+10:16:42.316 [main] DEBUG c.browserstack.utils.UtilityMethods - ERROR IN CHECKING hub-aps.browserstack.com HUB
+10:16:42.316 [main] DEBUG c.browserstack.utils.UtilityMethods - javax.net.ssl.SSLHandshakeException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+10:16:42.832 [main] DEBUG c.browserstack.utils.UtilityMethods - ERROR IN CHECKING hub-euw.browserstack.com HUB
+10:16:42.832 [main] DEBUG c.browserstack.utils.UtilityMethods - javax.net.ssl.SSLHandshakeException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+10:16:43.389 [main] DEBUG c.browserstack.utils.UtilityMethods - ERROR IN CHECKING hub-apse.browserstack.com HUB
+10:16:43.389 [main] DEBUG c.browserstack.utils.UtilityMethods - javax.net.ssl.SSLHandshakeException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+10:16:43.391 [main] DEBUG c.browserstack.utils.UtilityMethods - NEAREST HUBS NOT ALLOCATED - java.util.NoSuchElementException
+10:16:43.403 [main] DEBUG c.b.utils.FunnelInstrumentation - Sending funnel data for SDKTestAttempted with data: {"event_type":"SDKTestAttempted","accessKey":"TT6yhPXqyrxyxLg4ZzFy","userName":"rohitbhagat_cLgwie","event_properties":{"product":"[automate]","buildName":"bstack-demo","os":"Windows 11","languageVersion":"17.0.5","appiumVersion":"9.1.0","frameworkDetectionInstrumentation":{"parseLoadClass":93,"parseDependencies":36},"language":"java","sdkRunId":"6c7921c0-3ec8-4842-ab06-ae372de77fc0","buildIdentifier":"2","userFramework":"junit5","testhub_uuid":"","detectedAppiumVersion":"null","detectedDependencies":"testng","productMap":{"app_automate":true,"accessibility":false,"automate":false,"percy":false,"observability":true},"referrer":"junit5-javaagent\/1.19.2","hostname":"1N1209056P","language_framework":"java_junit5","detectedFramework":"junit5","detectedSeleniumVersion":"4.18.1","seleniumVersion":"4.18.1"}}
+10:16:43.756 [main] DEBUG c.b.utils.FunnelInstrumentation - API Event SDKTestAttempted response - {"message":"SDK Event recorded successfully"}
+10:16:43.756 [main] INFO  c.browserstack.BrowserStackJavaAgent - Project and debug logs are captured by default. To disable, set disableAutoCaptureLogs: true in config.
+10:16:44.047 [main] DEBUG c.browserstack.testOps.RequestUtils - [ TESTHUB ] Processing Request Kind launchTestSession
+10:16:44.047 [main] DEBUG c.browserstack.testOps.RequestUtils - [requestToTestOps] Sending Observability request: POST api/v2/builds with request size 1169
+10:16:45.471 [main] DEBUG c.browserstack.testOps.RequestUtils - requestToTestOps: Response code: 200
+10:16:45.471 [main] DEBUG com.browserstack.testOps.Listener - BROWSERSTACK_TESTHUB_UUID : qr84ycjpcbzshzedsdal0prfntzcw1ibhhttjaqa
+10:16:45.471 [main] DEBUG com.browserstack.testOps.Listener - [ TESTHUB ] Build creation successfull
+10:16:45.471 [main] INFO  c.browserstack.BrowserStackJavaAgent - Starting BrowserStack Local......
+10:16:45.476 [main] DEBUG com.browserstack.LocalFactory - Starting BrowserStack Local with identifier 01_Jul_1016_1N1209056P_puZM
+10:17:03.185 [main] ERROR com.browserstack.LocalFactory - Initialization of BrowserStack Local failed com.browserstack.local.LocalException: Looks like you have SSL inspection enabled. You can either bypass *.browserstack.com or disable SSL inspection entirely for BrowserStack local to connect.
+ Please contact your enterprise network administrator for more details. If the issue persists, please contact our support team.
+ Alternatively, you can pass root CA certificates to binary using the flags --use-ca-certificate <.pem file> for win and --use-system-installed-ca for mac/linux.
+10:17:03.186 [main] ERROR c.browserstack.BrowserStackJavaAgent - Something went wrong - com.browserstack.utils.BrowserStackSDKException: Initialization of BrowserStack Local failed Looks like you have SSL inspection enabled. You can either bypass *.browserstack.com or disable SSL inspection entirely for BrowserStack local to connect.
+ Please contact your enterprise network administrator for more details. If the issue persists, please contact our support team.
+ Alternatively, you can pass root CA certificates to binary using the flags --use-ca-certificate <.pem file> for win and --use-system-installed-ca for mac/linux.
+	at com.browserstack.LocalFactory.<init>(Unknown Source)
+	at com.browserstack.LocalFactory.a(Unknown Source)
+	at com.browserstack.LocalFactory.createInstance(Unknown Source)
+	at com.browserstack.BrowserStackJavaAgent.d(Unknown Source)
+	at com.browserstack.BrowserStackJavaAgent.a(Unknown Source)
+	at com.browserstack.BrowserStackJavaAgent.premain(Unknown Source)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.instrument/sun.instrument.InstrumentationImpl.loadClassAndStartAgent(InstrumentationImpl.java:491)
+	at java.instrument/sun.instrument.InstrumentationImpl.loadClassAndCallPremain(InstrumentationImpl.java:503)
+
+10:17:03.187 [Thread-0] DEBUG c.browserstack.BrowserStackJavaAgent - Starting final execution
+10:17:03.188 [Thread-0] DEBUG c.b.u.ObservabilityUtilityMethods - Processing batch requests with type: Global
+10:17:03.189 [Thread-0] DEBUG c.browserstack.testOps.RequestUtils - [ TESTHUB ] Processing Request Kind stopBuildUpstream
+10:17:03.189 [Thread-0] DEBUG c.browserstack.testOps.RequestUtils - [requestToTestOps] Sending Observability request: PUT api/v1/builds/qr84ycjpcbzshzedsdal0prfntzcw1ibhhttjaqa/stop with request size 65
+10:17:03.414 [Thread-0] DEBUG c.browserstack.testOps.RequestUtils - requestToTestOps: Response code: 200
+10:17:03.414 [Thread-0] DEBUG com.browserstack.testOps.Listener - Testhub stop response: 
+10:17:03.417 [Thread-0] INFO  c.browserstack.utils.LogReportingAPI - Visit https://observability.browserstack.com/builds/qr84ycjpcbzshzedsdal0prfntzcw1ibhhttjaqa to view build report, insights, and many more debugging information all at one place!
+
+10:17:03.417 [Thread-0] INFO  c.b.config.BrowserStackConfig - INFO
+10:17:03.421 [Thread-0] DEBUG com.browserstack.testOps.UsageStats - getFormattedData: Collecting data for TestObservability
+10:17:03.421 [Thread-0] DEBUG com.browserstack.testOps.UsageStats - getEventStats: Getting event data for TestObservability
+10:17:03.426 [Thread-0] DEBUG com.browserstack.testOps.UsageStats - [OBSERVABILITY] Failed to parse data from workers
+10:17:03.490 [Thread-0] DEBUG c.b.utils.FunnelInstrumentation - Sending funnel data for SDKTestSuccessful with data: {"event_type":"SDKTestSuccessful","accessKey":"TT6yhPXqyrxyxLg4ZzFy","userName":"rohitbhagat_cLgwie","event_properties":{"product":"[automate]","buildName":"bstack-demo","globalException":"Initialization of BrowserStack Local failed Looks like you have SSL inspection enabled. You can either bypass *.browserstack.com or disable SSL inspection entirely for BrowserStack local to connect.\n Please contact your enterprise network administrator for more details. If the issue persists, please contact our support team.\n Alternatively, you can pass root CA certificates to binary using the flags --use-ca-certificate <.pem file> for win and --use-system-installed-ca for mac\/linux.","os":"Windows 11","languageVersion":"17.0.5","appiumVersion":"9.1.0","frameworkDetectionInstrumentation":{"parseLoadClass":93,"parseDependencies":36},"language":"java","sdkRunId":"6c7921c0-3ec8-4842-ab06-ae372de77fc0","buildIdentifier":"2","userFramework":"junit5","testhub_uuid":"qr84ycjpcbzshzedsdal0prfntzcw1ibhhttjaqa","detectedAppiumVersion":"null","detectedDependencies":"testng","productMap":{"app_automate":true,"accessibility":false,"automate":false,"percy":false,"observability":true},"referrer":"junit5-javaagent\/1.19.2","hostname":"1N1209056P","language_framework":"java_junit5","detectedFramework":"junit5","productUsage":{"testObservability":{"buildHashedId":"qr84ycjpcbzshzedsdal0prfntzcw1ibhhttjaqa","manuallySet":true,"enabled":true,"events":{"hookEvents":{"started":{"errors":[],"sentCount":0,"triggeredCount":0,"failedCount":0},"finished":{"triggeredCount":0,"failedCount":0,"errors":[],"sentCount":0}},"logEvents":{"errors":[],"sentCount":0,"triggeredCount":0,"failedCount":0},"testEvents":{"started":{"errors":[],"sentCount":0,"triggeredCount":0,"failedCount":0},"finished":{"triggeredCount":0,"failedCount":0,"errors":[],"sentCount":0}},"batchEvents":{"triggeredCount":0,"failedCount":0,"errors":[],"sentCount":0},"cbtSessionEvents":{"errors":[],"sentCount":0,"triggeredCount":0,"failedCount":0},"buildEvents":{"started":{"error":null,"status":"success","triggered":true},"finished":{"error":null,"status":"success","triggered":true}}}}},"detectedSeleniumVersion":"4.18.1","seleniumVersion":"4.18.1"}}
+10:17:03.793 [Thread-0] DEBUG c.b.utils.FunnelInstrumentation - API Event SDKTestSuccessful response - {"message":"SDK Event recorded successfully"}
+10:17:05.572 [Thread-0] DEBUG c.browserstack.utils.UtilityMethods - Browserstack Gradle-M Config File does not exist.
+10:17:31.855 [main] INFO  c.browserstack.BrowserStackJavaAgent - Selenium version detected - 4.18.1
+10:17:31.859 [main] INFO  c.browserstack.BrowserStackJavaAgent - Appium version detected - 9.1.0
+10:17:32.110 [main] DEBUG c.b.config.BrowserStackConfig - Cli Config passed - {}
+10:17:32.111 [main] INFO  c.browserstack.utils.UtilityMethods - BrowserStack Yml Detected : C:\Users\Rohit\Desktop\Rohit\Eclipse\atombergapp\browserstack.yml
+10:17:32.183 [main] INFO  c.b.config.BrowserStackConfig - Detected Framework testng
+10:17:32.195 [main] INFO  c.b.config.BrowserStackConfig - Setting value of testObservability as specified in your browserstack.yml to true
+10:17:32.542 [main] DEBUG c.b.logger.BrowserstackLoggerFactory - Log Level set to DEBUG
+10:17:32.542 [main] DEBUG c.b.logger.BrowserstackLoggerFactory - Log Level set to INFO
+10:17:32.813 [main] DEBUG c.b.utils.FrameworkDetectionUtils - Java command - com.intellij.rt.junit.JUnitStarter -ideVersion5 -junit5 ZTests.AppTest
+10:17:32.813 [main] DEBUG c.b.utils.FrameworkDetectionUtils - Test classes detected: ZTests.AppTest
+10:17:32.907 [main] DEBUG c.b.utils.FrameworkDetectionUtils - Runner: junit5, Engine: none
+10:17:32.941 [main] DEBUG c.b.utils.FrameworkDetectionUtils - Runner: junit5, Engine: none from dependencies
+10:17:32.941 [main] DEBUG c.b.utils.FrameworkDetectionUtils - Detected final framework as: junit5
+10:17:32.941 [main] DEBUG c.browserstack.BrowserStackJavaAgent - JavaAgent Version 1.19.2
+10:17:32.943 [main] INFO  c.browserstack.BrowserStackJavaAgent - Using app: [https://play.google.com/store/apps/details?id=com.atomberg.app&hl=en_IN&pli=1]
+10:17:32.943 [main] INFO  c.browserstack.BrowserStackJavaAgent - Framework set to junit5
+10:17:32.946 [main] DEBUG c.b.utils.ExitSignalHandler - Registered handler for INT
+10:17:32.946 [main] DEBUG c.b.utils.ExitSignalHandler - Registered handler for TERM
+10:17:32.946 [main] DEBUG c.b.utils.ExitSignalHandler - Unable to attach signal handler for HUP Unknown signal: HUP
+10:17:32.946 [main] DEBUG c.b.utils.ExitSignalHandler - Registered handler for ABRT
+10:17:36.347 [Thread-1] DEBUG c.browserstack.utils.UtilityMethods - NEXT HUBS ARE: ["hub-aps.browserstack.com","hub-euw.browserstack.com","hub-apse.browserstack.com"]
+10:17:36.599 [main] DEBUG c.browserstack.utils.UtilityMethods - EXECUTION TIME OF hub-aps.browserstack.com HUB IS: 249ms
+10:17:37.447 [main] DEBUG c.browserstack.utils.UtilityMethods - EXECUTION TIME OF hub-euw.browserstack.com HUB IS: 839ms
+10:17:38.385 [main] DEBUG c.browserstack.utils.UtilityMethods - EXECUTION TIME OF hub-apse.browserstack.com HUB IS: 937ms
+10:17:38.389 [main] DEBUG c.browserstack.utils.UtilityMethods - NEAREST HUB ALLOCATED IS - hub-aps.browserstack.com
+10:17:38.403 [main] DEBUG c.b.utils.FunnelInstrumentation - Sending funnel data for SDKTestAttempted with data: {"event_type":"SDKTestAttempted","accessKey":"TT6yhPXqyrxyxLg4ZzFy","userName":"rohitbhagat_cLgwie","event_properties":{"product":"[automate]","buildName":"bstack-demo","os":"Windows 11","languageVersion":"17.0.5","appiumVersion":"9.1.0","frameworkDetectionInstrumentation":{"parseLoadClass":93,"parseDependencies":33},"language":"java","sdkRunId":"87efc14c-4f16-455b-b67d-9a3ba1c4f4fd","buildIdentifier":"3","userFramework":"junit5","testhub_uuid":"","detectedAppiumVersion":"null","detectedDependencies":"testng","productMap":{"app_automate":true,"accessibility":false,"automate":false,"percy":false,"observability":true},"referrer":"junit5-javaagent\/1.19.2","hostname":"1N1209056P","language_framework":"java_junit5","detectedFramework":"junit5","detectedSeleniumVersion":"4.18.1","seleniumVersion":"4.18.1"}}
+10:17:38.904 [main] DEBUG c.b.utils.FunnelInstrumentation - API Event SDKTestAttempted response - {"message":"SDK Event recorded successfully"}
+10:17:38.904 [main] INFO  c.browserstack.BrowserStackJavaAgent - Project and debug logs are captured by default. To disable, set disableAutoCaptureLogs: true in config.
+10:17:39.198 [main] DEBUG c.browserstack.testOps.RequestUtils - [ TESTHUB ] Processing Request Kind launchTestSession
+10:17:39.198 [main] DEBUG c.browserstack.testOps.RequestUtils - [requestToTestOps] Sending Observability request: POST api/v2/builds with request size 1169
+10:17:41.762 [main] DEBUG c.browserstack.testOps.RequestUtils - requestToTestOps: Response code: 200
+10:17:41.763 [main] DEBUG com.browserstack.testOps.Listener - BROWSERSTACK_TESTHUB_UUID : eipctksn42izwrsex9xl29qtq7a3hywcezxregvp
+10:17:41.763 [main] DEBUG com.browserstack.testOps.Listener - [ TESTHUB ] Build creation successfull
+10:17:41.763 [main] INFO  c.browserstack.BrowserStackJavaAgent - Starting BrowserStack Local......
+10:17:41.770 [main] DEBUG com.browserstack.LocalFactory - Starting BrowserStack Local with identifier 01_Jul_1017_1N1209056P_9cK6
+10:17:46.406 [main] ERROR com.browserstack.LocalFactory - Initialization of BrowserStack Local failed com.browserstack.local.LocalException: Looks like you have SSL inspection enabled. You can either bypass *.browserstack.com or disable SSL inspection entirely for BrowserStack local to connect.
+ Please contact your enterprise network administrator for more details. If the issue persists, please contact our support team.
+ Alternatively, you can pass root CA certificates to binary using the flags --use-ca-certificate <.pem file> for win and --use-system-installed-ca for mac/linux.
+10:17:46.408 [main] ERROR c.browserstack.BrowserStackJavaAgent - Something went wrong - com.browserstack.utils.BrowserStackSDKException: Initialization of BrowserStack Local failed Looks like you have SSL inspection enabled. You can either bypass *.browserstack.com or disable SSL inspection entirely for BrowserStack local to connect.
+ Please contact your enterprise network administrator for more details. If the issue persists, please contact our support team.
+ Alternatively, you can pass root CA certificates to binary using the flags --use-ca-certificate <.pem file> for win and --use-system-installed-ca for mac/linux.
+	at com.browserstack.LocalFactory.<init>(Unknown Source)
+	at com.browserstack.LocalFactory.a(Unknown Source)
+	at com.browserstack.LocalFactory.createInstance(Unknown Source)
+	at com.browserstack.BrowserStackJavaAgent.d(Unknown Source)
+	at com.browserstack.BrowserStackJavaAgent.a(Unknown Source)
+	at com.browserstack.BrowserStackJavaAgent.premain(Unknown Source)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.instrument/sun.instrument.InstrumentationImpl.loadClassAndStartAgent(InstrumentationImpl.java:491)
+	at java.instrument/sun.instrument.InstrumentationImpl.loadClassAndCallPremain(InstrumentationImpl.java:503)
+
+10:17:46.409 [Thread-0] DEBUG c.browserstack.BrowserStackJavaAgent - Starting final execution
+10:17:46.409 [Thread-0] DEBUG c.b.u.ObservabilityUtilityMethods - Processing batch requests with type: Global
+10:17:46.410 [Thread-0] DEBUG c.browserstack.testOps.RequestUtils - [ TESTHUB ] Processing Request Kind stopBuildUpstream
+10:17:46.410 [Thread-0] DEBUG c.browserstack.testOps.RequestUtils - [requestToTestOps] Sending Observability request: PUT api/v1/builds/eipctksn42izwrsex9xl29qtq7a3hywcezxregvp/stop with request size 65
+10:17:49.231 [Thread-0] DEBUG c.browserstack.testOps.RequestUtils - requestToTestOps: Response code: 200
+10:17:49.231 [Thread-0] DEBUG com.browserstack.testOps.Listener - Testhub stop response: 
+10:17:49.233 [Thread-0] INFO  c.browserstack.utils.LogReportingAPI - Visit https://observability.browserstack.com/builds/eipctksn42izwrsex9xl29qtq7a3hywcezxregvp to view build report, insights, and many more debugging information all at one place!
+
+10:17:49.234 [Thread-0] INFO  c.b.config.BrowserStackConfig - INFO
+10:17:49.237 [Thread-0] DEBUG com.browserstack.testOps.UsageStats - getFormattedData: Collecting data for TestObservability
+10:17:49.237 [Thread-0] DEBUG com.browserstack.testOps.UsageStats - getEventStats: Getting event data for TestObservability
+10:17:49.240 [Thread-0] DEBUG com.browserstack.testOps.UsageStats - [OBSERVABILITY] Failed to parse data from workers
+10:17:49.279 [Thread-0] DEBUG c.b.utils.FunnelInstrumentation - Sending funnel data for SDKTestSuccessful with data: {"event_type":"SDKTestSuccessful","accessKey":"TT6yhPXqyrxyxLg4ZzFy","userName":"rohitbhagat_cLgwie","event_properties":{"product":"[automate]","buildName":"bstack-demo","globalException":"Initialization of BrowserStack Local failed Looks like you have SSL inspection enabled. You can either bypass *.browserstack.com or disable SSL inspection entirely for BrowserStack local to connect.\n Please contact your enterprise network administrator for more details. If the issue persists, please contact our support team.\n Alternatively, you can pass root CA certificates to binary using the flags --use-ca-certificate <.pem file> for win and --use-system-installed-ca for mac\/linux.","os":"Windows 11","languageVersion":"17.0.5","appiumVersion":"9.1.0","frameworkDetectionInstrumentation":{"parseLoadClass":93,"parseDependencies":33},"language":"java","sdkRunId":"87efc14c-4f16-455b-b67d-9a3ba1c4f4fd","buildIdentifier":"3","userFramework":"junit5","testhub_uuid":"eipctksn42izwrsex9xl29qtq7a3hywcezxregvp","detectedAppiumVersion":"null","detectedDependencies":"testng","productMap":{"app_automate":true,"accessibility":false,"automate":false,"percy":false,"observability":true},"referrer":"junit5-javaagent\/1.19.2","hostname":"1N1209056P","language_framework":"java_junit5","detectedFramework":"junit5","productUsage":{"testObservability":{"buildHashedId":"eipctksn42izwrsex9xl29qtq7a3hywcezxregvp","manuallySet":true,"enabled":true,"events":{"hookEvents":{"started":{"errors":[],"sentCount":0,"failedCount":0,"triggeredCount":0},"finished":{"triggeredCount":0,"failedCount":0,"errors":[],"sentCount":0}},"logEvents":{"errors":[],"sentCount":0,"failedCount":0,"triggeredCount":0},"testEvents":{"started":{"errors":[],"sentCount":0,"failedCount":0,"triggeredCount":0},"finished":{"triggeredCount":0,"failedCount":0,"errors":[],"sentCount":0}},"batchEvents":{"triggeredCount":0,"failedCount":0,"errors":[],"sentCount":0},"cbtSessionEvents":{"errors":[],"sentCount":0,"failedCount":0,"triggeredCount":0},"buildEvents":{"started":{"error":null,"triggered":true,"status":"success"},"finished":{"error":null,"triggered":true,"status":"success"}}}}},"detectedSeleniumVersion":"4.18.1","seleniumVersion":"4.18.1"}}
+10:17:49.618 [Thread-0] DEBUG c.b.utils.FunnelInstrumentation - API Event SDKTestSuccessful response - {"message":"SDK Event recorded successfully"}
+10:17:51.754 [Thread-0] DEBUG c.browserstack.utils.UtilityMethods - Browserstack Gradle-M Config File does not exist.

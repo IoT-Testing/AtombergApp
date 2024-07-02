@@ -3,7 +3,7 @@ package AtombergTest;
 //adb logcat *:E | findstr "com.atomberg.app"
 // robot -d Output Test/Login.robot
 //adb shell monkey -p com.atomberg.app -v 5000 --throttle 100
-import Devices.SO;
+//import Devices.SO;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
@@ -93,7 +93,7 @@ public class Method {
 				WebElement Password = driver.findElement(By.xpath(
 						"//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.EditText[2]"));
 				Password.getText();
-				if (Password.getText() != "987654321") {
+				if (!Objects.equals(Password.getText(), "987654321")) {
 					Password.clear();
 				}
 				Password.click();
@@ -186,7 +186,7 @@ public static void AddLock(AppiumDriver driver)
 	}
     WebElement Save = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Save\"]"));
 	 Save.click();
-	sleep(3000);
+	sleep(5000);
 	WebElement SuccessMessage = null;
 	try {
 		SuccessMessage = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Added Successfully \uD83D\uDC4D\"]"));

@@ -16,7 +16,7 @@ import AtombergTest.Method;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AppTest {
     public static AppiumDriver driver;
-    static ExtentReports extent = new ExtentReports();
+    static ExtentReports extent = ExtentReportAT.getReportObjects();
 
     public static void sleep(long millis) {
         try {
@@ -31,7 +31,7 @@ public class AppTest {
         DesiredCapabilities cap = new DesiredCapabilities();
 
         cap.setCapability("platformName", "Android");
-        cap.setCapability("platformVersion", "12");
+        cap.setCapability("platformVersion", "14");
         cap.setCapability("appPackage", "com.atomberg.app");
         cap.setCapability("appActivity", "com.atomberg.app.MainActivity");
         cap.setCapability("apksigner",
@@ -57,6 +57,7 @@ public class AppTest {
     @Order(1)
     @Test
     void testOpenApp() {
+        ExtentReportAT.getReportObjects();
         extent.createTest("Opening App");
         openAtomberg();
         Email.Login(driver);
