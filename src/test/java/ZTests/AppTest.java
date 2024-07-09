@@ -4,12 +4,13 @@ import Devices.*;
 import Login.Email;
 import com.aventstack.extentreports.ExtentReports;
 import io.appium.java_client.AppiumDriver;
-import ZTests.ExtentReportAT;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
+
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.Assert;
 import AtombergTest.Method;
 
@@ -38,7 +39,8 @@ public class AppTest {
                 "C:\\Users\\Rohit\\Desktop\\android-sdk\\build-tools\\34.0.0\\lib\\apksigner.jar");
         try {
             System.out.println("Initializing Appium driver..."); // Check if the Appium driver is initialized
-            URL url = new URL("http://127.0.0.1:4723/wd/hub"); // URL of the Appium session
+
+           URL url = new URL("http://127.0.0.1:4723/wd/hub"); // URL of the Appium session
             driver = new AppiumDriver(url, cap);
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
             System.out.println("Appium driver initialized.");
@@ -87,16 +89,11 @@ public class AppTest {
         extent.flush();
     }
     @Order(5)
-//    @Test
-//    void testControlLock() {
-//        extent.createTest("Lock Control");
-//        SO.Lock(driver);
-//        extent.flush();
-//    }
-//    @Order(6)
     @Test
-    void driverClose(){
-        driver.quit();
+    void testControlLock() {
+        extent.createTest("Lock Control");
+        SO.Lock(driver);
+        extent.flush();
     }
 
 }

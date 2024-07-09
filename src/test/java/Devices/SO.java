@@ -143,13 +143,13 @@ public class SO {//Search Online Fan
 			System.out.println("Error");
 			driver.navigate().back();
 		}
-//		history(driver);  // history of lock
-//		sleep(5000);
-//		driver.navigate().back();
-		//AccessKeys(driver);  Access keys of lock
+		history(driver);  // history of lock
+		sleep(5000);
+		driver.navigate().back();
+		AccessKeys(driver);  //Access keys of lock
 		lockSettings(driver);   // lock settings
-//		driver.navigate().back();
-//		driver.navigate().back();
+		driver.navigate().back();
+		driver.navigate().back();
 
 	}
 	public static void history(AppiumDriver driver) {
@@ -204,7 +204,7 @@ public class SO {//Search Online Fan
 			List<WebElement> KEYS = driver.findElements(By.className("android.widget.Button"));
 			int i;
 			int total = KEYS.size();
-			for (i=0; 1<total; i++){
+			for (i=0; i<total; i++){
 				List<WebElement> Keys = driver.findElements(By.className("android.widget.Button"));
 				WebElement key = Keys.get(i);
 				boolean OTP = key.getAttribute("content-desc").endsWith("OTP"); // checks if the last string is OTP
@@ -259,11 +259,14 @@ public class SO {//Search Online Fan
 				{
 					WebElement CardEnable = ts.get(i);
 					CardEnable.click();
+					CardEnable(driver);
+
 				}
-//				if (i==3)
-//				{
-//					WebElement Pins = ts.get(i);
-//				}
+				if (i==3)
+				{
+					WebElement Pins = ts.get(i);
+					Pins.click();
+				}
 			}
 		}
 		}

@@ -131,8 +131,6 @@ public class Method {
 		Next.click();
 		SearchWiFi(driver, "Better_Together");
 		Method.captureScreenshot(driver);
-		Swipe.Right(driver, 0.20, 0.18);
-		Method.captureScreenshot(driver);
 
 		// Select Room
 
@@ -189,6 +187,7 @@ public static void AddLock(AppiumDriver driver)
 	sleep(5000);
 	WebElement SuccessMessage = null;
 	try {
+		sleep(2000);
 		SuccessMessage = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Added Successfully \uD83D\uDC4D\"]"));
 	}
 	catch(NoSuchElementException e){

@@ -19,3 +19,21 @@ X
 (src/test/java/ZTests/ExtentReportAT.java,0\d\0dfa0328edc180dbde4a5b27bc028e4983885dee
 S
 #src/test/java/ZTests/Listeners.java,0\2\02bc6d785350633dda68bdc7c2f739d57513adc2
+N
+src/test/java/Login/Login.java,2\8\282e08448d17d174219ec6179471fa6ce51db95f
+7
+pom.xml,4\4\442292b8a7efeabbe4cc176709b833b1792140ec
+P
+ src/test/java/Actions/Swipe.java,0\2\0240c2cab4f4731a02743de4cb7c960a150057b8
+N
+src/test/java/Devices/Add.java,d\6\d68f2c6bf1de2a7a77a9ff33617bc4b50529a9a9
+_
+/src/test/java/Supports/JUnitHTMLSampleTest.java,4\e\4e17a670270d7a201889fedfab8242fc580f45e5
+X
+(src/test/java/AtombergTest/App2test.java,1\5\15b43ea4894cbf1eff9a770f936ab2f621770fe7
+N
+src/test/java/Login/Email.java,c\e\cee5fbe6c2a6137aebc5c1cba7b4def9645843ac
+S
+#src/test/java/AtombergTest/App.java,d\2\d237cd7a8049f330b9667c7625846d62369206cf
+Y
+)src/test/java/Permissions/Permission.java,2\9\29ed5440947352b4fbb69728c6aa7be3b81ea5d3

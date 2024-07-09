@@ -3,12 +3,17 @@ package AtombergTest; //To check
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.concurrent.Callable;
+
+import org.openqa.selenium.By;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
-//import org.testng.annotations.Test;
 import Login.Email;
 import io.appium.java_client.AppiumDriver;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 
 class App2test {
 	public static AppiumDriver driver;
@@ -63,4 +68,5 @@ class App2test {
 		}
 		System.out.println("......");
 	}
+
 }

@@ -5,10 +5,8 @@ import java.net.URL;
 import java.time.Duration;
 import java.util.List;
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import Actions.Scroll;
 import Actions.Tap;
 import Login.Email;
 import io.appium.java_client.AppiumDriver;
@@ -23,69 +21,10 @@ public class App {
 		try {
 			openAtomberg();
 			Email.Login(driver);
-			sleep(5000);
-			AddButton(driver);
-			for(int c = 0 ; c<10; c++) {
-				sleep(15000);
-				WebElement element = null;
-				String xpathExpression = "//android.view.View[@content-desc=\"Atomberg Smart Fan\"]";
-				// Search Fan Only
-				try {
-					element = driver.findElement(By.xpath(xpathExpression));
-				} catch (NoSuchElementException ignored) {
-				}
-
-				if (element != null) // if device is available
-				{
-			List<WebElement> Connects = driver.findElements(By.xpath("(//android.view.View[@content-desc=\"Connect\"])"));
-			System.out.println(Connects.size());
-			if(Connects.size()>= 6)
-			{
-				Scroll.Up(driver);
-			}
-			for(WebElement connect : Connects) {
-				connect.click();
-				System.out.println("Connect Clicked");
-				
-					WebElement LAdd = null;
-					WebElement LReset = null;
-					WebElement FReset = null;
-					try {
-						LAdd = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Connecting to the Lock...\r\n"
-								+ "Please don't press back button\"]"));
-					}catch(Exception e) {}
-					try {
-						LReset = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Could not add the lock\"]"));
-					}catch(Exception e) {}
-					try {
-						FReset = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Device already paired\"]"));
-					}catch(Exception e) {}
-					
-					if(LAdd !=null || LReset!=null || FReset!=null)
-					{
-						System.out.println("Device Already added");
-						driver.navigate().back();
-					}
-					else
-					{
-						System.out.println("Device not added");
-						
-					}
-			}
-			
-			
-			
-				}
-				
-				
-				
-			}			
-		}
-		catch (Exception exp) {
-			System.out.println(exp.getCause());
-			System.out.println(exp.getMessage());
-			exp.printStackTrace();
-		}
+			sleep(15000);
+			SwitchFamily(driver);
+//			driver.quit();
+		}catch(Exception e){}
 	}
 
 	public static void sleep(long millis) {
@@ -135,17 +74,65 @@ public class App {
 		}
 	}
 	public static void AddButton(AppiumDriver driver) {
-		WebElement AddButton = null;
-		try {
-			AddButton = driver.findElement(By.xpath(
-					"//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]/android.widget.ImageView"));
-		} catch (Exception exp) {
+		System.out.println("searching element");
+		List<WebElement> Elements = driver.findElements(By.className("android.widget.ImageView"));
+		for (WebElement element : Elements)
+		{
+			if (element.equals(driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]/android.widget.ImageView"))))
+			{
+				driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]/android.widget.ImageView")).click();
+			}
+			else if (element.equals(driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Add your first smart device\"]"))))
+			{
+				Tap.withCoordinates(driver, 540, 1940);
+				sleep(1000);
+			}
 		}
-		if (AddButton != null) {
-			AddButton.click();
-		} else {
-			Tap.withCoordinates(driver, 540, 1940);
-		}
+	}
+	public static void SwitchFamily(AppiumDriver driver)
+	{
+				List<WebElement> Elements = driver.findElements(By.className("android.view.View"));
+				WebElement Element = Elements.get(0);
+				Element.getAttribute("content-desc");
+				Element.click();
+				System.out.println("Click on family");
+				List<WebElement> FAMILIES = driver.findElements(By.className("android.view.View"));
+				int i;
+				int total=0;
+				for (WebElement e : FAMILIES)
+				{
+					if ((e.getAttribute("content-desc")) != null)
+					{
+						total += 1;
+					}
+				}
+				System.out.println(total);
+				for(i=0; i< total; i++) {
+					List<WebElement> Families = driver.findElements(By.className("android.view.View"));
+					for (WebElement Family : Families) {
+						System.out.println(Family.getAttribute("content-desc"));
+						if ((Family.getAttribute("content-desc")) != null)
+						{
+							Family.click();
+							if(Family.equals(driver.findElement(By.xpath("//android.view.View[@content-desc=\"Sweet Home\"]")))){
+								continue;
+							}
+							if(driver.findElement(By.xpath("//android.view.View[@content-desc=\"Scan the below QR to join this family\"]")).isDisplayed()){
+								driver.navigate().back();
+							}
+							if (i< total-1){
+								Elements = driver.findElements(By.className("android.view.View"));
+								Element = Elements.get(0);
+								Element.getAttribute("content-desc");
+								Element.click();
+								System.out.println("Rescan");
+							}
+						}
+
+					}
+
+				}
+
 	}
 
 }

@@ -1,0 +1,13 @@
+
+G
+java:S11720"+Remove this unused method parameter "args".(Õçƒ-8¶é£ˆ2
+A
+java:S2925A"$Remove this use of "Thread.sleep()".(™Š‹²8¶é£ˆ2
+\
+java:S1128":Remove this unused import 'java.util.concurrent.Callable'.(¾×¶îûÿÿÿÿ8¶é£ˆ2
+P
+java:S1128"3Remove this unused import 'org.openqa.selenium.By'.(ÿŠŞ›8¶é£ˆ2
+d
+java:S1128"BRemove this unused import 'java.util.concurrent.TimeUnit.SECONDS'.(¥€¢ùÿÿÿÿ8¶é£ˆ2
+Y
+java:S1128"<Remove this unused import 'org.awaitility.Awaitility.await'.(Âş‘¦8¶é£ˆ2

@@ -11,10 +11,7 @@ import io.appium.java_client.AppiumDriver;
 
 public class Add2 {
 	public static AppiumDriver driver;
-	public static void blob(AppiumDriver driver){
-		System.out.println("checking the git");
-	}
-	public static void Fan(AppiumDriver driver) 
+	public static void Fan(AppiumDriver driver)
 	{
 
 		WebElement AddButton = null;
@@ -42,6 +39,7 @@ public class Add2 {
 
 			if (element != null) // if device is available
 			{
+
 				System.out.println("Fans Available");
 				List<WebElement> Connects = driver.findElements(By.xpath("(//android.view.View[@content-desc=\"Connect\"])"));
 				for(int i = 1; i<=Connects.size();i++ ) {

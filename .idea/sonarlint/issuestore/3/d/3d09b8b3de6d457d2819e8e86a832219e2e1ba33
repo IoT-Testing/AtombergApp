@@ -1,8 +1,5 @@
 
-O
-java:S2699b"-Add at least one assertion to this test case.(­˜”Üøÿÿÿÿ8ß¤ªŽ‡2
-A
-java:S2925"$Remove this use of "Thread.sleep()".(™Š‹²8ß¤ªŽ‡2
-]	java:S125["<This block of commented-out lines of code should be removed.(´ø‹óúÿÿÿÿ8ß¤ªŽ‡2
-v
-java:S1128"TRemove this unnecessary import: same package classes are always implicitly imported.(Ò§¨Àüÿÿÿÿ8ß¤ªŽ‡2
+g
+java:S2925"$Remove this use of "Thread.sleep()".(™Š‹²8ÊåÖ¾‡2J$1804f95b-678c-4606-a9b8-51b921cea6ef
+Š
+java:S1128"GRemove this unused import 'org.openqa.selenium.remote.RemoteWebDriver'.(ú£Ú—8Â÷ôë‡2J$0164534a-18b0-4815-914b-acb5305e26b7

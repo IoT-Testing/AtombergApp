@@ -23,7 +23,6 @@ public class JUnitHTMLSampleTest extends JUnitHTMLReporter {
 
 	public static void openAtomberg() {
 		DesiredCapabilities cap = new DesiredCapabilities();
-
 		cap.setCapability("platformName", "Android");
 		cap.setCapability("platformVersion", "14");
 		cap.setCapability("appPackage", "com.atomberg.app");
@@ -63,9 +62,10 @@ public class JUnitHTMLSampleTest extends JUnitHTMLReporter {
 	@Test()
 	void testB() {
 		try {
-			Add.Device(driver,"Atomberg Smart Fan");
+			Add.Lock(driver);
 			sleep(3000);
-			Select.Fan(driver);
+			Method.AddLock(driver);
+
 		} catch (Exception e) {
 			e.getCause();
 			e.printStackTrace();

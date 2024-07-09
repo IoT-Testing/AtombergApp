@@ -41,7 +41,7 @@ public class Check {
 
 				CLA(driver);
 			} else {
-				Add.Device(driver, "Atomberg Smart Lock");
+				Add.Fan(driver);
 				CLA(driver);
 			}
 		} catch (Exception exp) {
