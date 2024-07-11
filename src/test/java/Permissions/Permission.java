@@ -22,6 +22,8 @@ public class Permission {
 			allowPermissionButton(driver, "com.android.permissioncontroller:id/permission_allow_button");
 			Method.captureScreenshot(driver);
 			allowPermissionButton(driver,"com.android.permissioncontroller:id/permission_allow_foreground_only_button");
+			Method.captureScreenshot(driver);
+			allowPermissionButton(driver,"com.android.permissioncontroller:id/permission_allow_button");
 			System.out.println("On Home Screen");
 			Method.captureScreenshot(driver);
 		} else {
@@ -30,8 +32,9 @@ public class Permission {
 			// Click on allow permissions
 			allowPermissionButton(driver, "com.android.permissioncontroller:id/permission_allow_button");
 			Method.captureScreenshot(driver);
-			allowPermissionButton(driver,
-					"com.android.permissioncontroller:id/permission_allow_foreground_only_button");
+			allowPermissionButton(driver,"com.android.permissioncontroller:id/permission_allow_foreground_only_button");
+			Method.captureScreenshot(driver);
+			allowPermissionButton(driver,"com.android.permissioncontroller:id/permission_allow_button");
 			System.out.println("On Home Screen");
 			Method.captureScreenshot(driver);
 		}

@@ -12,8 +12,6 @@ import Login.Email;
 import io.appium.java_client.AppiumDriver;
 
 public class Trail {
-	public static AppiumDriver driver;
-
 	public static int Array() {
 		int[] numbers = {1, 2, 3, 4, 5, 6, 7, 8, 9, 0};
 

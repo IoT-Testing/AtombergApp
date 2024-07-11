@@ -14,7 +14,7 @@ public class Email {
 	{
 
 		WebElement emailLoginButton = driver.findElement(By.xpath(
-				"//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[4]"));
+				"//android.widget.ScrollView/android.widget.ImageView[4]"));
 		emailLoginButton.click();
 
 		Method.captureScreenshot(driver);
@@ -36,6 +36,7 @@ public class Email {
 				.findElement(By.xpath("//android.widget.ScrollView/android.widget.EditText[1]\r\n" + ""));
 		passwordField.click();
 		passwordField.sendKeys("Atomberg@123");
+
 		Method.captureScreenshot(driver);
 		System.out.println("Password entered..."); // Enter Password
 

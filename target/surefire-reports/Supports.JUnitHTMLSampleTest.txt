@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: Supports.JUnitHTMLSampleTest
 -------------------------------------------------------------------------------
-Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.547 s -- in Supports.JUnitHTMLSampleTest
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 10.47 s -- in Supports.JUnitHTMLSampleTest
