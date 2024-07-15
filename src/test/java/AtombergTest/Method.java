@@ -24,7 +24,7 @@ public class Method {
 		try {
 			File screenshotFile = driver.getScreenshotAs(OutputType.FILE);
 
-			String destinationFilePath = "C:\\Users\\Rohit\\Desktop\\Rohit\\Appium Screenshots\\NEWMOBILES\\Trail1\\Screenshot_"
+			String destinationFilePath = "C:\\Users\\Rohit Bhagat\\Desktop\\Rohit\\Appium Screenshots\\NEWMOBILES\\Trail1\\Screenshot_"
 					+ timestamp + ".png";
 			FileUtils.copyFile(screenshotFile, new File(destinationFilePath));
 

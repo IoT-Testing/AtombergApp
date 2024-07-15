@@ -1,5 +1,6 @@
 package Tabs;
 
+import Actions.Scroll;
 import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
@@ -14,6 +15,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class Automation {
     public static void TimeOfDay(AppiumDriver driver) {
@@ -27,7 +29,6 @@ public class Automation {
                 driver.findElement(By.xpath("//android.view.View[@content-desc=\"Schedule actions\nExample: Turn ON all bedroom fans at 11 PM\"]/android.widget.ImageView[1]")).click();
                 newAutomation(driver);
             }
-//            System.out.println(driver.findElement(By.xpath("//android.view.View[@content-desc=\"Schedule actions\n" + "Example: Turn ON all bedroom fans at 11 PM\"]/android.widget.ImageView[1]")).isEnabled());
 
         }
     }
@@ -49,7 +50,7 @@ public class Automation {
             selectAction(driver);
             driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Add\"]")).click();
 
-            AllScreenQA(driver);
+            allScreenQA(driver);
         }
     }
 
@@ -62,14 +63,12 @@ public class Automation {
         selectRandomFan(driver);
         driver.findElement(By.xpath("//android.view.View[@content-desc=\"Select time\"]")).click();
         seekBar(driver);
+        sleep(250);
+        seekBar(driver);
         sleep(1000);
         driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Ok\"]")).click();
         selectAction(driver);
-        List<WebElement> CheckEle = driver.findElements(By.className("android.widget.Switch"));
-        for(WebElement e : CheckEle)
-        {
-            System.out.println(e.getLocation());
-        }
+        Scroll.Up(driver);
         driver.findElement(By.xpath("//android.widget.Switch")).click();
         driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Add\"]")).click();
 
@@ -122,7 +121,7 @@ public class Automation {
 
     }
 
-    private static void AllScreenQA(AppiumDriver driver) {
+    private static void allScreenQA(AppiumDriver driver) {
         WebElement QA = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView"));
         QA.click();
         List<WebElement> ACTIONS = driver.findElements(By.className("android.widget.Button"));
@@ -146,10 +145,68 @@ public class Automation {
         }
     }
 
-    public static void DeleteAutomation(AppiumDriver driver)
-    {
+    public static void switchFamily(AppiumDriver driver) {
+        List<WebElement> elements = driver.findElements(By.className("android.view.View"));
+        WebElement e = elements.get(0);
+        String fam1 = e.getAttribute("content-desc");
+        System.out.println(e.getAttribute("content-desc"));
+
+        e.click();
+        // tap on the Family name on the screen (top right corner)
+
+        // getting the availble family list
+        List<WebElement> rawFamilies = driver.findElements(By.className("android.view.View"));
+        List<WebElement> FAMILIES = rawFamilies.stream().filter(fam -> fam.getAttribute("content-desc") != null).collect(Collectors.toList());
+        FAMILIES.remove(FAMILIES.size() - 1);
+        FAMILIES.remove(FAMILIES.size() - 1);
+        int i;
+        int total = FAMILIES.size();
+        System.out.println("number of FAMILIES present =" + total);
+        for (i = 0; i < total; i++) {
+            List<WebElement> rawFamily = driver.findElements(By.className("android.view.View"));
+            List<WebElement> families = rawFamily.stream().filter(fam -> fam.getAttribute("content-desc") != null).collect(Collectors.toList());
+            System.out.println("number of families present =" + total);
+            families.remove(families.size() - 1);
+            families.remove(families.size() - 1);
+            System.out.println("number of families1 present =" + total);
+            if (families.get(i).getAttribute("content-desc").equals(fam1)) {
+                i++;
+
+            }
+            System.out.println(families.get(i).getAttribute("content-desc") + " is clicked");
+            families.get(i).click();
+
+            sleep(1500);
+            if (i < total - 1) {
+                elements = driver.findElements(By.className("android.view.View"));
+                e = elements.get(0);
+                fam1 = e.getAttribute("content-desc");
+                e.click();
+            }
+        }
 
     }
+
+    public static void deleteAutomation(AppiumDriver driver) {
+        WebElement ToD = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Automation155806\n" +
+                "1 fan, 10:30 AM\n" +
+                "Frequency\n" +
+                "Daily\n" +
+                "Activity\n" +
+                "Power Toggle\"]"));
+        String AutoName = ToD.getAttribute("content-desc");
+        boolean check = AutoName.startsWith("Automation");
+        if (check) {
+            ToD.click();
+            WebElement delete = driver.findElement(By.xpath("//android.widget.ImageView/android.widget.Button"));
+            delete.click();
+            WebElement yes = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Yes\"]"));
+            yes.click();
+            assert driver.findElement(By.xpath("//android.view.View[@content-desc=\"Automation Removed Successfully\"]")).isDisplayed();
+        }
+
+    }
+
 
     private static void sleep(long millis) {
         try {

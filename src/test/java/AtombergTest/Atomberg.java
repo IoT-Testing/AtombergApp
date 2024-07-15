@@ -20,7 +20,7 @@ public class Atomberg {
 	public static void main(String[] args) {
 		openAtomberg(); // Open App through Appium
 		Email.Login(driver); // Login
-		SO.Lock(driver); // checks and controls locks
+
 	}
 
 // Sleep

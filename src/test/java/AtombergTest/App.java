@@ -29,7 +29,6 @@ public class App {
             openAtomberg();
             Email.Login(driver);
             sleep(5000);
-            Automation.TimeOfDay(driver);
             driver.close();
         } catch (Exception e) {
         }
@@ -49,7 +48,7 @@ public class App {
         cap.setCapability("appPackage", "com.atomberg.app");
         cap.setCapability("appActivity", "com.atomberg.app.MainActivity");
         cap.setCapability("apksigner",
-                "C:\\Users\\Rohit\\Desktop\\android-sdk\\build-tooBls\\34.0.0\\lib\\apksigner.jar");
+                "\"C:\\Users\\Rohit Bhagat\\Desktop\\android-sdk\\build-tools\\34.0.0\\lib\\apksigner.jar\"");
         try {
             System.out.println("Initializing Appium driver..."); // Check if the Appium driver is initialized
             URL url = new URL("http://127.0.0.1:4723/wd/hub"); // URL of the Appium session
@@ -94,100 +93,6 @@ public class App {
         }
     }
 
-    public static void SwitchFamily(AppiumDriver driver) {
-        List<WebElement> elements = driver.findElements(By.className("android.view.View"));
-        WebElement element = elements.get(0);
-        element.getAttribute("content-desc");
-        element.click();
-        System.out.println("Click on family");
-        List<WebElement> familiesRaw = driver.findElements(By.className("android.view.View"));
-        int i;
-        List<WebElement> FAMILIES = familiesRaw.stream().filter(fam -> fam.getAttribute("content-desc") != null).collect(Collectors.toList());
-        FAMILIES.remove(FAMILIES.size() - 1);
-        for (WebElement family : FAMILIES) {
-            System.out.println(family.getAttribute("content-desc"));
-        }
-        int total = FAMILIES.size();
-        System.out.println(total);
-        for (i = 0; i < total; i++) {
-            System.out.println("i = " + i + " total = " + total);
-            List<WebElement> families = driver.findElements(By.className("android.view.View"));
-            System.out.println("..............");
-            for (WebElement e : families) {
-                System.out.println(e.getAttribute("content-desc"));
-            }
-            WebElement family = null;
-            for (WebElement fam : families) {
-                if (FAMILIES.get(i + 1).getAttribute("content-desc").equals(fam.getAttribute("content-desc"))) {
-                    family = fam;
-                    System.out.println("]]]]]]]]]]");
-                }
-            }
-            assert family != null;
-            System.out.println("Clicking on family " + family.getAttribute("content-desc"));
-            family.click();
-            System.out.println("ccccccccc");
-//            if (driver.findElement(By.xpath("//android.view.View[@content-desc=\"Scan the below QR to join this family\"]")).isDisplayed()) {
-//                driver.navigate().back();
-            //continue;
-//            }
-            if (i < total - 1) {
-                System.out.println("Rescan");
-                elements = driver.findElements(By.className("android.view.View"));
-                element = elements.get(0);
-                element.getAttribute("content-desc");
-                System.out.println(element.getAttribute("content-desc"));
-                element.click();
-                sleep(2500);
-
-            }
-           /* for (WebElement  : families) {
-                System.out.println(family.getAttribute("content-desc"));
-						if ((family.getAttribute("content-desc")) != null)
-						{
-							family.click();
-							if(family.equals(driver.findElement(By.xpath("//android.view.View[@content-desc=\"Sweet Home\"]")))){
-								continue;
-							}
-							if(driver.findElement(By.xpath("//android.view.View[@content-desc=\"Scan the below QR to join this family\"]")).isDisplayed()){
-								driver.navigate().back();
-							}
-							if (i< total-1){
-								elements = driver.findElements(By.className("android.view.View"));
-								element = elements.get(0);
-								element.getAttribute("content-desc");
-								element.click();
-								System.out.println("Rescan");
-							}
-						}
-
-            }*/
-
-        }
-
-    }
-
-    public static void deleteAutomation(AppiumDriver driver)
-    {
-        WebElement ToD = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Automation155806\n" +
-                "1 fan, 10:30 AM\n" +
-                "Frequency\n" +
-                "Daily\n" +
-                "Activity\n" +
-                "Power Toggle\"]"));
-        String AutoName = ToD.getAttribute("content-desc");
-        boolean check = AutoName.startsWith("Automation");
-        if (check)
-        {
-            ToD.click();
-            WebElement delete = driver.findElement(By.xpath("//android.widget.ImageView/android.widget.Button"));
-            delete.click();
-            WebElement yes = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Yes\"]"));
-            yes.click();
-            assert driver.findElement(By.xpath("//android.view.View[@content-desc=\"Automation Removed Successfully\"]")).isDisplayed();
-        }
-
-    }
 }
 
 
