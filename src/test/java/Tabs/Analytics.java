@@ -1,7 +1,9 @@
 package Tabs;
 //Add First Device
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.awaitility.Awaitility;
 import org.openqa.selenium.By; //Selenium Dependencies
@@ -12,64 +14,96 @@ import AtombergTest.Method;
 import io.appium.java_client.AppiumDriver;
 
 public class Analytics {
-	public static void Show(AppiumDriver driver) {
-		WebElement FanCheck = null;
-		try {
+    public static WebElement analytics;
+    public static WebElement moreTab;
 
-			FanCheck = driver.findElement(
-					By.xpath("//android.view.View[@content-desc=\"Please add a smart fan to view analytics\"]"));
+    public static void Show(AppiumDriver driver) {
+        analytics = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Analytics\n" +
+                "Tab 1 of 3\"]"));
+        moreTab = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Analytics\n" +
+                "Tab 1 of 3\"]"));
+        analytics.click();
+        System.out.println("switched to Analytics");
+        WebElement FanCheck = null;
+        try {
+            FanCheck = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Please add a smart fan to view analytics\"]"));
+        } catch (Exception Exp) {
+        }
+        if (FanCheck == null) {
+            nextFan(driver);
+        }
+    }
 
-		} catch (Exception Exp) {
-		}
-		if (FanCheck != null) {
-			System.out.println("Add a Fan or Change Family");
+    private static void fanChange(AppiumDriver driver) {
+        List<WebElement> FANS = driver.findElements(By.className("android.view.View"));
+        List<WebElement> Fans = FANS.stream().filter(ele -> ele.getAttribute("content-desc") != null).collect(Collectors.toList());
+        List<WebElement> fans = Fans.stream().filter(ele -> ele.getAttribute("content-desc").endsWith("Fan")).collect(Collectors.toList());
 
-			Tap.withPercentage(driver, 0.1, 0.92);
-			Method.captureScreenshot(driver);
-			sleep(1000);
-			WebElement Family = driver.findElement(By.xpath("//android.view.View[@content-desc=\"My Home\"]"));
-			Family.click();
-			sleep(2000);
+        for (WebElement fan : fans) {
+            System.out.println(fan.getAttribute("content-desc"));
+            fan.click();
+        }
+    }
 
-		}
-		Method.captureScreenshot(driver);
-		Tap.withPercentage(driver, 0.58, 0.139); // Bill Saved
-		sleep(1000);
-		System.out.println("Bill Saved");
-		Method.captureScreenshot(driver);
-		Tap.withCoordinates(driver, 300, 170);// Random Tap
+    private static void nextFan(AppiumDriver driver) {
+        fanChange(driver);
+        List<WebElement> availFans = driver.findElements(By.className("android.view.View"));
+        List<WebElement> fans = availFans.stream().filter(ele -> ele.getAttribute("content-desc") != null).collect(Collectors.toList());
+        fans.remove(fans.size() - 1);
+        System.out.println(fans.size());
 
-		Swipe.Left(driver, 0.75, 0.50); // CO2 saved
-		sleep(1000);
-		Method.captureScreenshot(driver);
-		Tap.withPercentage(driver, 0.58, 0.139); // nokia & narzo 0.65, 0.173 //Tab 0.58, 0.139
-		sleep(1000);
-		System.out.println("CO2 Saved");
-		Method.captureScreenshot(driver);
-		Tap.withCoordinates(driver, 300, 170);// Random Tap
+        for (int i = 0; i < fans.size(); i++) {
 
-		Swipe.Left(driver, 0.75, 0.50); // Energy Saved
-		sleep(1000);
-		Method.captureScreenshot(driver);
-		Tap.withPercentage(driver, 0.59, 0.14);
-		sleep(1000);
-		System.out.println("Energy Saved");
-		Method.captureScreenshot(driver);
-		Tap.withCoordinates(driver, 300, 170);// Random Tap
+            List<WebElement> availFans1 = driver.findElements(By.className("android.view.View"));
+            List<WebElement> anaFans = availFans1.stream().filter(ele -> ele.getAttribute("content-desc") != null).collect(Collectors.toList());
+            anaFans.remove(anaFans.size() - 1);
+            anaFans.get(i).click();
+            System.out.println(i);
+            System.out.println(i < fans.size() - 1);
+            info(driver);
+            if (i < fans.size() - 1) { // to go to the analytics screen and
+                moreTab.click();
+                rateUs(driver);
+                sleep(1);
+                analytics.click();
+                rateUs(driver);
+                fanChange(driver);
+            }
+        }
+    }
 
-		Swipe.Left(driver, 0.75, 0.50); // Runtime
-		sleep(1000);
-		Method.captureScreenshot(driver);
-		System.out.println("Runtime");
-		Tap.withPercentage(driver, 0.58, 0.139);
-		sleep(1000);
-		Method.captureScreenshot(driver);
-		Tap.withCoordinates(driver, 300, 170);// Random Tap
+    private static void rateUs(AppiumDriver driver) {
+        List<WebElement> dialogueBox = driver.findElements(By.className("android.widget.Button"));
+        for (WebElement ele : dialogueBox) {
+            if (ele.getAttribute("content-desc").equals("Cancel")) {
+                ele.click();
+            }
+        }
+    }
 
-	}
+    private static void info(AppiumDriver driver) {
+        int i;
+        for (i = 0; i < 4; i++) {// there are 4 screens in analytics
+            List<WebElement> ICONS = driver.findElements(By.xpath("//android.view.View[@clickable=\"true\"]"));
+            List<WebElement> icons = ICONS.stream().filter(element -> element.getAttribute("content-desc") == null).collect(Collectors.toList());
+            icons.remove(icons.size() - 1);
+            for (WebElement icon : icons) {
+                System.out.println(icon.getAttribute("content-desc"));
+                icon.click();
+                sleep(3);
+                driver.navigate().back();
+                sleep(5);
+            }
+            if (i < 3) {// only three swipes for the screen
+                Swipe.Left(driver, 0.75, 0.50);
+                sleep(5);
+            }
+        }
+    }
 
-	private static void sleep(long millis) {
-		Awaitility.await().atMost(millis, TimeUnit.MILLISECONDS);
-	}
+    private static void sleep(long seconds) {
+        Awaitility.await().atMost(seconds, TimeUnit.SECONDS);
+        System.out.println(".....");
+    }
 
 }

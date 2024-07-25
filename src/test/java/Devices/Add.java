@@ -85,8 +85,6 @@ public class Add {
 							System.out.println("Cancel button clicked");
 							sleep(1000);
 						}
-
-
 					}
 					else {
 						System.out.println("Breaking the loop");

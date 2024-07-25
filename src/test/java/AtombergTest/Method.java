@@ -166,13 +166,6 @@ public class Method {
 		Method.captureScreenshot(driver);
 	}
 
-	public static void SwitchFamily(AppiumDriver driver) {
-		WebElement continueButton1 = driver
-				.findElement(By.xpath("//android.widget.Button[@content-desc=\"Continue\"]"));
-		continueButton1.click(); // Continue to Log in
-		sleep(10000);
-		Method.captureScreenshot(driver);
-	}
 public static void AddLock(AppiumDriver driver)
 {
  	for (int i = 3 ; i <9 ; i++)

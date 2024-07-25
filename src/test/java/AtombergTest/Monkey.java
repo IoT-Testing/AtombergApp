@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.Random;
 
 public class Monkey {
+// this is for random taps and swipes on the screen to check if the app crashes with the randomness
 
 	public static void Run(AppiumDriver driver) {
 		System.out.println("Monkey: count=200\r\n" + ":AllowPackage: com.atomberg.app");

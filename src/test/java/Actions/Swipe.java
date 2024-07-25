@@ -11,6 +11,7 @@ import org.openqa.selenium.interactions.Sequence;
 import io.appium.java_client.AppiumDriver;
 
 public class Swipe {
+	// Screen swipes
 	public static void Left(AppiumDriver driver, double x, double y) {
 		Dimension size = driver.manage().window().getSize(); // Assuming getWindowSize() returns the window size
 		int startY = (int) (size.getHeight() * y);

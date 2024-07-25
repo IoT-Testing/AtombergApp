@@ -7,7 +7,6 @@ import AtombergTest.Method;
 import io.appium.java_client.AppiumDriver;
 
 public class EUP {
-public static AppiumDriver driver;
 public static void UnitPrice(AppiumDriver driver) {
 	WebElement UnitPrice = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Electricity unit price\"]"));
 	UnitPrice.click();

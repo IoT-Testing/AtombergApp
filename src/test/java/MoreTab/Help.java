@@ -10,7 +10,6 @@ import AtombergTest.Method;
 import io.appium.java_client.AppiumDriver;
 
 public class Help {
-	public static AppiumDriver driver;
 	public static void RaC(AppiumDriver driver) {
 		WebElement RaiseComplaint = driver
 				.findElement(By.xpath("//android.view.View[@content-desc=\"Raise a complaint\"]"));

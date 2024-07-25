@@ -9,42 +9,27 @@ import AtombergTest.Method;
 import io.appium.java_client.AppiumDriver;
 
 public class Permission {
-	public static void Allow(AppiumDriver driver) // Main
-	{
-
+	public static void Allow(AppiumDriver driver){
 		WebElement AllowButton = null;
 		try {
-			AllowButton = driver.findElement(By.id("com.android.permissioncontroller:id/permission_message"));
+			AllowButton = driver.findElement(By.id("com.android.permissioncontroller:id/permission_allow_button"));
 		} catch (Exception exp) {
 		}
-		if (AllowButton != null) {
-
-			allowPermissionButton(driver, "com.android.permissioncontroller:id/permission_allow_button");
-			Method.captureScreenshot(driver);
-			allowPermissionButton(driver,"com.android.permissioncontroller:id/permission_allow_foreground_only_button");
-			Method.captureScreenshot(driver);
-			allowPermissionButton(driver,"com.android.permissioncontroller:id/permission_allow_button");
-			System.out.println("On Home Screen");
-			Method.captureScreenshot(driver);
-		} else {
-			System.out.println("No Device Present");
-			Tap.withCoordinates(driver, 540, 1940);
-			// Click on allow permissions
-			allowPermissionButton(driver, "com.android.permissioncontroller:id/permission_allow_button");
-			Method.captureScreenshot(driver);
-			allowPermissionButton(driver,"com.android.permissioncontroller:id/permission_allow_foreground_only_button");
-			Method.captureScreenshot(driver);
-			allowPermissionButton(driver,"com.android.permissioncontroller:id/permission_allow_button");
-			System.out.println("On Home Screen");
-			Method.captureScreenshot(driver);
+		if (AllowButton != null)
+		{
+			AllowButton.click();
 		}
-	}
+		else
+		{
+			System.out.println("No Device Present");
+			Tap.withCoordinates(driver, 540, 1900);
+			driver.findElement(By.id("com.android.permissioncontroller:id/permission_allow_button")).click();
+		}
 
-	private static void allowPermissionButton(AppiumDriver driver, String resourceId) {
-		WebElement permissionButton = driver
-				.findElement(By.xpath("//android.widget.Button[@resource-id=\"" + resourceId + "\"]\r\n" + ""));
-		permissionButton.click();
-	}
+		driver.findElement(By.id("com.android.permissioncontroller:id/permission_allow_foreground_only_button")).click();
+		driver.findElement(By.id("com.android.permissioncontroller:id/permission_allow_button")).click();
 
+		System.out.println("All Permissions Granted");
+	}
 
 }

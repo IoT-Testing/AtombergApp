@@ -11,6 +11,9 @@ import org.openqa.selenium.interactions.Sequence;
 import io.appium.java_client.AppiumDriver;
 
 public class Tap {
+	//2 types as there are some elements which are set w.r.t the screen dimensions of the mobile
+	// tap with percentage is for elements with common locations in multiple devices
+	// tap with co-ordinates is for the elements which might have slight different locations in different mobiles
 	public static void withCoordinates(AppiumDriver driver, int x, int y) {
 		PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
 		Sequence sequence = new Sequence(finger, 1)

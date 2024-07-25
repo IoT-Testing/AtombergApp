@@ -4,6 +4,7 @@ package AtombergTest; //To check
 //import Supports.GoogleHome;
 import io.appium.java_client.AppiumDriver;
 import net.bytebuddy.implementation.bind.MethodDelegationBinder;
+import org.awaitility.Awaitility;
 import org.openqa.selenium.*;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testng.Assert;
@@ -12,6 +13,8 @@ import Devices.*;
 import java.net.*;
 import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import Login.*;
 
 public class Atomberg {
@@ -23,14 +26,8 @@ public class Atomberg {
 
 	}
 
-// Sleep
 	private static void sleep(long millis) {
-		try {
-			Thread.sleep(millis);
-		} catch (InterruptedException e) {
-			e.fillInStackTrace();
-		}
-		System.out.println("......");
+		Awaitility.await().atMost(millis, TimeUnit.MILLISECONDS);
 	}
 
 	// connecting with the appium server and opening the app

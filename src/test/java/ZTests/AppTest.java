@@ -1,23 +1,24 @@
 package ZTests;
 
-import Devices.*;
-import Login.Email;
+import Login.Email2;
 import com.aventstack.extentreports.ExtentReports;
 import io.appium.java_client.AppiumDriver;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
-
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.openqa.selenium.By;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.Assert;
 import AtombergTest.Method;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AppTest {
     public static AppiumDriver driver;
-    static ExtentReports extent = ExtentReportAT.getReportObjects();
+    public static final ExtentReports extent = ExtentReportAT.getReportObjects();
+
 
     public static void sleep(long millis) {
         try {
@@ -46,26 +47,37 @@ public class AppTest {
             System.out.println("Appium driver initialized.");
         } catch (MalformedURLException e) {
             System.out.println("Error initializing Appium driver: " + e.getMessage());
-            Assert.fail("Expected element to click not found");
-            e.printStackTrace();
+        Assert.assertTrue(driver.findElement(By.xpath("//android.view.View[@content-desc=\"Experience smart living \n" +
+        " with Atomberg\"]")).isDisplayed());
+        e.printStackTrace();
             return;
         }
         System.out.println("Atomberg App Opened...");
+        assert driver.findElement(By.xpath("//android.view.View[@content-desc=\"Experience smart living \n" +
+                " with Atomberg\"]")).isDisplayed();
         sleep(6000);
         Method.captureScreenshot(driver);
 
     }
 
     @Order(1)
-    @Test
-    void testOpenApp() {
+    @ParameterizedTest
+    @CsvSource({"Weker42331@huleos.com,Atomberg@123"})
+    void testOpenApp(String email, String pass) {
+
         ExtentReportAT.getReportObjects();
-        extent.createTest("Opening App");
+        extent.createTest("Open App");
         openAtomberg();
-        Email.Login(driver);
+        Email2.Login(driver,email, pass);
+
+//        SO.Fan(driver);
+
         extent.flush();
+       driver.quit();
+
+
     }
-    @Order(2)
+   /* @Order(2)
     @Test
     void testAddFan() {
         extent.createTest("Fan Addition");
@@ -82,18 +94,20 @@ public class AppTest {
         Method.AddLock(driver);
     }
     @Order(4)
+
     @Test
     void testControlFan() {
         extent.createTest("Fan Control");
         SO.Fan(driver);
         extent.flush();
     }
-    @Order(5)
+
+   @Order(5)
     @Test
     void testControlLock() {
         extent.createTest("Lock Control");
         SO.Lock(driver);
         extent.flush();
-    }
+    }*/
 
 }

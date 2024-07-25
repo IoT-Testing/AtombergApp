@@ -9,7 +9,6 @@ import AtombergTest.Method;
 import io.appium.java_client.AppiumDriver;
 
 public class Manage {
-	public static AppiumDriver driver;
 	public static void Family(AppiumDriver driver) {
 	WebElement ManageFamily = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Manage family\"]"));
 	ManageFamily.click();

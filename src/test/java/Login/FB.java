@@ -8,6 +8,10 @@ import AtombergTest.Method;
 import Permissions.Permission;
 import io.appium.java_client.AppiumDriver;
 
+import java.util.concurrent.TimeUnit;
+
+import static org.awaitility.Awaitility.await;
+
 public class FB {
 	public static void Login(AppiumDriver driver) // Main
 	{
@@ -36,13 +40,10 @@ public class FB {
 			System.out.println("On Home Screen");
 			Method.captureScreenshot(driver);
 
-			WebElement Applogo = driver.findElement(By.xpath(
-					"//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.widget.ImageView"));
-			Applogo.isDisplayed();
-			if (true) {
-				System.out.println("Test Passed");
-			}
-
+			WebElement appLogo =driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.widget.ImageView"));
+			assert appLogo.isDisplayed();
+			await().atMost(10, TimeUnit.SECONDS).until(appLogo::isDisplayed);
+			System.out.println("Test Passed");
 			Permission.Allow(driver);
 		}
 	}

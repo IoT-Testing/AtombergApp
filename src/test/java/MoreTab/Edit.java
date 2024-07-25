@@ -9,7 +9,6 @@ import AtombergTest.Method;
 import io.appium.java_client.AppiumDriver;
 
 public class Edit {
-	public static AppiumDriver driver;
 	public static void Profile(AppiumDriver driver)
 	{
 	WebElement ChangeAvatar = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Change avatar\"]"));

@@ -27,10 +27,10 @@ class App2test {
 		cap.setCapability("appPackage", "com.atomberg.app");
 		cap.setCapability("appActivity", "com.atomberg.app.MainActivity");
 		cap.setCapability("apksigner",
-				"C:\\Users\\Rohit\\Desktop\\android-sdk\\build-tools\\34.0.0\\lib\\apksigner.jar");
+				"C:\\Users\\Rohit Bhagat\\Desktop\\android-sdk\\build-tools\\34.0.0\\lib\\apksigner.jar");
 		try {
 			System.out.println("Initializing Appium driver..."); // Check if the Appium driver is initialized
-			URL url = new URL("http://192.168.11.48:4723/wd/hub"); // URL of the Appium session
+			URL url = new URL("http://127.0.0.1:4723/wd/hub"); // URL of the Appium session
 			driver = new AppiumDriver(url, cap);
 			System.out.println("Appium driver initialized.");
 		} catch (MalformedURLException e) {

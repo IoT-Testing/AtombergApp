@@ -12,6 +12,8 @@ import java.util.Date;
 import java.util.Map;
 
 public class Monkey2 {
+
+	// Running the adb monkey script
 	public static AppiumDriver driver;
 
 	public static void main(String[] args) {

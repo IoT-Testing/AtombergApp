@@ -11,6 +11,7 @@ import org.openqa.selenium.interactions.Sequence;
 import io.appium.java_client.AppiumDriver;
 
 public class Scroll {
+	//Scrolling on the mobile screen either up or down. Tried to keep it as common as possible
 	public static void Down(AppiumDriver driver) {
 		Dimension size = driver.manage().window().getSize(); // Assuming getWindowSize() returns the window size
 		int startX = size.getHeight() / 2;
@@ -34,14 +35,13 @@ public class Scroll {
 		Dimension size = driver.manage().window().getSize();
 		int startX = size.getWidth() / 2;
 		int startY = size.getHeight() / 2;
-		int endX = startX;
 		int endY = (int) (size.getHeight() * 0.20);
 		PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
 		Sequence sequence = new Sequence(finger, 1)
 				.addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY))
 				.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
 				.addAction(new Pause(finger, Duration.ofMillis(200)))
-				.addAction(finger.createPointerMove(Duration.ofMillis(350), PointerInput.Origin.viewport(), endX, endY))
+				.addAction(finger.createPointerMove(Duration.ofMillis(150), PointerInput.Origin.viewport(), startX, endY))
 				.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
 
 		driver.perform(Collections.singletonList(sequence));

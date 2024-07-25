@@ -1,8 +1,7 @@
 package Actions;
 
 import io.appium.java_client.AppiumDriver;
-
-
+// number pad using co-ordinates of each element on the number pad
 public class NumberPad {
 	public static void one(AppiumDriver driver){
 		Tap.withCoordinates(driver,240,1725);

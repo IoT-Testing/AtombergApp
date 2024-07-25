@@ -2,6 +2,7 @@ package Tabs;
 
 import Actions.Scroll;
 import io.appium.java_client.AppiumDriver;
+import org.awaitility.Awaitility;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebElement;
@@ -15,6 +16,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class Automation {
@@ -209,11 +211,7 @@ public class Automation {
 
 
     private static void sleep(long millis) {
-        try {
-            Thread.sleep(millis);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        Awaitility.await().atMost(millis, TimeUnit.MILLISECONDS);
     }
 
 }

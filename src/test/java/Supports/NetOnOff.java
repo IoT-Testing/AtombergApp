@@ -2,6 +2,9 @@ package Supports;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.concurrent.TimeUnit;
+
+import org.awaitility.Awaitility;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testng.Assert;
 import AtombergTest.Method;
@@ -40,11 +43,7 @@ public class NetOnOff {
 	}
 
 	private static void sleep(long millis) {
-		try {
-			Thread.sleep(millis);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		Awaitility.await().atMost(millis, TimeUnit.MILLISECONDS);
 	}
 
 }

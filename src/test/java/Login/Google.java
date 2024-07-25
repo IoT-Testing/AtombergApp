@@ -2,12 +2,16 @@ package Login;
 //Add First Device
 
 import java.time.Duration;
+import java.util.concurrent.TimeUnit;
+
 import org.awaitility.Awaitility;
 import org.openqa.selenium.By; //Selenium Dependencies
 import org.openqa.selenium.WebElement;
 import AtombergTest.Method;
 import Permissions.Permission;
 import io.appium.java_client.AppiumDriver;
+
+import static org.awaitility.Awaitility.await;
 
 public class Google {
 	public static AppiumDriver driver;
@@ -33,12 +37,10 @@ public class Google {
 			sleep(10000);
 			System.out.println("On Home Screen");
 			Method.captureScreenshot(driver);
-			WebElement Applogo = driver.findElement(By.xpath(
-					"//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.widget.ImageView"));
-			Applogo.isDisplayed();
-			if (true) {
-				System.out.println("Test Passed");
-			}
+			WebElement appLogo =driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.widget.ImageView"));
+			assert appLogo.isDisplayed();
+			await().atMost(10, TimeUnit.SECONDS).until(appLogo::isDisplayed);
+			System.out.println("Test Passed");
 			Permission.Allow(driver);
 		}
 	}

@@ -2,18 +2,21 @@ package Actions;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.concurrent.TimeUnit;
+
+import org.awaitility.Awaitility;
 import org.testng.Assert;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import AtombergTest.Method;
 import AtombergTest.Monkey;
 import Login.Email;
 import io.appium.java_client.AppiumDriver;
-
+// this is used to check the working of the code before integrating it into the main code
 public class Check {
+	private static AppiumDriver driver;
 
-	public static AppiumDriver driver;
-
-	public void openAtomberg() {
+	//Initiating the driver (server URL & and App details)
+	private void openAtomberg() {
 		DesiredCapabilities cap = new DesiredCapabilities();
 		cap.setCapability("platformName", "Android");
 		cap.setCapability("appPackage", "com.atomberg.app");
@@ -46,12 +49,8 @@ public class Check {
 	}
 
 	private static void sleep(long millis) {
-		try {
-			Thread.sleep(millis);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		System.out.println("......");
+		Awaitility.await().atMost(millis, TimeUnit.MILLISECONDS);
+		//to avoid the whole code of awaitility
 	}
 
 }

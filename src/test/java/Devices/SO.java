@@ -5,7 +5,10 @@ import Actions.Tap;
 import AtombergTest.Method;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
+import org.awaitility.Awaitility;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import Actions.Scroll;
@@ -26,11 +29,11 @@ public class SO {//Search Online Fan
                 exp.getCause();
             }
             if (AddButton != null) {
-                CDO(driver);  // checks the Fan availability
+                CFO(driver);  // checks the Fan availability
             } else {
                 // Fan addition process
                 Add2.Fan(driver);
-                CDO(driver); //checks fan availability
+                CFO(driver); //checks fan availability
             }
         } catch (Exception exp) {
             exp.printStackTrace();
@@ -40,45 +43,54 @@ public class SO {//Search Online Fan
     }
 
     private static void sleep(long millis) {
-        try {
-            Thread.sleep(millis);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        System.out.println("......");
+        Awaitility.await().atMost(millis, TimeUnit.MILLISECONDS);
     }
 
-    private static void CDO(AppiumDriver driver) {
+    public static void CFO(AppiumDriver driver) {
         WebElement Fans = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Fans\"]"));
         Fans.click();   // click on the fan tab
         sleep(1500);
-        WebElement FO = null;
-        try { //checks if the fan is online
-            FO = driver.findElement(By.xpath("(//android.widget.Button/android.widget.ImageView)"));
-        } catch (Exception e) {
+        List<WebElement> FANS = driver.findElements(By.className("android.widget.Button"));
+        List<WebElement> fans = FANS.stream().filter(dev -> dev.getAttribute("content-desc") != null).collect(Collectors.toList());
+
+        if (fans.size() > 1) {
+            System.out.println("Fan Available " + fans.size());
+        }
+        for (WebElement element : fans) {
+            System.out.println(element.getAttribute("content-desc"));
+            element.click(); // Clicks on the for and opens device control
+            Method.FanControl(driver); // Controls the fan
+            driver.navigate().back();            // back
         }
 
-        if (FO != null) {
-            System.out.println("Fan Online");
-
-            // checks the number of fans available
-            List<WebElement> Device = driver.findElements(By.xpath("(//android.widget.Button/android.widget.ImageView[1])"));
-            System.out.println(Device.size());
-            for (WebElement element : Device) {
-                System.out.println(element);
-                element.click(); // Clicks on the for and opens device control
+        String lastName = fans.get(fans.size() - 1).getAttribute("content-desc");
+        System.out.println(lastName);
+        if (fans.size() >= 4) // only 4 devices are visible on the screen
+        {
+            Scroll.Up(driver);
+            List<WebElement> NEWFANS = driver.findElements(By.className("android.widget.Button"));
+            List<WebElement> newfans = NEWFANS.stream().filter(dev -> dev.getAttribute("content-desc") != null).collect(Collectors.toList());
+            if (newfans.get(newfans.size() - 1).getAttribute("content-desc").equals(lastName)) {
+                System.out.println("No more devices");
+            }
+            System.out.println(newfans.size());
+            String name = newfans.get(0).getAttribute("content-desc");
+            if (name.equals(lastName)) {
+                newfans.remove(0);
+                System.out.println(name + " Removed with new " + newfans.size() + " available");
+            }
+            for (int i = 0; i < newfans.size(); i++) {
+                name = newfans.get(i).getAttribute("content-desc");
+                System.out.println(i + name);
+                newfans.get(i).click(); // Clicks on the for and opens device control
                 Method.FanControl(driver); // Controls the fan
                 driver.navigate().back();            // back
             }
-            if (Device.size() >= 4) // only 4 devices are visible on the screen
-            {
-                Scroll.Up(driver);
-            }
-        } else {
+        }/**/
+        if (fans.isEmpty()) {
             System.out.println("No Fan Offline");
         }
     }
-
 
     public static void Lock(AppiumDriver driver) {
         driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Locks\"]")).click();

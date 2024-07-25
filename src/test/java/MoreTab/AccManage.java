@@ -1,46 +1,88 @@
 package MoreTab;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-
+import Actions.Scroll;
+import java.util.List;
 import AtombergTest.Method;
+import org.openqa.selenium.By;
+import java.util.stream.Collectors;
+import org.openqa.selenium.WebElement;
 import io.appium.java_client.AppiumDriver;
 
 public class AccManage {
-public static AppiumDriver driver;
-public static void ChangePassword(AppiumDriver driver) {
-	WebElement ChangePassword = driver
-			.findElement(By.xpath("//android.view.View[@content-desc=\"Change password\"]"));
-	ChangePassword.click();
-	Method.captureScreenshot(driver);
-	System.out.println("Tap on Change Password");
-	
-	driver.navigate().back();
-}
-public static void DeleteAccount(AppiumDriver driver) {
-	WebElement DeleteAccount = driver
-			.findElement(By.xpath("//android.view.View[@content-desc=\"Delete account\"]"));
-	DeleteAccount.click();
-	Method.captureScreenshot(driver);
-	System.out.println("Tap on Delete Account");
-	
-	driver.navigate().back();
-}
-public static void DeveloperOptions(AppiumDriver driver) {
-	WebElement DevOps = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Developer options\"]"));
-	DevOps.click();
-	Method.captureScreenshot(driver);
-	System.out.println("Tap on Developer Options");
-	
-	driver.navigate().back();
-	
-}
-public static void Logout(AppiumDriver driver) {
-	WebElement Logout = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Logout\"]"));
-	Logout.click();
-	Method.captureScreenshot(driver);
-	System.out.println("Tap on Logout");
-	
-	driver.navigate().back();
-}
+    public static void ChangePassword(AppiumDriver driver) {
+        WebElement ChangePassword = driver
+                .findElement(By.xpath("//android.view.View[@content-desc=\"Change password\"]"));
+        ChangePassword.click();
+        Method.captureScreenshot(driver);
+        System.out.println("Tap on Change Password");
+
+        driver.navigate().back();
+    }
+
+    public static void DeleteAccount(AppiumDriver driver) {
+        WebElement DeleteAccount = driver
+                .findElement(By.xpath("//android.view.View[@content-desc=\"Delete account\"]"));
+        DeleteAccount.click();
+        Method.captureScreenshot(driver);
+        System.out.println("Tap on Delete Account");
+
+        driver.navigate().back();
+    }
+
+    public static void DeveloperOptions(AppiumDriver driver) {
+        WebElement DevOps = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Developer options\"]"));
+        DevOps.click();
+        Method.captureScreenshot(driver);
+        System.out.println("Tap on Developer Options");
+
+        driver.navigate().back();
+
+    }
+
+    public static void Logout(AppiumDriver driver) {
+        checkLogout(driver);
+
+        WebElement Logout = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Logout\"]"));
+        Logout.click();
+        Method.captureScreenshot(driver);
+        System.out.println("Tap on Logout");
+        driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Yes\"]")).click();
+        /*driver.navigate().back();*/
+    }
+
+    private static void goToMore(AppiumDriver driver)
+    {
+        List<WebElement> MT = driver.findElements(By.className("android.widget.ImageView"));
+        System.out.println(MT.size());
+        List<WebElement> mt = MT.stream().filter(webElement -> webElement.getAttribute("content-desc") != null).collect(Collectors.toList());
+        System.out.println(mt.size());
+        List<WebElement> moreTab = mt.stream().filter(webElement -> webElement.getAttribute("selected").equals("true")).collect(Collectors.toList());
+        System.out.println(moreTab.size());
+
+        if (!moreTab.get(0).getAttribute("content-desc").endsWith("Tab 3 of 3"))
+        {
+            System.out.println("tap on moreTab");
+            driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\n" +
+                    "Tab 3 of 3\"]")).click();
+        }
+    }
+
+    private static void checkLogout(AppiumDriver driver)
+    {
+        AccManage.goToMore(driver);
+        List<WebElement> moreTab;
+        do {
+            List<WebElement> MT = driver.findElements(By.className("android.view.View"));
+            System.out.println(MT.size());
+            List<WebElement> mt = MT.stream().filter(webElement -> webElement.getAttribute("content-desc") != null).collect(Collectors.toList());
+            System.out.println(mt.size());
+            moreTab = mt.stream().filter(webElement -> webElement.getAttribute("content-desc").equals("Logout")).collect(Collectors.toList());
+            System.out.println(moreTab.size());
+
+            if(moreTab.isEmpty())
+            {
+                Scroll.Up(driver);
+            }
+        }while (moreTab.isEmpty());
+    }
 }
