@@ -4,24 +4,21 @@ package Tabs;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-
 import org.awaitility.Awaitility;
 import org.openqa.selenium.By; //Selenium Dependencies
 import org.openqa.selenium.WebElement;
 import Actions.Swipe;
-import Actions.Tap;
-import AtombergTest.Method;
 import io.appium.java_client.AppiumDriver;
 
 public class Analytics {
-    public static WebElement analytics;
-    public static WebElement moreTab;
+    private static WebElement analytics;
+    private static WebElement moreTab;
 
     public static void Show(AppiumDriver driver) {
         analytics = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Analytics\n" +
                 "Tab 1 of 3\"]"));
-        moreTab = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Analytics\n" +
-                "Tab 1 of 3\"]"));
+        moreTab = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\n" +
+                "Tab 3 of 3\"]"));
         analytics.click();
         System.out.println("switched to Analytics");
         WebElement FanCheck = null;
@@ -40,7 +37,6 @@ public class Analytics {
         List<WebElement> fans = Fans.stream().filter(ele -> ele.getAttribute("content-desc").endsWith("Fan")).collect(Collectors.toList());
 
         for (WebElement fan : fans) {
-            System.out.println(fan.getAttribute("content-desc"));
             fan.click();
         }
     }
@@ -57,14 +53,15 @@ public class Analytics {
             List<WebElement> availFans1 = driver.findElements(By.className("android.view.View"));
             List<WebElement> anaFans = availFans1.stream().filter(ele -> ele.getAttribute("content-desc") != null).collect(Collectors.toList());
             anaFans.remove(anaFans.size() - 1);
+            System.out.println(anaFans.get(i).getAttribute("content-desc"));
             anaFans.get(i).click();
             System.out.println(i);
-            System.out.println(i < fans.size() - 1);
             info(driver);
-            if (i < fans.size() - 1) { // to go to the analytics screen and
+            System.out.println(i < (fans.size() - 1));
+            if (i < (fans.size() - 1)) { // to go to the analytics screen and
                 moreTab.click();
                 rateUs(driver);
-                sleep(1);
+                sleep(1500);
                 analytics.click();
                 rateUs(driver);
                 fanChange(driver);
@@ -90,20 +87,19 @@ public class Analytics {
             for (WebElement icon : icons) {
                 System.out.println(icon.getAttribute("content-desc"));
                 icon.click();
-                sleep(3);
+                sleep(2000);
                 driver.navigate().back();
-                sleep(5);
+                sleep(1500);
             }
             if (i < 3) {// only three swipes for the screen
                 Swipe.Left(driver, 0.75, 0.50);
-                sleep(5);
+                sleep(1500);
             }
         }
     }
 
-    private static void sleep(long seconds) {
-        Awaitility.await().atMost(seconds, TimeUnit.SECONDS);
-        System.out.println(".....");
+    private static void sleep(long millis) {
+        Awaitility.await().atMost(millis, TimeUnit.MILLISECONDS);
     }
 
 }
