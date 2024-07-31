@@ -21,7 +21,6 @@ public class Tap {
 				.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
 				.addAction(new Pause(finger, Duration.ofMillis(150)))
 				.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
-
 		driver.perform(Collections.singletonList(sequence));
 		System.out.println("Tap with Coordinates");
 	}

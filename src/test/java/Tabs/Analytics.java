@@ -57,23 +57,29 @@ public class Analytics {
             anaFans.get(i).click();
             System.out.println(i);
             info(driver);
-            System.out.println(i < (fans.size() - 1));
-            if (i < (fans.size() - 1)) { // to go to the analytics screen and
+            System.out.println(i < (anaFans.size() - 1));
+            if (i < (anaFans.size() - 1)) { // to go to the analytics screen and
                 moreTab.click();
                 rateUs(driver);
                 sleep(1500);
                 analytics.click();
                 rateUs(driver);
-                fanChange(driver);
             }
+            fanChange(driver);
         }
     }
 
     private static void rateUs(AppiumDriver driver) {
         List<WebElement> dialogueBox = driver.findElements(By.className("android.widget.Button"));
-        for (WebElement ele : dialogueBox) {
+        List<WebElement> cancel = dialogueBox.stream().filter(webElement -> webElement.getAttribute("content-desc").equals("Cancel")).collect(Collectors.toList());
+        for (WebElement ele : cancel) {
             if (ele.getAttribute("content-desc").equals("Cancel")) {
                 ele.click();
+                System.out.println("Canceled Rate us");
+                analytics = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Analytics\n" +
+                        "Tab 1 of 3\"]"));
+                moreTab = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\n" +
+                        "Tab 3 of 3\"]"));
             }
         }
     }

@@ -39,7 +39,7 @@ public class screenRecord {
 			cap.setCapability("dumpAppPackageInfo", true);
 
 			System.out.println("Initializing Appium driver..."); // Check if the Appium driver is initialized
-			URL url = new URL("http://192.168.11.48:4723/wd/hub"); // URL of the Appium session
+			URL url = new URL("http://127.0.0.1:4723/wd/hub"); // URL of the Appium session
 			driver = new AppiumDriver(url, cap);
 			System.out.println("Appium driver initialized.");
 			((CanRecordScreen) driver).startRecordingScreen();
@@ -49,7 +49,6 @@ public class screenRecord {
 			Assert.fail("Expected element to click not found");
 			Method.captureScreenshot(driver);
 			e.printStackTrace();
-			return;
 		}
 	}
 

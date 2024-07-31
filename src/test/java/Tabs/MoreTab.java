@@ -1,44 +1,46 @@
 package Tabs;
 //Add First Device
 
+import org.awaitility.Awaitility;
 import org.openqa.selenium.*; //Selenium Dependencies
 import AtombergTest.Method;
 import Actions.*;
 import io.appium.java_client.AppiumDriver;
 import Supports.*;
 
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
 public class MoreTab {
 	public static void Options(AppiumDriver driver) {
-		
-		Tap.withPercentage(driver, 0.83, 0.98);
+
+		WebElement moreTab = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\n" +
+				"Tab 3 of 3\"]"));
+		moreTab.click();
 		sleep(1000);
-			Tap.withCoordinates(driver, 560, 740);
+		openProfile(driver);
 		Method.captureScreenshot(driver);
 		System.out.println("Tap on Edit Profile");
 
-		
-		 WebElement ChangeAvatar = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Change avatar\"]"));
-		 ChangeAvatar.click();
-		 Method.captureScreenshot(driver);
-		 System.out.println("Tap On Change Avatar"); 
-
-		 for(int i=1; i<25; i++) {
-		 WebElement Avatar1 = driver.findElement(By.xpath("//android.widget.ScrollView/android.view.View[2]/android.view.View/android.view.View/android.widget.ImageView["+i+"]"));
-		 Avatar1.click();
-		 Method.captureScreenshot(driver); 
-		 }
-		 driver.navigate().back(); 
-		 
-		 
-		  Tap.withPercentage(driver, 0.25, 0.275);
+		WebElement ChangeAvatar = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Change avatar\"]"));
+		ChangeAvatar.click();
 		Method.captureScreenshot(driver);
-		
+		System.out.println("Tap On Change Avatar");
+		for(int i=1; i<25; i++) {
+			WebElement Avatar1 = driver.findElement(By.xpath("//android.widget.ScrollView/android.view.View[2]/android.view.View/android.view.View/android.widget.ImageView["+i+"]"));
+			Avatar1.click();
+			Method.captureScreenshot(driver);
+		}
+		driver.navigate().back();
+
+		Tap.withPercentage(driver, 0.25, 0.275);
+		Method.captureScreenshot(driver);
 
 		WebElement EditCountryCode = driver
 				.findElement(By.xpath("//android.view.View[@content-desc=\"+91\"]/android.widget.EditText"));
 		EditCountryCode.click();
 
-		
 		Method.captureScreenshot(driver);
 		driver.navigate().back();
 		sleep(250);
@@ -46,17 +48,14 @@ public class MoreTab {
 		WebElement EditNumber = driver.findElement(By.xpath("//android.view.View[@content-desc=\"+91\"]"));
 		EditNumber.click();
 		Method.captureScreenshot(driver);
-		
-
 		driver.navigate().back();
 		sleep(250);
 		driver.navigate().back();
-
+/*
 		sleep(2000);
 		Alexa.Connect(driver);
 		sleep(2000);
-		GoogleHome.Connect(driver);
-
+		GoogleHome.Connect(driver);*/
 
 		WebElement Theme = driver.findElement(By.xpath("//android.widget.ScrollView/android.widget.ImageView[5]"));
 		Theme.click();
@@ -69,12 +68,9 @@ public class MoreTab {
 		 
 		WebElement ChangeAmount = driver.findElement(By.xpath("//android.widget.EditText[@text=\"7.0\"]"));
 		ChangeAmount.click();
-		
 		Method.captureScreenshot(driver);
-
 		WebElement ChangeCurrency = driver.findElement(By.xpath("//android.view.View[@content-desc=\"INR\"]"));
 		ChangeCurrency.click();
-		 
 		Method.captureScreenshot(driver);
 
 		driver.navigate().back();
@@ -87,23 +83,21 @@ public class MoreTab {
 		Method.captureScreenshot(driver);
 		
 		System.out.println("Tap on Manage Family");
-		
-
-/*		Tap.withPercentage(driver, 0.25, 0.25);
-		
+		Tap.withPercentage(driver, 0.25, 0.25); //
 		ManageHome(driver);
-		
-
 		Tap.withCoordinates(driver, 975, 875);// Narzo 650, 600 Tab 1125, 520 POCO 975, 875
-		
 		ManageMember(driver);
-
 		AddHome(driver);
-
 		Tap.withPercentage(driver, 0.75, 0.25);
 		ManageHome(driver);
 		driver.navigate().back();
-	*/	driver.navigate().back();
+		driver.navigate().back();
+
+		//Live Widget
+		WebElement widgetEnable = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Enable live widget\"]"));
+		widgetEnable.click();
+		List<WebElement> dialogueBox=driver.findElements(By.className("android.view.View"));
+
 		// Help
 		WebElement Help = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Help\"]"));
 		Help.click();
@@ -111,7 +105,7 @@ public class MoreTab {
 		System.out.println("Tap on Help");
 		driver.navigate().back();
 
-	/*	WebElement RaiseComplaint = driver
+		WebElement RaiseComplaint = driver
 				.findElement(By.xpath("//android.view.View[@content-desc=\"Raise a complaint\"]"));
 		RaiseComplaint.click();
 		Method.captureScreenshot(driver);
@@ -161,7 +155,7 @@ public class MoreTab {
 		Troubleshoot(driver);
 
 		driver.navigate().back();
-	*/	// Rate Us
+		// Rate Us
 		sleep(1000);
 		WebElement RateUs = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Rate us\"]"));
 		RateUs.click();
@@ -218,27 +212,33 @@ public class MoreTab {
 	}
 
 	private static void sleep(long millis) {
-		try {
-			Thread.sleep(millis);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		Awaitility.await().atMost(millis, TimeUnit.MILLISECONDS);
+	}
+
+	private static void openProfile(AppiumDriver driver) {
+		List<WebElement> ELEMENTS = driver.findElements(By.className("android.widget.ImageView"));
+		List<WebElement> elements = ELEMENTS.stream().filter(element -> element.getAttribute("content-desc") !=null).collect(Collectors.toList());
+		for (WebElement e: elements)
+		{
+			if(e.getAttribute("content-desc").startsWith("Hi,"))
+			{
+				e.click();
+				System.out.println("Edit Profile");
+			}
 		}
-		System.out.println("......");
 	}
 
 	public static void ManageHome(AppiumDriver driver) {
 		
 		WebElement FamilyEdit = driver
-				.findElement(By.xpath("//android.view.View[@content-desc=\"Manage Home\"]/android.view.View"));
+				.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View[2]"));
 		FamilyEdit.click();
 		 
 		System.out.println("Family Edit");
 		Method.captureScreenshot(driver);
 		
-
-		WebElement LeaveHome = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Leave Home\"]"));
+		WebElement LeaveHome = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Leave home\"]"));
 		LeaveHome.click();
-		 
 		System.out.println("Leave home");
 		Method.captureScreenshot(driver);
 		
@@ -247,7 +247,7 @@ public class MoreTab {
 		
 		WebElement DeleteHome = null;
 		try {
-			DeleteHome = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Delete Home\"]"));
+			DeleteHome = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Delete home\"]"));
 		} catch (Exception exp) {
 		}
 		if (DeleteHome != null) {

@@ -3,6 +3,7 @@ package ZTests;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
+import io.appium.java_client.AppiumDriver;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -11,6 +12,9 @@ public class ExtentReportAT {
     private static ExtentReports extent;
     private static final ThreadLocal<ExtentTest> test = new ThreadLocal<>();
     private static final ThreadLocal<Long> startTime = new ThreadLocal<>();
+    public ExtentReportAT() {
+
+    }
     public static ExtentReports getReportObjects() {
 
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -19,14 +23,14 @@ public class ExtentReportAT {
         reporter.config().setReportName("App Test Reports");
         reporter.config().setDocumentTitle("Test Reports");
 
-        ExtentReports extent = new ExtentReports();
+        extent = new ExtentReports();
         extent.attachReporter(reporter);
-        extent.setSystemInfo("Tester", "Rohit Bhagat");
+        extent.setSystemInfo("Tester","Rohit Bhagat");
         System.out.println("Report created at " + path);
 
         return extent;
     }
-    /*public static void startTest(String testName) {
+    public static void startTest(String testName) {
         ExtentTest extentTest = extent.createTest(testName);
         test.set(extentTest);
         startTime.set(System.currentTimeMillis());
@@ -48,11 +52,12 @@ public class ExtentReportAT {
         ExtentTest extentTest = test.get();
         extentTest.log(com.aventstack.extentreports.Status.INFO, "Test Ended at " + new SimpleDateFormat("HH:mm:ss").format(new Date(endTime)));
         extentTest.log(com.aventstack.extentreports.Status.INFO, "Test Duration: " + timeFormatted);
+        extent.getStats();
         extent.flush();
     }
 
     public static ExtentTest getTest() {
         return test.get();
-    }*/
+    }
 
 }
