@@ -8,7 +8,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import org.awaitility.Awaitility;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
@@ -98,7 +100,8 @@ public class FrameHandlingExample {
 			// Check if the element's content description matches the desired device name
 			System.out.println(element.getAttribute("content-desc"));
 			if (element.getAttribute("content-desc").equals(deviceName)) {
-				// Found the desired device, now click on the corresponding connect button
+				// Found the desired device, now click on the connect button corresponding to it.
+
 				WebElement connectButton = element.findElement(By.xpath("(//android.view.View[@content-desc="+connectButtonDesc+"])"));
 				connectButton.click();
 				System.out.println("Connect button clicked for " + deviceName);
@@ -116,11 +119,7 @@ public class FrameHandlingExample {
 
 	// Dummy method to simulate Appium driver initialization
 	public static void sleep(long millis) {
-		try {
-			Thread.sleep(millis);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		Awaitility.await().atLeast(millis, TimeUnit.MILLISECONDS);
 	}
 	public static void AtombergSmartLockFrame(AppiumDriver driver) {
 		// Locate the frame containing "Atomberg Smart Lock"

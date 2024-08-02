@@ -7,22 +7,20 @@ import AtombergTest.Method;
 import io.appium.java_client.AppiumDriver;
 
 public class EUP {
-public static void UnitPrice(AppiumDriver driver) {
-	WebElement UnitPrice = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Electricity unit price\"]"));
-	UnitPrice.click();
-	Method.captureScreenshot(driver);
-	System.out.println("Tap on Unit Price");
-	
-	WebElement ChangeAmount = driver.findElement(By.xpath("//android.widget.EditText[@text=\"7.0\"]"));
-	ChangeAmount.click();
-	Method.captureScreenshot(driver);
+	public static void UnitPrice(AppiumDriver driver) {
+		WebElement UnitPrice = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Electricity unit price\"]"));
+		UnitPrice.click();
+		Method.captureScreenshot(driver);
+		System.out.println("Tap on Unit Price");
 
-
-}
-public static void Currency(AppiumDriver driver) {
-	WebElement ChangeCurrency = driver.findElement(By.xpath("//android.view.View[@content-desc=\"INR\"]"));
-	ChangeCurrency.click();
-	Method.captureScreenshot(driver);
-	
-}
+		WebElement ChangeAmount = driver.findElement(By.xpath("//android.widget.EditText[@text=\"7.0\"]"));
+		ChangeAmount.click();
+		Method.captureScreenshot(driver);
+	}
+	public static void Currency(AppiumDriver driver) {
+		WebElement ChangeCurrency = driver.findElement(By.xpath("//android.view.View[@content-desc=\"INR\"]"));
+		ChangeCurrency.click();
+		Method.captureScreenshot(driver);
+		driver.navigate().back();
+	}
 }

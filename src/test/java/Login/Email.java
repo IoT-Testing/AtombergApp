@@ -27,7 +27,6 @@ public class Email {
         Method.captureScreenshot(driver);
         WebElement emailField = driver.findElement(By.xpath("//android.widget.EditText"));
         emailField.click();
-        Tap.withCoordinates(driver, 300, 250);
         emailField.sendKeys("Weker42331@huleos.com"); // Enter Email id
         Method.captureScreenshot(driver);
         emailField.getText();
@@ -40,7 +39,7 @@ public class Email {
         Method.captureScreenshot(driver);
         sleep(1000);
         WebElement passwordField = driver
-                .findElement(By.xpath("//android.widget.ScrollView/android.widget.EditText[1]\r\n" + ""));
+                .findElement(By.xpath("//android.widget.EditText"));
         passwordField.click();
         passwordField.sendKeys("Atomberg@123");
 

@@ -1,29 +1,14 @@
 package AtombergTest; //To check 
 
-import Actions.Tap;
-import Devices.SO;
 import Login.Email;
-
-import java.io.IOException;
 import java.net.URL;
-import MoreTab.AccManage;
 import java.time.Duration;
-
-import Supports.Screen;
 import Tabs.MoreTab;
-import Widget.Widgets;
-import io.appium.java_client.serverevents.CustomEvent;
 import org.awaitility.Awaitility;
-
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.net.MalformedURLException;
-import java.util.stream.Collectors;
-
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 public class App {
@@ -37,12 +22,6 @@ public class App {
             openAtomberg();
             Email.Login(driver);
             MoreTab.Options(driver);
-//            WebElement moreTab = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\n" +
-//                    "Tab 3 of 3\"]"));
-//            moreTab.click();
-
-            sleep(5000);
-            driver.quit();
         } catch (Exception e) {
         }
     }
@@ -75,7 +54,7 @@ public class App {
 
     }
     static void sleep(long millis) {
-        Awaitility.await().atMost(millis, TimeUnit.MILLISECONDS);
+        Awaitility.await().atLeast(millis, TimeUnit.MILLISECONDS);
     }
 }
 

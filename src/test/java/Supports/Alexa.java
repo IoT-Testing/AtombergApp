@@ -5,74 +5,91 @@ import org.openqa.selenium.WebElement;
 import io.appium.java_client.AppiumDriver;
 import Actions.Swipe;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class Alexa {
 	public static void Connect(AppiumDriver driver) {
 
-		WebElement MoreTab = null;
+		WebElement SLD = null;
 		try {
-			MoreTab = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Select and link device\"]"));
+			SLD = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Select and link device\"]"));
 		} catch (Exception e) {
 		}
+		if (SLD != null) {
+			alexa(driver);
+		} else {
+			driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\n" +
+					"Tab 3 of 3\"]")).click();
+			alexa(driver);
+		}
 
-		if (MoreTab != null) {
-			WebElement alexaConnect = null;
-			try {
-				alexaConnect = driver
-						.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Amazon Alexa\nConnect\"]"));
-			} catch (Exception e) {
-				System.out.println(e);
-				e.printStackTrace();
-			}
-			if (alexaConnect != null) {
-				alexaConnect.click();
-			} else {
-				System.out.println("Alexa is alredy connected");
-			}
-		} else {
-			WebElement element = null;
-			try {
-				element = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Devices\"]"));
-			} catch (Exception e) {
-				System.out.println("Element not found");
-			}
-			if (element != null) {
-				Swipe.screenRight(driver);
-			}
-			
-			Connect(driver);
+	}
+
+	private static void alexa(AppiumDriver driver) {
+		WebElement alexaConnect = null;
+		try {
+			alexaConnect = driver
+					.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Amazon Alexa\nConnect\"]"));
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		String pairAlexa = "Ensure that Alexa app is installed in your phone to pair it with the Atomberg Home";
-		WebElement PairAlexa = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Ensure that Alexa app is installed in your phone to pair it with the Atomberg Home\"]"));
-		if (pairAlexa == PairAlexa.getText()) {
-			System.out.println(PairAlexa.getText());
-			sleep(1000);
-			System.out.println("Text on the dialogue box is correct");
+		if (alexaConnect != null) {
+			alexaConnect.click();
 		} else {
-			System.out.println("Text on the dialogue box is incorrect");
+			System.out.println("Alexa is already connected");
 		}
-		
+		//check alexa linking guide
+		ALG(driver);
+		}
+
+	private static void ALG(AppiumDriver driver) {
+
 		driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Link\"]")).click();
-		sleep(5000);
-		driver.findElement(By.xpath("//android.view.View[@content-desc=\"Account linking guide\"]")).isDisplayed();
-		if (true) {
+
+		List<WebElement> Elements = driver.findElements(By.className("android.view.View"));
+		List<WebElement> elements = Elements.stream().filter(element -> element.getAttribute("content-desc")!=null).collect(Collectors.toList());
+		List<WebElement> algL = elements.stream().filter(element -> element.getAttribute("content-desc").equals("Account linking guide")).collect(Collectors.toList());
+		System.out.println(algL.size());
+		if (!algL.isEmpty())
+		{
 			driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"OK\"]")).click();
 			sleep(5000);
 			driver.findElement(By.xpath("//android.widget.TextView[@text=\"LINK\"]")).click();
 			sleep(5000);
 
-			WebElement Email = driver.findElement(By.xpath("//android.webkit.WebView[@text=\"Signin\"]/android.view.View/android.view.View/android.view.View[2]/android.view.View[2]/android.widget.EditText[1]"));
+			alexaCheck(driver);
+		}
+	}
+
+	private static void alexaCheck(AppiumDriver driver){
+		WebElement CHECK = null;
+		try {
+			CHECK = driver.findElement(By.xpath("//android.widget.TextView[@text=\"Sign in with your email and password\"]"));
+		}catch(Exception e){}
+		if(CHECK != null)
+		{
+			WebElement Email = driver.findElement(By.xpath("//android.widget.EditText[@resource-id=\"signInFormUsername\"]"));
 			Email.click();
 			Email.sendKeys("Weker42331@huleos.com");
-			
-			WebElement Password = driver.findElement(By.xpath("//android.widget.EditText[@index=\"3\"]"));
+			WebElement Password = driver.findElement(By.xpath("//android.widget.EditText[@resource-id=\"signInFormPassword\"]"));
 			Password.click();
 			Password.sendKeys("Atomberg@123");
 			sleep(1000);
-
 			driver.findElement(By.xpath("//android.widget.Button[@text=\"submit\"]")).click();
-
+		}
+		System.out.println("Alexa Linked");
+		WebElement SLD = null;
+		while(SLD == null)
+		{
+			driver.navigate().back();
+			try {
+				SLD=driver.findElement(By.xpath("//android.view.View[@content-desc=\"Select and link device\"]"));
+			}catch (Exception e)
+			{}
 		}
 	}
+
 
 	private static void sleep(long millis) {
 		try {

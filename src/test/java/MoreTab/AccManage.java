@@ -1,14 +1,10 @@
 package MoreTab;
 
 import Actions.Scroll;
-
 import java.util.List;
-
 import AtombergTest.Method;
 import org.openqa.selenium.By;
-
 import java.util.stream.Collectors;
-
 import org.openqa.selenium.WebElement;
 import io.appium.java_client.AppiumDriver;
 

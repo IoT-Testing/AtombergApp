@@ -1,108 +1,95 @@
 package Supports;
 
-import Actions.Swipe;
+import Actions.Tap;
 import io.appium.java_client.AppiumDriver;
-import io.opentelemetry.exporter.logging.SystemOutLogRecordExporter;
+import org.awaitility.Awaitility;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
+import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class GoogleHome {
 	public static void Connect(AppiumDriver driver) {
-
-		WebElement MoreTab = null;
+		WebElement SLD = null;
 		try {
-			MoreTab = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Select and link device\"]"));
+			SLD = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Select and link device\"]"));
 		} catch (Exception e) {
 		}
-
-		if (MoreTab != null) {
-			GCheck(driver);
+		if (SLD != null) {
+			googleHome(driver);			//Google Home
 		} else {
-			WebElement element = null;
-			try {
-				element = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Devices\"]"));
-			} catch (Exception e) {
-				System.out.println("Element not found");
-			}
-			if (element != null) {
-				Swipe.screenRight(driver);
-				GCheck(driver);
-			}
-			
+			driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\n" +
+					"Tab 3 of 3\"]")).click();
+			googleHome(driver);
 		}
-		driver.findElement(By.xpath("//android.view.View[@content-desc=\"Account linking guide\"]")).isDisplayed();
-		if (true) {
-			driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"OK\"]")).click();
-			sleep(5000);
+		ALG(driver);
+	}
 
-			WebElement Continue = driver.findElement(By.xpath("//android.widget.Button[@text=\"Continue\"]"));
-			Continue.click();
-			WebElement SignIn = null;
-			try {
-				SignIn = driver.findElement(By.xpath("//android.widget.Button[@text=\"Sign In as Weker42331@huleos.com\"]"));
-			}catch(Exception ignored){}
-			if (SignIn == null) {
-				WebElement Email = driver.findElement(By.xpath("//android.webkit.WebView[@text=\"Signin\"]/android.view.View/android.view.View/android.view.View[2]/android.view.View[2]/android.widget.EditText[1]"));
-				Email.click();
-				Email.sendKeys("Weker42331@huleos.com");
+	private static void googleHome(AppiumDriver driver) {
+		WebElement googleConnect = null;
+		try{
+			googleConnect = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Google\nConnect\"]"));
+		}catch (Exception e) {
+		}
+		if (googleConnect != null) {
+			System.out.println("Connecting Google Home");
+			googleConnect.click();
+		} else {
+			System.out.println("Google Home is already connected");
+		}
+	}
 
-				WebElement Password = driver.findElement(By.xpath("//android.widget.EditText[@index=\"3\"]"));
-				Password.click();
-				Password.sendKeys("Atomberg@123");
-				sleep(1000);
+	public static void ALG(AppiumDriver driver) {//Account Linking Guide
+			List<WebElement> Elements = driver.findElements(By.className("android.view.View"));
+			List<WebElement> elements = Elements.stream().filter(element -> element.getAttribute("content-desc")!=null).collect(Collectors.toList());
+			List<WebElement> algL = elements.stream().filter(element -> element.getAttribute("content-desc").equals("Account linking guide")).collect(Collectors.toList());
 
-				driver.findElement(By.xpath("//android.widget.Button[@text=\"submit\"]")).click();
-
-			}
-			else
+			if (!algL.isEmpty())
 			{
-				SignIn.click();
+				driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"OK\"]")).click();
+				sleep(1000);
+				driver.findElement(By.xpath("//android.widget.Button[@text=\"Continue\"]")).click();
+				sleep(5000);
+
+				gCheck(driver);// check if account is present
+
 			}
-			sleep(10000);
-				WebElement Done = driver.findElement(By.id("com.google.android.apps.chromecast.app:id/bottom_button"));
-				Done.click();
-				sleep(3000);
-
-				WebElement Devices = driver.findElement(By.xpath("//android.widget.TextView[@resource-id=\"com.google.android.apps.chromecast.app:id/navigation_bar_item_small_label_view\" and @text=\"Devices\"]"));
-				Devices.click();
-			ADevices(driver);
-			driver.navigate().back();
-			driver.navigate().back();
-			System.out.println("On More Tab");
 		}
-
-	}
-	private static void ADevices(AppiumDriver driver)
-	{
-		List<WebElement> Fans = driver.findElements(By.className("android.view.ViewGroup"));
-		for (WebElement fan: Fans)
+	private static void gCheck(AppiumDriver driver){
+		List<WebElement> CHECK =driver.findElements(By.className("android.widget.Button"));
+		System.out.println("Check");
+		List<WebElement> check = CHECK.stream().filter(element -> element.getAttribute("text").equals("Sign In as Weker42331@huleos.com")).collect(Collectors.toList());
+		System.out.println(check.size());
+		if(!CHECK.isEmpty())
 		{
-			System.out.println(fan.getAttribute("content-desc"));
+			CHECK.get(0).click();
 		}
-	}
-	private static void GCheck(AppiumDriver driver){
-		WebElement GoogleConnect = null;
-		try {
-			GoogleConnect = driver
-					.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Google\nConnect\"]"));
-		} catch (Exception e) {
-			System.out.println(e);
-			e.printStackTrace();
+		else{
+			WebElement Email = driver.findElement(By.xpath("//android.widget.EditText[@resource-id=\"signInFormUsername\"]"));
+			Email.click();
+			Email.sendKeys("Weker42331@huleos.com");
+			WebElement Password = driver.findElement(By.xpath("//android.widget.EditText[@resource-id=\"signInFormPassword\"]"));
+			Password.click();
+			Password.sendKeys("Atomberg@123");
+			sleep(1000);
+			driver.findElement(By.xpath("//android.widget.Button[@text=\"submit\"]")).click();
 		}
-		if (GoogleConnect != null) {
-			GoogleConnect.click();
-		} else {
-			System.out.println("Google is already connected");
+		System.out.println("Account entered");
+		WebElement SLD = null;
+		while(SLD == null)
+		{
+			driver.navigate().back();
+			try {
+				SLD=driver.findElement(By.xpath("//android.view.View[@content-desc=\"Select and link device\"]"));
+			}catch (Exception e)
+			{}
 		}
-	}
+}
 
 	private static void sleep(long millis) {
-		try {
-			Thread.sleep(millis);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		Awaitility.await().atMost(millis, TimeUnit.MILLISECONDS);
 	}
 }
