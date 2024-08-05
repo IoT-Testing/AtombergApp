@@ -18,12 +18,16 @@ public class Edit {
 		List<WebElement> ELEMENTS = driver.findElements(By.className("android.widget.ImageView"));
 		List<WebElement> elements = ELEMENTS.stream().filter(element -> element.getAttribute("content-desc") != null).collect(Collectors.toList());
 		System.out.println(elements.size());
+		List<WebElement> ele = elements.stream().filter(element -> element.getAttribute("content-desc").startsWith("Hi,")).collect(Collectors.toList());
 		for (WebElement e : elements) {
+			System.out.println(e.getAttribute("content-desc"));
 			if (e.getAttribute("content-desc").startsWith("Hi,")) {
 				e.click();
 				System.out.println("Edit Profile");
 			}
+			else{break;}
 		}
+		sleep(3000);
 		WebElement ChangeAvatar = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Change avatar\"]"));
 		ChangeAvatar.click();
 		Method.captureScreenshot(driver);
@@ -44,12 +48,24 @@ public class Edit {
 		Method.captureScreenshot(driver);
 		driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Update\"]")).click();
 		sleep(250);
-		driver.navigate().back();
-		driver.navigate().back();
+		WebElement SLD = null;
+		back(driver);
 
 	}
 
-		private static void sleep(long millis) {
+	private static void sleep(long millis) {
 			Awaitility.await().atMost(millis, TimeUnit.MILLISECONDS);
+	}
+
+	private static void back(AppiumDriver driver){
+		WebElement SLD =null;
+		while(SLD == null)
+		{
+			driver.navigate().back();
+			try {
+				SLD=driver.findElement(By.xpath("//android.view.View[@content-desc=\"Select and link device\"]"));
+			}catch (Exception e)
+			{}
+		}
 	}
 }

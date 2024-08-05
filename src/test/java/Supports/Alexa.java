@@ -79,7 +79,11 @@ public class Alexa {
 			driver.findElement(By.xpath("//android.widget.Button[@text=\"submit\"]")).click();
 		}
 		System.out.println("Alexa Linked");
-		WebElement SLD = null;
+		back(driver);
+	}
+
+	private static void back(AppiumDriver driver){
+		WebElement SLD =null;
 		while(SLD == null)
 		{
 			driver.navigate().back();
@@ -89,7 +93,6 @@ public class Alexa {
 			{}
 		}
 	}
-
 
 	private static void sleep(long millis) {
 		try {

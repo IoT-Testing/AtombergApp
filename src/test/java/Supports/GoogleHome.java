@@ -51,8 +51,10 @@ public class GoogleHome {
 			{
 				driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"OK\"]")).click();
 				sleep(1000);
-				driver.findElement(By.xpath("//android.widget.Button[@text=\"Continue\"]")).click();
+				System.out.println("OK");
 				sleep(5000);
+				driver.findElement(By.xpath("//android.widget.Button[@text=\"Continue\"]")).click();
+				System.out.println("Continue");
 
 				gCheck(driver);// check if account is present
 
@@ -78,7 +80,11 @@ public class GoogleHome {
 			driver.findElement(By.xpath("//android.widget.Button[@text=\"submit\"]")).click();
 		}
 		System.out.println("Account entered");
-		WebElement SLD = null;
+		back(driver);
+
+}
+	private static void back(AppiumDriver driver){
+		WebElement SLD =null;
 		while(SLD == null)
 		{
 			driver.navigate().back();
@@ -87,7 +93,7 @@ public class GoogleHome {
 			}catch (Exception e)
 			{}
 		}
-}
+	}
 
 	private static void sleep(long millis) {
 		Awaitility.await().atMost(millis, TimeUnit.MILLISECONDS);
