@@ -22,8 +22,9 @@ public class MoreTab {
 
 		sleep(2000);
 		Alexa.Connect(driver);
-		SLEEP(5000);
+		Sleep(5000);
 		GoogleHome.Connect(driver);
+        Sleep(3000);
 
         WebElement Theme = driver.findElement(By.xpath("//android.widget.ScrollView/android.widget.ImageView[5]"));
         Theme.click();
@@ -74,13 +75,12 @@ public class MoreTab {
         System.out.println("Tap on Privacy Policy");
         driver.navigate().back();
         sleep(1000);
-
+        Scroll.Up(driver);
 
         AccManage.ChangePassword(driver);
         AccManage.DeleteAccount(driver);
         AccManage.DeveloperOptions(driver);
-        AccManage.Logout(driver);
-        driver.navigate().back();
+//        AccManage.Logout(driver);
 
     }
     private static void LiveWidget(AppiumDriver driver)
@@ -92,7 +92,7 @@ public class MoreTab {
     private static void sleep(long millis) {
         Awaitility.await().atLeast(millis, TimeUnit.MILLISECONDS);
     }
-    private static void SLEEP(long millis)
+    private static void Sleep(long millis)
     {
         try {
             Thread.sleep(millis);

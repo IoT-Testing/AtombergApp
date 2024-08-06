@@ -79,7 +79,6 @@ public class Method {
 		}
 	}
 
-
 	public static void SearchWiFi(AppiumDriver driver, String SearchString) {
 		//// android.widget.EditText[@text="Better_Together"]
 		for (int i = 1; i <= 10; i++) {
@@ -117,6 +116,7 @@ public class Method {
 			}
 		}
 	}
+
 	public static int Array() {
 		int[] numbers = {1, 2, 3, 4, 5, 6, 7, 8, 9, 0};
 
@@ -124,6 +124,7 @@ public class Method {
 		int randomIndex = random.nextInt(numbers.length);
 		return numbers[randomIndex];
 	}
+
 	public static void AdditionProcess(AppiumDriver driver) {
 		WebElement Next = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Next\"]")); // Add 2nd
 																											// Device
@@ -166,30 +167,29 @@ public class Method {
 		Method.captureScreenshot(driver);
 	}
 
-public static void AddLock(AppiumDriver driver)
-{
- 	for (int i = 3 ; i <9 ; i++)
-	{
+	public static void AddLock(AppiumDriver driver) {
+		for (int i = 3 ; i <9 ; i++)
+		{
 
-		WebElement Pin = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.EditText["+i+"]"));
-		String randomNumber = String.valueOf(Array());
-		Pin.sendKeys(randomNumber);
-	}
-    WebElement Save = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Save\"]"));
-	 Save.click();
-	sleep(5000);
-	WebElement SuccessMessage = null;
-	try {
-		sleep(2000);
-		SuccessMessage = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Added Successfully \uD83D\uDC4D\"]"));
-	}
-	catch(NoSuchElementException e){
-	}
-	if (SuccessMessage != null) {
-		System.out.println("Lock Added Successfully");
-		sleep(1500);
-	}
-	sleep(3000);
+			WebElement Pin = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.EditText["+i+"]"));
+			String randomNumber = String.valueOf(Array());
+			Pin.sendKeys(randomNumber);
+		}
+		WebElement Save = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Save\"]"));
+		 Save.click();
+		sleep(5000);
+		WebElement SuccessMessage = null;
+		try {
+			sleep(2000);
+			SuccessMessage = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Added Successfully \uD83D\uDC4D\"]"));
+		}
+		catch(NoSuchElementException e){
+		}
+		if (SuccessMessage != null) {
+			System.out.println("Lock Added Successfully");
+			sleep(1500);
+		}
+		sleep(3000);
 
 	}
 

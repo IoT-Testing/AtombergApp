@@ -5,6 +5,7 @@ import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import io.appium.java_client.AppiumDriver;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -17,8 +18,18 @@ public class ExtentReportAT {
     }
     public static ExtentReports getReportObjects() {
 
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String date = dateFormat.format(new Date());
+        String basePath = System.getProperty("user.dir") + "\\reports\\Atomberg";
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String path = System.getProperty("user.dir") + "\\reports\\Atomberg" + timestamp + ".html";
+        String newFolderPath = basePath + date;
+        File newFolder = new File(newFolderPath);
+        if (!newFolder.exists())
+        {
+            newFolder.mkdir();
+        }
+        String s = timestamp + ".html";
+        String path = newFolderPath+"\\"+ s;
         ExtentSparkReporter reporter = new ExtentSparkReporter(path);
         reporter.config().setReportName("App Test Reports");
         reporter.config().setDocumentTitle("Test Reports");

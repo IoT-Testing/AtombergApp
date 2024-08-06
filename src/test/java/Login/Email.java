@@ -17,8 +17,7 @@ import static org.awaitility.Awaitility.await;
 public class Email {
     public static AppiumDriver driver;
 
-    public static void Login(AppiumDriver driver) // Main
-    {
+    public static void Login(AppiumDriver driver) {//Main
 
         WebElement emailLoginButton = driver.findElement(By.xpath(
                 "//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[4]"));
@@ -38,8 +37,7 @@ public class Email {
         continueButton.click(); // Continue button
         Method.captureScreenshot(driver);
         sleep(1000);
-        WebElement passwordField = driver
-                .findElement(By.xpath("//android.widget.EditText"));
+        WebElement passwordField = driver.findElement(By.xpath("//android.widget.EditText"));
         passwordField.click();
         passwordField.sendKeys("Atomberg@123");
 

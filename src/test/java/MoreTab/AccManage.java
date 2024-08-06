@@ -34,9 +34,7 @@ public class AccManage {
         DevOps.click();
         Method.captureScreenshot(driver);
         System.out.println("Tap on Developer Options");
-
         driver.navigate().back();
-
     }
 
     public static void Logout(AppiumDriver driver) {
@@ -56,9 +54,6 @@ public class AccManage {
         System.out.println(MT.size());
         System.out.println("More");
         List<WebElement> mt = MT.stream().filter(webElement -> webElement.getAttribute("content-desc") != null).collect(Collectors.toList());
-        for (WebElement e : mt) {
-            System.out.println(e.getAttribute("content-desc"));
-        }
         System.out.println(mt.size());
         System.out.println("More1");
         List<WebElement> moreTab = mt.stream().filter(webElement -> webElement.getAttribute("selected").equals("true")).collect(Collectors.toList());

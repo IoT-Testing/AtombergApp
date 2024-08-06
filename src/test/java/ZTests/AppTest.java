@@ -5,6 +5,7 @@ import Login.Email;
 import MoreTab.AccManage;
 import Supports.Screen;
 import Tabs.Analytics;
+import Tabs.MoreTab;
 import com.aventstack.extentreports.ExtentReports;
 import io.appium.java_client.AppiumDriver;
 
@@ -12,11 +13,13 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
+
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testng.Assert;
 import AtombergTest.Method;
+
 import static ZTests.ExtentReportAT.endTest;
 import static ZTests.ExtentReportAT.startTest;
 
@@ -31,7 +34,6 @@ public class AppTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println("......");
     }
 
     public static void openAtomberg() {
@@ -46,12 +48,11 @@ public class AppTest {
         try {
             System.out.println("Initializing Appium driver..."); // Check if the Appium driver is initialized
 
-            URL url = new URL("http://127.0.0.1:4723/wd/hub"); // URL of the Appium session
+            URL url = new URL("http://127.0.0.1:4723/wd/hub");// URL of the Appium session
             driver = new AppiumDriver(url, cap);
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
-            Screen.recordStart();
             System.out.println("Appium driver initialized.");
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             System.out.println("Error initializing Appium driver: " + e.getMessage());
             Assert.assertTrue(driver.findElement(By.xpath("//android.view.View[@content-desc=\"Experience smart living \n" +
                     " with Atomberg\"]")).isDisplayed());
@@ -88,7 +89,6 @@ public class AppTest {
             ExtentReportAT.getTest().log(com.aventstack.extentreports.Status.FAIL, "Login failed: " + e.getMessage());
         } finally {
             endTest();
-
         }
     }
 
@@ -102,7 +102,6 @@ public class AppTest {
             ExtentReportAT.getTest().log(com.aventstack.extentreports.Status.FAIL, "Fan Control failed: " + e.getMessage());
         } finally {
             endTest();
-            Screen.recordStop();
         }
     }
 
@@ -111,23 +110,37 @@ public class AppTest {
     void testAnalytics() {
         try {
             startTest("Analytics");
-            Screen.recordStart();
             Analytics.Show(driver);
         } catch (Exception e) {
-
+            e.printStackTrace();
             ExtentReportAT.getTest().log(com.aventstack.extentreports.Status.FAIL, "Analytics failed: " + e.getMessage());
         } finally {
             endTest();
-            Screen.recordStop();
         }
     }
 
     @Order(5)
+    @Test // Preconditions: Please Unlink Alexa and google home sor testing the linking process
+
+    void testMoreTab() {
+        try {
+            startTest("More Tab");
+            MoreTab.Options(driver);
+
+        } catch (Exception e) {
+            ExtentReportAT.getTest().log(com.aventstack.extentreports.Status.FAIL, "More Tab failed: " + e.getMessage());
+        } finally {
+            {
+                endTest();
+            }
+        }
+    }
+
+    @Order(6)
     @Test
     void testLogout() {
         try {
             startTest("Logout");
-            Screen.recordStart();
             AccManage.Logout(driver);
         } catch (Exception e) {
             ExtentReportAT.getTest().log(com.aventstack.extentreports.Status.FAIL, "Logout failed: " + e.getMessage());
@@ -136,11 +149,10 @@ public class AppTest {
         }
     }
 
-    @Order(6)
+    @Order(7)
     @Test
     void testDriverClose() {
         driver.quit();
-        Screen.recordStop();
     }
 
     @AfterAll

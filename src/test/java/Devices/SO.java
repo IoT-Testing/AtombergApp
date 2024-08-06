@@ -130,8 +130,6 @@ public class SO {//Search Online Fan
 
         }
     }
-
-
     // inside the lock control
     public static void LockControl(AppiumDriver driver) {
         sleep(7500);

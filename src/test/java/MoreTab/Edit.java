@@ -25,9 +25,9 @@ public class Edit {
 				e.click();
 				System.out.println("Edit Profile");
 			}
-			else{break;}
 		}
 		sleep(3000);
+
 		WebElement ChangeAvatar = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Change avatar\"]"));
 		ChangeAvatar.click();
 		Method.captureScreenshot(driver);

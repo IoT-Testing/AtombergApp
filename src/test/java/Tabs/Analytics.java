@@ -20,6 +20,8 @@ public class Analytics {
         moreTab = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\n" +
                 "Tab 3 of 3\"]"));
         analytics.click();
+
+//        Assertions.assertTrue();
         System.out.println("switched to Analytics");
         WebElement FanCheck = null;
         try {

@@ -135,7 +135,7 @@ public class Help {
         } catch (Exception exp) {
         }
         if (SLAppSetup == null) {
-            Swipe.Left(driver, 0.80, 0.45);// Tab 0.35 narzo 0.50
+            Swipe.Left(driver, 0.80, 0.50);// Tab 0.35 narzo 0.50
             sleep(2000);
         }
         WebElement SLFeatures = driver
@@ -162,9 +162,10 @@ public class Help {
     public static void Manual(AppiumDriver driver) {
         WebElement manual = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Manual\"]"));
         manual.click();
+        System.out.println("Manual Open");
         sleep(1000);
         driver.findElement(By.id("android:id/button1")).click();
-        sleep(2500);
+        Sleep(2500);
         driver.navigate().back();
     }
 
@@ -401,5 +402,13 @@ public class Help {
 
     private static void sleep(long millis) {
         Awaitility.await().atMost(millis, TimeUnit.MILLISECONDS);
+    }
+
+    private static void Sleep(long millis){
+        try {
+            Thread.sleep(millis);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }
