@@ -2,33 +2,27 @@ package ZTests;
 
 import Devices.SO;
 import Login.Email;
-import MoreTab.AccManage;
-import Supports.Screen;
+import MoreTab.*;
 import Tabs.Analytics;
 import Tabs.MoreTab;
 import com.aventstack.extentreports.ExtentReports;
 import io.appium.java_client.AppiumDriver;
-
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
-
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testng.Assert;
 import AtombergTest.Method;
-
-import static ZTests.ExtentReportAT.endTest;
-import static ZTests.ExtentReportAT.startTest;
+import static ZTests.ExtentReportAT.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AppTest {
     public static AppiumDriver driver;
     public static final ExtentReports extent = ExtentReportAT.getReportObjects();
 
-    public static void sleep(long millis) {
+    private static void sleep(long millis) {
         try {
             Thread.sleep(millis);
         } catch (InterruptedException e) {
@@ -36,7 +30,7 @@ public class AppTest {
         }
     }
 
-    public static void openAtomberg() {
+    private static void openAtomberg() {
         DesiredCapabilities cap = new DesiredCapabilities();
 
         cap.setCapability("platformName", "Android");
@@ -94,6 +88,19 @@ public class AppTest {
 
     @Order(3)
     @Test
+    void testManageFamily(){
+        try {
+            startTest("Family");
+            Manage.Family(driver);
+        } catch (Exception e) {
+            ExtentReportAT.getTest().log(com.aventstack.extentreports.Status.FAIL, "Logout failed: " + e.getMessage());
+        } finally {
+            endTest();
+        }
+    }
+
+    @Order(4)
+    @Test
     void testFanControl() {
         try {
             startTest("Fan Control");
@@ -105,7 +112,7 @@ public class AppTest {
         }
     }
 
-    @Order(4)
+    @Order(5)
     @Test
     void testAnalytics() {
         try {
@@ -119,7 +126,7 @@ public class AppTest {
         }
     }
 
-    @Order(5)
+    @Order(6)
     @Test // Preconditions: Please Unlink Alexa and google home sor testing the linking process
 
     void testMoreTab() {
@@ -136,7 +143,7 @@ public class AppTest {
         }
     }
 
-    @Order(6)
+    @Order(7)
     @Test
     void testLogout() {
         try {
@@ -149,7 +156,7 @@ public class AppTest {
         }
     }
 
-    @Order(7)
+    @Order(8)
     @Test
     void testDriverClose() {
         driver.quit();

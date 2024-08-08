@@ -1,29 +1,35 @@
 package AtombergTest; //To check 
 
+import MoreTab.*;
 import Login.Email;
 import java.net.URL;
 import java.time.Duration;
-
-import Supports.GoogleHome;
-import Tabs.MoreTab;
 import org.awaitility.Awaitility;
 import java.util.concurrent.TimeUnit;
 import java.net.MalformedURLException;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
+
+        /*
+          @author Rohit B. Bhagat
+         */
 
 public class App {
     public static AppiumDriver driver;
 
     public static void main(String[] args) {
-        /*
-          @author Rohit
-         */
         try {
             openAtomberg();
             Email.Login(driver);
-            MoreTab.Options(driver);
+            WebElement moreTab = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\n" +
+                    "Tab 3 of 3\"]"));
+            moreTab.click();
+            System.out.println("MoreTab");
+            sleep(1000);
+            Manage.Family(driver);
         } catch (Exception e) {
         }
     }
@@ -48,13 +54,13 @@ public class App {
             Method.captureScreenshot(driver);
             e.printStackTrace();
             return;
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {}
         System.out.println("Atomberg App Opened...");
         sleep(6000);
         Method.captureScreenshot(driver);
 
     }
+
     static void sleep(long millis) {
         Awaitility.await().atLeast(millis, TimeUnit.MILLISECONDS);
     }

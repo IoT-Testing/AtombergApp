@@ -12,8 +12,16 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class Manage {
+    private int memberSize;
     public static void Family(AppiumDriver driver) {
-        WebElement ManageFamily = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Manage family\"]"));
+        WebElement ManageFamily = null;
+        while (ManageFamily == null) {
+            Scroll.Up(driver);
+            try {
+                ManageFamily = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Manage family\"]"));
+            } catch (Exception e) {
+            }
+        }
         ManageFamily.click();
         Method.captureScreenshot(driver);
         System.out.println("Tap on Manage Family");
@@ -22,9 +30,10 @@ public class Manage {
         List<WebElement> families = elements.stream().filter(element -> element.getAttribute("content-desc") != null).collect(Collectors.toList());
         for(WebElement family : families)
         {
+            System.out.println(family.getAttribute("content-desc"));
             family.click();
             // insert manage home code
-            Home(driver);
+            countMember(driver);
             driver.navigate().back();
         }
     }
@@ -33,19 +42,16 @@ public class Manage {
 
         WebElement RemoveMember = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Remove Member\"]"));
         RemoveMember.click();
-
         System.out.println("Remove Member");
         Method.captureScreenshot(driver);
 
         WebElement Cancel2 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]"));
         Cancel2.click();
-
         WebElement MakeAdmin = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Make Admin\"]"));
         MakeAdmin.click();
 
         System.out.println("Make Admin");
         Method.captureScreenshot(driver);
-
 
         WebElement Cancel3 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]"));
         Cancel3.click();
@@ -59,9 +65,7 @@ public class Manage {
 
         WebElement Share = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Share\"]"));
         Share.click();
-
         Method.captureScreenshot(driver);
-
 
         driver.navigate().back();
         driver.navigate().back();
@@ -104,7 +108,7 @@ public class Manage {
 
     public static void Home(AppiumDriver driver) {
 
-        WebElement FamilyEdit = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Manage home\"]/android.view.View"));
+        WebElement FamilyEdit = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View[2]"));
         FamilyEdit.click();
         System.out.println("Family Edit");
         Method.captureScreenshot(driver);
@@ -119,10 +123,21 @@ public class Manage {
         System.out.println("Cancel");
         Method.captureScreenshot(driver);
 
-/*        Add Delete butto
+        WebElement delete =driver.findElement(By.xpath("//android.view.View[@content-desc=\"Delete home\"]"));
+        delete.click();
+
         Cancel = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]"));
         Cancel.click(); // android.widget.Button[@content-desc="Cancel"]
-        driver.navigate().back();*/
+        driver.navigate().back();
+    }
+
+    private static void countMember(AppiumDriver driver){
+        List<WebElement> Elements = driver.findElements(By.className("android.view.View"));
+        List<WebElement> elements = Elements.stream().filter(element -> element.getAttribute("clickable").equals("true")).collect(Collectors.toList());
+        System.out.println(elements.size());
+        for (WebElement e: elements){
+            System.out.println(e.getTagName());
+        }
     }
 
     private static void sleep(long millis) {

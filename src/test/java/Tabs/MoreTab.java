@@ -7,7 +7,6 @@ import Actions.*;
 import MoreTab.*;
 import Supports.*;
 import io.appium.java_client.AppiumDriver;
-
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -83,15 +82,16 @@ public class MoreTab {
 //        AccManage.Logout(driver);
 
     }
-    private static void LiveWidget(AppiumDriver driver)
-    {
-        List<WebElement> Element = driver.findElements(By.className(""));
-
-    }
+//    private static void LiveWidget(AppiumDriver driver)
+//    {
+//        List<WebElement> Element = driver.findElements(By.className(""));
+//
+//    }
 
     private static void sleep(long millis) {
         Awaitility.await().atLeast(millis, TimeUnit.MILLISECONDS);
     }
+
     private static void Sleep(long millis)
     {
         try {

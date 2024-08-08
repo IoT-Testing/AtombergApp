@@ -1,5 +1,6 @@
 package Supports;
 
+import Actions.Tap;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import io.appium.java_client.AppiumDriver;
@@ -41,7 +42,8 @@ public class Alexa {
 		}
 		//check alexa linking guide
 		ALG(driver);
-		}
+		linkCheck(driver);
+	}
 
 	private static void ALG(AppiumDriver driver) {
 
@@ -78,8 +80,7 @@ public class Alexa {
 			sleep(1000);
 			driver.findElement(By.xpath("//android.widget.Button[@text=\"submit\"]")).click();
 		}
-		System.out.println("Alexa Linked");
-		back(driver);
+
 	}
 
 	private static void back(AppiumDriver driver){
@@ -92,6 +93,16 @@ public class Alexa {
 			}catch (Exception e)
 			{}
 		}
+	}
+
+	private static void linkCheck(AppiumDriver driver){
+		List<WebElement> Success = driver.findElements(By.className("android.view.View"));
+		List<WebElement> successM = Success.stream().filter(element -> element.getAttribute("content-desc")!=null).collect(Collectors.toList());
+		for(WebElement e:successM)
+			if(e.getAttribute("content-desc").equals("Alexa Linked Successfully")){
+				System.out.println("Alexa Linked Successfully");
+				Tap.withPercentage(driver, 0.20,0.20);
+			}
 	}
 
 	private static void sleep(long millis) {
