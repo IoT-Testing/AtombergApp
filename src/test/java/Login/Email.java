@@ -20,11 +20,11 @@ public class Email {
     public static void Login(AppiumDriver driver) {//Main
 
         WebElement emailLoginButton = driver.findElement(By.xpath(
-                "//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[4]"));
+                "//XCUIElementTypeWindow/XCUIElementTypeOther/XCUIElementTypeOther/XCUIElementTypeOther/XCUIElementTypeOther/XCUIElementTypeOther[2]/XCUIElementTypeOther[2]/XCUIElementTypeOther[2]/XCUIElementTypeOther[2]/XCUIElementTypeImage[4]"));
         emailLoginButton.click();
 
         Method.captureScreenshot(driver);
-        WebElement emailField = driver.findElement(By.xpath("//android.widget.EditText"));
+        WebElement emailField = driver.findElement(By.xpath("//XCUIElementTypeTextField[@name=\"Email\"]"));
         emailField.click();
         emailField.sendKeys("Weker42331@huleos.com"); // Enter Email id
         Method.captureScreenshot(driver);
