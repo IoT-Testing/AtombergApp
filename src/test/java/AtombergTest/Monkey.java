@@ -1,6 +1,6 @@
 package AtombergTest; //To check 
 
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.ios.IOSDriver;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
@@ -17,7 +17,7 @@ import java.util.Random;
 public class Monkey {
 // this is for random taps and swipes on the screen to check if the app crashes with the randomness
 
-    public static void Run(AppiumDriver driver) {
+    public static void Run(IOSDriver driver) {
         System.out.println("Monkey: count=200\r\n" + "AllowPackage: com.atomberg.app");
         for (int i = 1; i < 100; i++) {
             switch (Case()) {
@@ -67,7 +67,7 @@ public class Monkey {
         }
     }
 
-    public static void tap(AppiumDriver driver) {
+    public static void tap(IOSDriver driver) {
         int x = new Random().nextInt(1080);
         int y = new Random().nextInt(2460);
         PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
@@ -81,7 +81,7 @@ public class Monkey {
         sleep(100);
     }
 
-    public static void ScrollUp(AppiumDriver driver) {
+    public static void ScrollUp(IOSDriver driver) {
         Dimension size = driver.manage().window().getSize(); // Assuming getWindowSize() returns the window size
         double x1 = 0.1 + (new Random().nextDouble()) * 0.8;
         double y1 = 0.1 + (new Random().nextDouble()) * 0.8;
@@ -102,7 +102,7 @@ public class Monkey {
         System.out.println("Scrolled Up");
     }
 
-    public static void ScrollDown(AppiumDriver driver) {
+    public static void ScrollDown(IOSDriver driver) {
         Dimension size = driver.manage().window().getSize(); // Assuming getWindowSize() returns the window size
         double x1 = 0.1 + (new Random().nextDouble()) * 0.8;
         double y1 = 0.1 + (new Random().nextDouble()) * 0.8;
@@ -123,7 +123,7 @@ public class Monkey {
         System.out.println("Scrolled Down");
     }
 
-    public static void swipeToRight(AppiumDriver driver) {
+    public static void swipeToRight(IOSDriver driver) {
         Dimension size = driver.manage().window().getSize(); // Assuming getWindowSize() returns the window size
         double x = 0.1 + (new Random().nextDouble()) * 0.8;
         double y = 0.1 + (new Random().nextDouble()) * 0.8;
@@ -142,7 +142,7 @@ public class Monkey {
         System.out.println("Right Swipe");
     }
 
-    public static void swipeToLeft(AppiumDriver driver) {
+    public static void swipeToLeft(IOSDriver driver) {
         Dimension size = driver.manage().window().getSize(); // Assuming getWindowSize() returns the window size
         double x = 0.1 + (new Random().nextDouble()) * 0.8;
         double y = 0.1 + (new Random().nextDouble()) * 0.8;
@@ -161,25 +161,25 @@ public class Monkey {
         System.out.println("Left Swipe");
     }
 
-    public static void MinimizeandOpen(AppiumDriver driver) {
+    public static void MinimizeandOpen(IOSDriver driver) {
         Tap.withPercentage(driver, 0.28, 1.05);
         sleep(500);
         Tap.withPercentage(driver, 0.28, 1.05);
 
     }
 
-    public static void Minimize(AppiumDriver driver) {
+    public static void Minimize(IOSDriver driver) {
         Tap.withPercentage(driver, 0.28, 1.05);
     }
 
-    public static void Back(AppiumDriver driver) {
+    public static void Back(IOSDriver driver) {
 
         driver.navigate().back();
         sleep(100);
 
         WebElement App = null;
         try {
-            App = driver.findElement(By.className("android.widget.ImageView"));
+            App = driver.findElement(By.className("XCUIElementTypeImage"));
         } catch (Exception e) {
         }
 
@@ -188,11 +188,11 @@ public class Monkey {
         }
     }
 
-    public static void Check(AppiumDriver driver) {
+    public static void Check(IOSDriver driver) {
 
         WebElement App = null;
         try {
-            App = driver.findElement(By.className("android.widget.ImageView"));
+            App = driver.findElement(By.className("XCUIElementTypeImage"));
         } catch (Exception e) {
         }
 
@@ -201,7 +201,7 @@ public class Monkey {
         }
     }
 
-    public static void killApp(AppiumDriver driver) {
+    public static void killApp(IOSDriver driver) {
         Tap.withPercentage(driver, 0.28, 1.05);
         sleep(2000);
         Dimension size = driver.manage().window().getSize(); // Assuming getWindowSize() returns the window size
@@ -221,11 +221,11 @@ public class Monkey {
         driver.perform(Collections.singletonList(sequence));
     }
 
-    public static void OpenApp(AppiumDriver driver) {
+    public static void OpenApp(IOSDriver driver) {
         Tap.withPercentage(driver, 0.50, 1.05);
         WebElement App = null;
         try {
-            App = driver.findElement(By.xpath("//android.widget.TextView[@content-desc=\"Atomberg Home\"]"));
+            App = driver.findElement(By.xpath("//android.widget.TextView[@name=\"Atomberg Home\"]"));
         } catch (Exception e) {
         }
         if (App == null) {

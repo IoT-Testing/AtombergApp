@@ -9,10 +9,10 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import AtombergTest.Method;
 import Login.Email;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.ios.IOSDriver;
 
 public class Check {
-	public static AppiumDriver driver;
+	public static IOSDriver driver;
 
 	public static void main(String[] args) {
 		openAtomberg();
@@ -20,12 +20,12 @@ public class Check {
 		Lock(driver);
 	}
 
-	public static void blob(AppiumDriver driver)
+	public static void blob(IOSDriver driver)
 	{
 		System.out.println("checking the git");
 	}
 
-	public static void Lock(AppiumDriver driver) {
+	public static void Lock(IOSDriver driver) {
 		/**
 		 * @author Rohit
 		 */
@@ -34,7 +34,7 @@ public class Check {
 			WebElement AddButton = null;
 			try {
 				AddButton = driver.findElement(By.xpath(
-						"//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]/android.widget.ImageView"));
+						"//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[1]/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[3]/XCUIElementTypeImage"));
 			} catch (Exception exp) {
 			}
 			if (AddButton != null) {
@@ -70,7 +70,7 @@ public class Check {
 		try {
 			System.out.println("Initializing Appium driver..."); // Check if the Appium driver is initialized
 			URL url = new URL("http://127.0.0.1:4723/wd/hub"); // URL of the Appium session
-			driver = new AppiumDriver(url, cap);
+			driver = new IOSDriver(url, cap);
 			driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
 			System.out.println("Appium driver initialized.");
 		} catch (MalformedURLException e) {
@@ -85,19 +85,19 @@ public class Check {
 
 	}
 
-	public static void CLA(AppiumDriver driver) {
+	public static void CLA(IOSDriver driver) {
 
-		driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Locks\"]")).click();
+		driver.findElement(By.xpath("//XCUIElementTypeImage[@name=\"Locks\"]")).click();
 		WebElement LO = null;
 		try {
-			LO = driver.findElement(By.xpath("(//android.widget.Button/android.widget.Button)"));
+			LO = driver.findElement(By.xpath("(//XCUIElementTypeButton/XCUIElementTypeButton)"));
 		} catch (Exception e) {
 		}
 
 		if (LO != null) {
 			System.out.println("Lock Available");
 			List<WebElement> Device = driver
-					.findElements(By.xpath("//android.widget.Button/android.widget.ImageView[1]"));
+					.findElements(By.xpath("//XCUIElementTypeButton/XCUIElementTypeImage[1]"));
 			System.out.println(Device.size());
 			for (WebElement element : Device) {
 				System.out.println(element);
@@ -107,15 +107,15 @@ public class Check {
 			}
 		} else {
 			System.out.println("No Lock Available");
-			// android.view.View[@content-desc="Living Room"]/android.view.View[2]
+			// XCUIElementTypeStaticText[@name="Living Room"]/XCUIElementTypeStaticText[2]
 
 		}
 	}
 
-	public static void LockControl(AppiumDriver driver) {// driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+	public static void LockControl(IOSDriver driver) {// driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
 		sleep(12000);
-		driver.findElement(By.xpath("//android.view.View[@content-desc=\"Pull down to unlock\"]")).click();
-		Boolean Unlock = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Unlocked\"]")).isDisplayed();
+		driver.findElement(By.xpath("//XCUIElementTypeStaticText[@name=\"Pull down to unlock\"]")).click();
+		Boolean Unlock = driver.findElement(By.xpath("//XCUIElementTypeStaticText[@name=\"Unlocked\"]")).isDisplayed();
 		if (Unlock == true) {
 			System.out.println("Successfully unlocked");
 		} else {
@@ -124,21 +124,21 @@ public class Check {
 		History(driver);
 	}
 
-	public static void History(AppiumDriver driver) {
+	public static void History(IOSDriver driver) {
 		WebElement history = null;
 		try {
-			history = driver.findElement(By.xpath("//android.view.View[@content-desc=\"History\"]"));
+			history = driver.findElement(By.xpath("//XCUIElementTypeStaticText[@name=\"History\"]"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		if (history != null) {
 			history.click();
 		}
-		List<WebElement> elements = driver.findElements(By.xpath("//android.view.View"));
+		List<WebElement> elements = driver.findElements(By.xpath("//XCUIElementTypeStaticText"));
 		for (WebElement element : elements) {
 
-			System.out.println(element.getAttribute("content-desc"));
-		if (element.getAttribute("content-desc")== "Only the latest 404 history logs are synced")
+			System.out.println(element.getAttribute("name"));
+		if (element.getAttribute("name")== "Only the latest 404 history logs are synced")
 		{
 			break;
 		}

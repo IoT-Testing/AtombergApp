@@ -2,88 +2,86 @@ package MoreTab;
 
 import Actions.Scroll;
 import java.util.List;
+import Actions.Tap;
 import AtombergTest.Method;
 import org.openqa.selenium.By;
 import java.util.stream.Collectors;
 import org.openqa.selenium.WebElement;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.ios.IOSDriver;
 
 public class AccManage {
-    public static void ChangePassword(AppiumDriver driver) {
+    public static void ChangePassword(IOSDriver driver) {
         WebElement ChangePassword = driver
-                .findElement(By.xpath("//android.view.View[@content-desc=\"Change password\"]"));
+                .findElement(By.xpath("//XCUIElementTypeOther[@name=\"Change password\"]"));
         ChangePassword.click();
         Method.captureScreenshot(driver);
         System.out.println("Tap on Change Password");
 
-        driver.navigate().back();
+        Tap.withCoordinates(driver,35,125);
+        Tap.withCoordinates(driver,35,125);
     }
 
-    public static void DeleteAccount(AppiumDriver driver) {
+    public static void DeleteAccount(IOSDriver driver) {
         WebElement DeleteAccount = driver
-                .findElement(By.xpath("//android.view.View[@content-desc=\"Delete account\"]"));
+                .findElement(By.xpath("//XCUIElementTypeOther[@name=\"Delete account\"]"));
         DeleteAccount.click();
         Method.captureScreenshot(driver);
         System.out.println("Tap on Delete Account");
 
-        driver.navigate().back();
+        Tap.withCoordinates(driver,35,125);
+        Tap.withCoordinates(driver,35,125);
     }
 
-    public static void DeveloperOptions(AppiumDriver driver) {
-        WebElement DevOps = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Developer options\"]"));
+    public static void DeveloperOptions(IOSDriver driver){
+        WebElement DevOps = driver.findElement(By.xpath("//XCUIElementTypeOther[@name=\"Developer options\"]"));
         DevOps.click();
         Method.captureScreenshot(driver);
         System.out.println("Tap on Developer Options");
-        driver.navigate().back();
+        Tap.withCoordinates(driver,35,125);
     }
 
-    public static void Logout(AppiumDriver driver) {
+    public static void Logout(IOSDriver driver) {
         checkLogout(driver);
 
-        WebElement Logout = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Logout\"]"));
+        WebElement Logout = driver.findElement(By.xpath("//XCUIElementTypeOther[@name=\"Logout\"]"));
         Logout.click();
         Method.captureScreenshot(driver);
         System.out.println("Tap on Logout");
-        WebElement yes = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Yes\"]"));
+        WebElement yes = driver.findElement(By.xpath("//XCUIElementTypeButton[@name=\"Yes\"]"));
         yes.click();
         /*driver.navigate().back();*/
     }
 
-    private static void goToMore(AppiumDriver driver) {
-        List<WebElement> MT = driver.findElements(By.className("android.widget.ImageView"));
+    private static void goToMore(IOSDriver driver) {
+        List<WebElement> MT = driver.findElements(By.className("XCUIElementTypeImage"));
         System.out.println(MT.size());
         System.out.println("More");
-        List<WebElement> mt = MT.stream().filter(webElement -> webElement.getAttribute("content-desc") != null).collect(Collectors.toList());
+        List<WebElement> mt = MT.stream().filter(webElement -> webElement.getAttribute("name") != null).collect(Collectors.toList());
         System.out.println(mt.size());
         System.out.println("More1");
-        List<WebElement> moreTab = mt.stream().filter(webElement -> webElement.getAttribute("selected").equals("true")).collect(Collectors.toList());
+        List<WebElement> moreTab = mt.stream().filter(webElement -> webElement.getAttribute("name").startsWith("More")).collect(Collectors.toList());
         System.out.println(moreTab.size());
         for (WebElement e : moreTab) {
-            System.out.println(e.getAttribute("content-desc"));
+            System.out.println(e.getAttribute("name"));
         }
-        if (moreTab.isEmpty()) {
-            driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\n" +
-                    "Tab 3 of 3\"]")).click();
-
-        } else if (!moreTab.get(0).getAttribute("content-desc").endsWith("Tab 3 of 3")) {
-            System.out.println("tap on moreTab");
-            driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\n" +
+        if (!moreTab.isEmpty()) {
+            driver.findElement(By.xpath("//XCUIElementTypeImage[@name=\"More\n" +
                     "Tab 3 of 3\"]")).click();
         }
 
     }
 
-    private static void checkLogout(AppiumDriver driver) {
+    private static void checkLogout(IOSDriver driver) {
         AccManage.goToMore(driver);
         List<WebElement> moreTab;
         do {
-            List<WebElement> MT = driver.findElements(By.className("android.view.View"));
+            List<WebElement> MT = driver.findElements(By.className("XCUIElementTypeOther"));
             System.out.println(MT.size());
             System.out.println("here");
-            List<WebElement> mt = MT.stream().filter(webElement -> webElement.getAttribute("content-desc") != null).collect(Collectors.toList());
+            List<WebElement> mt = MT.stream().filter(webElement -> webElement.getAttribute("name") != null).collect(Collectors.toList());
             System.out.println(mt.size());
             System.out.println("here1");
-            moreTab = mt.stream().filter(webElement -> webElement.getAttribute("content-desc").equals("Logout")).collect(Collectors.toList());
+            moreTab = mt.stream().filter(webElement -> webElement.getAttribute("name").equals("Logout")).collect(Collectors.toList());
             System.out.println(moreTab.size());
 
             if (moreTab.isEmpty()) {

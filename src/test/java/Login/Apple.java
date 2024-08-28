@@ -6,7 +6,7 @@ import org.openqa.selenium.WebElement;
 
 import AtombergTest.Method;
 import Permissions.Permission;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.ios.IOSDriver;
 
 import java.util.concurrent.TimeUnit;
 
@@ -14,10 +14,10 @@ import static org.awaitility.Awaitility.await;
 
 public class Apple {
 
-	public static void Login(AppiumDriver driver) // Main
+	public static void Login(IOSDriver driver) // Main
 	{
 		WebElement AppleLogin = driver.findElement(By.xpath(
-				"//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[1]")); 
+				"//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeImage[1]")); 
 		AppleLogin.click();
 		Method.captureScreenshot(driver);
 		sleep(5000);
@@ -25,7 +25,7 @@ public class Apple {
 		WebElement Home = null;
 		try {
 			Home = driver.findElement(By.xpath(
-					"//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.widget.ImageView"));
+					"//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[1]/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[1]/XCUIElementTypeImage"));
 		} catch (Exception exp) {
 		}
 		if (Home != null) {
@@ -41,29 +41,29 @@ public class Apple {
 			Method.captureScreenshot(driver);
 			sleep(1000);
 
-			WebElement continueButton = driver.findElement(By.xpath("//android.widget.Button[@text=\"Continue\"]"));
-			continueButton.click(); // Continue button //android.widget.Button[@text="Continue"]
+			WebElement continueButton = driver.findElement(By.xpath("//XCUIElementTypeButton[@text=\"Continue\"]"));
+			continueButton.click(); // Continue button //XCUIElementTypeButton[@text="Continue"]
 			sleep(2000);
 			Method.captureScreenshot(driver);
 
 			WebElement passwordField = driver.findElement(By.xpath(
-					"//android.webkit.WebView[@text=\"Sign in with Apple ID\"]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View[2]/android.view.View/android.widget.EditText"));
+					"//android.webkit.WebView[@text=\"Sign in with Apple ID\"]/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[1]/XCUIElementTypeStaticText/XCUIElementTypeStaticText[2]/XCUIElementTypeStaticText/android.widget.EditText"));
 			passwordField.click();
 			passwordField.sendKeys("SumitaBH@133");
 			Method.captureScreenshot(driver);
 			System.out.println("Password entered..."); // Enter Password
 
-			WebElement SignIn = driver.findElement(By.xpath("//android.widget.Button[@text=\"Sign In\"]"));
+			WebElement SignIn = driver.findElement(By.xpath("//XCUIElementTypeButton[@text=\"Sign In\"]"));
 			SignIn.click(); // Continue to Login
 			sleep(2000);
 			System.out.println("On Home Screen");
 			Method.captureScreenshot(driver);
-			WebElement continueButton1 = driver.findElement(By.xpath("//android.widget.Button[@text=\"Continue\"]"));
-			continueButton1.click(); // Continue button //android.widget.Button[@text="Continue"]
+			WebElement continueButton1 = driver.findElement(By.xpath("//XCUIElementTypeButton[@text=\"Continue\"]"));
+			continueButton1.click(); // Continue button //XCUIElementTypeButton[@text="Continue"]
 			sleep(10000);
 			Method.captureScreenshot(driver);
 
-			WebElement appLogo =driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.widget.ImageView"));
+			WebElement appLogo =driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[1]/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[1]/XCUIElementTypeImage"));
 			assert appLogo.isDisplayed();
 			await().atMost(10, TimeUnit.SECONDS).until(appLogo::isDisplayed);
 			System.out.println("Test Passed");

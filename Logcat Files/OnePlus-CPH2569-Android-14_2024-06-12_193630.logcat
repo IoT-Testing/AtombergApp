@@ -21315,7 +21315,7 @@
           "nanos": 16000000
         }
       },
-      "message": "[OplusViewMirrorManager] updateHostViewRootIfNeeded, not support android.view.ViewRootImpl@c7b7659"
+      "message": "[OplusViewMirrorManager] updateHostViewRootIfNeeded, not support XCUIElementTypeStaticTextRootImpl@c7b7659"
     },
     {
       "header": {
@@ -31650,7 +31650,7 @@
           "nanos": 465000000
         }
       },
-      "message": "[OplusViewMirrorManager] updateHostViewRootIfNeeded, not support android.view.ViewRootImpl@90cc1bd"
+      "message": "[OplusViewMirrorManager] updateHostViewRootIfNeeded, not support XCUIElementTypeStaticTextRootImpl@90cc1bd"
     },
     {
       "header": {
@@ -39975,7 +39975,7 @@
           "nanos": 24000000
         }
       },
-      "message": "sendCancelIfRunning: isInProgress\u003dfalsecallback\u003dandroid.view.ViewRootImpl$$ExternalSyntheticLambda17@76b21e"
+      "message": "sendCancelIfRunning: isInProgress\u003dfalsecallback\u003dXCUIElementTypeStaticTextRootImpl$$ExternalSyntheticLambda17@76b21e"
     },
     {
       "header": {

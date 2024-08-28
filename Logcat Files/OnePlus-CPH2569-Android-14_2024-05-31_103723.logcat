@@ -44820,7 +44820,7 @@
           "nanos": 992000000
         }
       },
-      "message": "The following attributes will be included to the page source: [content-desc]"
+      "message": "The following attributes will be included to the page source: [name]"
     },
     {
       "header": {
@@ -45810,7 +45810,7 @@
           "nanos": 451000000
         }
       },
-      "message": "Took 0ms to retrieve 0 matches for \u0027//android.view.View[@content-desc\u003d\"Try Again\"]\u0027 XPath query"
+      "message": "Took 0ms to retrieve 0 matches for \u0027//XCUIElementTypeStaticText[@name\u003d\"Try Again\"]\u0027 XPath query"
     },
     {
       "header": {
@@ -55230,7 +55230,7 @@
           "nanos": 119000000
         }
       },
-      "message": "method: \u0027xpath\u0027, selector: \u0027//android.widget.ImageView[@content-desc\u003d\"Change avatar\"]\u0027"
+      "message": "method: \u0027xpath\u0027, selector: \u0027//XCUIElementTypeImage[@name\u003d\"Change avatar\"]\u0027"
     },
     {
       "header": {
@@ -78240,7 +78240,7 @@
           "nanos": 180000000
         }
       },
-      "message": "The following attributes will be included to the page source: [content-desc]"
+      "message": "The following attributes will be included to the page source: [name]"
     },
     {
       "header": {
@@ -79275,7 +79275,7 @@
           "nanos": 670000000
         }
       },
-      "message": "Took 0ms to retrieve 0 matches for \u0027//android.widget.ImageView[@content-desc\u003d\"Change avatar\"]\u0027 XPath query"
+      "message": "Took 0ms to retrieve 0 matches for \u0027//XCUIElementTypeImage[@name\u003d\"Change avatar\"]\u0027 XPath query"
     },
     {
       "header": {

@@ -3,7 +3,7 @@ package Widget;
 import Actions.Swipe;
 import AtombergTest.Method;
 import AtombergTest.Monkey;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.ios.IOSDriver;
 import org.awaitility.Awaitility;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Widgets {
 
-    public static void Home(AppiumDriver driver) {
+    public static void Home(IOSDriver driver) {
         WebElement widget = null;
         do {
             try {

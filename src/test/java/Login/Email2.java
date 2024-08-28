@@ -5,7 +5,7 @@ package Login;
 import Actions.Tap;
 import AtombergTest.Method;
 import Permissions.Permission;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.ios.IOSDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -14,12 +14,12 @@ import java.util.concurrent.TimeUnit;
 import static org.awaitility.Awaitility.await;
 
 public class Email2 {
-	public static AppiumDriver driver;
-	public static void Login(AppiumDriver driver,String login, String pass) // Main
+	public static IOSDriver driver;
+	public static void Login(IOSDriver driver,String login, String pass) // Main
 	{
 
 		WebElement emailLoginButton = driver.findElement(By.xpath(
-				"//android.widget.ScrollView/android.widget.ImageView[4]"));
+				"//android.widget.ScrollView/XCUIElementTypeImage[4]"));
 		emailLoginButton.click();
 
 		Method.captureScreenshot(driver);
@@ -33,7 +33,7 @@ public class Email2 {
 		System.out.println("Email Entered...");
 		Method.captureScreenshot(driver);
 
-		WebElement continueButton = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Continue\"]"));
+		WebElement continueButton = driver.findElement(By.xpath("//XCUIElementTypeButton[@name=\"Continue\"]"));
 		continueButton.click(); // Continue button
 		Method.captureScreenshot(driver);
 		sleep(1000);
@@ -46,10 +46,10 @@ public class Email2 {
 		System.out.println("Password entered..."); // Enter Password
 
 
-		WebElement continueButton1 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Continue\"]"));
+		WebElement continueButton1 = driver.findElement(By.xpath("//XCUIElementTypeButton[@name=\"Continue\"]"));
 		continueButton1.click(); // Continue to Log in
 		System.out.println("Continue...");
-		WebElement appLogo =driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.widget.ImageView"));
+		WebElement appLogo =driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[1]/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[1]/XCUIElementTypeImage"));
 		await().atMost(10, TimeUnit.SECONDS).until(appLogo::isDisplayed);
 		System.out.println("Test Passed");
 

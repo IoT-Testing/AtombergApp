@@ -4,11 +4,11 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import Actions.Swipe;
 import AtombergTest.Method;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.ios.IOSDriver;
 
 public class Play {
-	public static void Videos(AppiumDriver driver) {
-		WebElement AppTour = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"App Tour\"]"));
+	public static void Videos(IOSDriver driver) {
+		WebElement AppTour = driver.findElement(By.xpath("//XCUIElementTypeImage[@name=\"App Tour\"]"));
 		AppTour.click();
 		
 		Method.captureScreenshot(driver);
@@ -19,7 +19,7 @@ public class Play {
 		sleep(5000);
 
 		WebElement ConnectAlexa = driver
-				.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Connect Alexa\"]"));
+				.findElement(By.xpath("//XCUIElementTypeImage[@name=\"Connect Alexa\"]"));
 		ConnectAlexa.click();
 		
 		Method.captureScreenshot(driver);
@@ -31,7 +31,7 @@ public class Play {
 		sleep(5000);
 
 		WebElement ConnectGoogle = driver
-				.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Connect Google\"]"));
+				.findElement(By.xpath("//XCUIElementTypeImage[@name=\"Connect Google\"]"));
 		ConnectGoogle.click();
 		
 		Method.captureScreenshot(driver);
@@ -44,19 +44,19 @@ public class Play {
 		WebElement SLAppSetup = null;
 		try {
 			SLAppSetup = driver
-					.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Smart Locks App Setup\"]"));
+					.findElement(By.xpath("//XCUIElementTypeImage[@name=\"Smart Locks App Setup\"]"));
 		} catch (Exception exp) {
 		}
 		if (SLAppSetup == null) {
 			Swipe.Left(driver, 0.80, 0.50);// Tab 0.35 narzo 0.50
 			
 			WebElement SLInstall = driver
-					.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Smart Locks Installation\"]"));
+					.findElement(By.xpath("//XCUIElementTypeImage[@name=\"Smart Locks Installation\"]"));
 			SLInstall.click();
 			sleep(2000);
 		} else {
 			WebElement SLInstall = driver
-					.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Smart Locks Installation\"]"));
+					.findElement(By.xpath("//XCUIElementTypeImage[@name=\"Smart Locks Installation\"]"));
 			SLInstall.click();
 		}
 
@@ -70,17 +70,17 @@ public class Play {
 		SLAppSetup = null;
 		try {
 			SLAppSetup = driver
-					.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Smart Locks App Setup\"]"));
+					.findElement(By.xpath("//XCUIElementTypeImage[@name=\"Smart Locks App Setup\"]"));
 		} catch (Exception exp) {
 		}
 		if (SLAppSetup == null) {
 			Swipe.Left(driver, 0.80, 0.45);// Tab 0.35 narzo 0.50
 			sleep(2000);
 			SLAppSetup = driver
-					.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Smart Locks App Setup\"]"));
+					.findElement(By.xpath("//XCUIElementTypeImage[@name=\"Smart Locks App Setup\"]"));
 		}
 		WebElement SLFeatures = driver
-				.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Smart Locks Features\"]"));
+				.findElement(By.xpath("//XCUIElementTypeImage[@name=\"Smart Locks Features\"]"));
 		SLFeatures.click();
 		sleep(2000);
 		Method.captureScreenshot(driver);
@@ -98,11 +98,11 @@ public class Play {
 		VideoTryCatch(driver);
 
 	}
-	public static void VideoTryCatch(AppiumDriver driver) {
+	public static void VideoTryCatch(IOSDriver driver) {
 		WebElement VideoTutorials = null;
 
 		try {
-			VideoTutorials = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Help\"]"));
+			VideoTutorials = driver.findElement(By.xpath("//XCUIElementTypeImage[@name=\"Help\"]"));
 		} catch (Exception exp) {
 		}
 		if (VideoTutorials == null) {

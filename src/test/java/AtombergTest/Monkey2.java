@@ -1,6 +1,6 @@
 package AtombergTest; //To check 
 
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.ios.IOSDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testng.Assert;
 import Login.Email;
@@ -14,7 +14,7 @@ import java.util.Map;
 public class Monkey2 {
 
 	// Running the adb monkey script
-	public static AppiumDriver driver;
+	public static IOSDriver driver;
 
 	public static void main(String[] args) {
 		try {
@@ -47,7 +47,7 @@ public class Monkey2 {
 		try {
 			System.out.println("Initializing Driver..."); // Check if the Appium driver is initialized
 			URL url = new URL("http://127.0.0.1:4723/wd/hub"); // URL of the Appium session
-            driver = new AppiumDriver(url, cap);
+            driver = new IOSDriver(url, cap);
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
 			System.out.println("Appium driver initialized.");
 		} catch (MalformedURLException e) {

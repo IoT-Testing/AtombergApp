@@ -6,13 +6,13 @@ Library    AppiumLibrary
 Login Test
     
     Open Application    platformName=Android    deviceName=Pixel 5     appPackage=com.atomberg.app    appActivity=com.atomberg.app.MainActivity
-    Tap    Object  AtombergApp/android.widget.ImageView    500ms
+    Tap    Object  AtombergApp/XCUIElementTypeImage    500ms
     Tap    Object  AtombergApp/android.widget.EditText    2000ms
     Input Text    Object  AtombergApp/android.widget.EditText    wametis763@bookspre.com
-    Tap    Object  AtombergApp/android.widget.Button    500ms
+    Tap    Object  AtombergApp/XCUIElementTypeButton    500ms
     Tap    Object  AtombergApp/android.widget.EditText    500ms
     Input Text    Object  AtombergApp/android.widget.EditText    Atomberg@123
-    Tap    Object  AtombergApp/android.widget.Button    500ms
+    Tap    Object  AtombergApp/XCUIElementTypeButton    500ms
         Start Application Crawler
     Close Application
 

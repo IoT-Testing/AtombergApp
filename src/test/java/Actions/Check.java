@@ -10,10 +10,10 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import AtombergTest.Method;
 import AtombergTest.Monkey;
 import Login.Email;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.ios.IOSDriver;
 // this is used to check the working of the code before integrating it into the main code
 public class Check {
-	private static AppiumDriver driver;
+	private static IOSDriver driver;
 
 	//Initiating the driver (server URL & and App details)
 	private void openAtomberg() {
@@ -26,7 +26,7 @@ public class Check {
 		try {
 			System.out.println("Initializing Appium driver..."); // Check if the Appium driver is initialized
 			URL url = new URL("http://192.168.11.48:4723/wd/hub"); // URL of the Appium session
-			driver = new AppiumDriver(url, cap);
+			driver = new IOSDriver(url, cap);
 			System.out.println("Appium driver initialized.");
 
 		} catch (MalformedURLException e) {

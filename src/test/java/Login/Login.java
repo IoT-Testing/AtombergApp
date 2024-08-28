@@ -1,9 +1,9 @@
 package Login;
 
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.ios.IOSDriver;
 
 public class Login {
-	public static void main(AppiumDriver driver) {
+	public static void main(IOSDriver driver) {
 		try {
 
 			int randomNumber = (int) (Math.random() * 4); // generate a random number between 0 and 5

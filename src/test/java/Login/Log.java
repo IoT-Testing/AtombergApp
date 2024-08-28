@@ -3,16 +3,16 @@ package Login;
 import Actions.Scroll;
 import Actions.Tap;
 import AtombergTest.Method;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.ios.IOSDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 public class Log {
-	public static void Out(AppiumDriver driver) {
+	public static void Out(IOSDriver driver) {
 		try {
 			WebElement MoreTab = null;
 			try {
-				MoreTab = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Select and link device\"]"));
+				MoreTab = driver.findElement(By.xpath("//XCUIElementTypeStaticText[@name=\"Select and link device\"]"));
 			}catch(Exception ignored){}
 			if(MoreTab == null) {
 				Tap.withPercentage(driver, 0.83, 0.98);
@@ -21,18 +21,18 @@ public class Log {
 			Scroll.Up(driver);
 			WebElement Logout = null;
 			try {
-				Logout = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Logout\"]"));
+				Logout = driver.findElement(By.xpath("//XCUIElementTypeStaticText[@name=\"Logout\"]"));
 			}catch(Exception ignored){}
 			if(Logout == null) {
 				Scroll.Up(driver);
 				sleep(1000);
-				Logout = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Logout\"]"));
+				Logout = driver.findElement(By.xpath("//XCUIElementTypeStaticText[@name=\"Logout\"]"));
 			}
 			Logout.click();
 			Method.captureScreenshot(driver);
 			System.out.println("Tap on Logout");
 			sleep(2500);
-			WebElement Ok = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Yes\"]"));
+			WebElement Ok = driver.findElement(By.xpath("//XCUIElementTypeButton[@name=\"Yes\"]"));
 			Ok.click();
 
 		} catch (Exception exp) {

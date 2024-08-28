@@ -6,7 +6,7 @@ import MoreTab.*;
 import Tabs.Analytics;
 import Tabs.MoreTab;
 import com.aventstack.extentreports.ExtentReports;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.ios.IOSDriver;
 import java.io.IOException;
 import java.net.URL;
 import java.time.Duration;
@@ -19,7 +19,7 @@ import static ZTests.ExtentReportAT.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AppTest {
-    public static AppiumDriver driver;
+    public static IOSDriver driver;
     public static final ExtentReports extent = ExtentReportAT.getReportObjects();
 
     private static void sleep(long millis) {
@@ -43,18 +43,18 @@ public class AppTest {
             System.out.println("Initializing Appium driver..."); // Check if the Appium driver is initialized
 
             URL url = new URL("http://127.0.0.1:4723/wd/hub");// URL of the Appium session
-            driver = new AppiumDriver(url, cap);
+            driver = new IOSDriver(url, cap);
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
             System.out.println("Appium driver initialized.");
         } catch (IOException e) {
             System.out.println("Error initializing Appium driver: " + e.getMessage());
-            Assert.assertTrue(driver.findElement(By.xpath("//android.view.View[@content-desc=\"Experience smart living \n" +
+            Assert.assertTrue(driver.findElement(By.xpath("//XCUIElementTypeStaticText[@name=\"Experience smart living \n" +
                     " with Atomberg\"]")).isDisplayed());
             e.printStackTrace();
             throw new RuntimeException(e);
         }
         System.out.println("Atomberg App Opened...");
-        assert driver.findElement(By.xpath("//android.view.View[@content-desc=\"Experience smart living \n" +
+        assert driver.findElement(By.xpath("//XCUIElementTypeStaticText[@name=\"Experience smart living \n" +
                 " with Atomberg\"]")).isDisplayed();
         sleep(6000);
         Method.captureScreenshot(driver);

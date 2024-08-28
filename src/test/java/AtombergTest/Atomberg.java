@@ -2,7 +2,7 @@ package AtombergTest; //To check
 
 
 //import Supports.GoogleHome;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.ios.IOSDriver;
 import org.awaitility.Awaitility;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import java.net.*;
@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 import Login.*;
 
 public class Atomberg {
-	public static AppiumDriver driver;
+	public static IOSDriver driver;
 
 	public static void main(String[] args) {
 		openAtomberg(); // Open App through Appium
@@ -34,7 +34,7 @@ public class Atomberg {
 		try {
 			System.out.println("Initializing Appium driver..."); // Check if the Appium driver is initialized
 			URL url = new URL("http://127.0.0.1:4723/wd/hub"); // URL of the Appium session
-			driver = new AppiumDriver(url, cap);
+			driver = new IOSDriver(url, cap);
 			driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
 			System.out.println("Appium driver initialized.");
 		} catch (MalformedURLException e) {

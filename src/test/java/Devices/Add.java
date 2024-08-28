@@ -2,35 +2,37 @@ package Devices;
 
 import Actions.Tap;
 import java.util.List;
+
+import org.checkerframework.checker.units.qual.N;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
 
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.ios.IOSDriver;
 
 public class Add {
-	public static AppiumDriver driver;
-	public static void Fan(AppiumDriver driver)
+	public static IOSDriver driver;
+	public static void Fan(IOSDriver driver)
 	{
-
 		WebElement AddButton = null;
 		try {
-			AddButton = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]/android.widget.ImageView"));
+			AddButton = driver.findElement(By.xpath("//XCUIElementTypeWindow/XCUIElementTypeOther/XCUIElementTypeOther/XCUIElementTypeOther/XCUIElementTypeOther/XCUIElementTypeOther[2]/XCUIElementTypeOther[2]/XCUIElementTypeOther[2]/XCUIElementTypeOther[2]/XCUIElementTypeOther[2]/XCUIElementTypeOther[2]/XCUIElementTypeOther[2]/XCUIElementTypeOther[2]/XCUIElementTypeOther[3]/XCUIElementTypeImage"));
 		} catch (Exception exp) {
 		}
 		if (AddButton != null) {
 			AddButton.click();
 			sleep(1000);
 		} else {
-			Tap.withCoordinates(driver, 540, 1940);
+			Tap.withCoordinates(driver, 198, 709);
+
 			sleep(1000);
 		}
 		System.out.println("Searching for Available devices");
 		for(int c = 0 ; c<10; c++) {
 			sleep(15000);
 			WebElement element = null;
-			String xpathExpression = "//android.view.View[@content-desc=\"Atomberg Smart Fan\"]";
+			String xpathExpression = "//XCUIElementTypeStaticText[@name=\"Atomberg Smart Fan\"]";
 			// Search Fan Only
 			try {
 				element = driver.findElement(By.xpath(xpathExpression));
@@ -40,31 +42,31 @@ public class Add {
 			if (element != null) // if device is available
 			{
 				System.out.println("Fans Available");
-				List<WebElement> Connects = driver.findElements(By.xpath("(//android.view.View[@content-desc=\"Connect\"])"));
+				List<WebElement> Connects = driver.findElements(By.xpath("//XCUIElementTypeStaticText[@name=\"Connect\"]"));
 				for(int i = 1; i<=Connects.size();i++ ) {
 
-					WebElement Connect = driver.findElement(By.xpath("(//android.view.View[@content-desc=\"Connect\"])["+i+"]"));
+					WebElement Connect = driver.findElement(By.xpath("(//XCUIElementTypeStaticText[@name=\"Connect\"])["+i+"]"));
 					System.out.println("Connect button at : "+i);
 					Connect.click();
-					WebElement LAdd = null;  //(//android.view.View[@content-desc="Connect"])[2]
-					WebElement LReset = null;//(//android.view.View[@content-desc="Connect"])[2]
+					WebElement LAdd = null;  //(//XCUIElementTypeStaticText[@name="Connect"])[2]
+					WebElement LReset = null;//(//XCUIElementTypeStaticText[@name="Connect"])[2]
 					WebElement FReset = null;
 					WebElement Reach = null;
 					try {
-						LAdd = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Connecting to the Lock...\r\n"
-								+ "Please don't press back button\"]"));
+						LAdd = driver.findElement(By.xpath("//XCUIElementTypeStaticText[@name=\"Connecting to the Lock...\n" +
+								"Please don't press back button\"]"));
 					}catch(Exception e) {}
 					try {
-						LReset = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Could not add the lock\"]"));
+						LReset = driver.findElement(By.xpath("//XCUIElementTypeStaticText[@name=\"Could not add the lock\"]"));
 					}catch(Exception e) {}
 					try {
-						FReset = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Device already paired\"]"));
+						FReset = driver.findElement(By.xpath("//XCUIElementTypeStaticText[@name=\"Device already paired\"]"));
 					}catch(Exception e) {}
 					try {
-						Reach = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Could not reach\r\n"
+						sleep(5000);
+						Reach = driver.findElement(By.xpath("//XCUIElementTypeStaticText[@name=\"Could not reach\r\n"
 								+ "the device\"]"));
 					}catch(Exception e) {}
-
 					if(LAdd !=null || LReset!=null || FReset!=null || Reach != null)
 					{
 						if(LAdd != null)
@@ -74,14 +76,12 @@ public class Add {
 						}
 						else if (Reach != null)
 						{
-							System.out.println("Out of Reach");
-							driver.navigate().back();
-							driver.navigate().back();
-							System.out.println("Back");
-						}
-						else
+							System.out.println("Error connecting the device");
+							Tap.withCoordinates(driver,50,50);
+							Tap.withCoordinates(driver,35,125);
+						} else
 						{
-							driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]")).click();
+							driver.findElement(By.xpath("//XCUIElementTypeButton[@name=\"Cancel\"]")).click();
 							System.out.println("Cancel button clicked");
 							sleep(1000);
 						}
@@ -97,14 +97,14 @@ public class Add {
 			{
 				WebElement DD = null;//discovered devices
 				try {
-					DD = driver.findElement(By.xpath("(//android.view.View[@content-desc=\"Connect\"])[2]"));
+					DD = driver.findElement(By.xpath("(//XCUIElementTypeStaticText[@name=\"Connect\"])[2]"));
 				}catch(Exception e) {}
 				if (DD != null) {
-					driver.findElement(By.xpath("//android.widget.Button")).click();
+					driver.findElement(By.xpath("//XCUIElementTypeButton")).click();
 				}
 				else
 				{
-					WebElement tryAgain = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Try Again\"]"));
+					WebElement tryAgain = driver.findElement(By.xpath("//XCUIElementTypeStaticText[@name=\"Try Again\"]"));
 					tryAgain.click();
 					System.out.println("Trying Again...");
 				}
@@ -115,12 +115,12 @@ public class Add {
 		}
 	}
 
-	public static void Lock(AppiumDriver driver)
+	public static void Lock(IOSDriver driver)
 	{
 
 		WebElement AddButton = null;
 		try {
-			AddButton = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]/android.widget.ImageView"));
+			AddButton = driver.findElement(By.xpath("//XCUIElementTypeWindow/XCUIElementTypeOther/XCUIElementTypeOther/XCUIElementTypeOther/XCUIElementTypeOther/XCUIElementTypeOther[2]/XCUIElementTypeOther[2]/XCUIElementTypeOther[2]/XCUIElementTypeOther[2]/XCUIElementTypeOther[2]/XCUIElementTypeOther[2]/XCUIElementTypeOther[2]/XCUIElementTypeOther[2]/XCUIElementTypeOther[3]/XCUIElementTypeImage"));
 		} catch (Exception exp) {
 		}
 		if (AddButton != null) {
@@ -134,7 +134,7 @@ public class Add {
 		for(int c = 0 ; c<10; c++) {
 			sleep(15000);
 			WebElement element = null;
-			String xpathExpression = "//android.view.View[@content-desc=\"Atomberg Smart Lock\"]";
+			String xpathExpression = "//XCUIElementTypeStaticText[@name=\"Atomberg Smart Lock\"]";
 			// Search Fan Only
 			try {
 				element = driver.findElement(By.xpath(xpathExpression));
@@ -144,30 +144,32 @@ public class Add {
 			if (element != null) // if device is available
 			{
 				System.out.println("Lock Available");
-				List<WebElement> Connects = driver.findElements(By.xpath("(//android.view.View[@content-desc=\"Connect\"])"));
+				List<WebElement> Connects = driver.findElements(By.xpath("(//XCUIElementTypeStaticText[@name=\"Connect\"])"));
 
 				for(int i = 1; i<=Connects.size();i++ ) {
 
-					WebElement Connect = driver.findElement(By.xpath("(//android.view.View[@content-desc=\"Connect\"])["+i+"]"));
+					WebElement Connect = driver.findElement(By.xpath("(//XCUIElementTypeStaticText[@name=\"Connect\"])["+i+"]"));
 					System.out.println("Connect button at : "+i);
 					Connect.click();
-					WebElement FAdd = null;  //(//android.view.View[@content-desc="Connect"])[2]
-					WebElement LReset = null;//(//android.view.View[@content-desc="Connect"])[2]
+					WebElement FAdd = null;  //(//XCUIElementTypeStaticText[@name="Connect"])[2]
+					WebElement LReset = null;//(//XCUIElementTypeStaticText[@name="Connect"])[2]
 					WebElement FReset = null;
 					WebElement Reach = null;
+
 					try {
-						FAdd = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Identify your device\"]"));
+						FAdd = driver.findElement(By.xpath("//XCUIElementTypeStaticText[@name=\"Identify your device\"]"));
 					}catch(Exception e) {}
 					try {
-						LReset = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Could not add the lock\"]"));
+						LReset = driver.findElement(By.xpath("//XCUIElementTypeStaticText[@name=\"Could not add the lock\"]"));
 					}catch(Exception e) {}
 					try {
-						FReset = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Device already paired\"]"));
+						FReset = driver.findElement(By.xpath("//XCUIElementTypeStaticText[@name=\"Device already paired\"]"));
 					}catch(Exception e) {}
 					try {
-						Reach = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Could not reach\r\n"
+						Reach = driver.findElement(By.xpath("//XCUIElementTypeStaticText[@name=\"Could not reach\r\n"
 								+ "the device\"]"));
 					}catch(Exception e) {}
+
 
 					if(FAdd !=null || LReset != null || FReset!=null || Reach != null)
 					{
@@ -176,16 +178,15 @@ public class Add {
 							driver.navigate().back();
 							System.out.println("Back");
 						}
-						else if (Reach != null)
-						{
-							System.out.println("Out of Reach");
-							driver.navigate().back();
-							driver.navigate().back();
+						else if (Reach != null) {
+
+							System.out.println("Error connecting the device");
+							Tap.withCoordinates(driver, 50, 50);
+							Tap.withCoordinates(driver, 35, 125);
 							System.out.println("Back");
-						}
-						else
+						}else
 						{
-							driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]")).click();
+							driver.findElement(By.xpath("//XCUIElementTypeButton[@name=\"Cancel\"]")).click();
 							System.out.println("Cancel button clicked");
 							sleep(1000);
 						}
@@ -201,14 +202,14 @@ public class Add {
 			{
 				WebElement DD = null;//discovered devices
 				try {
-					DD = driver.findElement(By.xpath("(//android.view.View[@content-desc=\"Connect\"])[2]"));
+					DD = driver.findElement(By.xpath("(//XCUIElementTypeStaticText[@name=\"Connect\"])[2]"));
 				}catch(Exception e) {}
 				if (DD != null) {
-					driver.findElement(By.xpath("//android.widget.Button")).click();
+					driver.findElement(By.xpath("//XCUIElementTypeButton")).click();
 				}
 				else
 				{
-					WebElement tryAgain = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Try Again\"]"));
+					WebElement tryAgain = driver.findElement(By.xpath("//XCUIElementTypeStaticText[@name=\"Try Again\"]"));
 					tryAgain.click();
 					System.out.println("Trying Again...");
 				}

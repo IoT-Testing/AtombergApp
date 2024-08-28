@@ -2,7 +2,7 @@ package Supports;
 
 import Actions.Tap;
 import com.sun.jarsigner.ContentSignerParameters;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.ios.IOSDriver;
 import org.awaitility.Awaitility;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -12,17 +12,17 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class GoogleHome {
-	public static void Connect(AppiumDriver driver) {
+	public static void Connect(IOSDriver driver) {
 		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
 		WebElement SLD = null;
 		try {
-			SLD = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Select and link device\"]"));
+			SLD = driver.findElement(By.xpath("//XCUIElementTypeStaticText[@name=\"Select and link device\"]"));
 		} catch (Exception e) {
 		}
 		if (SLD != null) {
 			googleHome(driver);			//Google Home
 		} else {
-			driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\n" +
+			driver.findElement(By.xpath("//XCUIElementTypeImage[@name=\"More\n" +
 					"Tab 3 of 3\"]")).click();
 			googleHome(driver);
 		}
@@ -30,10 +30,10 @@ public class GoogleHome {
 		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
 	}
 
-	private static void googleHome(AppiumDriver driver) {
+	private static void googleHome(IOSDriver driver) {
 		WebElement googleConnect = null;
 		try{
-			googleConnect = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Google\nConnect\"]"));
+			googleConnect = driver.findElement(By.xpath("//XCUIElementTypeImage[@name=\"Google\nConnect\"]"));
 		}catch (Exception e) {
 		}
 		if (googleConnect != null) {
@@ -44,15 +44,15 @@ public class GoogleHome {
 		}
 	}
 
-	public static void ALG(AppiumDriver driver) {//Account Linking Guide
-			List<WebElement> Elements = driver.findElements(By.className("android.view.View"));
-			List<WebElement> elements = Elements.stream().filter(element -> element.getAttribute("content-desc")!=null).collect(Collectors.toList());
+	public static void ALG(IOSDriver driver) {//Account Linking Guide
+			List<WebElement> Elements = driver.findElements(By.className("XCUIElementTypeStaticText"));
+			List<WebElement> elements = Elements.stream().filter(element -> element.getAttribute("name")!=null).collect(Collectors.toList());
 			System.out.println(elements.size());
-			List<WebElement> algL = elements.stream().filter(element -> element.getAttribute("content-desc").equals("Account linking guide")).collect(Collectors.toList());
+			List<WebElement> algL = elements.stream().filter(element -> element.getAttribute("name").equals("Account linking guide")).collect(Collectors.toList());
 
 			if (!algL.isEmpty())
 			{
-				WebElement OK = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"OK\"]"));
+				WebElement OK = driver.findElement(By.xpath("//XCUIElementTypeButton[@name=\"OK\"]"));
 				OK.click();
 				sleep(1000);
 				System.out.println("OK");
@@ -63,13 +63,13 @@ public class GoogleHome {
 
 			}
 		}
-	private static void gCheck(AppiumDriver driver){
-		List<WebElement> CHECK =driver.findElements(By.className("android.widget.Button"));
+	private static void gCheck(IOSDriver driver){
+		List<WebElement> CHECK =driver.findElements(By.className("XCUIElementTypeButton"));
 		System.out.println("Check");
 		System.out.println(CHECK.size());
 		if(!CHECK.isEmpty())
 		{
-			WebElement signIn = driver.findElement(By.xpath("//android.widget.Button[@text=\"Sign In as Weker42331@huleos.com\"]"));
+			WebElement signIn = driver.findElement(By.xpath("//XCUIElementTypeButton[@text=\"Sign In as Weker42331@huleos.com\"]"));
 			signIn.click();
 		}
 		else{
@@ -80,30 +80,30 @@ public class GoogleHome {
 			Password.click();
 			Password.sendKeys("Atomberg@123");
 			sleep(1000);
-			driver.findElement(By.xpath("//android.widget.Button[@text=\"submit\"]")).click();
+			driver.findElement(By.xpath("//XCUIElementTypeButton[@text=\"submit\"]")).click();
 		}
 		System.out.println("Account entered");
 		Sleep(5000);
-		WebElement done = driver.findElement(By.xpath("//android.widget.Button[@text=\"Done\"]"));
+		WebElement done = driver.findElement(By.xpath("//XCUIElementTypeButton[@text=\"Done\"]"));
 		done.click();
 		back(driver);
 }
-	private static void back(AppiumDriver driver){
+	private static void back(IOSDriver driver){
 		WebElement SLD =null;
 		while(SLD == null)
 		{
 			driver.navigate().back();
 			try {
-				SLD=driver.findElement(By.xpath("//android.view.View[@content-desc=\"Select and link device\"]"));
+				SLD=driver.findElement(By.xpath("//XCUIElementTypeStaticText[@name=\"Select and link device\"]"));
 			}catch (Exception e)
 			{}
 		}
 	}
 
-	private static void checkContinue(AppiumDriver driver){
+	private static void checkContinue(IOSDriver driver){
 		WebElement continueBt = null;
 		try {
-			continueBt = driver.findElement(By.xpath("//android.widget.Button[@text=\"Continue\"]"));
+			continueBt = driver.findElement(By.xpath("//XCUIElementTypeButton[@text=\"Continue\"]"));
 		}catch (Exception e){}
 		if(continueBt != null)
 		{

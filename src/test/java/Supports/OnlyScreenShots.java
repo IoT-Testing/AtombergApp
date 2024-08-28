@@ -13,10 +13,10 @@ import org.openqa.selenium.remote.DesiredCapabilities; //Selenium Dependencies f
 import org.testng.Assert;
 
 import AtombergTest.Method;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.ios.IOSDriver;
 
 public class OnlyScreenShots {
-	public static AppiumDriver driver;
+	public static IOSDriver driver;
 
 	public static void main(String[] args) {
 		try {
@@ -42,7 +42,7 @@ public class OnlyScreenShots {
 		try {
 			System.out.println("Initializing Appium driver..."); // Check if the Appium driver is initialized
 			URL url = new URL("http://192.168.8.255:4723/wd/hub"); // URL of the Appium session
-			driver = new AppiumDriver(url, cap);
+			driver = new IOSDriver(url, cap);
 			System.out.println("Appium driver initialized.");
 		} catch (MalformedURLException e) {
 			System.out.println("Error initializing Appium driver: " + e.getMessage());
@@ -52,7 +52,7 @@ public class OnlyScreenShots {
 			return;
 		}
 		Method.captureScreenshot(driver);
-		List<WebElement> el = driver.findElements(By.xpath("//android.widget.ImageView"));
+		List<WebElement> el = driver.findElements(By.xpath("//XCUIElementTypeImage"));
 		System.out.println("List Size: " + el.size() + "\n");
 
 		for (WebElement element : el) {

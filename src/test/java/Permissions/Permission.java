@@ -7,12 +7,12 @@ import org.openqa.selenium.WebElement;
 
 import Actions.Tap;
 import AtombergTest.Method;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.ios.IOSDriver;
 
 import java.util.concurrent.TimeUnit;
 
 public class Permission {
-	public static void Allow(AppiumDriver driver){
+	public static void Allow(IOSDriver driver){
 		WebElement AllowButton = null;
 		try {
 			AllowButton = driver.findElement(By.id("com.android.permissioncontroller:id/permission_allow_button"));

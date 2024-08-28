@@ -4515,7 +4515,7 @@
           "nanos": 519000000
         }
       },
-      "message": "[OplusViewMirrorManager] updateHostViewRootIfNeeded, not support android.view.ViewRootImpl@fa64496"
+      "message": "[OplusViewMirrorManager] updateHostViewRootIfNeeded, not support XCUIElementTypeStaticTextRootImpl@fa64496"
     },
     {
       "header": {
@@ -8085,7 +8085,7 @@
           "nanos": 106000000
         }
       },
-      "message": "sendCancelIfRunning: isInProgress\u003dfalsecallback\u003dandroid.view.ViewRootImpl$$ExternalSyntheticLambda17@e19df11"
+      "message": "sendCancelIfRunning: isInProgress\u003dfalsecallback\u003dXCUIElementTypeStaticTextRootImpl$$ExternalSyntheticLambda17@e19df11"
     },
     {
       "header": {
@@ -14160,7 +14160,7 @@
           "nanos": 187000000
         }
       },
-      "message": "method: \u0027xpath\u0027, selector: \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[4]\u0027"
+      "message": "method: \u0027xpath\u0027, selector: \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeImage[4]\u0027"
     },
     {
       "header": {
@@ -14490,7 +14490,7 @@
           "nanos": 743000000
         }
       },
-      "message": "Took 0ms to retrieve 1 matches for \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[4]\u0027 XPath query"
+      "message": "Took 0ms to retrieve 1 matches for \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeImage[4]\u0027 XPath query"
     },
     {
       "header": {
@@ -21705,7 +21705,7 @@
           "nanos": 866000000
         }
       },
-      "message": "method: \u0027xpath\u0027, selector: \u0027//android.widget.Button[@content-desc\u003d\"Continue\"]\u0027"
+      "message": "method: \u0027xpath\u0027, selector: \u0027//XCUIElementTypeButton[@name\u003d\"Continue\"]\u0027"
     },
     {
       "header": {
@@ -21735,7 +21735,7 @@
           "nanos": 871000000
         }
       },
-      "message": "The following attributes will be included to the page source: [content-desc]"
+      "message": "The following attributes will be included to the page source: [name]"
     },
     {
       "header": {
@@ -21765,7 +21765,7 @@
           "nanos": 993000000
         }
       },
-      "message": "Took 0ms to retrieve 1 matches for \u0027//android.widget.Button[@content-desc\u003d\"Continue\"]\u0027 XPath query"
+      "message": "Took 0ms to retrieve 1 matches for \u0027//XCUIElementTypeButton[@name\u003d\"Continue\"]\u0027 XPath query"
     },
     {
       "header": {
@@ -26805,7 +26805,7 @@
           "nanos": 505000000
         }
       },
-      "message": "[OplusViewMirrorManager] updateHostViewRootIfNeeded, not support android.view.ViewRootImpl@19cf9ff"
+      "message": "[OplusViewMirrorManager] updateHostViewRootIfNeeded, not support XCUIElementTypeStaticTextRootImpl@19cf9ff"
     },
     {
       "header": {
@@ -28395,7 +28395,7 @@
           "nanos": 493000000
         }
       },
-      "message": "sendCancelIfRunning: isInProgress\u003dfalsecallback\u003dandroid.view.ViewRootImpl$$ExternalSyntheticLambda17@e3c53cc"
+      "message": "sendCancelIfRunning: isInProgress\u003dfalsecallback\u003dXCUIElementTypeStaticTextRootImpl$$ExternalSyntheticLambda17@e3c53cc"
     },
     {
       "header": {
@@ -29115,7 +29115,7 @@
           "nanos": 846000000
         }
       },
-      "message": "method: \u0027xpath\u0027, selector: \u0027//android.widget.Button[@content-desc\u003d\"Continue\"]\n\u0027"
+      "message": "method: \u0027xpath\u0027, selector: \u0027//XCUIElementTypeButton[@name\u003d\"Continue\"]\n\u0027"
     },
     {
       "header": {
@@ -29145,7 +29145,7 @@
           "nanos": 883000000
         }
       },
-      "message": "The following attributes will be included to the page source: [content-desc]"
+      "message": "The following attributes will be included to the page source: [name]"
     },
     {
       "header": {
@@ -29265,7 +29265,7 @@
           "nanos": 16000000
         }
       },
-      "message": "Took 0ms to retrieve 1 matches for \u0027//android.widget.Button[@content-desc\u003d\"Continue\"]\n\u0027 XPath query"
+      "message": "Took 0ms to retrieve 1 matches for \u0027//XCUIElementTypeButton[@name\u003d\"Continue\"]\n\u0027 XPath query"
     },
     {
       "header": {
@@ -36315,7 +36315,7 @@
           "nanos": 956000000
         }
       },
-      "message": "[OplusViewMirrorManager] updateHostViewRootIfNeeded, not support android.view.ViewRootImpl@2f3d1f8"
+      "message": "[OplusViewMirrorManager] updateHostViewRootIfNeeded, not support XCUIElementTypeStaticTextRootImpl@2f3d1f8"
     },
     {
       "header": {
@@ -44370,7 +44370,7 @@
           "nanos": 158000000
         }
       },
-      "message": "method: \u0027xpath\u0027, selector: \u0027//android.widget.Button[@resource-id\u003d\"com.android.permissioncontroller:id/permission_allow_button\"]\n\u0027"
+      "message": "method: \u0027xpath\u0027, selector: \u0027//XCUIElementTypeButton[@resource-id\u003d\"com.android.permissioncontroller:id/permission_allow_button\"]\n\u0027"
     },
     {
       "header": {
@@ -44700,7 +44700,7 @@
           "nanos": 310000000
         }
       },
-      "message": "Took 0ms to retrieve 1 matches for \u0027//android.widget.Button[@resource-id\u003d\"com.android.permissioncontroller:id/permission_allow_button\"]\n\u0027 XPath query"
+      "message": "Took 0ms to retrieve 1 matches for \u0027//XCUIElementTypeButton[@resource-id\u003d\"com.android.permissioncontroller:id/permission_allow_button\"]\n\u0027 XPath query"
     },
     {
       "header": {
@@ -51315,7 +51315,7 @@
           "nanos": 549000000
         }
       },
-      "message": "[OplusViewMirrorManager] updateHostViewRootIfNeeded, not support android.view.ViewRootImpl@69addde"
+      "message": "[OplusViewMirrorManager] updateHostViewRootIfNeeded, not support XCUIElementTypeStaticTextRootImpl@69addde"
     },
     {
       "header": {
@@ -51705,7 +51705,7 @@
           "nanos": 569000000
         }
       },
-      "message": "sendCancelIfRunning: isInProgress\u003dfalsecallback\u003dandroid.view.ViewRootImpl$$ExternalSyntheticLambda17@99a26d1"
+      "message": "sendCancelIfRunning: isInProgress\u003dfalsecallback\u003dXCUIElementTypeStaticTextRootImpl$$ExternalSyntheticLambda17@99a26d1"
     },
     {
       "header": {
@@ -59550,7 +59550,7 @@
           "nanos": 739000000
         }
       },
-      "message": "sendCancelIfRunning: isInProgress\u003dfalsecallback\u003dandroid.view.ViewRootImpl$$ExternalSyntheticLambda17@73e4bbf"
+      "message": "sendCancelIfRunning: isInProgress\u003dfalsecallback\u003dXCUIElementTypeStaticTextRootImpl$$ExternalSyntheticLambda17@73e4bbf"
     },
     {
       "header": {
@@ -59625,7 +59625,7 @@
           "nanos": 746000000
         }
       },
-      "message": "[OplusViewMirrorManager] updateHostViewRootIfNeeded, not support android.view.ViewRootImpl@34f43d3"
+      "message": "[OplusViewMirrorManager] updateHostViewRootIfNeeded, not support XCUIElementTypeStaticTextRootImpl@34f43d3"
     },
     {
       "header": {
@@ -66630,7 +66630,7 @@
           "nanos": 915000000
         }
       },
-      "message": "sendCancelIfRunning: isInProgress\u003dfalsecallback\u003dandroid.view.ViewRootImpl$$ExternalSyntheticLambda17@79c5b10"
+      "message": "sendCancelIfRunning: isInProgress\u003dfalsecallback\u003dXCUIElementTypeStaticTextRootImpl$$ExternalSyntheticLambda17@79c5b10"
     },
     {
       "header": {
@@ -66675,7 +66675,7 @@
           "nanos": 922000000
         }
       },
-      "message": "[OplusViewMirrorManager] updateHostViewRootIfNeeded, not support android.view.ViewRootImpl@6ad15a6"
+      "message": "[OplusViewMirrorManager] updateHostViewRootIfNeeded, not support XCUIElementTypeStaticTextRootImpl@6ad15a6"
     },
     {
       "header": {
@@ -68850,7 +68850,7 @@
           "nanos": 190000000
         }
       },
-      "message": "method: \u0027xpath\u0027, selector: \u0027//android.widget.Button[@resource-id\u003d\"com.android.permissioncontroller:id/permission_allow_foreground_only_button\"]\n\u0027"
+      "message": "method: \u0027xpath\u0027, selector: \u0027//XCUIElementTypeButton[@resource-id\u003d\"com.android.permissioncontroller:id/permission_allow_foreground_only_button\"]\n\u0027"
     },
     {
       "header": {
@@ -69930,7 +69930,7 @@
           "nanos": 221000000
         }
       },
-      "message": "Took 0ms to retrieve 1 matches for \u0027//android.widget.Button[@resource-id\u003d\"com.android.permissioncontroller:id/permission_allow_foreground_only_button\"]\n\u0027 XPath query"
+      "message": "Took 0ms to retrieve 1 matches for \u0027//XCUIElementTypeButton[@resource-id\u003d\"com.android.permissioncontroller:id/permission_allow_foreground_only_button\"]\n\u0027 XPath query"
     },
     {
       "header": {
@@ -74400,7 +74400,7 @@
           "nanos": 499000000
         }
       },
-      "message": "sendCancelIfRunning: isInProgress\u003dfalsecallback\u003dandroid.view.ViewRootImpl$$ExternalSyntheticLambda17@8aefbe7"
+      "message": "sendCancelIfRunning: isInProgress\u003dfalsecallback\u003dXCUIElementTypeStaticTextRootImpl$$ExternalSyntheticLambda17@8aefbe7"
     },
     {
       "header": {
@@ -77085,7 +77085,7 @@
           "nanos": 921000000
         }
       },
-      "message": "method: \u0027xpath\u0027, selector: \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.widget.ImageView\u0027"
+      "message": "method: \u0027xpath\u0027, selector: \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[1]/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[1]/XCUIElementTypeImage\u0027"
     },
     {
       "header": {
@@ -88875,7 +88875,7 @@
           "nanos": 34000000
         }
       },
-      "message": "Took 0ms to retrieve 0 matches for \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.widget.ImageView\u0027 XPath query"
+      "message": "Took 0ms to retrieve 0 matches for \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[1]/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[1]/XCUIElementTypeImage\u0027 XPath query"
     },
     {
       "header": {
@@ -89415,7 +89415,7 @@
           "nanos": 578000000
         }
       },
-      "message": "method: \u0027xpath\u0027, selector: \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.widget.ImageView\u0027"
+      "message": "method: \u0027xpath\u0027, selector: \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[1]/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[1]/XCUIElementTypeImage\u0027"
     },
     {
       "header": {
@@ -89460,7 +89460,7 @@
           "nanos": 815000000
         }
       },
-      "message": "Took 0ms to retrieve 0 matches for \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.widget.ImageView\u0027 XPath query"
+      "message": "Took 0ms to retrieve 0 matches for \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[1]/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[1]/XCUIElementTypeImage\u0027 XPath query"
     },
     {
       "header": {
@@ -89625,7 +89625,7 @@
           "nanos": 351000000
         }
       },
-      "message": "method: \u0027xpath\u0027, selector: \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.widget.ImageView\u0027"
+      "message": "method: \u0027xpath\u0027, selector: \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[1]/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[1]/XCUIElementTypeImage\u0027"
     },
     {
       "header": {
@@ -90465,7 +90465,7 @@
           "nanos": 602000000
         }
       },
-      "message": "Took 0ms to retrieve 0 matches for \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.widget.ImageView\u0027 XPath query"
+      "message": "Took 0ms to retrieve 0 matches for \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[1]/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[1]/XCUIElementTypeImage\u0027 XPath query"
     },
     {
       "header": {
@@ -90540,7 +90540,7 @@
           "nanos": 167000000
         }
       },
-      "message": "method: \u0027xpath\u0027, selector: \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.widget.ImageView\u0027"
+      "message": "method: \u0027xpath\u0027, selector: \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[1]/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[1]/XCUIElementTypeImage\u0027"
     },
     {
       "header": {
@@ -90915,7 +90915,7 @@
           "nanos": 464000000
         }
       },
-      "message": "Took 0ms to retrieve 0 matches for \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.widget.ImageView\u0027 XPath query"
+      "message": "Took 0ms to retrieve 0 matches for \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[1]/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[1]/XCUIElementTypeImage\u0027 XPath query"
     },
     {
       "header": {
@@ -91200,7 +91200,7 @@
           "nanos": 925000000
         }
       },
-      "message": "method: \u0027xpath\u0027, selector: \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.widget.ImageView\u0027"
+      "message": "method: \u0027xpath\u0027, selector: \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[1]/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[1]/XCUIElementTypeImage\u0027"
     },
     {
       "header": {
@@ -91275,7 +91275,7 @@
           "nanos": 134000000
         }
       },
-      "message": "Took 0ms to retrieve 0 matches for \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.widget.ImageView\u0027 XPath query"
+      "message": "Took 0ms to retrieve 0 matches for \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[1]/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[1]/XCUIElementTypeImage\u0027 XPath query"
     },
     {
       "header": {
@@ -91635,7 +91635,7 @@
           "nanos": 196000000
         }
       },
-      "message": "method: \u0027xpath\u0027, selector: \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]/android.widget.ImageView\u0027"
+      "message": "method: \u0027xpath\u0027, selector: \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[1]/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[3]/XCUIElementTypeImage\u0027"
     },
     {
       "header": {
@@ -91695,7 +91695,7 @@
           "nanos": 433000000
         }
       },
-      "message": "Took 0ms to retrieve 0 matches for \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]/android.widget.ImageView\u0027 XPath query"
+      "message": "Took 0ms to retrieve 0 matches for \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[1]/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[3]/XCUIElementTypeImage\u0027 XPath query"
     },
     {
       "header": {
@@ -92025,7 +92025,7 @@
           "nanos": 959000000
         }
       },
-      "message": "method: \u0027xpath\u0027, selector: \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]/android.widget.ImageView\u0027"
+      "message": "method: \u0027xpath\u0027, selector: \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[1]/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[3]/XCUIElementTypeImage\u0027"
     },
     {
       "header": {
@@ -92100,7 +92100,7 @@
           "nanos": 196000000
         }
       },
-      "message": "Took 0ms to retrieve 0 matches for \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]/android.widget.ImageView\u0027 XPath query"
+      "message": "Took 0ms to retrieve 0 matches for \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[1]/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[3]/XCUIElementTypeImage\u0027 XPath query"
     },
     {
       "header": {
@@ -92835,7 +92835,7 @@
           "nanos": 713000000
         }
       },
-      "message": "method: \u0027xpath\u0027, selector: \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]/android.widget.ImageView\u0027"
+      "message": "method: \u0027xpath\u0027, selector: \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[1]/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[3]/XCUIElementTypeImage\u0027"
     },
     {
       "header": {
@@ -93165,7 +93165,7 @@
           "nanos": 492000000
         }
       },
-      "message": "Took 0ms to retrieve 0 matches for \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]/android.widget.ImageView\u0027 XPath query"
+      "message": "Took 0ms to retrieve 0 matches for \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[1]/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[3]/XCUIElementTypeImage\u0027 XPath query"
     },
     {
       "header": {
@@ -93705,7 +93705,7 @@
           "nanos": 79000000
         }
       },
-      "message": "method: \u0027xpath\u0027, selector: \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]/android.widget.ImageView\u0027"
+      "message": "method: \u0027xpath\u0027, selector: \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[1]/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[3]/XCUIElementTypeImage\u0027"
     },
     {
       "header": {
@@ -93765,7 +93765,7 @@
           "nanos": 310000000
         }
       },
-      "message": "Took 0ms to retrieve 0 matches for \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]/android.widget.ImageView\u0027 XPath query"
+      "message": "Took 0ms to retrieve 0 matches for \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[1]/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[3]/XCUIElementTypeImage\u0027 XPath query"
     },
     {
       "header": {
@@ -94335,7 +94335,7 @@
           "nanos": 844000000
         }
       },
-      "message": "method: \u0027xpath\u0027, selector: \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]/android.widget.ImageView\u0027"
+      "message": "method: \u0027xpath\u0027, selector: \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[1]/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[3]/XCUIElementTypeImage\u0027"
     },
     {
       "header": {
@@ -94395,7 +94395,7 @@
           "nanos": 449000000
         }
       },
-      "message": "Took 0ms to retrieve 0 matches for \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]/android.widget.ImageView\u0027 XPath query"
+      "message": "Took 0ms to retrieve 0 matches for \u0027//android.widget.FrameLayout[@resource-id\u003d\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[1]/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText/XCUIElementTypeStaticText[3]/XCUIElementTypeImage\u0027 XPath query"
     },
     {
       "header": {

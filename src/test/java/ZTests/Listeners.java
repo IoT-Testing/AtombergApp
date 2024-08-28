@@ -4,7 +4,7 @@ import AtombergTest.Method;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.ios.IOSDriver;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
 
