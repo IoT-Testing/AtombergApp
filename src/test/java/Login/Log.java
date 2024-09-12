@@ -8,6 +8,38 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 public class Log {
+
+	//Login Methods
+	public static void In(AppiumDriver driver) {
+		try {
+
+			int randomNumber = (int) (Math.random() * 4); // generate a random number between 0 and 5
+			switch (randomNumber) {
+				case 0:
+					System.out.println("Login with Apple");
+					Apple.Login(driver);
+					break;
+				case 1:
+					System.out.println("Login with Email");
+					Email.Login(driver);
+					break;
+				case 2:
+					System.out.println("Login with Facebook");
+					FB.Login(driver);
+					break;
+
+				case 3:
+					System.out.println("Login with Google");
+					Google.Login(driver);
+					break;
+			}
+		} catch (Exception exp) {
+			System.out.println(exp.getMessage());
+			exp.printStackTrace();
+		}
+	}
+
+	//Logout from any screen
 	public static void Out(AppiumDriver driver) {
 		try {
 			WebElement MoreTab = null;
@@ -36,11 +68,11 @@ public class Log {
 			Ok.click();
 
 		} catch (Exception exp) {
-			System.out.println(exp.getCause());
 			System.out.println(exp.getMessage());
 			exp.printStackTrace();
 		}
 	}
+
 	private static void sleep(long millis) {
 		try {
 			Thread.sleep(millis);
@@ -48,4 +80,5 @@ public class Log {
 			e.printStackTrace();
 		}
 	}
+
 }

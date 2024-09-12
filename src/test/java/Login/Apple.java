@@ -35,7 +35,7 @@ public class Apple {
 			emailField.sendKeys("bhagatrb4174@gmail.com"); // Enter Email id
 			Method.captureScreenshot(driver);
 			emailField.getText();
-			System.out.println("" + emailField.getText() + "");
+			System.out.println(" " + emailField.getText() + " ");
 			sleep(1000);
 			System.out.println("Email Entered...");
 			Method.captureScreenshot(driver);
@@ -54,7 +54,7 @@ public class Apple {
 			System.out.println("Password entered..."); // Enter Password
 
 			WebElement SignIn = driver.findElement(By.xpath("//android.widget.Button[@text=\"Sign In\"]"));
-			SignIn.click(); // Continue to Login
+			SignIn.click(); // Continue to Log in
 			sleep(2000);
 			System.out.println("On Home Screen");
 			Method.captureScreenshot(driver);

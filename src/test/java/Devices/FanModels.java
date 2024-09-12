@@ -6,8 +6,11 @@ import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
 
-public class Fans {
-	public static void SixLEDcolorSelect(AppiumDriver driver) {
+public class FanModels {
+
+
+	// to select whether the selected model(at random) is renesa, renesa+. studio+
+	public static void SixLEDColorSelect(AppiumDriver driver) {
 		WebElement RPlus = null;
 		WebElement SPlus = null;
 		try {
@@ -28,6 +31,7 @@ public class Fans {
 		
 	}
 
+	// below are the SKU according to the model selected
 	public static void Renesa(AppiumDriver driver) {
 		try {
 			int randomNumber = (int) (Math.random() * 5); // generate a random number between 0 and 5
@@ -70,7 +74,6 @@ public class Fans {
 
 			}
 		} catch (Exception exp) {
-			System.out.println(exp.getCause());
 			System.out.println(exp.getMessage());
 			exp.printStackTrace();
 		}
@@ -104,7 +107,6 @@ public class Fans {
 				break;
 			}
 		} catch (Exception exp) {
-			System.out.println(exp.getCause());
 			System.out.println(exp.getMessage());
 			exp.printStackTrace();
 		}
@@ -126,7 +128,6 @@ public class Fans {
 				break;
 			}
 		} catch (Exception exp) {
-			System.out.println(exp.getCause());
 			System.out.println(exp.getMessage());
 			exp.printStackTrace();
 		}
@@ -148,7 +149,6 @@ public class Fans {
 				break;
 			}
 		} catch (Exception exp) {
-			System.out.println(exp.getCause());
 			System.out.println(exp.getMessage());
 			exp.printStackTrace();
 		}
@@ -176,7 +176,6 @@ public class Fans {
 				break;
 			}
 		} catch (Exception exp) {
-			System.out.println(exp.getCause());
 			System.out.println(exp.getMessage());
 			exp.printStackTrace();
 		}
@@ -198,11 +197,12 @@ public class Fans {
 				break;
 			}
 		} catch (Exception exp) {
-			System.out.println(exp.getCause());
 			System.out.println(exp.getMessage());
 			exp.printStackTrace();
 		}
 	}
+
+	//thread sleep
 	private static void sleep(long millis) {
 		try {
 			Thread.sleep(millis);

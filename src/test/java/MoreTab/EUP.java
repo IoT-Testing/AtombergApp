@@ -7,6 +7,7 @@ import AtombergTest.Method;
 import io.appium.java_client.AppiumDriver;
 
 public class EUP {
+	// Unit Price Check
 	public static void UnitPrice(AppiumDriver driver) {
 		WebElement UnitPrice = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Electricity unit price\"]"));
 		UnitPrice.click();
@@ -17,6 +18,8 @@ public class EUP {
 		ChangeAmount.click();
 		Method.captureScreenshot(driver);
 	}
+
+	// the currency
 	public static void Currency(AppiumDriver driver) {
 		WebElement ChangeCurrency = driver.findElement(By.xpath("//android.view.View[@content-desc=\"INR\"]"));
 		ChangeCurrency.click();

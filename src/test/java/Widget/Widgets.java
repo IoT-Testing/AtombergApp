@@ -1,15 +1,10 @@
 package Widget;
 
 import Actions.Swipe;
-import AtombergTest.Method;
-import AtombergTest.Monkey;
 import io.appium.java_client.AppiumDriver;
 import org.awaitility.Awaitility;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-
-import java.util.List;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public class Widgets {
@@ -43,15 +38,6 @@ public class Widgets {
         sleep(1000);
         nextFan.click();
 
-/*        List<WebElement> widgetButtons = driver.findElements(By.className("android.widget.ImageButton"));
-        System.out.println(widgetButtons.size());
-        for(int i=0; i<widgetButtons.size(); i++)
-        {
-            Random random = new Random();
-            int index = random.nextInt(widgetButtons.size());
-
-            widgetButtons.get(index).click();
-        }*/
     }
 
     public static void sleep(long millis) {

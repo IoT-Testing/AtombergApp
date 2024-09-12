@@ -10,8 +10,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ExtentReportAT {
-    private static ExtentReports extent;
-    private static final ThreadLocal<ExtentTest> test = new ThreadLocal<>();
+    public static ExtentReports extent;
+    public static final ThreadLocal<ExtentTest> test = new ThreadLocal<>();
     private static final ThreadLocal<Long> startTime = new ThreadLocal<>();
     public ExtentReportAT() {
 

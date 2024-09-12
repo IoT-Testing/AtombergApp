@@ -20,15 +20,10 @@ public class Check {
 		Lock(driver);
 	}
 
-	public static void blob(AppiumDriver driver)
-	{
-		System.out.println("checking the git");
-	}
-
 	public static void Lock(AppiumDriver driver) {
 		/**
 		 * @author Rohit
-		 */
+		 **/
 		try {
 			sleep(5000);
 			WebElement AddButton = null;

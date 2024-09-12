@@ -1,13 +1,10 @@
 package MoreTab;
 
 import org.awaitility.Awaitility;
-import org.mozilla.javascript.ast.WhileLoop;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-
 import Actions.Scroll;
 import Actions.Swipe;
-import Actions.Tap;
 import AtombergTest.Method;
 import io.appium.java_client.AppiumDriver;
 
@@ -15,8 +12,8 @@ import java.util.concurrent.TimeUnit;
 
 public class Help {
     public static void RaC(AppiumDriver driver) {
-        WebElement RaiseComplaint = driver
-                .findElement(By.xpath("//android.view.View[@content-desc=\"Raise a complaint\"]"));
+        // Tap on Raise a complaint
+        WebElement RaiseComplaint = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Raise a complaint\"]"));
         RaiseComplaint.click();
         Method.captureScreenshot(driver);
         System.out.println("Tap on Raise Complaint");
@@ -24,7 +21,6 @@ public class Help {
         driver.navigate().back();
 
     }
-
     public static void TC(AppiumDriver driver) {
         WebElement TrackComplaint = driver
                 .findElement(By.xpath("//android.view.View[@content-desc=\"Track complaints\"]"));
@@ -42,7 +38,6 @@ public class Help {
         }
         if (NoComplaints != null) {
             System.out.println("No Complaints Raised.");
-
         }
 
         Method.captureScreenshot(driver);
@@ -83,7 +78,6 @@ public class Help {
 
         Method.captureScreenshot(driver);
         System.out.println("Alexa Video Opened");
-
         VideoTryCatch(driver);
         VideoTryCatch(driver);
         VideoTryCatch(driver);

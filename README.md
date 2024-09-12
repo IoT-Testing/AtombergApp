@@ -15,13 +15,20 @@ There are few stress tests in the project.
 
 
  **Prerequisites**
-1. Appium Server should be installed in the Host PC
-2. Java compatible IDE (IntelliJ IDE or Eclipse).
-3. Android Device with developer mode. Connect it with host using USB cable.
-4. Dependencies for the project to be mentioned in pom.xml file.
-5. NPM installed in the HOST PC. https://nodejs.org/en
-6. cmd : `npm install appium` 
+1. Appium/Appium Desktop Server should be installed in the Host PC
+2. Appium Inspector should be installed to get the element ID's
+3. Java compatible IDE (IntelliJ IDE or Eclipse).
+4. Android Device with developer mode. Connect it with host using USB cable.
+5. Dependencies for the project to be mentioned in pom.xml file.
+6. NPM installed in the HOST PC. https://nodejs.org/en
+7. cmd : `npm install appium`
 
+**Cmd prompt**
+//adb logcat *:E | findstr "com.atomberg.app"
+
+// robot -d Output Test/Login.robot
+
+//adb shell monkey -p com.atomberg.app -v 5000 --throttle 100
 
 **Communication**
 

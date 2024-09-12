@@ -1,15 +1,12 @@
 package Supports; //To check 
 
-import io.appium.java_client.AppiumDriver;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Map;
-
-import Login.Login;
 
 public class Screen {
 	private static Process process = null;
+
 
     private Screen(Process process) {
         Screen.process = process;

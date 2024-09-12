@@ -11,24 +11,25 @@ import io.appium.java_client.AppiumDriver;
 
 public class Add {
 	public static AppiumDriver driver;
-	public static void Fan(AppiumDriver driver)
-	{
+	public static void Fan(AppiumDriver driver) {
 
 		WebElement AddButton = null;
 		try {
 			AddButton = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]/android.widget.ImageView"));
 		} catch (Exception exp) {
 		}
+		//Check if there are already fans present in the family of not
 		if (AddButton != null) {
 			AddButton.click();
 			sleep(1000);
 		} else {
+			// if there are no devices added in the family the tap with the coordinates of the add button(xpath vaue is not available)
 			Tap.withCoordinates(driver, 540, 1940);
 			sleep(1000);
 		}
 		System.out.println("Searching for Available devices");
 		for(int c = 0 ; c<10; c++) {
-			sleep(15000);
+			sleep(15000);//delay to let search get complete
 			WebElement element = null;
 			String xpathExpression = "//android.view.View[@content-desc=\"Atomberg Smart Fan\"]";
 			// Search Fan Only
@@ -46,26 +47,30 @@ public class Add {
 					WebElement Connect = driver.findElement(By.xpath("(//android.view.View[@content-desc=\"Connect\"])["+i+"]"));
 					System.out.println("Connect button at : "+i);
 					Connect.click();
-					WebElement LAdd = null;  //(//android.view.View[@content-desc="Connect"])[2]
-					WebElement LReset = null;//(//android.view.View[@content-desc="Connect"])[2]
-					WebElement FReset = null;
-					WebElement Reach = null;
+					WebElement LAdd = null;        //these are to check
+					WebElement LReset = null;  	   //for the specific popup that
+					WebElement FReset = null;	   //may occur if incorrect connect
+					WebElement Reach = null;	   //button is clicked
 					try {
+						//Lock Add is avoided as we are adding Fan
 						LAdd = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Connecting to the Lock...\r\n"
 								+ "Please don't press back button\"]"));
 					}catch(Exception e) {}
 					try {
+						//Lock Reset condition
 						LReset = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Could not add the lock\"]"));
 					}catch(Exception e) {}
 					try {
+						//Fan reset condition
 						FReset = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Device already paired\"]"));
 					}catch(Exception e) {}
 					try {
+						//Device could not be reached
 						Reach = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Could not reach\r\n"
 								+ "the device\"]"));
 					}catch(Exception e) {}
 
-					if(LAdd !=null || LReset!=null || FReset!=null || Reach != null)
+					if(LAdd !=null || LReset!=null || FReset!=null || Reach != null) // if any of those is applicable then to go back and press the nect connect button
 					{
 						if(LAdd != null)
 						{

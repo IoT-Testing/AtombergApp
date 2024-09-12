@@ -8,20 +8,19 @@ import AtombergTest.Method;
 import io.appium.java_client.AppiumDriver;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class Edit {
-	public static void Profile(AppiumDriver driver)
-	{
-
+	public static void Profile(AppiumDriver driver) {
 		List<WebElement> ELEMENTS = driver.findElements(By.className("android.widget.ImageView"));
 		List<WebElement> elements = ELEMENTS.stream().filter(element -> element.getAttribute("content-desc") != null).collect(Collectors.toList());
 		System.out.println(elements.size());
-		List<WebElement> ele = elements.stream().filter(element -> element.getAttribute("content-desc").startsWith("Hi,")).collect(Collectors.toList());
-		for (WebElement e : elements) {
+		List<WebElement> ele = elements.stream().filter(element -> Objects.requireNonNull(element.getAttribute("content-desc")).startsWith("Hi,")).collect(Collectors.toList());
+		for (WebElement e : ele) {
 			System.out.println(e.getAttribute("content-desc"));
-			if (e.getAttribute("content-desc").startsWith("Hi,")) {
+			if (Objects.requireNonNull(e.getAttribute("content-desc")).startsWith("Hi,")) {
 				e.click();
 				System.out.println("Edit Profile");
 			}
@@ -48,7 +47,6 @@ public class Edit {
 		Method.captureScreenshot(driver);
 		driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Update\"]")).click();
 		sleep(250);
-		WebElement SLD = null;
 		back(driver);
 
 	}
@@ -64,8 +62,7 @@ public class Edit {
 			driver.navigate().back();
 			try {
 				SLD=driver.findElement(By.xpath("//android.view.View[@content-desc=\"Select and link device\"]"));
-			}catch (Exception e)
-			{}
+			}catch (Exception e){}
 		}
 	}
 }

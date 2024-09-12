@@ -3,11 +3,10 @@ package Devices;
 import Actions.NumberPad;
 import Actions.Tap;
 import AtombergTest.Method;
-
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-
 import org.awaitility.Awaitility;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -46,6 +45,7 @@ public class SO {//Search Online Fan
         Awaitility.await().atMost(millis, TimeUnit.MILLISECONDS);
     }
 
+    //Check the number of fans available online
     public static void CFO(AppiumDriver driver) {//Check Fan Online
         WebElement Fans = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Fans\"]"));
         Fans.click();   // click on the fan tab
@@ -60,7 +60,7 @@ public class SO {//Search Online Fan
         for (WebElement element : fans) {
             System.out.println(element.getAttribute("content-desc"));
             element.click(); // Clicks on the for and opens device control
-            Method.FanControl(driver); // Controls the fan
+            FanControl(driver); // Controls the fan
             driver.navigate().back();            // back
         }
         String previousFan = fans.get(fans.size()-2).getAttribute("content-desc");
@@ -72,15 +72,14 @@ public class SO {//Search Online Fan
             Scroll.Up(driver);
             List<WebElement> NEWFANS = driver.findElements(By.className("android.widget.Button"));
             List<WebElement> newfans = NEWFANS.stream().filter(dev -> dev.getAttribute("content-desc") != null).collect(Collectors.toList());
-            if (newfans.get(newfans.size() - 1).getAttribute("content-desc").equals(lastFan)) {
+            if (Objects.equals(newfans.get(newfans.size() - 1).getAttribute("content-desc"), lastFan)) {
                 System.out.println("No more devices");
             }
             System.out.println(newfans.size());
             int count = 0;
             for (WebElement fan : newfans) {
-
                 String name = fan.getAttribute("content-desc");
-                if (name.equals(previousFan) || name.equals(lastFan)) {
+                if (name != null &&(name.equals(previousFan) || name.equals(lastFan))) {
                     count ++;
                 }
             }
@@ -93,7 +92,7 @@ public class SO {//Search Online Fan
                 String name = newfans.get(i).getAttribute("content-desc");
                 System.out.println(i + name);
                 newfans.get(i).click(); // Clicks on the for and opens device control
-                Method.FanControl(driver); // Controls the fan
+                FanControl(driver); // Controls the fan
                 driver.navigate().back();            // back
             }
 
@@ -103,6 +102,7 @@ public class SO {//Search Online Fan
         }
     }
 
+    //Check the number of available Locks
     public static void Lock(AppiumDriver driver) {
         driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Locks\"]")).click();
         WebElement LO = null;  // checks Lock availability
@@ -130,6 +130,7 @@ public class SO {//Search Online Fan
 
         }
     }
+
     // inside the lock control
     public static void LockControl(AppiumDriver driver) {
         sleep(7500);
@@ -167,6 +168,7 @@ public class SO {//Search Online Fan
 
     }
 
+    //Opening the History of the locks
     public static void history(AppiumDriver driver) {
         WebElement history = null;
         try {// check in the history button is available
@@ -179,6 +181,7 @@ public class SO {//Search Online Fan
         }
     }
 
+    //Opening the Locks Settings
     public static void lockSettings(AppiumDriver driver) {
         WebElement settings = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Settings\"]"));
         settings.click();  // tap on the Setting button
@@ -193,6 +196,7 @@ public class SO {//Search Online Fan
 
     }
 
+    //Opening the access keys
     public static void AccessKeys(AppiumDriver driver) {
 
         WebElement AccessKeys = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Access\nkeys\"]"));
@@ -216,6 +220,7 @@ public class SO {//Search Online Fan
         NumberPad.done(driver);
     }
 
+    //Opening each and every key type
     public static void KeyType(AppiumDriver driver) {
         List<WebElement> KEYS = driver.findElements(By.className("android.widget.Button"));
         int i;
@@ -223,8 +228,8 @@ public class SO {//Search Online Fan
         for (i = 0; i < total; i++) {
             List<WebElement> Keys = driver.findElements(By.className("android.widget.Button"));
             WebElement key = Keys.get(i);
-            boolean OTP = key.getAttribute("content-desc").endsWith("OTP"); // checks if the last string is OTP
-            boolean New = key.getAttribute("content-desc").endsWith("NEW"); // checks if the last string is NEW
+            boolean OTP = Objects.requireNonNull(key.getAttribute("content-desc")).endsWith("OTP"); // checks if the last string is OTP
+            boolean New = Objects.requireNonNull(key.getAttribute("content-desc")).endsWith("NEW"); // checks if the last string is NEW
             System.out.println(OTP || New); // When opened 1st time the last string is NEW while in the second attempt it is OTP
             key.click();
             if (OTP || New) {
@@ -245,6 +250,7 @@ public class SO {//Search Online Fan
         }
     }
 
+    //PINs, Biometrics and Card Settings
     public static void PBCSettings(AppiumDriver driver) {
         WebElement PBC = null; // Checks the availability on Pin, Biometrics & Cards in Lock Settings
         try {
@@ -284,6 +290,7 @@ public class SO {//Search Online Fan
         }
     }
 
+    //Turning on/off the passage mode
     public static void passageMode(AppiumDriver driver) {
         WebElement PMDisabled = null;
         try {
@@ -322,6 +329,7 @@ public class SO {//Search Online Fan
 
     }
 
+    // turning on/off the fingerprints
     public static void fingerprint(AppiumDriver driver) {
         WebElement FPDisabled = null;
         try {
@@ -343,6 +351,7 @@ public class SO {//Search Online Fan
         }
     }
 
+    //turning on/off the cards
     public static void CardEnable(AppiumDriver driver) {
         WebElement CNotAvail = null;
         WebElement CDisable = null;
@@ -374,4 +383,41 @@ public class SO {//Search Online Fan
             System.out.println("Cards Enabled");
         }
     }
+
+    public static void FanControl(AppiumDriver driver) {
+
+        WebElement Speed1 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"1\"]"));
+        Speed1.click();
+        System.out.println("Speed1");
+        Method.captureScreenshot(driver);
+
+
+        WebElement Speed2 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"2\"]"));
+        Speed2.click();
+        System.out.println("Speed2");
+        Method.captureScreenshot(driver);
+
+        WebElement Speed3 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"3\"]"));
+        Speed3.click();
+        System.out.println("Speed3");
+        Method.captureScreenshot(driver);
+
+        WebElement Speed4 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"4\"]"));
+        Speed4.click();
+        System.out.println("Speed4");
+        Method.captureScreenshot(driver);
+
+        WebElement Speed5 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"5\"]"));
+        Speed5.click();
+        System.out.println("Speed5");
+        Method.captureScreenshot(driver);
+
+        WebElement Boost = driver.findElement(By.xpath(
+                "//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.Button[5]"));
+        Boost.click();
+        System.out.println("Boost");
+        Method.captureScreenshot(driver);
+
+    }
+
 }

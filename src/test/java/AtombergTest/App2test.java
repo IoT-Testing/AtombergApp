@@ -39,7 +39,7 @@ class App2test {
 
 	
 	void App(String[] args) {
-		/**
+		/*
 		 * @author Rohit
 		 */
 		try {
@@ -47,7 +47,6 @@ class App2test {
 			Email.Login(driver);
 			sleep(5000);
 		} catch (Exception exp) {
-			System.out.println(exp.getCause());
 			System.out.println(exp.getMessage());
 			exp.printStackTrace();
 		}

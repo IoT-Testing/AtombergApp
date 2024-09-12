@@ -16,11 +16,7 @@ public class FB {
 	public static void Login(AppiumDriver driver) // Main
 	{
 		WebElement FBLoginButton = driver.findElement(By.xpath(
-				"//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[3]")); // Click
-																																																																	// on
-																																																																	// Login
-																																																																	// with
-																																																																	// Facebook
+				"//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[3]"));
 		FBLoginButton.click();
 		sleep(10000);
 		WebElement Home = null;
@@ -35,11 +31,9 @@ public class FB {
 			WebElement Continue = driver.findElement(By.xpath("//android.widget.Button[@text=\"Continue as Rohit\"]"));
 			Continue.click(); // Enter Email id
 			Method.captureScreenshot(driver);
-
 			sleep(10000);
 			System.out.println("On Home Screen");
 			Method.captureScreenshot(driver);
-
 			WebElement appLogo =driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.widget.ImageView"));
 			assert appLogo.isDisplayed();
 			await().atMost(10, TimeUnit.SECONDS).until(appLogo::isDisplayed);
@@ -54,5 +48,6 @@ public class FB {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+
 	}
 }

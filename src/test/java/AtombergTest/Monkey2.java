@@ -2,7 +2,6 @@ package AtombergTest; //To check
 
 import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.testng.Assert;
 import Login.Email;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -31,7 +30,6 @@ public class Monkey2 {
 			System.out.println("Monkey finished....");
 			driver.quit();
 		} catch (Exception exp) {
-			System.out.println(exp.getCause());
 			System.out.println(exp.getMessage());
 			exp.fillInStackTrace();
 		}

@@ -29,7 +29,7 @@ public class screenRecord {
 	public void setup() {
 
 		try {
-			// Use a empty DesiredCapabilities object
+			// Use an empty DesiredCapabilities object
 			DesiredCapabilities cap = new DesiredCapabilities();
 			cap.setCapability("platformName", "Android");
 			cap.setCapability("appPackage", "com.atomberg.app");
@@ -53,14 +53,14 @@ public class screenRecord {
 	}
 
 	@Test
-	public void testSample() throws InterruptedException {
+	public void testSample(){
 		System.out.println("I am inside Sample test");
 		System.out.println("test");
 
 	}
 
 	@AfterTest
-	public void tearDown() throws IOException, InterruptedException {
+	public void tearDown() throws IOException {
 		System.out.println("inside tear down");
 
 		String media = ((CanRecordScreen) driver).stopRecordingScreen();

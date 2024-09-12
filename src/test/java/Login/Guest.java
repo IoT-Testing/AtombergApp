@@ -4,8 +4,6 @@ import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-import java.sql.Driver;
-
 public class Guest {
     public static void Mode(AppiumDriver driver)
     {

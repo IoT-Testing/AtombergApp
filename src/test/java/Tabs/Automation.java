@@ -12,10 +12,7 @@ import org.openqa.selenium.interactions.Sequence;
 
 import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -156,7 +153,7 @@ public class Automation {
         e.click();
         // tap on the Family name on the screen (top right corner)
 
-        // getting the availble family list
+        // getting the available family list
         List<WebElement> rawFamilies = driver.findElements(By.className("android.view.View"));
         List<WebElement> FAMILIES = rawFamilies.stream().filter(fam -> fam.getAttribute("content-desc") != null).collect(Collectors.toList());
         FAMILIES.remove(FAMILIES.size() - 1);
@@ -171,7 +168,7 @@ public class Automation {
             families.remove(families.size() - 1);
             families.remove(families.size() - 1);
             System.out.println("number of families1 present =" + total);
-            if (families.get(i).getAttribute("content-desc").equals(fam1)) {
+            if (Objects.equals(families.get(i).getAttribute("content-desc"), fam1)) {
                 i++;
 
             }

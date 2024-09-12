@@ -1,32 +1,39 @@
 package Tabs;
+// This whole code is for all the elements and sub-elements present in the more tab section
+// the change in xpath may occur after the change in flutter libraries(happened once)
+// Please note that the code might some time get error if the element xpath value is different
+// Keep tabs on the path
+//Prerequisites for More Tab section are : Alexa and Google Home should be disconnected as we are test for alexa and google connectivity
 
 import org.awaitility.Awaitility;
 import org.openqa.selenium.*; //Selenium Dependencies
 import AtombergTest.Method;
-import Actions.*;
-import MoreTab.*;
-import Supports.*;
+import Actions.*; // Actions are create as per the apps convenience
+import MoreTab.*; // to avoid creating an object of the class multiple time, it is imported
+import Supports.*; // Alexa and Google Home
 import io.appium.java_client.AppiumDriver;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class MoreTab {
     public static void Options(AppiumDriver driver) {
         WebElement moreTab = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\n" +
-                "Tab 3 of 3\"]"));
+                "Tab 3 of 3\"]"));// More tab has a static value.
         moreTab.click();
         System.out.println("MoreTab");
-        sleep(1000);
-        Edit.Profile(driver);
+        sleep(1000); // wait till the tab is open
+        Edit.Profile(driver); // Edit profile elements and flow is set properly, one can change the values at send keys.
 
 		sleep(2000);
-		Alexa.Connect(driver);
+		Alexa.Connect(driver);  // Alexa connect have two different procedure: 1> to put the values 2> previous values
 		Sleep(5000);
-		GoogleHome.Connect(driver);
+		GoogleHome.Connect(driver); // Google Home have two different procedure: 1> to put the values 2> previous values
         Sleep(3000);
 
         WebElement Theme = driver.findElement(By.xpath("//android.widget.ScrollView/android.widget.ImageView[5]"));
-        Theme.click();
+        Theme.click(); // After the theme is changed the  rest of the app will run in that theme, one can add one more tap on the theme to go back to the previous theme
         System.out.println("Theme");
         Scroll.Up(driver);
 
@@ -36,10 +43,26 @@ public class MoreTab {
         sleep(1000);
         Tap.withPercentage(driver, 0.10, 0.10);
 
-        //Add Live Widget
-
         // Manage Family
-//        Manage.Family(driver);
+        Manage.Family(driver);
+        driver.navigate().back();
+
+        //Live Widget
+        WebElement LiveWidget = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Enable live widget\"]"));
+        LiveWidget.click();
+
+        List<WebElement> popup = driver.findElements(By.className("android.view.View"));
+        List<WebElement> elements = popup.stream().filter(element -> element.getAttribute("content-desc")!=null).collect(Collectors.toList());
+        for (WebElement element: elements)
+        {
+            if(Objects.equals(element.getAttribute("content-desc"), "Yes")){
+                element.click();
+                break;
+            }
+        }
+        WebElement successPopup = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Widget enabled!\"]"));
+        System.out.println(successPopup.isDisplayed());
+//        Assert.assertTrue(successPopup.isDisplayed());
 
         // Help
         WebElement HelpBt = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Help\"]"));
@@ -92,8 +115,7 @@ public class MoreTab {
         Awaitility.await().atLeast(millis, TimeUnit.MILLISECONDS);
     }
 
-    private static void Sleep(long millis)
-    {
+    private static void Sleep(long millis) {
         try {
             Thread.sleep(millis);
         } catch (InterruptedException e) {

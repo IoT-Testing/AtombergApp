@@ -1,35 +1,27 @@
 package AtombergTest; //To check 
 
-import MoreTab.*;
 import Login.Email;
 import java.net.URL;
 import java.time.Duration;
+
+import Tabs.Analytics;
 import org.awaitility.Awaitility;
 import java.util.concurrent.TimeUnit;
 import java.net.MalformedURLException;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
-
         /*
           @author Rohit B. Bhagat
          */
-
 public class App {
     public static AppiumDriver driver;
 
     public static void main(String[] args) {
         try {
             openAtomberg();
-            Email.Login(driver);
-            WebElement moreTab = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\n" +
-                    "Tab 3 of 3\"]"));
-            moreTab.click();
-            System.out.println("MoreTab");
-            sleep(1000);
-            Manage.Family(driver);
+            Email.Login(driver); // As in Android script, MainActivity i=of the app is mentioned, it starts from scratch
+            Analytics.Show(driver);
         } catch (Exception e) {
         }
     }
@@ -47,7 +39,7 @@ public class App {
             URL url = new URL("http://127.0.0.1:4723/wd/hub"); // URL of the Appium session
             driver = new AndroidDriver(url, cap);
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
-//            Screen.recordStart();  //Screen Recording only works in those mobiles which have screenrecording tool in the device OS
+//            Screen.recordStart();  //Screen Recording only works in those mobiles which have screen recording tool in the device OS
             System.out.println("Appium driver initialized.");
         } catch (MalformedURLException e) {
             System.out.println("Error initializing Appium driver: " + e.getMessage());
