@@ -25,7 +25,7 @@ public class Permission {
 		else
 		{
 			System.out.println("No Device Present");
-			Tap.withCoordinates(driver, 540, 1900);
+			Tap.withCoordinates(driver, 540, 1950);
 			driver.findElement(By.id("com.android.permissioncontroller:id/permission_allow_button")).click();
 		}
 		System.out.println("Permissions");

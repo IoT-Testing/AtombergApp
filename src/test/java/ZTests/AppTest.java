@@ -6,8 +6,10 @@ import MoreTab.*;
 import Tabs.Analytics;
 import Tabs.MoreTab;
 import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.Status;
 import io.appium.java_client.AppiumDriver;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
 import org.junit.jupiter.api.*;
@@ -20,7 +22,7 @@ import static ZTests.ExtentReportAT.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AppTest {
     public static AppiumDriver driver;
-    public static final ExtentReports extent = ExtentReportAT.getReportObjects();
+    public static final ExtentReports extent = getReportObjects();
 
     private static void sleep(long millis) {
         try {
@@ -32,27 +34,25 @@ public class AppTest {
 
     private static void openAtomberg() {
         DesiredCapabilities cap = new DesiredCapabilities();
-
         cap.setCapability("platformName", "Android");
         cap.setCapability("platformVersion", "14");
         cap.setCapability("appPackage", "com.atomberg.app");
         cap.setCapability("appActivity", "com.atomberg.app.MainActivity");
-        cap.setCapability("apksigner",
-                "C:\\Users\\Rohit\\Desktop\\android-sdk\\build-tools\\34.0.0\\lib\\apksigner.jar");
-        try {
-            System.out.println("Initializing Appium driver..."); // Check if the Appium driver is initialized
-
-            URL url = new URL("http://127.0.0.1:4723/wd/hub");// URL of the Appium session
-            driver = new AppiumDriver(url, cap);
-            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
-            System.out.println("Appium driver initialized.");
-        } catch (IOException e) {
-            System.out.println("Error initializing Appium driver: " + e.getMessage());
-            Assert.assertTrue(driver.findElement(By.xpath("//android.view.View[@content-desc=\"Experience smart living \n" +
-                    " with Atomberg\"]")).isDisplayed());
-            e.printStackTrace();
-            throw new RuntimeException(e);
+        cap.setCapability("apksigner", "/Users/himanshuchoudhary/apksigner.jar");
+        URL url = null;
+        try{
+            url = new URL("http://localhost:4723/wd/hub");
+        } catch (MalformedURLException e) {
+            System.out.println("Malformed URL exception " + e.getMessage());
         }
+        System.out.println("Initializing Appium driver..."); // Check if the Appium driver is initialized
+        try {
+            driver = new AppiumDriver(url, cap);
+        } catch (Exception e) {
+            System.out.println("error in initializing driver e = " + e.getMessage());
+        }
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+        System.out.println("Appium driver initialized.");
         System.out.println("Atomberg App Opened...");
         assert driver.findElement(By.xpath("//android.view.View[@content-desc=\"Experience smart living \n" +
                 " with Atomberg\"]")).isDisplayed();
@@ -67,7 +67,7 @@ public class AppTest {
             startTest("Open App");
             openAtomberg();
         } catch (Exception e) {
-            ExtentReportAT.getTest().log(com.aventstack.extentreports.Status.FAIL, "App Open failed: " + e.getMessage());
+            getTest().log(Status.FAIL, "App Open failed: " + e.getMessage());
         } finally {
             endTest();
         }
@@ -80,7 +80,7 @@ public class AppTest {
             startTest("Login");
             Email.Login(driver);
         } catch (Exception e) {
-            ExtentReportAT.getTest().log(com.aventstack.extentreports.Status.FAIL, "Login failed: " + e.getMessage());
+            getTest().log(Status.FAIL, "Login failed: " + e.getMessage());
         } finally {
             endTest();
         }
@@ -93,7 +93,7 @@ public class AppTest {
             startTest("Family");
             Manage.Family(driver);
         } catch (Exception e) {
-            ExtentReportAT.getTest().log(com.aventstack.extentreports.Status.FAIL, "Logout failed: " + e.getMessage());
+            getTest().log(Status.FAIL, "Logout failed: " + e.getMessage());
         } finally {
             endTest();
         }
@@ -106,7 +106,7 @@ public class AppTest {
             startTest("Fan Control");
             SO.Fan(driver);
         } catch (Exception e) {
-            ExtentReportAT.getTest().log(com.aventstack.extentreports.Status.FAIL, "Fan Control failed: " + e.getMessage());
+            getTest().log(Status.FAIL, "Fan Control failed: " + e.getMessage());
         } finally {
             endTest();
         }
@@ -120,7 +120,7 @@ public class AppTest {
             Analytics.Show(driver);
         } catch (Exception e) {
             e.printStackTrace();
-            ExtentReportAT.getTest().log(com.aventstack.extentreports.Status.FAIL, "Analytics failed: " + e.getMessage());
+            getTest().log(Status.FAIL, "Analytics failed: " + e.getMessage());
         } finally {
             endTest();
         }
@@ -135,7 +135,7 @@ public class AppTest {
             MoreTab.Options(driver);
 
         } catch (Exception e) {
-            ExtentReportAT.getTest().log(com.aventstack.extentreports.Status.FAIL, "More Tab failed: " + e.getMessage());
+            getTest().log(Status.FAIL, "More Tab failed: " + e.getMessage());
         } finally {
             {
                 endTest();
@@ -150,7 +150,7 @@ public class AppTest {
             startTest("Logout");
             AccManage.Logout(driver);
         } catch (Exception e) {
-            ExtentReportAT.getTest().log(com.aventstack.extentreports.Status.FAIL, "Logout failed: " + e.getMessage());
+            getTest().log(Status.FAIL, "Logout failed: " + e.getMessage());
         } finally {
             endTest();
         }
