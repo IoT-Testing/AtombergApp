@@ -11,6 +11,7 @@ import org.openqa.selenium.WebElement;
 import io.appium.java_client.AppiumDriver;
 
 public class AccManage {
+    //TODO : Add complete change password
     public static void ChangePassword(AppiumDriver driver) {
         WebElement ChangePassword = driver
                 .findElement(By.xpath("//android.view.View[@content-desc=\"Change password\"]"));

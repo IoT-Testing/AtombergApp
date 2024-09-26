@@ -10,17 +10,19 @@ import java.util.concurrent.TimeUnit;
 public class Widgets {
 
     public static void Home(AppiumDriver driver) {
+        //TODO : Check the working of the Widget and make changes if needed
+        //Not tested yet
         WebElement widget = null;
         do {
             try {
                 widget = driver.findElement(By.className("android.widget.RelativeLayout"));
             } catch (Exception e) {
             }
-            if (widget.equals(null)) {
+            if (widget==null) {
                 Swipe.Right(driver, 0.50, 0.80);
             }
 
-        }while(widget.equals(null));
+        }while(widget==null);
 
         WebElement spdBtUp= driver.findElement(By.id("com.atomberg.app:id/bt_up"));
         WebElement spdBtDown = driver.findElement(By.id("com.atomberg.app:id/bt_down"));

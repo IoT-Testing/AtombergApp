@@ -305,25 +305,22 @@ public class Help {
 
     private static void EnterSerialNumber(AppiumDriver driver) {
         WebElement ManualEnter = driver.findElement(By.xpath("//android.widget.EditText"));
-        ManualEnter.click();
+        ManualEnter.click(); // Tap on the edit text field
         Method.captureScreenshot(driver);
         System.out.println("Enter Barcode Manually...");
 
         WebElement ScanBarcode = driver.findElement(By.xpath("//android.widget.EditText/android.widget.ImageView"));
-        ScanBarcode.click();
+        ScanBarcode.click();// Scan the barcode by opening the camera
         Method.captureScreenshot(driver);
         System.out.println("Scan Barcode ...");
 
-        WebElement AllowCamera = null;
+        WebElement AllowCamera = null;// Checking if the permission for Camera is asked
         try {
             sleep(2000);
             AllowCamera = driver.findElement(By.id("com.android.permissioncontroller:id/permission_message"));
 
-        } catch (Exception exp) {
-
-        }
+        } catch (Exception exp) {}
         if (AllowCamera != null) {
-
             Method.captureScreenshot(driver);
             WebElement Camera = driver
                     .findElement(By.id("com.android.permissioncontroller:id/permission_allow_foreground_only_button"));

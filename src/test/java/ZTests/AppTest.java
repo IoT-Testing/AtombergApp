@@ -1,31 +1,41 @@
 package ZTests;
 
+import AtombergTest.Method;
 import Login.Email;
-import MoreTab.*;
+import MoreTab.AccManage;
+import MoreTab.Manage;
 import Tabs.Analytics;
 import Tabs.MoreTab;
 import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.Status;
 import io.appium.java_client.AppiumDriver;
+import org.junit.jupiter.api.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.DesiredCapabilities;
+
 import java.io.IOException;
 import java.net.URL;
 import java.time.Duration;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.junit.jupiter.api.*;
-import org.openqa.selenium.By;
-import org.openqa.selenium.remote.DesiredCapabilities;
-import AtombergTest.Method;
-import static ZTests.ExtentReportAT.*;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
+import static ZTests.ExtentReportAT.endTest;
+import static ZTests.ExtentReportAT.startTest;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AppTest {
-    private static final Logger log = LogManager.getLogger(AppTest.class);
-    public static AppiumDriver driver;
-    public static boolean ITestResult;
     public static final ExtentReports extent = ExtentReportAT.getReportObjects();
+    public static AppiumDriver driver;
+    public static boolean LoginResult;
+//TODO : implement the listeners /watchers
+
+    /*  public static boolean MoreTabResult;
+        public static boolean AnalyticsResult;
+        public static boolean LogoutResult;
+        public static boolean ProfileResult;
+    */
+    public static boolean ResultOpenApp;
 
     private static void sleep(long millis) {
         try {
@@ -35,7 +45,7 @@ public class AppTest {
         }
     }
 
-    private static void openAtomberg() {
+    private static boolean openAtomberg() {
         DesiredCapabilities cap = new DesiredCapabilities();
 
         cap.setCapability("platformName", "Android");
@@ -54,16 +64,32 @@ public class AppTest {
         } catch (IOException e) {
             System.out.println("Error Initializing Appium Driver: " + e.getMessage());
             e.printStackTrace();
+            return false;
         }
         System.out.println("Atomberg app opened...");
-        assert driver.findElement(By.xpath("//android.view.View[@content-desc=\"Experience smart living \n" +
-                " with Atomberg\"]")).isDisplayed();
-        sleep(6000);
         Method.captureScreenshot(driver);
+        WebElement LoginScreen = null;
+        try {
+            LoginScreen = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Experience smart living \n" +
+                    " with Atomberg\"]"));
+        } catch (Exception e) {
+        }
+        ResultOpenApp = LoginScreen != null;
+        sleep(6000);
+
+        return ResultOpenApp;
+    }
+
+    @AfterAll
+    static void teardown() {
+        if (extent != null) {
+            extent.flush();
+        }
     }
 
     @Order(1)
-    @Test // opening the app
+    @Test
+        // opening the app
     void testOpenApp() {
         try {
             startTest("Open App");
@@ -76,16 +102,19 @@ public class AppTest {
     }
 
     @Order(2)
-    @Test //login, there is one more login method, which is parameterising this test.
+    @Test
+        //login, there is one more login method, which is parameterising this test.
     void testLogin() {
+        assumeTrue(ResultOpenApp, "Failed to open app");
         try {
             startTest("Login");
             Email.Login(driver);
-            if (ITestResult)
-            {
+            if (LoginResult) {
                 ExtentReportAT.getTest().log(Status.PASS, "login test passed");
-            } else{
+                ExtentReportAT.test.get().pass("Screenshot captured", MediaEntityBuilder.createScreenCaptureFromPath(Method.ScreenShot).build());
+            } else {
                 ExtentReportAT.getTest().log(Status.FAIL, "login failed as the password was incorrect, other tests are skipped");
+                ExtentReportAT.test.get().fail("Screenshot captured", MediaEntityBuilder.createScreenCaptureFromPath(Method.ScreenShot).build());
                 driver.navigate().back();
                 driver.navigate().back();
             }
@@ -98,8 +127,10 @@ public class AppTest {
 
     @Order(3)
     @Test
-    void testManageFamily(){
-        assumeTrue(ITestResult, "as login failed, other tests are skipped");
+    void testManageFamily() {
+        assumeTrue(LoginResult, "as login failed, other tests are skipped");
+        /* assumeTrue will check if the login was successful and then continue with the code
+          If the login has failed there is no need to continue with the test */
         try {
             startTest("family");
             Manage.Family(driver);
@@ -112,21 +143,10 @@ public class AppTest {
 
     @Order(4)
     @Test
-//    void testFanControl() {
-//        try {
-//            startTest("fan control");
-//            so.fan(driver);
-//        } catch (Exception e) {
-//            ExtentReportAT.getTest().log(Status.FAIL, "fan control failed: " + e.getMessage());
-//        } finally {
-//            endTest();
-//        }
-//    }
-//
-//    @order(5)
-//    @test
     void testAnalytics() {
-        assumeTrue(ITestResult, "as login failed, other tests are skipped");
+        assumeTrue(LoginResult, "as login failed, other tests are skipped");
+         /* assumeTrue will check if the login was successful and then continue with the code
+          If the login has failed there is no need to continue with the test */
         try {
             startTest("analytics");
             Analytics.Show(driver);
@@ -138,11 +158,14 @@ public class AppTest {
         }
     }
 
-    @Order(6)
-    @Test // preconditions: please unlink alexa and google home sor testing the linking process
+    @Order(5)
+    @Test
+        //preconditions: please unlink alexa and google home sor testing the linking process
 
     void testMoreTab() {
-        assumeTrue(ITestResult, "as login failed, other tests are skipped");
+        assumeTrue(LoginResult, "as login failed, other tests are skipped");
+         /* assumeTrue will check if the login was successful and then continue with the code
+          If the login has failed there is no need to continue with the test */
         try {
             startTest("more tab");
             MoreTab.Options(driver);
@@ -156,10 +179,12 @@ public class AppTest {
         }
     }
 
-    @Order(7)
+    @Order(6)
     @Test
     void testLogout() {
-        assumeTrue(ITestResult, "as login failed, other tests are skipped");
+        assumeTrue(LoginResult, "as login failed, other tests are skipped");
+         /* assumeTrue will check if the login was successful and then continue with the code
+          If the login has failed there is no need to continue with the test */
         try {
             startTest("logout");
             AccManage.Logout(driver);
@@ -170,16 +195,9 @@ public class AppTest {
         }
     }
 
-    @Order(8)
+    @Order(7)
     @Test
     void testDriverClose() {
         driver.quit();
-    }
-
-    @AfterAll
-    static void teardown() {
-        if (extent != null) {
-            extent.flush();
-        }
     }
 }

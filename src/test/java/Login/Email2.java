@@ -38,8 +38,8 @@ public class Email2 {
 		WebElement continueButton = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Continue\"]"));
 		continueButton.click(); // Continue button
 		Method.captureScreenshot(driver);
-		sleep(1000);
-		WebElement passwordField = driver.findElement(By.xpath("//android.widget.ScrollView/android.widget.EditText[1]\r\n"));
+		sleep(5000);
+		WebElement passwordField = driver.findElement(By.xpath("//android.widget.EditText"));
 		passwordField.click();
 		passwordField.sendKeys(pass);
 
@@ -57,16 +57,12 @@ public class Email2 {
 		if (incorrect!=null) {
 			Method.captureScreenshot(driver);
 			System.out.println("Login Failed as the password is incorrect");
-			return LoginTest.ITestResult = false;
+			return LoginTest.LoginResult = false;
 		}else {
 			Method.captureScreenshot(driver);
-//			Tap.withCoordinates(driver, 540, 2150);
-//			sleep(1000);
-//			WebElement appLogo = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.widget.ImageView"));
-//			await().atMost(10, TimeUnit.SECONDS).until(appLogo::isDisplayed);
 			System.out.println("Test Passed");
 			Permission.Allow(driver);
-			return LoginTest.ITestResult = true;
+			return LoginTest.LoginResult = true;
 		}
 	}
 

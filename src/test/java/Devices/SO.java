@@ -1,20 +1,21 @@
 package Devices;
 
 import Actions.NumberPad;
+import Actions.Scroll;
 import Actions.Tap;
 import AtombergTest.Method;
+import io.appium.java_client.AppiumDriver;
+import org.awaitility.Awaitility;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import org.awaitility.Awaitility;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-import Actions.Scroll;
 
-import io.appium.java_client.AppiumDriver;
-
-public class SO {//Search Online Fan
+public class SO {
+    //Search Online Fan
 
     public static void Fan(AppiumDriver driver) {
 
@@ -63,7 +64,7 @@ public class SO {//Search Online Fan
             FanControl(driver); // Controls the fan
             driver.navigate().back();            // back
         }
-        String previousFan = fans.get(fans.size()-2).getAttribute("content-desc");
+        String previousFan = fans.get(fans.size() - 2).getAttribute("content-desc");
         String lastFan = fans.get(fans.size() - 1).getAttribute("content-desc");
         System.out.println(previousFan);
         System.out.println(lastFan);
@@ -79,8 +80,8 @@ public class SO {//Search Online Fan
             int count = 0;
             for (WebElement fan : newfans) {
                 String name = fan.getAttribute("content-desc");
-                if (name != null &&(name.equals(previousFan) || name.equals(lastFan))) {
-                    count ++;
+                if (name != null && (name.equals(previousFan) || name.equals(lastFan))) {
+                    count++;
                 }
             }
             if (count > 0) {

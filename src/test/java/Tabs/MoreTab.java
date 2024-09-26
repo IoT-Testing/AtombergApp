@@ -70,11 +70,11 @@ public class MoreTab {
         Method.captureScreenshot(driver);
         System.out.println("Tap on Help");
 
-        Help.RaC(driver);
-        Help.TC(driver);
-        Help.Videos(driver);
+        Help.RaC(driver);               //Register a complaint
+        Help.TC(driver);                //Track complaint
+        Help.Videos(driver);            //Check all videos
         Help.Manual(driver);
-        Help.Troubleshoot(driver);
+        Help.Troubleshoot(driver);      // Check all the trouble shoot are working or not
         Scroll.Up(driver);
         Help.email(driver);
         Help.call(driver);

@@ -1,27 +1,32 @@
 package AtombergTest; //To check 
 
-import Login.Email;
-import java.net.URL;
-import java.time.Duration;
-
-import Tabs.Analytics;
-import org.awaitility.Awaitility;
-import java.util.concurrent.TimeUnit;
-import java.net.MalformedURLException;
+import Actions.Tap;
+import Login.TempMail;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
+import org.awaitility.Awaitility;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
-        /*
-          @author Rohit B. Bhagat
-         */
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.time.Duration;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+/*
+  @author Rohit B. Bhagat
+ */
 public class App {
     public static AppiumDriver driver;
 
     public static void main(String[] args) {
         try {
-            openAtomberg();
-            Email.Login(driver); // As in Android script, MainActivity i=of the app is mentioned, it starts from scratch
-            Analytics.Show(driver);
+            /*openAtomberg();*/
+            /*Guest.Mode(driver);*/
+            TempMail.Email();
+            TempMail.OTP();
         } catch (Exception e) {
         }
     }
@@ -46,7 +51,8 @@ public class App {
             Method.captureScreenshot(driver);
             e.printStackTrace();
             return;
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
         System.out.println("Atomberg App Opened...");
         sleep(6000);
         Method.captureScreenshot(driver);
@@ -57,6 +63,38 @@ public class App {
         Awaitility.await().atLeast(millis, TimeUnit.MILLISECONDS);
     }
 
+    public static void Fan(AppiumDriver driver) {
+
+        WebElement AddButton = null;
+        try {
+            AddButton = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]/android.widget.ImageView"));
+        } catch (Exception exp) {
+        }
+        //Check if there are already fans present in the family of not
+        if (AddButton != null) {
+            AddButton.click();
+            sleep(1000);
+        } else {
+            // if there are no devices added in the family the tap with the coordinates of the add button(xpath vaue is not available)
+            Tap.withCoordinates(driver, 540, 1940);
+            sleep(1000);
+        }
+        System.out.println("Searching for Available devices");
+        sleep(15000);
+
+        WebElement frame = driver.findElement(By.xpath("//android.widget.ScrollView"));
+        driver.switchTo().frame(frame);
+
+        WebElement elementWithinFrame = driver.findElement(By.xpath("(//android.view.View[@content-desc=\"Connect\"])[1]"));
+        String name = elementWithinFrame.getAttribute("content-desc");
+        System.out.println(name);
+        driver.switchTo().defaultContent();
+
+        List<WebElement> elements = driver.findElements(By.xpath("//android.widget.ScrollView"));
+        for (WebElement e : elements) {
+            System.out.println(e.getAttribute("content-desc"));
+        }
+    }
 }
 
 

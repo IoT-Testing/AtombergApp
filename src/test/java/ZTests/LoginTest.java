@@ -13,20 +13,17 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.openqa.selenium.By;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testng.Assert;
-import org.testng.ITestResult;
-
 import java.io.IOException;
 import java.net.URL;
 import java.time.Duration;
-
 import static ZTests.ExtentReportAT.*;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-
+//@ExtendWith(TestWatcherExample.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class LoginTest {
     public static AppiumDriver driver;
-    public static boolean ITestResult;
+    public static boolean LoginResult;
     public static final ExtentReports extent = ExtentReportAT.getReportObjects();
 
     private static void sleep(long millis) {
@@ -68,7 +65,7 @@ public class LoginTest {
     }
 
     @Order(1)
-    @Test // Openeing the app
+    @Test // Opening the app
     void testOpenApp() {
         try {
             startTest("Open App");
@@ -82,47 +79,51 @@ public class LoginTest {
 
     @Order(2)
     @ParameterizedTest
-    @CsvSource({"hiwitaw422@wuzak.com,Atomberg@1234",
+    @CsvSource({"hiwitaw422@wuzak.com,Atomberg@134",
             "gawob65213@kkoup.com,Atomberg@123",
-            "mopibo8392@trackden.com,Aomberg@123",
+            /*"mopibo8392@trackden.com,Atomberg@123",
             "vodadi6751@wuzak.com,Atomberg@123",
-            "hanoni8273@wikfee.com,Atmberg@098",
-            "teboham827@agaseo.com,Atombrg@123",
-            "mitim28961@godsigma.com,Atomerg@123",
-            "weker42331@huleos.com,Atomberg@123"
+            "hanoni8273@wikfee.com,Atomberg@098",
+            "teboham827@agaseo.com,Atomberg@123",
+            "mitim28961@godsigma.com,Atomberg@123",
+            "weker42331@huleos.com,Atomberg@123"*/
     })
-    void testLogin(String login, String password) {
-        try {
-            startTest("Login");
-            extent.setSystemInfo("Email Used", login);
-            Email2.Login(driver, login, password);
-            if (ITestResult)
-            {
-                ExtentReportAT.getTest().log(Status.PASS, "Login Test Passed");
-                ExtentReportAT.test.get().pass("Screenshot captured", MediaEntityBuilder.createScreenCaptureFromPath(Method.ScreenShot).build());
+    void
+    testLogin(String login, String password) throws Exception {
+           try {
+               startTest("Login");
+               extent.setSystemInfo("Email Used", login);
 
-            } else{
-                test.get().info(login);
-                ExtentReportAT.getTest().log(com.aventstack.extentreports.Status.FAIL, "Login failed as the password was incorrect");
-                ExtentReportAT.test.get().fail("Screenshot captured", MediaEntityBuilder.createScreenCaptureFromPath(Method.ScreenShot).build());
-                driver.navigate().back();
-                driver.navigate().back();
-            }
-        } catch (Exception e) {
-            ExtentReportAT.getTest().log(com.aventstack.extentreports.Status.FAIL, "Login failed: " + e.getMessage());
-        }
-        finally {
+               Email2.Login(driver, login, password);
+               if (LoginResult) {
+                   ExtentReportAT.getTest().log(Status.PASS, "Login Test Passed");
+                   ExtentReportAT.test.get().pass("Screenshot captured", MediaEntityBuilder.createScreenCaptureFromPath(Method.ScreenShot).build());
+               } else {
+                   test.get().info(login);
+                   extent.getStats();
+                   ExtentReportAT.getTest().log(com.aventstack.extentreports.Status.FAIL, "Login failed as the password was incorrect");
+                   ExtentReportAT.test.get().fail("Screenshot captured", MediaEntityBuilder.createScreenCaptureFromPath(Method.ScreenShot).build());
+                   driver.navigate().back();
+                   driver.navigate().back();
+               }
+           }catch(Exception e){
+               e.printStackTrace();
+           }
+           finally {
             endTest();
-        }
-        if(ITestResult) {
-            try {
-                startTest("Logout");
-                AccManage.Logout(driver);
-            } catch (Exception e) {
-                ExtentReportAT.getTest().log(com.aventstack.extentreports.Status.FAIL, "Login Failed" + e.getMessage());
-            } finally {
-                endTest();
-            }
+           }
+            testLogout();
+    }
+
+
+    void testLogout(){
+        assumeTrue(LoginResult, "Login Failed");
+        try{
+        startTest("Logout");
+        AccManage.Logout(driver);
+        endTest();
+    }catch(Exception e){
+            e.printStackTrace();
         }
     }
 

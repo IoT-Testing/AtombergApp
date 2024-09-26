@@ -3,13 +3,14 @@ package Login;
 //Add First Device
 
 import Actions.Tap;
-import ZTests.AppTest;
-import org.awaitility.Awaitility;
-import org.openqa.selenium.By; //Selenium Dependencies
-import org.openqa.selenium.WebElement;
 import AtombergTest.Method;
 import Permissions.Permission;
+import ZTests.AppTest;
 import io.appium.java_client.AppiumDriver;
+import org.awaitility.Awaitility;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
@@ -50,21 +51,23 @@ public class Email {
         continueButton1.click(); // Continue to Log in
         System.out.println("Continue...");
         WebElement incorrect = null;
-        try{
+        try {
             incorrect = driver.findElement(By.xpath("//android.view.View[@content-desc=\"! Incorrect password\"]"));
-        }catch(Exception e){}
-        if (incorrect==null) {
+        } catch (Exception e) {
+        }
+        if (incorrect == null) {
             Tap.withCoordinates(driver, 540, 2150);
             sleep(1000);
+
+            Permission.Allow(driver);
             WebElement appLogo = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.widget.ImageView"));
             await().atMost(10, TimeUnit.SECONDS).until(appLogo::isDisplayed);
             System.out.println("Test Passed");
-            Permission.Allow(driver);
 
-            return AppTest.ITestResult = true;
-        }else {
+            return AppTest.LoginResult = true;
+        } else {
             System.out.println("Login Failed as the password is incorrect");
-            return AppTest.ITestResult = false;
+            return AppTest.LoginResult = false;
         }
     }
 
