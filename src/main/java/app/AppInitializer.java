@@ -1,5 +1,6 @@
 package app;
 
+import app.util.ActionsUtil;
 import app.util.AppUtil;
 import app.util.PermissionUtil;
 import io.appium.java_client.AppiumDriver;
@@ -9,6 +10,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.Duration;
 
 import static java.lang.Thread.sleep;
 
@@ -29,7 +31,7 @@ public class AppInitializer {
         cap.setCapability("platformVersion", "14");
         cap.setCapability("appPackage", "com.atomberg.app");
         cap.setCapability("appActivity", "com.atomberg.app.MainActivity");
-        cap.setCapability("apksigner", "/Users/himanshuchoudhary/apksigner.jar");
+        /*cap.setCapability("apksigner", "/Users/himanshuchoudhary/apksigner.jar");*/
         URL url = null;
         try {
             url = new URL("http://localhost:4723/wd/hub");
@@ -37,11 +39,8 @@ public class AppInitializer {
             System.out.println("Malformed URL exception " + e.getMessage());
         }
         driver = new AppiumDriver(url, cap);
-        try {
-            sleep(5000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+        ActionsUtil.sleep(5000);
         AppUtil.captureScreenshot(driver);
     }
 
@@ -57,7 +56,7 @@ public class AppInitializer {
         AppUtil.captureScreenshot(driver);
         WebElement emailField = driver.findElement(By.xpath("//android.widget.EditText"));
         emailField.click();
-        emailField.sendKeys("hiwitaw422@wuzak.com"); // Enter Email id
+        emailField.sendKeys("teboham827@agaseo.com"); // Enter Email id
         AppUtil.captureScreenshot(driver);
         System.out.println(" " + emailField.getText() + " ");
         System.out.println("Email Entered...");
@@ -72,17 +71,13 @@ public class AppInitializer {
         }
         WebElement passwordField = driver.findElement(By.xpath("//android.widget.EditText"));
         passwordField.click();
-        passwordField.sendKeys("Atomberg@1234");
+        passwordField.sendKeys("Atomberg@123");
         AppUtil.captureScreenshot(driver);
         System.out.println("Password entered..."); // Enter Password
         WebElement continueButton1 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Continue\"]"));
         continueButton1.click(); // Continue to Log in
         System.out.println("Continue...");
-        try {
-            sleep(5000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        ActionsUtil.sleep(5000);
         PermissionUtil.allow(driver);
     }
 }

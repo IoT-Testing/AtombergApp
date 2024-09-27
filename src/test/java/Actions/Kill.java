@@ -34,6 +34,7 @@ public class Kill {
 
 		driver.perform(Collections.singletonList(sequence));
 	}
+
 	private static void sleep(long millis) {
 		Awaitility.await().atMost(millis, TimeUnit.MILLISECONDS);
 	}

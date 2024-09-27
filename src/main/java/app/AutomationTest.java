@@ -1,6 +1,9 @@
-package app.util;
+package app;
 
-import app.AppInitializer;
+import app.Fan.FanManagement;
+import app.Fan.FanModels;
+import app.util.ActionsUtil;
+import app.util.AppUtil;
 import io.appium.java_client.AppiumDriver;
 
 public class AutomationTest {
@@ -13,5 +16,8 @@ public class AutomationTest {
         driver = appInitializer.getDriver();
         appInitializer.checkMainScreen();
         appInitializer.login();
+        FanManagement fanManagement = new FanManagement(driver);
+        fanManagement.checkFanOnline(driver);
+        ActionsUtil.sleep(5000);
     }
 }
