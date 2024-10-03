@@ -1,0 +1,226 @@
+package app.Automations;
+
+import app.util.ActionsUtil;
+import io.appium.java_client.AppiumDriver;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Pause;
+import org.openqa.selenium.interactions.PointerInput;
+import org.openqa.selenium.interactions.Sequence;
+import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
+
+public class Automation {
+    private AppiumDriver driver;
+    private WebElement automations;
+    private WebElement quickAccess;
+    public Automation(AppiumDriver driver){
+        this.driver = driver;
+        automations = this.driver.findElement(By.xpath("//android.view.View[@content-desc=\"Automations\"]"));
+        quickAccess = this.driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Quick access\"]"));
+    }
+
+    public void TimeOfDay() {
+        if (automations.isDisplayed()) {
+            automations.click();
+            System.out.println("Click on Automations");
+            WebElement newAutomation = null;
+            try{
+                String xpath = "//android.view.View[@content-desc=\"Schedule actions\nExample: Turn ON all bedroom fans at 11 PM\"]/android.widget.ImageView[1]";
+                newAutomation = driver.findElement(By.xpath(xpath));
+            }catch(Exception ignored){}
+            if (newAutomation == null ) {
+                driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]/android.widget.ImageView")).click();
+                newAutomation();
+            }
+            else newAutomation.click(); newAutomation();
+        }
+    }
+
+    public void QuickAccess() {
+        if (automations.isDisplayed()) {
+            automations.click();
+            System.out.println("Click on Automations");
+            quickAccess.click();
+            WebElement newQuickAccess = null;
+            try{
+                newQuickAccess = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Create 'Speed-dial' buttons for frequent actions\n" +
+                        "Example: 'Goodbye' button to turn off all fans with one click\"]/android.view.View[5]"));
+            }catch (Exception ignored){}
+            if(newQuickAccess != null){
+                newQuickAccess.click();
+            }
+            else {
+                driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]/android.widget.ImageView")).click();
+            }
+
+            WebElement quickAccessName = driver.findElement(By.xpath("//android.widget.EditText"));
+            quickAccessName.click();
+            String timestamp = new SimpleDateFormat("HHmmss").format(new Date());
+
+            quickAccessName.sendKeys("QA" + timestamp);
+            selectRandomFan();
+            selectAction();
+            driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Add\"]")).click();
+
+            allScreenQA();
+        }
+    }
+
+    private void newAutomation() {
+        String timestamp = new SimpleDateFormat("HHmmss").format(new Date());
+
+        WebElement AutoName = driver.findElement(By.xpath("//android.widget.EditText"));
+        AutoName.click();
+        AutoName.sendKeys("Automation" + timestamp);
+        selectRandomFan();
+        driver.findElement(By.xpath("//android.view.View[@content-desc=\"Select time\"]")).click();
+        seekBar();
+        ActionsUtil.sleep(250);
+        seekBar();
+        ActionsUtil.sleep(1000);
+        driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Ok\"]")).click();
+        selectAction();
+        ActionsUtil.Scroll.Up(driver);
+        driver.findElement(By.xpath("//android.widget.Switch")).click();
+        driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Add\"]")).click();
+
+    }
+
+    private void selectRandomFan() {
+
+        WebElement selectFan = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Select fans\"]"));
+        selectFan.click();
+        List<WebElement> fans = driver.findElements(By.className("android.widget.CheckBox"));
+        if (fans.size() == 1) {
+            WebElement fan = fans.get(0);
+            fan.click();
+        }
+        if (fans.size() > 1) {
+            int x = new Random().nextInt(fans.size());
+            WebElement fan = fans.get(x);
+            fan.click();
+        }
+        WebElement Ok = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"OK\"]"));
+        Ok.click();
+    }
+
+    private void seekBar() {
+        Dimension size = driver.manage().window().getSize(); // Assuming getWindowSize() returns the window size
+
+        int startY = (int) (size.getHeight() * 0.635);
+        int startX = (int) (size.getWidth() * 0.21); // Adjusted to swipe right
+        double x = 0.22 + (new Random().nextDouble()) * 0.8;
+        int endX = (int) (size.getWidth() * x); // Adjusted to swipe right
+        PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+        Sequence sequence = new Sequence(finger, 1)
+                .addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY))
+                .addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
+                .addAction(new Pause(finger, Duration.ofMillis(150)))
+                .addAction(
+                        finger.createPointerMove(Duration.ofMillis(250), PointerInput.Origin.viewport(), endX, startY))
+                .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+        driver.perform(Collections.singletonList(sequence));
+        System.out.println("SeekBar slide");
+    }
+
+    private void selectAction() {
+        driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Power ON\"]")).click();
+
+        List<WebElement> ACTIONS = driver.findElements(By.className("android.view.View"));
+        int x = new Random().nextInt(ACTIONS.size());
+        WebElement action = ACTIONS.get(x);
+        action.click();
+
+    }
+
+    private void allScreenQA() {
+        WebElement devices = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Devices\"]"));
+        devices.click();
+        WebElement allScreenQuickAccess = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView"));
+        allScreenQuickAccess.click();
+        List<WebElement> ACTIONS = driver.findElements(By.className("android.widget.Button"));
+        ACTIONS.remove(0);
+        ACTIONS.remove(0);
+        ACTIONS.remove(0);
+        int i;
+        int total = ACTIONS.size();
+        for (i = 0; i < total; i++) {
+            List<WebElement> Actions = driver.findElements(By.className("android.widget.Button"));
+            Actions.remove(0);
+            Actions.remove(0);
+            Actions.remove(0);
+            WebElement action = Actions.get(i);
+            System.out.println(action.getAttribute("content-desc"));
+//            action.click();
+            ActionsUtil.sleep(1000);
+            if (i < total - 1) {
+                quickAccess.click();
+            }
+        }
+    }
+
+    public void switchFamily() {
+        List<WebElement> elements = driver.findElements(By.className("android.view.View"));
+        WebElement e = elements.get(0);
+        String fam1 = e.getAttribute("content-desc");
+        System.out.println(e.getAttribute("content-desc"));
+
+        e.click();
+        // tap on the Family name on the screen (top right corner)
+
+        // getting the availble family list
+        List<WebElement> rawFamilies = driver.findElements(By.className("android.view.View"));
+        List<WebElement> FAMILIES = rawFamilies.stream().filter(fam -> fam.getAttribute("content-desc") != null).collect(Collectors.toList());
+        FAMILIES.remove(FAMILIES.size() - 1);
+        FAMILIES.remove(FAMILIES.size() - 1);
+        int i;
+        int total = FAMILIES.size();
+        System.out.println("number of FAMILIES present =" + total);
+        for (i = 0; i < total; i++) {
+            List<WebElement> rawFamily = driver.findElements(By.className("android.view.View"));
+            List<WebElement> families = rawFamily.stream().filter(fam -> fam.getAttribute("content-desc") != null).collect(Collectors.toList());
+            System.out.println("number of families present =" + total);
+            families.remove(families.size() - 1);
+            families.remove(families.size() - 1);
+            System.out.println("number of families1 present =" + total);
+            if (families.get(i).getAttribute("content-desc").equals(fam1)) {
+                i++;
+
+            }
+            System.out.println(families.get(i).getAttribute("content-desc") + " is clicked");
+            families.get(i).click();
+
+            ActionsUtil.sleep(1500);
+            if (i < total - 1) {
+                elements = driver.findElements(By.className("android.view.View"));
+                e = elements.get(0);
+                fam1 = e.getAttribute("content-desc");
+                e.click();
+            }
+        }
+
+    }
+
+    public void deleteAutomations(){
+        driver.findElement(By.xpath("//android.view.View[@content-desc=\"Automations\"]")).click();
+        List<WebElement> Elements = driver.findElements(By.className("android.widget.ImageView"));
+        List<WebElement> Elements2 = Elements.stream().filter(element -> element.getAttribute("content-desc")!=null).collect(Collectors.toList());
+        List<WebElement> elements = Elements2.stream().filter(element -> element.getAttribute("content-desc").startsWith("Automation")).collect(Collectors.toList());
+        for (WebElement e:elements){
+            System.out.println(e.getAttribute("content-desc"));
+            e.click();
+            driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.Button")).click();
+            driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Yes\"]")).click();
+            System.out.println("Automation Deleted");
+        }
+    }
+
+
+}

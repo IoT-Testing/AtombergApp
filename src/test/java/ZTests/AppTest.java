@@ -8,16 +8,15 @@ import Tabs.MoreTab;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.Status;
 import io.appium.java_client.AppiumDriver;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.testng.Assert;
 import AtombergTest.Method;
 import static ZTests.ExtentReportAT.*;
+
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AppTest {

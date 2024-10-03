@@ -4,6 +4,9 @@ package Tabs;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import app.util.ActionsUtil;
+import app.util.AppUtil;
 import org.awaitility.Awaitility;
 import org.openqa.selenium.By; //Selenium Dependencies
 import org.openqa.selenium.WebElement;
@@ -91,13 +94,15 @@ public class Analytics {
         for (i = 0; i < 4; i++) {// there are 4 screens in analytics
             List<WebElement> ICONS = driver.findElements(By.xpath("//android.view.View[@clickable=\"true\"]"));
             List<WebElement> icons = ICONS.stream().filter(element -> element.getAttribute("content-desc") == null).collect(Collectors.toList());
-            icons.remove(icons.size() - 1);
+            System.out.println(icons.size());
+//            icons.remove(icons.size() - 1);
             for (WebElement icon : icons) {
                 System.out.println(icon.getAttribute("content-desc"));
                 icon.click();
                 sleep(2000);
                 driver.navigate().back();
                 sleep(1500);
+                confetti(driver);
             }
             if (i < 3) {// only three swipes for the screen
                 Swipe.Left(driver, 0.75, 0.50);
@@ -110,4 +115,18 @@ public class Analytics {
         Awaitility.await().atMost(millis, TimeUnit.MILLISECONDS);
     }
 
+    private static void confetti(AppiumDriver driver){
+        System.out.println("checking confetti");
+        List<WebElement> CONFETTI = driver.findElements(By.className("android.widget.ImageView"));
+        List<WebElement> confetti1 = CONFETTI.stream().filter(element -> element.getAttribute("content-desc")==null).collect(Collectors.toList());
+        List<WebElement> confetti2 = confetti1.stream().filter(webElement -> webElement.getAttribute("bounds").endsWith("482]")).collect(Collectors.toList());
+        System.out.println("confetti size "+ confetti2.size());                                                             //[380,410][452,482]
+        for (WebElement e: confetti2)
+        {
+            System.out.println(e.getAttribute("bounds"));
+            e.click();
+            ActionsUtil.sleep(2000);
+            driver.navigate().back();
+        }
+    }
 }

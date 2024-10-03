@@ -209,7 +209,6 @@ public class Automation {
 
     }
 
-
     private static void sleep(long millis) {
         Awaitility.await().atMost(millis, TimeUnit.MILLISECONDS);
     }

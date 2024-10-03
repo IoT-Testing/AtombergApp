@@ -4,7 +4,6 @@ import app.util.ActionsUtil;
 import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-
 import static app.util.ActionsUtil.sleep;
 
 public class FanModels {

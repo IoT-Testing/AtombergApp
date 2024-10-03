@@ -31,13 +31,16 @@ public class AppInitializer {
         cap.setCapability("platformVersion", "14");
         cap.setCapability("appPackage", "com.atomberg.app");
         cap.setCapability("appActivity", "com.atomberg.app.MainActivity");
-        /*cap.setCapability("apksigner", "/Users/himanshuchoudhary/apksigner.jar");*/
+/*
+        cap.setCapability("apksigner", "C:\\Users\\Rohit Bhagat\\Desktop\\android-sdk\\build-tools\\34.0.0\\lib\\apksigner.jar");
+*/
         URL url = null;
         try {
-            url = new URL("http://localhost:4723/wd/hub");
+            url = new URL("http://127.0.0.1:4723/wd/hub");
         } catch (MalformedURLException e) {
             System.out.println("Malformed URL exception " + e.getMessage());
         }
+//        assert url != null;
         driver = new AppiumDriver(url, cap);
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
         ActionsUtil.sleep(5000);

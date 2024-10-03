@@ -26,7 +26,7 @@ public class Email {
         Method.captureScreenshot(driver);
         WebElement emailField = driver.findElement(By.xpath("//android.widget.EditText"));
         emailField.click();
-        emailField.sendKeys("Weker42331@huleos.com"); // Enter Email id
+        emailField.sendKeys("teboham827@agaseo.com"); // Enter Email id
         Method.captureScreenshot(driver);
         emailField.getText();
         System.out.println(" " + emailField.getText() + " ");

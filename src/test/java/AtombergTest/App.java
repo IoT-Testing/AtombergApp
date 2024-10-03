@@ -1,12 +1,20 @@
 package AtombergTest; //To check 
 
+import Login.Email3;
 import MoreTab.*;
 import Login.Email;
 import java.net.URL;
 import java.time.Duration;
+
+import Supports.TempMail;
+import Tabs.Analytics;
 import org.awaitility.Awaitility;
+
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.net.MalformedURLException;
+import java.util.stream.Collectors;
+
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
@@ -22,15 +30,13 @@ public class App {
 
     public static void main(String[] args) {
         try {
+//            TempMail.Email();
             openAtomberg();
             Email.Login(driver);
-            WebElement moreTab = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\n" +
-                    "Tab 3 of 3\"]"));
-            moreTab.click();
-            System.out.println("MoreTab");
-            sleep(1000);
-            Manage.Family(driver);
+            deleteAutomations(driver);
+
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -64,6 +70,21 @@ public class App {
     static void sleep(long millis) {
         Awaitility.await().atLeast(millis, TimeUnit.MILLISECONDS);
     }
+
+    private static void deleteAutomations(AppiumDriver driver){
+        driver.findElement(By.xpath("//android.view.View[@content-desc=\"Automations\"]")).click();
+        List<WebElement> Elements = driver.findElements(By.className("android.widget.ImageView"));
+        List<WebElement> Elements2 = Elements.stream().filter(element -> element.getAttribute("content-desc")!=null).collect(Collectors.toList());
+        List<WebElement> elements = Elements2.stream().filter(element -> element.getAttribute("content-desc").startsWith("Automation")).collect(Collectors.toList());
+        for (WebElement e:elements){
+            System.out.println(e.getAttribute("content-desc"));
+            e.click();
+            driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.Button")).click();
+            driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Yes\"]")).click();
+            System.out.println("Automation Deleted");
+        }
+    }
+
 
 }
 

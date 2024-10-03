@@ -196,7 +196,7 @@ public class FanManagement {
         sleep(3000);
         List<WebElement> FANS = driver.findElements(By.className("android.widget.Button"));
         System.out.println(FANS.size());
-        List<WebElement> fans = FANS.stream().filter(dev -> dev.getAttribute("content-desc") != null).toList();
+        List<WebElement> fans = FANS.stream().filter(dev -> dev.getAttribute("content-desc") != null).collect(Collectors.toList());
 
         if (fans.size() > 1) {
             System.out.println("Fan Available " + fans.size());

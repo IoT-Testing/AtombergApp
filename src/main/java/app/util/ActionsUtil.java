@@ -78,7 +78,7 @@ public class ActionsUtil {
 
     public static class Swipe {
         // Screen swipes
-        public void Left(AppiumDriver driver, double x, double y) {
+        public static void Left(AppiumDriver driver, double x, double y) {
             Dimension size = driver.manage().window().getSize(); // Assuming getWindowSize() returns the window size
             int startY = (int) (size.getHeight() * y);
             int startX = (int) (size.getWidth() * x); // Adjusted to swipe left

@@ -31,8 +31,8 @@ public class MoreTab {
         Scroll.Up(driver);
 
         // Change Electricity Unit Price
-        EUP.UnitPrice(driver);
-        EUP.Currency(driver);
+        electricity.UnitPrice(driver);
+        electricity.Currency(driver);
         sleep(1000);
         Tap.withPercentage(driver, 0.10, 0.10);
 
