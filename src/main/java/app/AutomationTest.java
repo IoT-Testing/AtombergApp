@@ -17,7 +17,7 @@ public class AutomationTest {
         appInitializer.login();
         Automation automation = new Automation(driver);
         automation.TimeOfDay();
-        ActionsUtil.sleep(2000);
+        ActionsUtil.sleep(5000);
         automation.QuickAccess();
         ActionsUtil.sleep(5000);
         automation.deleteAutomations();

@@ -8,6 +8,7 @@ import java.time.Duration;
 
 import Supports.TempMail;
 import Tabs.Analytics;
+import app.util.ActionsUtil;
 import org.awaitility.Awaitility;
 
 import java.util.List;
@@ -82,6 +83,8 @@ public class App {
             driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.Button")).click();
             driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Yes\"]")).click();
             System.out.println("Automation Deleted");
+            ActionsUtil.sleep(2500);
+
         }
     }
 

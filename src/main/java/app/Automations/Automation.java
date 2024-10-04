@@ -22,11 +22,11 @@ public class Automation {
     private WebElement quickAccess;
     public Automation(AppiumDriver driver){
         this.driver = driver;
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
         automations = this.driver.findElement(By.xpath("//android.view.View[@content-desc=\"Automations\"]"));
-        quickAccess = this.driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Quick access\"]"));
     }
 
-    public void TimeOfDay() {
+    public void TimeOfDay(){
         if (automations.isDisplayed()) {
             automations.click();
             System.out.println("Click on Automations");
@@ -35,18 +35,22 @@ public class Automation {
                 String xpath = "//android.view.View[@content-desc=\"Schedule actions\nExample: Turn ON all bedroom fans at 11 PM\"]/android.widget.ImageView[1]";
                 newAutomation = driver.findElement(By.xpath(xpath));
             }catch(Exception ignored){}
-            if (newAutomation == null ) {
+            if (newAutomation == null )
                 driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]/android.widget.ImageView")).click();
-                newAutomation();
-            }
-            else newAutomation.click(); newAutomation();
+
+            else newAutomation.click();
+            newAutomation();
+            WebElement dialogueBox = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Scheduled Automation Added Successfully\"]"));
+            assert dialogueBox.isDisplayed();
         }
     }
 
     public void QuickAccess() {
+        ActionsUtil.sleep(2000);
         if (automations.isDisplayed()) {
             automations.click();
             System.out.println("Click on Automations");
+            quickAccess = this.driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Quick access\"]"));
             quickAccess.click();
             WebElement newQuickAccess = null;
             try{
@@ -90,7 +94,7 @@ public class Automation {
         ActionsUtil.Scroll.Up(driver);
         driver.findElement(By.xpath("//android.widget.Switch")).click();
         driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Add\"]")).click();
-
+        System.out.println("New automation created");
     }
 
     private void selectRandomFan() {
@@ -144,6 +148,7 @@ public class Automation {
         WebElement devices = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Devices\"]"));
         devices.click();
         WebElement allScreenQuickAccess = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView"));
+        assert allScreenQuickAccess.isDisplayed();
         allScreenQuickAccess.click();
         List<WebElement> ACTIONS = driver.findElements(By.className("android.widget.Button"));
         ACTIONS.remove(0);
@@ -166,7 +171,7 @@ public class Automation {
         }
     }
 
-    public void switchFamily() {
+    void switchFamily() {
         List<WebElement> elements = driver.findElements(By.className("android.view.View"));
         WebElement e = elements.get(0);
         String fam1 = e.getAttribute("content-desc");
@@ -175,7 +180,7 @@ public class Automation {
         e.click();
         // tap on the Family name on the screen (top right corner)
 
-        // getting the availble family list
+        // getting the available family list
         List<WebElement> rawFamilies = driver.findElements(By.className("android.view.View"));
         List<WebElement> FAMILIES = rawFamilies.stream().filter(fam -> fam.getAttribute("content-desc") != null).collect(Collectors.toList());
         FAMILIES.remove(FAMILIES.size() - 1);
