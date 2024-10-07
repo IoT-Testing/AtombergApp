@@ -1,20 +1,20 @@
 package app.Automations;
 
-import app.util.ActionsUtil;
-import io.appium.java_client.AppiumDriver;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Pause;
-import org.openqa.selenium.interactions.PointerInput;
-import org.openqa.selenium.interactions.Sequence;
-import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.time.Duration;
+import app.util.ActionsUtil;
+import java.util.Collections;
+import org.openqa.selenium.By;
+import java.text.SimpleDateFormat;
 import java.util.stream.Collectors;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.WebElement;
+import io.appium.java_client.AppiumDriver;
+import org.openqa.selenium.interactions.Pause;
+import org.openqa.selenium.interactions.Sequence;
+import org.openqa.selenium.interactions.PointerInput;
 
 public class Automation {
     private AppiumDriver driver;
@@ -22,7 +22,7 @@ public class Automation {
     private WebElement quickAccess;
     public Automation(AppiumDriver driver){
         this.driver = driver;
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(6));
         automations = this.driver.findElement(By.xpath("//android.view.View[@content-desc=\"Automations\"]"));
     }
 
@@ -63,7 +63,6 @@ public class Automation {
             else {
                 driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]/android.widget.ImageView")).click();
             }
-
             WebElement quickAccessName = driver.findElement(By.xpath("//android.widget.EditText"));
             quickAccessName.click();
             String timestamp = new SimpleDateFormat("HHmmss").format(new Date());
@@ -73,7 +72,8 @@ public class Automation {
             selectAction();
             driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Add\"]")).click();
 
-            allScreenQA();
+            WebElement quickAccessSuccessful = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Quick Access Automation Added Successfully\"]"));
+            assert quickAccessSuccessful.isDisplayed();
         }
     }
 
@@ -144,7 +144,7 @@ public class Automation {
 
     }
 
-    private void allScreenQA() {
+    public void allScreenQA() {
         WebElement devices = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Devices\"]"));
         devices.click();
         WebElement allScreenQuickAccess = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView"));
@@ -171,60 +171,62 @@ public class Automation {
         }
     }
 
-    void switchFamily() {
-        List<WebElement> elements = driver.findElements(By.className("android.view.View"));
-        WebElement e = elements.get(0);
-        String fam1 = e.getAttribute("content-desc");
-        System.out.println(e.getAttribute("content-desc"));
-
-        e.click();
-        // tap on the Family name on the screen (top right corner)
-
-        // getting the available family list
-        List<WebElement> rawFamilies = driver.findElements(By.className("android.view.View"));
-        List<WebElement> FAMILIES = rawFamilies.stream().filter(fam -> fam.getAttribute("content-desc") != null).collect(Collectors.toList());
-        FAMILIES.remove(FAMILIES.size() - 1);
-        FAMILIES.remove(FAMILIES.size() - 1);
-        int i;
-        int total = FAMILIES.size();
-        System.out.println("number of FAMILIES present =" + total);
-        for (i = 0; i < total; i++) {
-            List<WebElement> rawFamily = driver.findElements(By.className("android.view.View"));
-            List<WebElement> families = rawFamily.stream().filter(fam -> fam.getAttribute("content-desc") != null).collect(Collectors.toList());
-            System.out.println("number of families present =" + total);
-            families.remove(families.size() - 1);
-            families.remove(families.size() - 1);
-            System.out.println("number of families1 present =" + total);
-            if (families.get(i).getAttribute("content-desc").equals(fam1)) {
-                i++;
-
-            }
-            System.out.println(families.get(i).getAttribute("content-desc") + " is clicked");
-            families.get(i).click();
-
-            ActionsUtil.sleep(1500);
-            if (i < total - 1) {
-                elements = driver.findElements(By.className("android.view.View"));
-                e = elements.get(0);
-                fam1 = e.getAttribute("content-desc");
-                e.click();
-            }
-        }
-
-    }
-
-    public void deleteAutomations(){
+    public void deleteTimeOfDay(){
         driver.findElement(By.xpath("//android.view.View[@content-desc=\"Automations\"]")).click();
+        WebElement timeOfDay = null;
+        try{
+            timeOfDay = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Time of day\"]"));
+        }catch(Exception ignored){}
+        if(timeOfDay==null)driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Time of day\"]")).click();
+        else timeOfDay.click();
+
         List<WebElement> Elements = driver.findElements(By.className("android.widget.ImageView"));
         List<WebElement> Elements2 = Elements.stream().filter(element -> element.getAttribute("content-desc")!=null).collect(Collectors.toList());
         List<WebElement> elements = Elements2.stream().filter(element -> element.getAttribute("content-desc").startsWith("Automation")).collect(Collectors.toList());
-        for (WebElement e:elements){
-            System.out.println(e.getAttribute("content-desc"));
-            e.click();
+        int size = elements.size();
+        for (int i = 0; i < size; i++) {
+            List<WebElement> ELEMENTS= driver.findElements(By.className("android.widget.ImageView"));
+            List<WebElement> ELEMENTS2 = ELEMENTS.stream().filter(element -> element.getAttribute("content-desc")!=null).collect(Collectors.toList());
+            List<WebElement> Automations = ELEMENTS2.stream().filter(element -> element.getAttribute("content-desc").startsWith("Automation")).collect(Collectors.toList());
+
+            Automations.get(0).click();
             driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.Button")).click();
             driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Yes\"]")).click();
+            WebElement deleteAutomation = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Automation Removed Successfully\"]"));
+            assert deleteAutomation.isDisplayed();
             System.out.println("Automation Deleted");
         }
+        Elements = driver.findElements(By.className("android.widget.ImageView"));
+        Elements2 = Elements.stream().filter(element -> element.getAttribute("content-desc")!=null).collect(Collectors.toList());
+        elements = Elements2.stream().filter(element -> element.getAttribute("content-desc").startsWith("Automation")).collect(Collectors.toList());
+        size = elements.size();
+        if (size != 0) deleteTimeOfDay();
+    }
+
+    public void deleteQuickAccess() {
+        driver.findElement(By.xpath("//android.view.View[@content-desc=\"Automations\"]")).click();
+        driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Quick access\"]")).click();
+        List<WebElement> Elements = driver.findElements(By.className("android.widget.ImageView"));
+        List<WebElement> Elements2 = Elements.stream().filter(element -> element.getAttribute("content-desc") != null).collect(Collectors.toList());
+        List<WebElement> elements = Elements2.stream().filter(element -> element.getAttribute("content-desc").startsWith("QA")).collect(Collectors.toList());
+        int size = elements.size();
+        for (int i = 0; i < size; i++) {
+            List<WebElement> ELEMENTS = driver.findElements(By.className("android.widget.ImageView"));
+            List<WebElement> ELEMENTS2 = ELEMENTS.stream().filter(element -> element.getAttribute("content-desc") != null).collect(Collectors.toList());
+            List<WebElement> Automations = ELEMENTS2.stream().filter(element -> element.getAttribute("content-desc").startsWith("QA")).collect(Collectors.toList());
+
+            Automations.get(0).click();
+            driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.widget.Button")).click();
+            driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Yes\"]")).click();
+            WebElement deleteAutomation = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Automation Removed Successfully\"]"));
+            assert deleteAutomation.isDisplayed();
+            System.out.println("Quick Access Deleted");
+        }
+        Elements = driver.findElements(By.className("android.widget.ImageView"));
+        Elements2 = Elements.stream().filter(element -> element.getAttribute("content-desc") != null).collect(Collectors.toList());
+        elements = Elements2.stream().filter(element -> element.getAttribute("content-desc").startsWith("QA")).collect(Collectors.toList());
+        size = elements.size();
+        if (size!=0) deleteQuickAccess();
     }
 
 

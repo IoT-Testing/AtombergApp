@@ -40,7 +40,7 @@ public class AppInitializer {
         } catch (MalformedURLException e) {
             System.out.println("Malformed URL exception " + e.getMessage());
         }
-//        assert url != null;
+        assert url != null;
         driver = new AppiumDriver(url, cap);
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
         ActionsUtil.sleep(5000);

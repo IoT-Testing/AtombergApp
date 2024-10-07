@@ -1,11 +1,10 @@
 package app;
 
-import app.Analytics.Analytics;
-import app.Automations.Automation;
 import app.util.ActionsUtil;
+import app.Automations.Automation;
 import io.appium.java_client.AppiumDriver;
 
-public class AutomationTest {
+public class AutomatedTest {
 
     public AppiumDriver driver;
 
@@ -15,11 +14,7 @@ public class AutomationTest {
         driver = appInitializer.getDriver();
         appInitializer.checkMainScreen();
         appInitializer.login();
-        Automation automation = new Automation(driver);
-        automation.TimeOfDay();
-        ActionsUtil.sleep(5000);
-        automation.QuickAccess();
-        ActionsUtil.sleep(5000);
-        automation.deleteAutomations();
+        SwitchFamily family = new SwitchFamily(driver);
+        family.switchFamily();
     }
 }

@@ -21,7 +21,7 @@ public class FanManagement {
         this.driver = driver;
     }
 
-    public void addFan(AppiumDriver driver) {
+    public void addFan() {
         WebElement AddButton = null;
         try {
             AddButton = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]/android.widget.ImageView"));
@@ -119,7 +119,7 @@ public class FanManagement {
         }
     }
 
-    public void additionProcess(AppiumDriver driver) {
+    public void additionProcess() {
         Select.Fan(driver);
 
         WebElement Next = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Next\"]")); // Add 2nd
@@ -154,7 +154,7 @@ public class FanManagement {
         AppUtil.captureScreenshot(driver);
     }
 
-    public void fanControl(AppiumDriver driver) {
+    public void fanControl() {
 
         WebElement Speed1 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"1\"]"));
         Speed1.click();
@@ -187,10 +187,10 @@ public class FanManagement {
         Boost.click();
         System.out.println("Boost");
         AppUtil.captureScreenshot(driver);
-
     }
 
-    public void checkFanOnline(AppiumDriver driver) {//Check Fan Online
+    public void checkFanOnline() {//Check Fan Online
+
         WebElement Fans = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Fans\"]"));
         Fans.click();   // click on the fan tab
         sleep(3000);
@@ -204,7 +204,7 @@ public class FanManagement {
         for (WebElement element : fans) {
             System.out.println(element.getAttribute("content-desc"));
             element.click(); // Clicks on the for and opens device control
-            fanControl(driver); // Controls the fan
+            fanControl(); // Controls the fan
             driver.navigate().back();            // back
         }
         String previousFan = fans.get(fans.size()-2).getAttribute("content-desc");
@@ -237,7 +237,7 @@ public class FanManagement {
                 String name = newfans.get(i).getAttribute("content-desc");
                 System.out.println(i + name);
                 newfans.get(i).click(); // Clicks on the for and opens device control
-                fanControl(driver); // Controls the fan
+                fanControl(); // Controls the fan
                 driver.navigate().back();            // back
             }
         }
