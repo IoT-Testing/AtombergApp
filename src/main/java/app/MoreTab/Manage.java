@@ -7,10 +7,15 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class Manage {
-    public void ChangePassword(AppiumDriver driver) {
+    public AppiumDriver driver;
+    public Manage(AppiumDriver driver){
+        this.driver = driver;
+    }
+    public void ChangePassword() {
         WebElement ChangePassword = driver
                 .findElement(By.xpath("//android.view.View[@content-desc=\"Change password\"]"));
         ChangePassword.click();
@@ -20,7 +25,7 @@ public class Manage {
         driver.navigate().back();
     }
 
-    public void DeleteAccount(AppiumDriver driver) {
+    public void DeleteAccount() {
         WebElement DeleteAccount = driver
                 .findElement(By.xpath("//android.view.View[@content-desc=\"Delete account\"]"));
         DeleteAccount.click();
@@ -30,7 +35,7 @@ public class Manage {
         driver.navigate().back();
     }
 
-    public void DeveloperOptions(AppiumDriver driver) {
+    public void DeveloperOptions() {
         WebElement DevOps = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Developer options\"]"));
         DevOps.click();
         AppUtil.captureScreenshot(driver);
@@ -38,9 +43,8 @@ public class Manage {
         driver.navigate().back();
     }
 
-    public void Logout(AppiumDriver driver) {
-        checkLogout(driver);
-
+    public void Logout() {
+        checkLogout();
         WebElement Logout = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Logout\"]"));
         Logout.click();
         AppUtil.captureScreenshot(driver);
@@ -50,55 +54,8 @@ public class Manage {
         /*driver.navigate().back();*/
     }
 
-    public void goToMore(AppiumDriver driver) {
-        List<WebElement> MT = driver.findElements(By.className("android.widget.ImageView"));
-        System.out.println(MT.size());
-        System.out.println("More");
-        List<WebElement> mt = MT.stream().filter(webElement -> webElement.getAttribute("content-desc") != null).collect(Collectors.toList());
-        System.out.println(mt.size());
-        System.out.println("More1");
-        List<WebElement> moreTab = mt.stream().filter(webElement -> webElement.getAttribute("selected").equals("true")).collect(Collectors.toList());
-        System.out.println(moreTab.size());
-        for (WebElement e : moreTab) {
-            System.out.println(e.getAttribute("content-desc"));
-        }
-        if (moreTab.isEmpty()) {
-            driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\n" +
-                    "Tab 3 of 3\"]")).click();
-
-        } else if (!moreTab.get(0).getAttribute("content-desc").endsWith("Tab 3 of 3")) {
-            System.out.println("tap on moreTab");
-            driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\n" +
-                    "Tab 3 of 3\"]")).click();
-        }
-
-    }
-
-    private void checkLogout(AppiumDriver driver) {
-        goToMore(driver);
-        List<WebElement> moreTab;
-        do {
-            List<WebElement> MT = driver.findElements(By.className("android.view.View"));
-            System.out.println(MT.size());
-            System.out.println("here");
-            List<WebElement> mt = MT.stream().filter(webElement -> webElement.getAttribute("content-desc") != null).collect(Collectors.toList());
-            System.out.println(mt.size());
-            System.out.println("here1");
-            moreTab = mt.stream().filter(webElement -> webElement.getAttribute("content-desc").equals("Logout")).collect(Collectors.toList());
-            System.out.println(moreTab.size());
-
-            if (moreTab.isEmpty()) {
-                ActionsUtil.Scroll.Up(driver);
-            } else if (!moreTab.get(0).isDisplayed()) // Rare case where the Logout button is in the DOM but not on the Screen
-            {
-                System.out.println(!moreTab.get(0).isDisplayed());
-                ActionsUtil.Scroll.Up(driver);
-            }
-        } while (moreTab.isEmpty());
-    }
-
-    private int memberSize;
-    public void Family(AppiumDriver driver) {
+    public void Family() {
+        goToMore();
         WebElement ManageFamily = null;
         while (ManageFamily == null) {
             ActionsUtil.Scroll.Up(driver);
@@ -115,15 +72,20 @@ public class Manage {
         List<WebElement> families = elements.stream().filter(element -> element.getAttribute("content-desc") != null).collect(Collectors.toList());
         for(WebElement family : families)
         {
+            String familyName = family.getAttribute("content-desc");
             System.out.println(family.getAttribute("content-desc"));
             family.click();
-            Home(driver);
-            countMember(driver);
-            driver.navigate().back();
+            if(!Objects.equals(familyName, "Add")) {
+                Home();
+                countMember();
+                driver.navigate().back();
+            } else{
+                AddHome();
+            }
         }
     }
 
-    public void Member(AppiumDriver driver) {
+    public void Member() {
 
         WebElement RemoveMember = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Remove Member\"]"));
         RemoveMember.click();
@@ -157,7 +119,7 @@ public class Manage {
         driver.navigate().back();
     }
 
-    public void AddHome(AppiumDriver driver) {
+    private void AddHome() {
 
         WebElement AddHome = null;
 
@@ -191,7 +153,7 @@ public class Manage {
 
     }
 
-    private void Home(AppiumDriver driver) {
+    private void Home() {
 
         WebElement FamilyEdit = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View[2]"));
         FamilyEdit.click();
@@ -216,14 +178,57 @@ public class Manage {
         driver.navigate().back();
     }
 
-    private void countMember(AppiumDriver driver){
+    private void countMember(){
         List<WebElement> Elements = driver.findElements(By.className("android.view.View"));
-        List<WebElement> elements = Elements.stream().filter(element -> element.getAttribute("clickable").equals("true")).collect(Collectors.toList());
+        List<WebElement> elements = Elements.stream().filter(element -> Objects.equals(element.getAttribute("clickable"), "true")).collect(Collectors.toList());
         System.out.println(elements.size());
         for (WebElement e: elements){
             System.out.println(e.getTagName());
         }
     }
 
+    private void goToMore() {
+        List<WebElement> MT = driver.findElements(By.className("android.widget.ImageView"));
+        System.out.println(MT.size());
+        System.out.println("More");
+        List<WebElement> mt = MT.stream().filter(webElement -> webElement.getAttribute("content-desc") != null).collect(Collectors.toList());
+        System.out.println(mt.size());
+        System.out.println("More1");
+        List<WebElement> moreTab = mt.stream().filter(webElement -> Objects.equals(webElement.getAttribute("selected"), "true")).collect(Collectors.toList());
+        System.out.println(moreTab.size());
+        for (WebElement e : moreTab) {
+            System.out.println(e.getAttribute("content-desc"));
+        }
+        if (moreTab.isEmpty()) {
+            driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\n" +
+                    "Tab 3 of 3\"]")).click();
+
+        } else if (!Objects.requireNonNull(moreTab.get(0).getAttribute("content-desc")).endsWith("Tab 3 of 3")) {
+            System.out.println("tap on moreTab");
+            driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\n" +
+                    "Tab 3 of 3\"]")).click();
+        }
+    }
+
+    private void checkLogout() {
+        goToMore();
+        List<WebElement> moreTab;
+        do {
+            List<WebElement> MT = driver.findElements(By.className("android.view.View"));
+            System.out.println(MT.size());
+            List<WebElement> mt = MT.stream().filter(webElement -> webElement.getAttribute("content-desc") != null).collect(Collectors.toList());
+            System.out.println(mt.size());
+            moreTab = mt.stream().filter(webElement -> Objects.equals(webElement.getAttribute("content-desc"), "Logout")).collect(Collectors.toList());
+            System.out.println(moreTab.size());
+
+            if (moreTab.isEmpty()) {
+                ActionsUtil.Scroll.Up(driver);
+            } else if (!moreTab.get(0).isDisplayed()) // Rare case where the Logout button is in the DOM but not on the Screen
+            {
+                System.out.println(!moreTab.get(0).isDisplayed());
+                ActionsUtil.Scroll.Up(driver);
+            }
+        } while (moreTab.isEmpty());
+    }
 }
 

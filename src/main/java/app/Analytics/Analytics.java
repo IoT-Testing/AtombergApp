@@ -6,13 +6,18 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class Analytics {
     private WebElement analytics;
     private WebElement moreTab;
+    private AppiumDriver driver;
 
-    public void Show(AppiumDriver driver) {
+    public Analytics(AppiumDriver driver){
+        this.driver = driver;
+    }
+    public void Show() {
         analytics = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Analytics\n" +
                 "Tab 1 of 3\"]"));
         moreTab = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\n" +
@@ -23,15 +28,17 @@ public class Analytics {
         System.out.println("switched to Analytics");
         WebElement FanCheck = null;
         try {
-            FanCheck = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Please add a smart fan to view analytics\"]"));
+            FanCheck = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Please add a smart device to view analytics\"]"));
         } catch (Exception ignored) {
         }
         if (FanCheck == null) {
-            nextFan(driver);
+            System.out.println("Fan Available in Analytics");
+            nextFan();
         }
+        else System.out.println("Fan Not Available in Analytics");
     }
 
-    private void fanChange(AppiumDriver driver) {
+    private void fanChange() {
         List<WebElement> FANS = driver.findElements(By.className("android.view.View"));
         List<WebElement> Fans = FANS.stream().filter(ele -> ele.getAttribute("content-desc") != null).collect(Collectors.toList());
         List<WebElement> fans = Fans.stream().filter(ele -> ele.getAttribute("content-desc").endsWith("Fan")).collect(Collectors.toList());
@@ -41,8 +48,8 @@ public class Analytics {
         }
     }
 
-    private void nextFan(AppiumDriver driver) {
-        fanChange(driver);
+    private void nextFan() {
+        fanChange();
         List<WebElement> availFans = driver.findElements(By.className("android.view.View"));
         List<WebElement> fans = availFans.stream().filter(ele -> ele.getAttribute("content-desc") != null).collect(Collectors.toList());
         fans.remove(fans.size() - 1);
@@ -53,27 +60,27 @@ public class Analytics {
             List<WebElement> availFans1 = driver.findElements(By.className("android.view.View"));
             List<WebElement> anaFans = availFans1.stream().filter(ele -> ele.getAttribute("content-desc") != null).collect(Collectors.toList());
             anaFans.remove(anaFans.size() - 1);
+            System.out.println(i);//To check which iteration is running
             System.out.println(anaFans.get(i).getAttribute("content-desc"));
             anaFans.get(i).click();
-            System.out.println(i);
-            info(driver);
+            info();
             System.out.println(i < (anaFans.size() - 1));
             if (i < (anaFans.size() - 1)) { // to go to the analytics screen and
                 moreTab.click();
-                rateUs(driver);
+                rateUs();
                 ActionsUtil.sleep(1500);
                 analytics.click();
-                rateUs(driver);
+                rateUs();
             }
-            fanChange(driver);
+            fanChange();
         }
     }
 
-    private void rateUs(AppiumDriver driver) {
+    private void rateUs() {
         List<WebElement> dialogueBox = driver.findElements(By.className("android.widget.Button"));
         List<WebElement> cancel = dialogueBox.stream().filter(webElement -> webElement.getAttribute("content-desc").equals("Cancel")).collect(Collectors.toList());
         for (WebElement ele : cancel) {
-            if (ele.getAttribute("content-desc").equals("Cancel")) {
+            if (Objects.equals(ele.getAttribute("content-desc"), "Cancel")) {
                 ele.click();
                 System.out.println("Canceled Rate us");
                 analytics = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Analytics\n" +
@@ -84,7 +91,7 @@ public class Analytics {
         }
     }
 
-    private void info(AppiumDriver driver) {
+    private void info() {
         int i;
         for (i = 0; i < 4; i++) {// there are 4 screens in analytics
             List<WebElement> ICONS = driver.findElements(By.xpath("//android.view.View[@clickable=\"true\"]"));
@@ -96,7 +103,7 @@ public class Analytics {
                 ActionsUtil.sleep(2000);
                 driver.navigate().back();
                 ActionsUtil.sleep(1500);
-                confetti(driver);
+                confetti();
             }
             if (i < 3) {// only three swipes for the screen
                 ActionsUtil.Swipe.Left(driver, 0.75, 0.50);
@@ -105,7 +112,7 @@ public class Analytics {
         }
     }
 
-    private static void confetti(AppiumDriver driver){
+    private void confetti(){
         System.out.println("checking confetti");
         List<WebElement> CONFETTI = driver.findElements(By.className("android.widget.ImageView"));
         List<WebElement> confetti1 = CONFETTI.stream().filter(element -> element.getAttribute("content-desc")==null).collect(Collectors.toList());
@@ -119,6 +126,4 @@ public class Analytics {
             driver.navigate().back();
         }
     }
-
-
 }

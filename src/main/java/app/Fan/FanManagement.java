@@ -190,60 +190,64 @@ public class FanManagement {
     }
 
     public void checkFanOnline() {//Check Fan Online
-
         WebElement Fans = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Fans\"]"));
         Fans.click();   // click on the fan tab
         sleep(3000);
-        List<WebElement> FANS = driver.findElements(By.className("android.widget.Button"));
-        System.out.println(FANS.size());
-        List<WebElement> fans = FANS.stream().filter(dev -> dev.getAttribute("content-desc") != null).collect(Collectors.toList());
+        WebElement buyNow = null;
+        try {
+            buyNow = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Buy Now!\"]"));
+        }catch (Exception ignored){}
+        if(buyNow==null) {
+            List<WebElement> FANS = driver.findElements(By.className("android.widget.Button"));
+            System.out.println(FANS.size());
+            List<WebElement> fans = FANS.stream().filter(dev -> dev.getAttribute("content-desc") != null).collect(Collectors.toList());
 
-        if (fans.size() > 1) {
-            System.out.println("Fan Available " + fans.size());
-        }
-        for (WebElement element : fans) {
-            System.out.println(element.getAttribute("content-desc"));
-            element.click(); // Clicks on the for and opens device control
-            fanControl(); // Controls the fan
-            driver.navigate().back();            // back
-        }
-        String previousFan = fans.get(fans.size()-2).getAttribute("content-desc");
-        String lastFan = fans.get(fans.size() - 1).getAttribute("content-desc");/*
-        System.out.println(previousFan);
-        System.out.println(lastFan);*/
-        if (fans.size() >= 4) // only 4 devices are visible on the screen
-        {
-            ActionsUtil.Scroll.Up(driver);
-            List<WebElement> NEWFANS = driver.findElements(By.className("android.widget.Button"));
-            List<WebElement> newfans = NEWFANS.stream().filter(dev -> dev.getAttribute("content-desc") != null).collect(Collectors.toList());
-            if (newfans.get(newfans.size() - 1).getAttribute("content-desc").equals(lastFan)) {
-                System.out.println("No more devices");
+            if (fans.size() > 1) {
+                System.out.println("Fan Available " + fans.size());
             }
-            System.out.println(newfans.size());
-            int count = 0;
-            for (WebElement fan : newfans) {
-
-                String name = fan.getAttribute("content-desc");
-                if (name.equals(previousFan) || name.equals(lastFan)) {
-                    count ++;
-                }
-            }
-            if (count > 0) {
-                newfans.subList(0, count).clear();
-                System.out.println("Fans Removed with new " + newfans.size() + " available");
-            }
-            System.out.println(newfans.size());
-            for (int i = 0; i < newfans.size(); i++) {
-                String name = newfans.get(i).getAttribute("content-desc");
-                System.out.println(i + name);
-                newfans.get(i).click(); // Clicks on the for and opens device control
+            for (WebElement element : fans) {
+                System.out.println(element.getAttribute("content-desc"));
+                element.click(); // Clicks on the for and opens device control
                 fanControl(); // Controls the fan
                 driver.navigate().back();            // back
             }
+            if (fans.size() >= 4) // only 4 devices are visible on the screen
+            {
+                String previousFan = fans.get(fans.size() - 2).getAttribute("content-desc");
+                String lastFan = fans.get(fans.size() - 1).getAttribute("content-desc");
+                ActionsUtil.Scroll.Up(driver);
+                List<WebElement> NEWFANS = driver.findElements(By.className("android.widget.Button"));
+                List<WebElement> newfans = NEWFANS.stream().filter(dev -> dev.getAttribute("content-desc") != null).collect(Collectors.toList());
+                if (newfans.get(newfans.size() - 1).getAttribute("content-desc").equals(lastFan)) {
+                    System.out.println("No more devices");
+                }
+                System.out.println(newfans.size());
+                int count = 0;
+                for (WebElement fan : newfans) {
+
+                    String name = fan.getAttribute("content-desc");
+                    if (name.equals(previousFan) || name.equals(lastFan)) {
+                        count++;
+                    }
+                }
+                if (count > 0) {
+                    newfans.subList(0, count).clear();
+                    System.out.println("Fans Removed with new " + newfans.size() + " available");
+                }
+                System.out.println(newfans.size());
+                for (int i = 0; i < newfans.size(); i++) {
+                    String name = newfans.get(i).getAttribute("content-desc");
+                    System.out.println(i + name);
+                    newfans.get(i).click(); // Clicks on the for and opens device control
+                    fanControl(); // Controls the fan
+                    driver.navigate().back();            // back
+                }
+            }
+            if (fans.isEmpty()) {
+                System.out.println("No Fan Online");
+            }
         }
-        if (fans.isEmpty()) {
-            System.out.println("No Fan Online");
-        }
+        ActionsUtil.sleep(1000);
     }
 
     public static class Select {
@@ -329,6 +333,18 @@ public class FanManagement {
 
         }
 
+    }
+
+    public void checkFan() {
+        WebElement emptyFamily = null;
+        try {
+            emptyFamily = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Add your first smart device\"]"));
+        } catch (Exception ignored) {}
+        if (emptyFamily==null)
+        {
+            FanManagement fan = new FanManagement(driver);
+            fan.checkFanOnline();
+        }
     }
 
 }

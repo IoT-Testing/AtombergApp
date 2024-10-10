@@ -31,9 +31,7 @@ public class AppInitializer {
         cap.setCapability("platformVersion", "14");
         cap.setCapability("appPackage", "com.atomberg.app");
         cap.setCapability("appActivity", "com.atomberg.app.MainActivity");
-/*
-        cap.setCapability("apksigner", "C:\\Users\\Rohit Bhagat\\Desktop\\android-sdk\\build-tools\\34.0.0\\lib\\apksigner.jar");
-*/
+
         URL url = null;
         try {
             url = new URL("http://127.0.0.1:4723/wd/hub");
@@ -53,13 +51,13 @@ public class AppInitializer {
         else System.out.println("No main screen yet");
     }
 
-    public void login() {
+    public void login(String login, String pass) {
         WebElement emailLoginButton = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[4]"));
         emailLoginButton.click();
         AppUtil.captureScreenshot(driver);
         WebElement emailField = driver.findElement(By.xpath("//android.widget.EditText"));
         emailField.click();
-        emailField.sendKeys("teboham827@agaseo.com"); // Enter Email id
+        emailField.sendKeys(login); // Enter Email id
         AppUtil.captureScreenshot(driver);
         System.out.println(" " + emailField.getText() + " ");
         System.out.println("Email Entered...");
@@ -74,7 +72,7 @@ public class AppInitializer {
         }
         WebElement passwordField = driver.findElement(By.xpath("//android.widget.EditText"));
         passwordField.click();
-        passwordField.sendKeys("Atomberg@123");
+        passwordField.sendKeys(pass);
         AppUtil.captureScreenshot(driver);
         System.out.println("Password entered..."); // Enter Password
         WebElement continueButton1 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Continue\"]"));
