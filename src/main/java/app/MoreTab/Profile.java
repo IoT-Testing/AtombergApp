@@ -7,19 +7,24 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class Profile {
     public AppiumDriver driver;
 
-    public void editProfile(AppiumDriver driver){
+    public Profile(AppiumDriver driver) {
+        this.driver = driver;
+    }
+
+    public void edit(){
         List<WebElement> ELEMENTS = driver.findElements(By.className("android.widget.ImageView"));
         List<WebElement> elements = ELEMENTS.stream().filter(element -> element.getAttribute("content-desc") != null).collect(Collectors.toList());
         System.out.println(elements.size());
-        List<WebElement> ele = elements.stream().filter(element -> element.getAttribute("content-desc").startsWith("Hi,")).collect(Collectors.toList());
+        List<WebElement> ele = elements.stream().filter(element -> Objects.requireNonNull(element.getAttribute("content-desc")).startsWith("Hi,")).collect(Collectors.toList());
         System.out.println(elements.size());
-        for (WebElement e : elements) {
-            if (e.getAttribute("content-desc").startsWith("Hi,")) {
+        for (WebElement e : ele) {
+            if (Objects.requireNonNull(e.getAttribute("content-desc")).startsWith("Hi,")) {
                 e.click();
                 System.out.println("Edit Profile");
                 break;
@@ -47,7 +52,7 @@ public class Profile {
         AppUtil.captureScreenshot(driver);
         driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Update\"]")).click();
         ActionsUtil.sleep(250);
-        WebElement SLD = null;
+
         back(driver);
     }
 

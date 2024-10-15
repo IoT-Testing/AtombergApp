@@ -18,7 +18,7 @@ public class AppUtil {
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String screenshotDirectory = System.getProperty("user.dir")+"/screenshots";
         File screenshotFile = driver.getScreenshotAs(OutputType.FILE);
-        String destinationFilePath = screenshotDirectory + "/screenshot_" + timestamp + ".png";
+        String destinationFilePath = screenshotDirectory + "screenshot_" + timestamp + ".png";
         try {
             FileUtils.copyFile(screenshotFile, new File(destinationFilePath));
             System.out.println("Appium screenshot saved as: " + destinationFilePath);

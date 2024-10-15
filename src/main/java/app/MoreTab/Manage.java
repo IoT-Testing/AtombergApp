@@ -187,7 +187,7 @@ public class Manage {
         }
     }
 
-    private void goToMore() {
+    public void goToMore() {
         List<WebElement> MT = driver.findElements(By.className("android.widget.ImageView"));
         System.out.println(MT.size());
         System.out.println("More");
