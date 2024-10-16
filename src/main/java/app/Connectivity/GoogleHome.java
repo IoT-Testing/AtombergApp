@@ -7,10 +7,23 @@ import org.openqa.selenium.WebElement;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
+/*
+*  THIS IS TO CONNECT ATOMBERG HOME APP TO GOOGLE HOME
+*  IT HAS SKILLS TO CONNECT WITH THE SMART DEVICES
+*  "WORK WITH GOOGLE" OPTION WITHIN GOOGLE HOME
+*  SEARCH FOR ATOMBERG HOME
+*  LOGIN IN WITH ATOMBERG ACCOUNT
+*/
 public class GoogleHome {
-    public static void Connect(AppiumDriver driver) {
+    public AppiumDriver driver;
+    public GoogleHome(AppiumDriver driver){
+        this.driver = driver;
+    }
+
+    public void Connect() {
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         WebElement SLD = null;
         try {
@@ -18,16 +31,17 @@ public class GoogleHome {
         } catch (Exception ignored) {
         }
         if (SLD != null) {
-            googleHome(driver);			//Google Home
+            googleHome();			//Google Home
         } else {
             driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\n" +
                     "Tab 3 of 3\"]")).click();
-            googleHome(driver);
+            googleHome();
         }
-        ALG(driver);
+        ALG();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
     }
-    private static void googleHome(AppiumDriver driver) {
+
+    private void googleHome() {
         WebElement googleConnect = null;
         try{
             googleConnect = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Google\nConnect\"]"));
@@ -40,11 +54,12 @@ public class GoogleHome {
             System.out.println("Google Home is already connected");
         }
     }
-    public static void ALG(AppiumDriver driver) {//Account Linking Guide
+
+    private void ALG() {//Account Linking Guide
         List<WebElement> Elements = driver.findElements(By.className("android.view.View"));
         List<WebElement> elements = Elements.stream().filter(element -> element.getAttribute("content-desc")!=null).collect(Collectors.toList());
         System.out.println(elements.size());
-        List<WebElement> algL = elements.stream().filter(element -> element.getAttribute("content-desc").equals("Account linking guide")).collect(Collectors.toList());
+        List<WebElement> algL = elements.stream().filter(element -> Objects.equals(element.getAttribute("content-desc"), "Account linking guide")).collect(Collectors.toList());
 
         if (!algL.isEmpty())
         {
@@ -53,13 +68,69 @@ public class GoogleHome {
             ActionsUtil.sleep(1000);
             System.out.println("OK");
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-            checkContinue(driver);
-
-            gCheck(driver);// check if account is present
+            checkContinue();
+            loginScreenCheck();// check if account is present
 
         }
     }
-    private static void gCheck(AppiumDriver driver){
+
+    private void loginScreenCheck(){
+        WebElement signInFormUsername = null;
+        try {
+            signInFormUsername = driver.findElement(By.xpath("//android.widget.EditText[@resource-id=\"signInFormUsername\"]"));
+        }catch (Exception ignored){}
+        if (signInFormUsername!=null){
+            signInFormUsername.click();
+            signInFormUsername.sendKeys("Teboham827@agaseo.com");
+            WebElement signInFormPassword = driver.findElement(By.xpath("//android.widget.EditText[@resource-id=\"signInFormPassword\"]"));
+            signInFormPassword.click();
+            signInFormPassword.sendKeys("Atomberg@123");
+            ActionsUtil.sleep(1000);
+            driver.findElement(By.xpath("//android.widget.Button[@text=\"submit\"]")).click();
+        }
+        else {
+            List<WebElement> previousLoginCheckList =driver.findElements(By.className("android.widget.Button"));
+            System.out.println(previousLoginCheckList.size());
+            List<WebElement> previousEmailCheck = previousLoginCheckList.stream().filter(Object -> Object.getAttribute("content-desc")!= null).collect(Collectors.toList());
+            List<WebElement> availableEmail = previousEmailCheck.stream().filter(Object -> Objects.requireNonNull(Object.getAttribute("content-desc")).startsWith("Sign In as")).collect(Collectors.toList());
+            if (!availableEmail.isEmpty()){
+                availableEmail.get(0).click();
+            }
+        }
+        System.out.println("Account entered");
+        ActionsUtil.sleep(5000);
+        WebElement done = driver.findElement(By.xpath("//android.widget.Button[@text=\"Done\"]"));
+        done.click();
+        back();
+    }
+
+    private void back(){
+        WebElement SLD =null;
+        while(SLD == null)
+        {
+            driver.navigate().back();
+            try {
+                SLD=driver.findElement(By.xpath("//android.view.View[@content-desc=\"Select and link device\"]"));
+            }catch (Exception ignored)
+            {}
+        }
+    }
+
+    private void checkContinue(){
+        WebElement continueBt = null;
+        try {
+            continueBt = driver.findElement(By.xpath("//android.widget.Button[@text=\"Continue\"]"));
+        }catch (Exception ignored){}
+        if(continueBt != null)
+        {
+            continueBt.click();
+        }
+        else {
+            ActionsUtil.Tap.withCoordinates(driver, 890, 1290);
+        }
+    }
+/*
+    private void gCheck(){
         List<WebElement> CHECK =driver.findElements(By.className("android.widget.Button"));
         System.out.println("Check");
         System.out.println(CHECK.size());
@@ -82,30 +153,9 @@ public class GoogleHome {
         ActionsUtil.sleep(5000);
         WebElement done = driver.findElement(By.xpath("//android.widget.Button[@text=\"Done\"]"));
         done.click();
-        back(driver);
+        back();
     }
-    private static void back(AppiumDriver driver){
-        WebElement SLD =null;
-        while(SLD == null)
-        {
-            driver.navigate().back();
-            try {
-                SLD=driver.findElement(By.xpath("//android.view.View[@content-desc=\"Select and link device\"]"));
-            }catch (Exception ignored)
-            {}
-        }
-    }
-    private static void checkContinue(AppiumDriver driver){
-        WebElement continueBt = null;
-        try {
-            continueBt = driver.findElement(By.xpath("//android.widget.Button[@text=\"Continue\"]"));
-        }catch (Exception ignored){}
-        if(continueBt != null)
-        {
-            continueBt.click();
-        }
-        else {
-            ActionsUtil.Tap.withCoordinates(driver, 890, 1290);
-        }
-    }
+*/
+
+
 }

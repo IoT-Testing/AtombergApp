@@ -7,15 +7,20 @@ import org.openqa.selenium.WebElement;
 import io.appium.java_client.AppiumDriver;
 
 public class Play {
-    public void Videos(AppiumDriver driver) {
+    public AppiumDriver driver;
+
+    public Play(AppiumDriver driver){
+        this.driver = driver;
+    }
+    public void Videos() {
         WebElement AppTour = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"App Tour\"]"));
         AppTour.click();
 
         AppUtil.captureScreenshot(driver);
         System.out.println("App Video Opened");
 
-        VideoTryCatch(driver);
-        VideoTryCatch(driver);
+        VideoTryCatch();
+        VideoTryCatch();
         ActionsUtil.sleep(5000);
 
         WebElement ConnectAlexa = driver
@@ -25,9 +30,9 @@ public class Play {
         AppUtil.captureScreenshot(driver);
         System.out.println("Alexa Video Opened");
 
-        VideoTryCatch(driver);
-        VideoTryCatch(driver);
-        VideoTryCatch(driver);
+        VideoTryCatch();
+        VideoTryCatch();
+        VideoTryCatch();
         ActionsUtil.sleep(5000);
 
         WebElement ConnectGoogle = driver
@@ -35,8 +40,8 @@ public class Play {
         ConnectGoogle.click();
         AppUtil.captureScreenshot(driver);
         System.out.println("Google Home Video Opened");
-        VideoTryCatch(driver);
-        VideoTryCatch(driver);
+        VideoTryCatch();
+        VideoTryCatch();
         ActionsUtil.sleep(5000);
 
         WebElement SLAppSetup = null;
@@ -61,8 +66,8 @@ public class Play {
         AppUtil.captureScreenshot(driver);
         System.out.println("SL installation Video Opened");
 
-        VideoTryCatch(driver);
-        VideoTryCatch(driver);
+        VideoTryCatch();
+        VideoTryCatch();
         ActionsUtil.sleep(5000);
 
         SLAppSetup = null;
@@ -84,19 +89,19 @@ public class Play {
         AppUtil.captureScreenshot(driver);
         System.out.println("SL Feature Video Opened");
 
-        VideoTryCatch(driver);
-        VideoTryCatch(driver);
+        VideoTryCatch();
+        VideoTryCatch();
         ActionsUtil.sleep(5000);
 
         SLAppSetup.click();
         ActionsUtil.sleep(2000);
         AppUtil.captureScreenshot(driver);
         System.out.println("App Setup for Lock Video Opened");
-        VideoTryCatch(driver);
-        VideoTryCatch(driver);
+        VideoTryCatch();
+        VideoTryCatch();
 
     }
-    private static void VideoTryCatch(AppiumDriver driver) {
+    private void VideoTryCatch() {
         WebElement VideoTutorials = null;
 
         try {

@@ -3,3 +3,4 @@ reports/
 /screenshots/
 /logs/
 /target/
+/target/surefire-reports/

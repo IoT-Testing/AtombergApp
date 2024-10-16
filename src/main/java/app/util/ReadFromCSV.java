@@ -12,7 +12,7 @@ public class ReadFromCSV {
     public static List<List<String>> readFromCSV() {
         String csvPath = System.getProperty("user.dir") + "/accounts.csv";
         Path path = Paths.get(csvPath);
-        BufferedReader reader = null;
+        BufferedReader reader ;
         List<List<String>> result = new ArrayList<>();
         try {
             reader = Files.newBufferedReader(path);

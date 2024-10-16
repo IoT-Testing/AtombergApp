@@ -2,7 +2,6 @@ package app.util;
 
 import io.appium.java_client.AppiumDriver;
 import org.apache.commons.io.FileUtils;
-import org.checkerframework.checker.units.qual.A;
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebElement;
@@ -16,9 +15,9 @@ import java.util.Random;
 public class AppUtil {
     public static void captureScreenshot(AppiumDriver driver) {
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String screenshotDirectory = System.getProperty("user.dir")+"/screenshots";
+        String screenshotDirectory = System.getProperty("user.dir")+"\\screenshots\\";
         File screenshotFile = driver.getScreenshotAs(OutputType.FILE);
-        String destinationFilePath = screenshotDirectory + "screenshot_" + timestamp + ".png";
+        String destinationFilePath = screenshotDirectory + "Screenshot_" + timestamp + ".png";
         try {
             FileUtils.copyFile(screenshotFile, new File(destinationFilePath));
             System.out.println("Appium screenshot saved as: " + destinationFilePath);

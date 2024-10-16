@@ -10,6 +10,8 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import java.util.List;
+import java.util.Objects;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import static app.util.ActionsUtil.sleep;
@@ -17,6 +19,7 @@ import static app.util.AppUtil.SearchWiFi;
 
 public class FanManagement {
     public AppiumDriver driver;
+
     public FanManagement(AppiumDriver driver){
         this.driver = driver;
     }
@@ -156,37 +159,43 @@ public class FanManagement {
 
     public void fanControl() {
 
+        driver.manage().timeouts().implicitlyWait(Duration.ZERO);
         WebElement Speed1 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"1\"]"));
         Speed1.click();
         System.out.println("Speed1");
-        AppUtil.captureScreenshot(driver);
-
+//        AppUtil.captureScreenshot(driver);
 
         WebElement Speed2 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"2\"]"));
         Speed2.click();
         System.out.println("Speed2");
-        AppUtil.captureScreenshot(driver);
+//        AppUtil.captureScreenshot(driver);
 
         WebElement Speed3 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"3\"]"));
         Speed3.click();
         System.out.println("Speed3");
-        AppUtil.captureScreenshot(driver);
+//        AppUtil.captureScreenshot(driver);
 
         WebElement Speed4 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"4\"]"));
         Speed4.click();
         System.out.println("Speed4");
-        AppUtil.captureScreenshot(driver);
+//        AppUtil.captureScreenshot(driver);
 
         WebElement Speed5 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"5\"]"));
         Speed5.click();
         System.out.println("Speed5");
-        AppUtil.captureScreenshot(driver);
+//        AppUtil.captureScreenshot(driver);
 
         WebElement Boost = driver.findElement(By.xpath(
                 "//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.Button[5]"));
         Boost.click();
         System.out.println("Boost");
-        AppUtil.captureScreenshot(driver);
+//        AppUtil.captureScreenshot(driver);
+
+        WebElement power = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.Button[4]"));
+        power.click();
+        System.out.println("Power");
+//        AppUtil.captureScreenshot(driver);
+//        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
     }
 
     public void checkFanOnline() {//Check Fan Online
@@ -208,7 +217,7 @@ public class FanManagement {
             for (WebElement element : fans) {
                 System.out.println(element.getAttribute("content-desc"));
                 element.click(); // Clicks on the for and opens device control
-                fanControl(); // Controls the fan
+                repeatCommands(10);
                 driver.navigate().back();            // back
             }
             if (fans.size() >= 4) // only 4 devices are visible on the screen
@@ -218,7 +227,7 @@ public class FanManagement {
                 ActionsUtil.Scroll.Up(driver);
                 List<WebElement> NEWFANS = driver.findElements(By.className("android.widget.Button"));
                 List<WebElement> newfans = NEWFANS.stream().filter(dev -> dev.getAttribute("content-desc") != null).collect(Collectors.toList());
-                if (newfans.get(newfans.size() - 1).getAttribute("content-desc").equals(lastFan)) {
+                if (Objects.equals(newfans.get(newfans.size() - 1).getAttribute("content-desc"), lastFan)) {
                     System.out.println("No more devices");
                 }
                 System.out.println(newfans.size());
@@ -226,6 +235,7 @@ public class FanManagement {
                 for (WebElement fan : newfans) {
 
                     String name = fan.getAttribute("content-desc");
+                    assert name != null;
                     if (name.equals(previousFan) || name.equals(lastFan)) {
                         count++;
                     }
@@ -251,6 +261,7 @@ public class FanManagement {
     }
 
     public static class Select {
+
         public static void Fan(AppiumDriver driver) {
             WebElement ModelSelect = null;
             try {
@@ -263,6 +274,7 @@ public class FanManagement {
                 SixLED(driver);
 
             } else {
+                FanModels fanModels = new FanModels(driver);
                 WebElement Others = null;
                 try {
                     Others = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Select your device color\"]"));
@@ -281,11 +293,11 @@ public class FanManagement {
                     } catch (Exception ignored) {
                     }
                     if (Aris != null) {
-                        FanModels.Aris(driver);
+                        fanModels.Aris();
                     } else if (Jaguar != null) {
-                        FanModels.Jaguar(driver);
+                        fanModels.Jaguar();
                     } else {
-                        FanModels.Erica(driver);
+                        fanModels.Erica();
                     }
                     AppUtil.captureScreenshot(driver);
                 }
@@ -329,10 +341,10 @@ public class FanManagement {
                 System.out.println(exp.getMessage());
             }
             driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Continue\"]")).click();
-            FanModels.SixLEDColorSelect(driver);
+            FanModels fanModels = new FanModels(driver);
+            fanModels.SixLEDColorSelect();
 
         }
-
     }
 
     public void checkFan() {
@@ -347,4 +359,77 @@ public class FanManagement {
         }
     }
 
+    private void randomFanCommands(int iteration){
+        driver.manage().timeouts().implicitlyWait(Duration.ZERO);
+       for(int i =0; i<iteration; i++) {
+           Random random = new Random();
+           int command = random.nextInt(7);
+           switch (command) {
+               case 0:
+                   WebElement Speed1 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"1\"]"));
+                   Speed1.click();
+                   System.out.println("Speed1");
+                   break;
+
+               case 1:
+                   WebElement Speed2 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"2\"]"));
+                   Speed2.click();
+                   System.out.println("Speed2");
+                   break;
+
+               case 2:
+                   WebElement Speed3 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"3\"]"));
+                   Speed3.click();
+                   System.out.println("Speed3");
+                   break;
+
+               case 3:
+                   WebElement Speed4 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"4\"]"));
+                   Speed4.click();
+                   System.out.println("Speed4");
+                   break;
+
+               case 4:
+                   WebElement Speed5 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"5\"]"));
+                   Speed5.click();
+                   System.out.println("Speed5");
+                   break;
+
+               case 5:
+                   WebElement Boost = driver.findElement(By.xpath(
+                           "//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.Button[5]"));
+                   Boost.click();
+                   System.out.println("Boost");
+                   break;
+
+               case 6:
+                   WebElement power = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.Button[4]"));
+                   power.click();
+                   System.out.println("Power");
+                   break;
+           }
+           driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+       }
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+    }
+
+    public void repeatCommands(int iteration) {
+        WebElement Speed1 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"1\"]"));
+        WebElement power = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.Button[4]"));
+        WebElement Boost = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.Button[5]"));
+        WebElement Speed2 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"2\"]"));
+        WebElement Speed3 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"3\"]"));
+        WebElement Speed4 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"4\"]"));
+        WebElement Speed5 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"5\"]"));
+        driver.manage().timeouts().implicitlyWait(Duration.ZERO);
+        for (int i= 0; i< iteration; i++){
+            Speed1.click();
+            Speed2.click();
+            Speed3.click();
+            Speed4.click();
+            Speed5.click();
+            Boost.click();
+            power.click();
+        }
+    }
 }

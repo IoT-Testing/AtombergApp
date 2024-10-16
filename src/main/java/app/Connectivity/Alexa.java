@@ -6,10 +6,23 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
+/*
+ *  THIS IS TO CONNECT ATOMBERG HOME APP TO AMAZON ALEXA
+ *  IT HAS SKILLS TO CONNECT WITH THE SMART DEVICES
+ *  "SKILLS & GAMES" OPTION WITHIN ALEXA APP
+ *  SEARCH FOR ATOMBERG HOME
+ *  LOGIN IN WITH ATOMBERG ACCOUNT
+ */
+
 public class Alexa {
-    public static void Connect(AppiumDriver driver) {
+    public AppiumDriver driver;
+    public Alexa(AppiumDriver driver){
+        this.driver = driver;
+    }
+    public void Connect() {
 
         WebElement SLD = null;
         try {
@@ -17,16 +30,15 @@ public class Alexa {
         } catch (Exception ignored) {
         }
         if (SLD != null) {
-            alexa(driver);
+            alexa();
         } else {
             driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\n" +
                     "Tab 3 of 3\"]")).click();
-            alexa(driver);
+            alexa();
         }
-
     }
 
-    private static void alexa(AppiumDriver driver) {
+    private void alexa() {
         WebElement alexaConnect = null;
         try {
             alexaConnect = driver
@@ -39,17 +51,17 @@ public class Alexa {
             System.out.println("Alexa is already connected");
         }
         //check alexa linking guide
-        ALG(driver);
-        linkCheck(driver);
+        ALG();
+        linkCheck();
     }
 
-    private static void ALG(AppiumDriver driver) {
+    private void ALG() {
 
         driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Link\"]")).click();
 
         List<WebElement> Elements = driver.findElements(By.className("android.view.View"));
         List<WebElement> elements = Elements.stream().filter(element -> element.getAttribute("content-desc")!=null).collect(Collectors.toList());
-        List<WebElement> algL = elements.stream().filter(element -> element.getAttribute("content-desc").equals("Account linking guide")).collect(Collectors.toList());
+        List<WebElement> algL = elements.stream().filter(element -> Objects.equals(element.getAttribute("content-desc"), "Account linking guide")).collect(Collectors.toList());
         System.out.println(algL.size());
         if (!algL.isEmpty())
         {
@@ -58,11 +70,11 @@ public class Alexa {
             driver.findElement(By.xpath("//android.widget.TextView[@text=\"LINK\"]")).click();
             ActionsUtil.sleep(5000);
 
-            alexaCheck(driver);
+            alexaCheck();
         }
     }
 
-    private static void alexaCheck(AppiumDriver driver){
+    private void alexaCheck(){
         WebElement CHECK = null;
         try {
             CHECK = driver.findElement(By.xpath("//android.widget.TextView[@text=\"Sign in with your email and password\"]"));
@@ -81,7 +93,7 @@ public class Alexa {
 
     }
 
-    private static void back(AppiumDriver driver){
+    private void back(){
         WebElement SLD =null;
         while(SLD == null)
         {
@@ -93,11 +105,11 @@ public class Alexa {
         }
     }
 
-    private static void linkCheck(AppiumDriver driver){
+    private void linkCheck(){
         List<WebElement> Success = driver.findElements(By.className("android.view.View"));
         List<WebElement> successM = Success.stream().filter(element -> element.getAttribute("content-desc")!=null).collect(Collectors.toList());
         for(WebElement e:successM)
-            if(e.getAttribute("content-desc").equals("Alexa Linked Successfully")){
+            if(Objects.equals(e.getAttribute("content-desc"), "Alexa Linked Successfully")){
                 System.out.println("Alexa Linked Successfully");
                 ActionsUtil.Tap.withPercentage(driver, 0.20,0.20);
             }

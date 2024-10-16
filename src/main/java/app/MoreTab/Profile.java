@@ -47,7 +47,7 @@ public class Profile {
         editName.clear();
         editName.sendKeys("Hi Hi Hi");
 
-        WebElement EditNumber = driver.findElement(By.xpath("//android.view.View[@content-desc=\"+91\"]"));
+        WebElement EditNumber = driver.findElement(By.xpath("//android.view.View[@index=\"2\"]"));
         EditNumber.click();
         AppUtil.captureScreenshot(driver);
         driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Update\"]")).click();

@@ -48,17 +48,11 @@ public class Email {
         WebElement continueButton1 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Continue\"]"));
         continueButton1.click(); // Continue to Log in
         System.out.println("Continue...");
-		/*WebElement appLogo =driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.widget.ImageView"));
-		await().atMost(10, TimeUnit.SECONDS).until(appLogo::isDisplayed);
-		System.out.println("Test Passed");*/
 
         Permission.Allow(driver);
-
     }
 
     private static void sleep(long millis) {
         Awaitility.await().atMost(millis, TimeUnit.MILLISECONDS);
     }
-
-
 }

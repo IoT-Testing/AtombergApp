@@ -7,8 +7,12 @@ import org.openqa.selenium.WebElement;
 import static app.util.ActionsUtil.sleep;
 
 public class FanModels {
+    public AppiumDriver driver;
+    public FanModels(AppiumDriver driver){
+        this.driver = driver;
+    }
 
-    public static void SixLEDColorSelect(AppiumDriver driver) {
+    public void SixLEDColorSelect() {
         WebElement RPlus = null;
         WebElement SPlus = null;
         try {
@@ -20,16 +24,16 @@ public class FanModels {
         } catch (Exception ignored) {
         }
         if (RPlus != null) {
-            RenesaPlus(driver);
+            RenesaPlus();
         } else if (SPlus != null) {
-            StudioPlus(driver);
+            StudioPlus();
         } else {
-            Renesa(driver);
+            Renesa();
         }
 
     }
 
-    public static void Renesa(AppiumDriver driver) {
+    public void Renesa() {
         try {
             int randomNumber = (int) (Math.random() * 5); // generate a random number between 0 and 5
             switch (randomNumber) {
@@ -75,7 +79,7 @@ public class FanModels {
         }
     }
 
-    public static void RenesaPlus(AppiumDriver driver) {
+    public void RenesaPlus() {
         try {
             int randomNumber = (int) (Math.random() * 4); // generate a random number between 0 and 4
             switch (randomNumber) {
@@ -107,7 +111,7 @@ public class FanModels {
         }
     }
 
-    public static void StudioPlus(AppiumDriver driver) {
+    public void StudioPlus() {
         try {
             int randomNumber = (int) (Math.random() * 2); // generate a random number between 0 and 5
             switch (randomNumber) {
@@ -127,7 +131,7 @@ public class FanModels {
         }
     }
 
-    public static void Aris(AppiumDriver driver) {
+    public void Aris() {
         try {
             int randomNumber = (int) (Math.random() * 2); // generate a random number between 0 and 2
             switch (randomNumber) {
@@ -147,7 +151,7 @@ public class FanModels {
         }
     }
 
-    public static void Jaguar(AppiumDriver driver) {
+    public void Jaguar() {
         try {
             int randomNumber = (int) (Math.random() * 3); // generate a random number between 0 and 5
             switch (randomNumber) {
@@ -173,7 +177,7 @@ public class FanModels {
         }
     }
 
-    public static void Erica(AppiumDriver driver) {
+    public void Erica() {
         try {
             int randomNumber = (int) (Math.random() * 2); // generate a random number between 0 and 2
             switch (randomNumber) {
@@ -192,4 +196,5 @@ public class FanModels {
             System.out.println(exp.getMessage());
         }
     }
+
 }

@@ -1,7 +1,7 @@
 package app;
 
+import app.Fan.FanManagement;
 import app.MoreTab.Manage;
-import app.MoreTab.Profile;
 import app.util.ActionsUtil;
 import app.util.ReadFromCSV;
 import io.appium.java_client.AppiumDriver;
@@ -22,10 +22,9 @@ public class AutomatedTest {
             String password = credential.get(1);
             appInitializer.login(email, password);
             ActionsUtil.Tap.withCoordinates(driver, 540, 2140);
+            FanManagement fan = new FanManagement(driver);
+            fan.checkFan();
             Manage manage = new Manage(driver);
-            manage.goToMore();
-            Profile profile = new Profile(driver);
-            profile.edit();
             manage.Logout();
             ActionsUtil.sleep(2000);
         }

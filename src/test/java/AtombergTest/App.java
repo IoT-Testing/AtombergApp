@@ -8,10 +8,14 @@ import java.time.Duration;
 
 import Supports.TempMail;
 import Tabs.Analytics;
+import app.Connectivity.Alexa;
+import app.Connectivity.GoogleHome;
+import app.Fan.FanManagement;
 import app.util.ActionsUtil;
 import org.awaitility.Awaitility;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.net.MalformedURLException;
 import java.util.stream.Collectors;
@@ -28,21 +32,23 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 
 public class App {
     public static AppiumDriver driver;
-    int i = 0;
-    int total;
+    int i;
     String fam1;
     List<WebElement> elements;
     WebElement element;
+    int total;
     public static void main(String[] args) {
         try {
-//            TempMail.Email();
             openAtomberg();
             Email.Login(driver);
+            GoogleHome googleHome = new GoogleHome(driver);
+            googleHome.Connect();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
     static void openAtomberg() {
         DesiredCapabilities cap = new DesiredCapabilities();
         cap.setCapability("platformName", "Android");
@@ -67,7 +73,7 @@ public class App {
         } catch (Exception e) {}
         System.out.println("Atomberg App Opened...");
         sleep(6000);
-        Method.captureScreenshot(driver);
+//        Method.captureScreenshot(driver);
     }
 
     static void sleep(long millis) {
@@ -107,7 +113,7 @@ public class App {
             families.remove(families.size() - 1);
             families.remove(families.size() - 1);
             System.out.println("number of families1 present =" + total);
-            if (families.get(i).getAttribute("content-desc").equals(fam1)){
+            if (Objects.equals(families.get(i).getAttribute("content-desc"), fam1)){
                 driver.navigate().back();
             }
             else{

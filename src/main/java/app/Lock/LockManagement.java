@@ -8,6 +8,7 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
+import java.util.Objects;
 
 import static app.util.ActionsUtil.sleep;
 
@@ -22,7 +23,7 @@ public class LockManagement {
         WebElement AddButton = null;
         try {
             AddButton = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]/android.widget.ImageView"));
-        } catch (Exception exp) {
+        } catch (Exception ignored) {
         }
         if (AddButton != null) {
             AddButton.click();
@@ -218,7 +219,7 @@ public class LockManagement {
     public void Passcode(AppiumDriver driver) {
         ActionsUtil.Tap.withCoordinates(driver, 540, 880);
         sleep(500);
-        AppUtil.NumberPad NumberPad = null;
+        AppUtil.NumberPad NumberPad = new AppUtil.NumberPad();
         NumberPad.one(driver);
         NumberPad.one(driver);
         NumberPad.one(driver);
@@ -235,8 +236,8 @@ public class LockManagement {
         for (i = 0; i < total; i++) {
             List<WebElement> Keys = driver.findElements(By.className("android.widget.Button"));
             WebElement key = Keys.get(i);
-            boolean OTP = key.getAttribute("content-desc").endsWith("OTP"); // checks if the last string is OTP
-            boolean New = key.getAttribute("content-desc").endsWith("NEW"); // checks if the last string is NEW
+            boolean OTP = Objects.requireNonNull(key.getAttribute("content-desc")).endsWith("OTP"); // checks if the last string is OTP
+            boolean New = Objects.requireNonNull(key.getAttribute("content-desc")).endsWith("NEW"); // checks if the last string is NEW
             System.out.println(OTP || New); // When opened 1st time the last string is NEW while in the second attempt it is OTP
             key.click();
             if (OTP || New) {
@@ -246,9 +247,7 @@ public class LockManagement {
                     System.out.println(otp.getAttribute("content-desc"));
                 }
             }
-
             driver.navigate().back();
-
             if (i < (total - 1)) { // to repeat the Access keys opening as once we go back it goes back to lock control screen
                 WebElement AccessKeys = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Access\nkeys\"]"));
                 AccessKeys.click();
@@ -261,7 +260,7 @@ public class LockManagement {
         WebElement PBC = null; // Checks the availability on Pin, Biometrics & Cards in Lock Settings
         try {
             PBC = driver.findElement(By.xpath("//android.view.View[@content-desc=\"PINs, biometric and card settings\"]"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         if (PBC != null) {
             List<WebElement> TS = driver.findElements(By.className("android.widget.Switch"));
@@ -300,17 +299,17 @@ public class LockManagement {
         WebElement PMDisabled = null;
         try {
             PMDisabled = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Passage Mode disabled successfully\"]"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         if (PMDisabled == null) {
             WebElement psmText = driver.findElement(By.xpath("//android.view.View[@content-desc=\"You are enabling passage mode. Enabling this mode will allow anyone to enter the house without any authentication. Do you want to continue?\"]"));
-            boolean allow = psmText.getAttribute("content-desc").endsWith("Do you want to continue?");
+            boolean allow = Objects.requireNonNull(psmText.getAttribute("content-desc")).endsWith("Do you want to continue?");
             if (allow) {
                 WebElement Yes = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Yes\"]"));
                 Yes.click();
             }
             WebElement psmText2 = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Please read this below. Do you still want to continue?\"]"));
-            boolean allow2 = psmText2.getAttribute("content-desc").startsWith("Please read this below");
+            boolean allow2 = Objects.requireNonNull(psmText2.getAttribute("content-desc")).startsWith("Please read this below");
             if (allow2) {
                 WebElement Yes2 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Yes\"]"));
                 Yes2.click();
@@ -318,7 +317,7 @@ public class LockManagement {
             WebElement PMEnabled = null;
             try {
                 PMEnabled = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Passage Mode Enabled Successfully\"]"));
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
             if (PMEnabled != null) {
                 System.out.println("Passage Mode Enabled Successfully");
@@ -338,12 +337,12 @@ public class LockManagement {
         WebElement FPDisabled = null;
         try {
             FPDisabled = driver.findElement(By.xpath("//android.view.View[@content-desc=\"All Fingerprints Disabled Successfully!\"]"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         WebElement FPEnabled = null;
         try {
             FPEnabled = driver.findElement(By.xpath("//android.view.View[@content-desc=\"All Fingerprints Enabled Successfully!\"]"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         if (FPDisabled != null) {
             System.out.println("All Fingerprints Disabled Successfully!\n Enabling them again");
@@ -362,16 +361,16 @@ public class LockManagement {
 
         try {
             CNotAvail = driver.findElement(By.xpath("//android.view.View[@content-desc=\"No Cards present for this Lock.\"]"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         try {
             CDisable = driver.findElement(By.xpath("//android.view.View[@content-desc=\"All Cards Disabled Successfully!\"]"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         try {
             CEnabled = driver.findElement(By.xpath("//android.view.View[@content-desc=\"All Cards Enabled Successfully!\"]"));
 
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         if (CNotAvail != null) {
             System.out.println("No Cards present for this Lock. Please add one");
