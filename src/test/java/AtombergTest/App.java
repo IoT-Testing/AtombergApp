@@ -8,9 +8,11 @@ import java.time.Duration;
 
 import Supports.TempMail;
 import Tabs.Analytics;
+import app.Connectivity.AIConnectivity;
 import app.Connectivity.Alexa;
 import app.Connectivity.GoogleHome;
 import app.Fan.FanManagement;
+import app.ScreenCheck.ScreenCheck;
 import app.util.ActionsUtil;
 import org.awaitility.Awaitility;
 
@@ -41,9 +43,10 @@ public class App {
         try {
             openAtomberg();
             Email.Login(driver);
-            GoogleHome googleHome = new GoogleHome(driver);
-            googleHome.Connect();
-
+            ScreenCheck screen = new ScreenCheck(driver);
+            screen.moreTab();
+            screen.homeScreen();
+            screen.analytics();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -59,11 +62,9 @@ public class App {
 //        cap.setCapability("idleTimeout", 20);
         try {
             System.out.println("Initializing Appium driver...");
-            // Check if the Appium driver is initialized
             URL url = new URL("http://127.0.0.1:4723/wd/hub"); // URL of the Appium session
             App.driver = new AndroidDriver(url, cap);
             App.driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
-//            Screen.recordStart();  //Screen Recording only works in those mobiles which have screenrecording tool in the device OS
             System.out.println("Appium driver initialized.");
         } catch (MalformedURLException e) {
             System.out.println("Error initializing Appium driver: " + e.getMessage());
@@ -79,7 +80,6 @@ public class App {
     static void sleep(long millis) {
         Awaitility.await().atLeast(millis, TimeUnit.MILLISECONDS);
     }
-
     void totalFamilies(){
         elements = driver.findElements(By.className("android.view.View"));
         element = elements.get(0);
@@ -105,7 +105,6 @@ public class App {
         }
 
     }
-
     int clickOnFamily(){
             List<WebElement> rawFamily = driver.findElements(By.className("android.view.View"));
             List<WebElement> families = rawFamily.stream().filter(fam -> fam.getAttribute("content-desc") != null).collect(Collectors.toList());

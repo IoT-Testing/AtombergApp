@@ -1,5 +1,6 @@
 package app.Connectivity;
 
+import app.ScreenCheck.ScreenCheck;
 import app.util.ActionsUtil;
 import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.By;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 *  SEARCH FOR ATOMBERG HOME
 *  LOGIN IN WITH ATOMBERG ACCOUNT
 */
+
 public class GoogleHome {
     public AppiumDriver driver;
     public GoogleHome(AppiumDriver driver){
@@ -30,15 +32,44 @@ public class GoogleHome {
             SLD = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Select and link device\"]"));
         } catch (Exception ignored) {
         }
-        if (SLD != null) {
-            googleHome();			//Google Home
-        } else {
-            driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\n" +
-                    "Tab 3 of 3\"]")).click();
-            googleHome();
+        if (SLD == null) {
+            driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\nTab 3 of 3\"]")).click();
         }
-        ALG();
+        googleHome();
+
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+    }
+
+    public void Disconnect(){
+        ScreenCheck screen = new ScreenCheck(driver);
+        screen.moreTab();
+        WebElement googleConnected = null;
+        try {
+            googleConnected = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Google\nConnected\"]"));
+        } catch (Exception ignored) {}
+        if (googleConnected!=null)
+        {
+            googleConnected.click();
+            googleHomeControl();
+        }
+    }
+
+    private void googleHomeControl(){
+        List<WebElement> Services = driver.findElements(By.className("android.widget.TextView"));
+        List<WebElement> services = Services.stream().filter(Object-> Object.getAttribute("text")!=null).collect(Collectors.toList());
+        List<WebElement> atomberg = services.stream().filter(Object-> Objects.equals(Object.getAttribute("text"), "Atomberg Home")).collect(Collectors.toList());
+        System.out.println(atomberg.size());
+        if(!atomberg.isEmpty()){
+            atomberg.get(0).click();
+            driver.findElement(By.xpath("//android.widget.TextView[@text=\"Unlink account\"]")).click();
+            driver.findElement(By.xpath("//android.widget.Button[@text=\"UNLINK\"]")).click();
+            driver.navigate().back();
+            driver.navigate().back();
+        }
+    }
+
+    private void unlinkCheck(){
+        //TODO write the code to check the Unlink Successful popup is displayed or not
     }
 
     private void googleHome() {
@@ -50,18 +81,18 @@ public class GoogleHome {
         if (googleConnect != null) {
             System.out.println("Connecting Google Home");
             googleConnect.click();
+            accountLinkingGuide();
         } else {
             System.out.println("Google Home is already connected");
         }
     }
 
-    private void ALG() {//Account Linking Guide
+    private void accountLinkingGuide() {//Account Linking Guide
         List<WebElement> Elements = driver.findElements(By.className("android.view.View"));
         List<WebElement> elements = Elements.stream().filter(element -> element.getAttribute("content-desc")!=null).collect(Collectors.toList());
         System.out.println(elements.size());
-        List<WebElement> algL = elements.stream().filter(element -> Objects.equals(element.getAttribute("content-desc"), "Account linking guide")).collect(Collectors.toList());
-
-        if (!algL.isEmpty())
+        List<WebElement> accountLinkingGuideList = elements.stream().filter(element -> Objects.equals(element.getAttribute("content-desc"), "Account linking guide")).collect(Collectors.toList());
+        if (!accountLinkingGuideList.isEmpty())
         {
             WebElement OK = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"OK\"]"));
             OK.click();
@@ -156,6 +187,4 @@ public class GoogleHome {
         back();
     }
 */
-
-
 }

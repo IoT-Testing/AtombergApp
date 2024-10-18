@@ -1,5 +1,6 @@
 package app.Connectivity;
 
+import app.ScreenCheck.ScreenCheck;
 import app.util.ActionsUtil;
 import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.By;
@@ -23,41 +24,57 @@ public class Alexa {
         this.driver = driver;
     }
     public void Connect() {
+        ScreenCheck screen = new ScreenCheck(driver);
+        screen.moreTab();
+        alexa();
+    }
 
-        WebElement SLD = null;
+    public void Disconnect(){
+        WebElement selectAndLinkDevice = null;
         try {
-            SLD = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Select and link device\"]"));
+            selectAndLinkDevice = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Select and link device\"]"));
         } catch (Exception ignored) {
         }
-        if (SLD != null) {
-            alexa();
-        } else {
-            driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\n" +
-                    "Tab 3 of 3\"]")).click();
-            alexa();
+        if (selectAndLinkDevice!=null){
+            WebElement alexaConnected = null;
+            try {
+                alexaConnected = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Amazon Alexa\nConnected\"]"));
+            } catch (Exception ignored) {}
+            if (alexaConnected!=null)
+            {
+                alexaConnected.click();
+                driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Yes\"]")).click();
+            }
+            unlinkCheck();
         }
     }
 
     private void alexa() {
         WebElement alexaConnect = null;
         try {
-            alexaConnect = driver
-                    .findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Amazon Alexa\nConnect\"]"));
+            alexaConnect = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Amazon Alexa\nConnect\"]"));
         } catch (Exception ignored) {
         }
         if (alexaConnect != null) {
             alexaConnect.click();
+            System.out.println("Alexa Connect ");
+            pairAlexaCheck();
+            accountLinkingGuide(); //check alexa linking guide
+            linkCheck();
         } else {
             System.out.println("Alexa is already connected");
         }
-        //check alexa linking guide
-        ALG();
-        linkCheck();
     }
 
-    private void ALG() {
+    private void pairAlexaCheck(){
+        WebElement pairAlexa = null;
+        try {
+            pairAlexa = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Pair Alexa\"]"));
+        }catch (Exception ignored){}
+        if (pairAlexa!= null) driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Link\"]")).click();
+    }
 
-        driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Link\"]")).click();
+    private void accountLinkingGuide() {
 
         List<WebElement> Elements = driver.findElements(By.className("android.view.View"));
         List<WebElement> elements = Elements.stream().filter(element -> element.getAttribute("content-desc")!=null).collect(Collectors.toList());
@@ -69,28 +86,26 @@ public class Alexa {
             ActionsUtil.sleep(5000);
             driver.findElement(By.xpath("//android.widget.TextView[@text=\"LINK\"]")).click();
             ActionsUtil.sleep(5000);
-
             alexaCheck();
         }
     }
 
     private void alexaCheck(){
-        WebElement CHECK = null;
+        WebElement loginScreenCheck = null;
         try {
-            CHECK = driver.findElement(By.xpath("//android.widget.TextView[@text=\"Sign in with your email and password\"]"));
+            loginScreenCheck = driver.findElement(By.xpath("//android.webkit.WebView[@text=\"Signin\"]"));
         }catch(Exception ignored){}
-        if(CHECK != null)
+        if(loginScreenCheck != null)
         {
-            WebElement Email = driver.findElement(By.xpath("//android.widget.EditText[@resource-id=\"signInFormUsername\"]"));
-            Email.click();
-            Email.sendKeys("Weker42331@huleos.com");
-            WebElement Password = driver.findElement(By.xpath("//android.widget.EditText[@resource-id=\"signInFormPassword\"]"));
-            Password.click();
-            Password.sendKeys("Atomberg@123");
+            WebElement signInFormUsername = driver.findElement(By.xpath("//android.widget.EditText[@resource-id=\"signInFormUsername\"]"));
+            signInFormUsername.click();
+            signInFormUsername.sendKeys("teboham827@agaseo.com");
+            WebElement signInFormPassword = driver.findElement(By.xpath("//android.widget.EditText[@resource-id=\"signInFormPassword\"]"));
+            signInFormPassword.click();
+            signInFormPassword.sendKeys("Atomberg@123");
             ActionsUtil.sleep(1000);
             driver.findElement(By.xpath("//android.widget.Button[@text=\"submit\"]")).click();
         }
-
     }
 
     private void back(){
@@ -108,11 +123,19 @@ public class Alexa {
     private void linkCheck(){
         List<WebElement> Success = driver.findElements(By.className("android.view.View"));
         List<WebElement> successM = Success.stream().filter(element -> element.getAttribute("content-desc")!=null).collect(Collectors.toList());
-        for(WebElement e:successM)
-            if(Objects.equals(e.getAttribute("content-desc"), "Alexa Linked Successfully")){
+        for(WebElement e:successM) {
+            if (Objects.equals(e.getAttribute("content-desc"), "Alexa Linked Successfully")) {
                 System.out.println("Alexa Linked Successfully");
-                ActionsUtil.Tap.withPercentage(driver, 0.20,0.20);
+                ActionsUtil.Tap.withPercentage(driver, 0.20, 0.20);
             }
+        }
     }
 
+    private void unlinkCheck(){
+            WebElement unlink = null;
+            try {
+                unlink = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Unlink Successful\"]"));
+            }catch (Exception ignored){}
+            if (unlink!= null) System.out.println("Alexa Unlink Successful");
+    }
 }
