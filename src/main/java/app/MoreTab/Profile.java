@@ -1,11 +1,11 @@
 package app.MoreTab;
 
+import app.ScreenCheck.ScreenCheck;
 import app.util.ActionsUtil;
 import app.util.AppUtil;
 import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -66,5 +66,4 @@ public class Profile {
             }catch (Exception ignored) {}
         }
     }
-
 }

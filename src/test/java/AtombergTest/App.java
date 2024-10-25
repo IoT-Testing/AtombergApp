@@ -1,19 +1,16 @@
 package AtombergTest; //To check 
 
-import Login.Email3;
-import MoreTab.*;
 import Login.Email;
 import java.net.URL;
 import java.time.Duration;
-
-import Supports.TempMail;
-import Tabs.Analytics;
 import app.Connectivity.AIConnectivity;
-import app.Connectivity.Alexa;
-import app.Connectivity.GoogleHome;
-import app.Fan.FanManagement;
+import app.MoreTab.Help;
+import app.MoreTab.Manage;
+import app.MoreTab.Play;
+import app.MoreTab.Profile;
 import app.ScreenCheck.ScreenCheck;
 import app.util.ActionsUtil;
+import app.util.ChromeCacheClear;
 import org.awaitility.Awaitility;
 
 import java.util.List;
@@ -39,14 +36,14 @@ public class App {
     List<WebElement> elements;
     WebElement element;
     int total;
+
     public static void main(String[] args) {
         try {
             openAtomberg();
             Email.Login(driver);
-            ScreenCheck screen = new ScreenCheck(driver);
-            screen.moreTab();
-            screen.homeScreen();
-            screen.analytics();
+            Manage manage = new Manage(driver);
+            manage.family();
+            ActionsUtil.sleep(2000);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -59,7 +56,6 @@ public class App {
         cap.setCapability("automationName", "UiAutomator2");
         cap.setCapability("appActivity", "com.atomberg.app.MainActivity");
         cap.setCapability("apksigner", "\"C:\\Users\\Rohit Bhagat\\Desktop\\android-sdk\\build-tools\\34.0.0\\lib\\apksigner.jar\"");
-//        cap.setCapability("idleTimeout", 20);
         try {
             System.out.println("Initializing Appium driver...");
             URL url = new URL("http://127.0.0.1:4723/wd/hub"); // URL of the Appium session
@@ -70,20 +66,21 @@ public class App {
             System.out.println("Error initializing Appium driver: " + e.getMessage());
             Method.captureScreenshot(driver);
             e.printStackTrace();
+            sleep(1000);
             return;
         } catch (Exception e) {}
         System.out.println("Atomberg App Opened...");
         sleep(6000);
-//        Method.captureScreenshot(driver);
     }
 
     static void sleep(long millis) {
         Awaitility.await().atLeast(millis, TimeUnit.MILLISECONDS);
     }
+
     void totalFamilies(){
         elements = driver.findElements(By.className("android.view.View"));
         element = elements.get(0);
-        String fam1 = element.getAttribute("content-desc");
+        fam1 = element.getAttribute("content-desc");
         System.out.println(element.getAttribute("content-desc"));
         element.click();
         // tap on the Family name on the screen (top right corner)
@@ -95,6 +92,7 @@ public class App {
         total = FAMILIES.size();
         System.out.println("number of FAMILIES present =" + total);
     }
+
     void repeatStep(){
 
         if (i < total - 1) {
@@ -105,6 +103,7 @@ public class App {
         }
 
     }
+
     int clickOnFamily(){
             List<WebElement> rawFamily = driver.findElements(By.className("android.view.View"));
             List<WebElement> families = rawFamily.stream().filter(fam -> fam.getAttribute("content-desc") != null).collect(Collectors.toList());

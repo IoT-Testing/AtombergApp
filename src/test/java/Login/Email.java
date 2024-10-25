@@ -43,8 +43,6 @@ public class Email {
 
         Method.captureScreenshot(driver);
         System.out.println("Password entered..."); // Enter Password
-
-
         WebElement continueButton1 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Continue\"]"));
         continueButton1.click(); // Continue to Log in
         System.out.println("Continue...");
