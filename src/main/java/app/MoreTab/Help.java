@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import io.appium.java_client.AppiumDriver;
+import org.awaitility.Awaitility;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -21,7 +22,7 @@ public class Help {
         RaiseComplaint.click();
         AppUtil.captureScreenshot(driver);
         System.out.println("Tap on Raise Complaint");
-//        Awaitility.await().until(() -> driver.findElement(By.xpath("//android.widget.ScrollView/android.widget.EditText[1]")).isDisplayed());
+        Awaitility.await().until(() -> driver.findElement(By.xpath("//android.widget.ScrollView/android.widget.EditText[1]")).isDisplayed());
         driver.navigate().back();
         ActionsUtil.sleep(5000);
     }
