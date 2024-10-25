@@ -1,6 +1,6 @@
 reports/
 /src/test/java/screenshots/
 /screenshots/
-/logs/
+logs/
 /target/
 /target/surefire-reports/
