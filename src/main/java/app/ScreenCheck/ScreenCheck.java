@@ -1,5 +1,6 @@
 package app.ScreenCheck;
 
+import app.ScreenCheckCallbackAction;
 import app.util.ActionsUtil;
 import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.By;
@@ -14,8 +15,10 @@ import org.openqa.selenium.WebElement;
 
 public class ScreenCheck {
     public AppiumDriver driver;
+    ScreenCheckCallbackAction callbackAction;
     public ScreenCheck(AppiumDriver driver){
         this.driver = driver;
+        // Keep Empty is not using moreTab
     }
 
     public void moreTab(){
@@ -23,6 +26,7 @@ public class ScreenCheck {
         try {
             moreTab = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\nTab 3 of 3\"]"));
         } catch (Exception ignored) {}
+        assert moreTab != null;
         System.out.println(moreTab.isSelected());
         if(!moreTab.isSelected()) moreTab.click();
     }
@@ -48,4 +52,5 @@ public class ScreenCheck {
             analytics.click();
         }
     }
+
 }

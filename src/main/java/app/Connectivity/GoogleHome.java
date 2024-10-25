@@ -1,6 +1,7 @@
 package app.Connectivity;
 
 import app.ScreenCheck.ScreenCheck;
+import app.ScreenCheckCallbackAction;
 import app.util.ActionsUtil;
 import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.By;
@@ -27,16 +28,9 @@ public class GoogleHome {
 
     public void Connect() {
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-        WebElement SLD = null;
-        try {
-            SLD = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Select and link device\"]"));
-        } catch (Exception ignored) {
-        }
-        if (SLD == null) {
-            driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\nTab 3 of 3\"]")).click();
-        }
+        ScreenCheck screen = new ScreenCheck(driver);
+        screen.moreTab();
         googleHome();
-
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
     }
 
@@ -50,11 +44,32 @@ public class GoogleHome {
         if (googleConnected!=null)
         {
             googleConnected.click();
+            ActionsUtil.sleep(2500);
             googleHomeControl();
+        }
+        screen.homeScreen();
+        ActionsUtil.sleep(2500);
+        ActionsUtil.refresh(driver);
+        screen.moreTab();
+        WebElement googleIsDisconnected = null;
+        try {
+            googleIsDisconnected = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Google\nConnect\"]"));
+        }catch (Exception ignored){}
+        if(googleIsDisconnected!= null)System.out.println("Google Home Unlinked Successfully");
+        else {
+            screen.homeScreen();
+            ActionsUtil.sleep(2500);
+            ActionsUtil.refresh(driver);
+            screen.moreTab();
+            googleIsDisconnected = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Google\nConnect\"]"));
+            if(googleIsDisconnected == null){
+                System.out.println("Google unlink Error");
+            }
         }
     }
 
     private void googleHomeControl(){
+        ActionsUtil.sleep(2500);
         List<WebElement> Services = driver.findElements(By.className("android.widget.TextView"));
         List<WebElement> services = Services.stream().filter(Object-> Object.getAttribute("text")!=null).collect(Collectors.toList());
         List<WebElement> atomberg = services.stream().filter(Object-> Objects.equals(Object.getAttribute("text"), "Atomberg Home")).collect(Collectors.toList());
@@ -63,6 +78,7 @@ public class GoogleHome {
             atomberg.get(0).click();
             driver.findElement(By.xpath("//android.widget.TextView[@text=\"Unlink account\"]")).click();
             driver.findElement(By.xpath("//android.widget.Button[@text=\"UNLINK\"]")).click();
+            ActionsUtil.sleep(10000);
             driver.navigate().back();
             driver.navigate().back();
         }
@@ -101,7 +117,6 @@ public class GoogleHome {
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
             checkContinue();
             loginScreenCheck();// check if account is present
-
         }
     }
 
@@ -122,17 +137,26 @@ public class GoogleHome {
         else {
             List<WebElement> previousLoginCheckList =driver.findElements(By.className("android.widget.Button"));
             System.out.println(previousLoginCheckList.size());
-            List<WebElement> previousEmailCheck = previousLoginCheckList.stream().filter(Object -> Object.getAttribute("content-desc")!= null).collect(Collectors.toList());
-            List<WebElement> availableEmail = previousEmailCheck.stream().filter(Object -> Objects.requireNonNull(Object.getAttribute("content-desc")).startsWith("Sign In as")).collect(Collectors.toList());
-            if (!availableEmail.isEmpty()){
-                availableEmail.get(0).click();
+            for(WebElement email : previousLoginCheckList){
+                if(Objects.requireNonNull(email.getAttribute("text")).startsWith("Sign In as")){
+                    email.click();
+                }
             }
         }
         System.out.println("Account entered");
-        ActionsUtil.sleep(5000);
-        WebElement done = driver.findElement(By.xpath("//android.widget.Button[@text=\"Done\"]"));
-        done.click();
-        back();
+        ActionsUtil.sleep(8000);
+        WebElement navigate = driver.findElement(By.xpath("//android.widget.ImageButton[@content-desc=\"Navigate up\"]"));
+        navigate.click();
+        WebElement createHome = null;
+        try {
+            createHome = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Create home\"]"));
+        }catch (Exception ignored){}
+            if (createHome!=null) {back();
+            ScreenCheck screen = new ScreenCheck(driver);
+            screen.homeScreen();
+            ActionsUtil.sleep(2500);
+            ActionsUtil.refresh(driver);
+        }
     }
 
     private void back(){
@@ -141,9 +165,8 @@ public class GoogleHome {
         {
             driver.navigate().back();
             try {
-                SLD=driver.findElement(By.xpath("//android.view.View[@content-desc=\"Select and link device\"]"));
-            }catch (Exception ignored)
-            {}
+                SLD = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Select and link device\"]"));
+            } catch (Exception ignored) {}
         }
     }
 
@@ -160,31 +183,4 @@ public class GoogleHome {
             ActionsUtil.Tap.withCoordinates(driver, 890, 1290);
         }
     }
-/*
-    private void gCheck(){
-        List<WebElement> CHECK =driver.findElements(By.className("android.widget.Button"));
-        System.out.println("Check");
-        System.out.println(CHECK.size());
-        if(!CHECK.isEmpty())
-        {
-            WebElement signIn = driver.findElement(By.xpath("//android.widget.Button[@text=\"Sign In as Weker42331@huleos.com\"]"));
-            signIn.click();
-        }
-        else{
-            WebElement Email = driver.findElement(By.xpath("//android.widget.EditText[@resource-id=\"signInFormUsername\"]"));
-            Email.click();
-            Email.sendKeys("Weker42331@huleos.com");
-            WebElement Password = driver.findElement(By.xpath("//android.widget.EditText[@resource-id=\"signInFormPassword\"]"));
-            Password.click();
-            Password.sendKeys("Atomberg@123");
-            ActionsUtil.sleep(1000);
-            driver.findElement(By.xpath("//android.widget.Button[@text=\"submit\"]")).click();
-        }
-        System.out.println("Account entered");
-        ActionsUtil.sleep(5000);
-        WebElement done = driver.findElement(By.xpath("//android.widget.Button[@text=\"Done\"]"));
-        done.click();
-        back();
-    }
-*/
 }

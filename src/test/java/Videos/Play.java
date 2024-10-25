@@ -14,8 +14,8 @@ public class Play {
 		Method.captureScreenshot(driver);
 		System.out.println("App Video Opened");
 		
-		VideoTryCatch(driver);
-		VideoTryCatch(driver);
+		videoTryCatch(driver);
+		videoTryCatch(driver);
 		sleep(5000);
 
 		WebElement ConnectAlexa = driver
@@ -25,9 +25,9 @@ public class Play {
 		Method.captureScreenshot(driver);
 		System.out.println("Alexa Video Opened");
 		
-		VideoTryCatch(driver);
-		VideoTryCatch(driver);
-		VideoTryCatch(driver);
+		videoTryCatch(driver);
+		videoTryCatch(driver);
+		videoTryCatch(driver);
 		sleep(5000);
 
 		WebElement ConnectGoogle = driver
@@ -37,8 +37,8 @@ public class Play {
 		Method.captureScreenshot(driver);
 		System.out.println("Google Home Video Opened");
 		
-		VideoTryCatch(driver);
-		VideoTryCatch(driver);
+		videoTryCatch(driver);
+		videoTryCatch(driver);
 		sleep(5000);
 
 		WebElement SLAppSetup = null;
@@ -63,8 +63,8 @@ public class Play {
 		Method.captureScreenshot(driver);
 		System.out.println("SL installation Video Opened");
 		
-		VideoTryCatch(driver);
-		VideoTryCatch(driver);
+		videoTryCatch(driver);
+		videoTryCatch(driver);
 		sleep(5000);
 
 		SLAppSetup = null;
@@ -86,19 +86,19 @@ public class Play {
 		Method.captureScreenshot(driver);
 		System.out.println("SL Feature Video Opened");
 		
-		VideoTryCatch(driver);
-		VideoTryCatch(driver);
+		videoTryCatch(driver);
+		videoTryCatch(driver);
 		sleep(5000);
 
 		SLAppSetup.click();
 		sleep(2000);
 		Method.captureScreenshot(driver);
 		System.out.println("App Setup for Lock Video Opened");
-		VideoTryCatch(driver);
-		VideoTryCatch(driver);
+		videoTryCatch(driver);
+		videoTryCatch(driver);
 
 	}
-	public static void VideoTryCatch(AppiumDriver driver) {
+	public static void videoTryCatch(AppiumDriver driver) {
 		WebElement VideoTutorials = null;
 
 		try {

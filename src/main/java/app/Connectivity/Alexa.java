@@ -1,6 +1,7 @@
 package app.Connectivity;
 
 import app.ScreenCheck.ScreenCheck;
+import app.ScreenCheckCallbackAction;
 import app.util.ActionsUtil;
 import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.By;

@@ -6,33 +6,35 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import io.appium.java_client.AppiumDriver;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 public class Play {
     public AppiumDriver driver;
 
     public Play(AppiumDriver driver){
         this.driver = driver;
     }
-    public void Videos() {
+    public void videos() {
+        helpCheck();
         WebElement AppTour = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"App Tour\"]"));
         AppTour.click();
-
         AppUtil.captureScreenshot(driver);
         System.out.println("App Video Opened");
-
-        VideoTryCatch();
-        VideoTryCatch();
+        videoTryCatch();
+        videoTryCatch();
         ActionsUtil.sleep(5000);
 
-        WebElement ConnectAlexa = driver
-                .findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Connect Alexa\"]"));
+        WebElement ConnectAlexa = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Connect Alexa\"]"));
         ConnectAlexa.click();
 
         AppUtil.captureScreenshot(driver);
         System.out.println("Alexa Video Opened");
 
-        VideoTryCatch();
-        VideoTryCatch();
-        VideoTryCatch();
+        videoTryCatch();
+        videoTryCatch();
+        videoTryCatch();
         ActionsUtil.sleep(5000);
 
         WebElement ConnectGoogle = driver
@@ -40,8 +42,8 @@ public class Play {
         ConnectGoogle.click();
         AppUtil.captureScreenshot(driver);
         System.out.println("Google Home Video Opened");
-        VideoTryCatch();
-        VideoTryCatch();
+        videoTryCatch();
+        videoTryCatch();
         ActionsUtil.sleep(5000);
 
         WebElement SLAppSetup = null;
@@ -66,8 +68,8 @@ public class Play {
         AppUtil.captureScreenshot(driver);
         System.out.println("SL installation Video Opened");
 
-        VideoTryCatch();
-        VideoTryCatch();
+        videoTryCatch();
+        videoTryCatch();
         ActionsUtil.sleep(5000);
 
         SLAppSetup = null;
@@ -77,7 +79,7 @@ public class Play {
         } catch (Exception ignored) {
         }
         if (SLAppSetup == null) {
-            ActionsUtil.Swipe.Left(driver, 0.80, 0.45);// Tab 0.35 narzo 0.50
+            ActionsUtil.Swipe.Left(driver, 0.80, 0.50);// Tab 0.35 narzo 0.50
             ActionsUtil.sleep(2000);
             SLAppSetup = driver
                     .findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Smart Locks App Setup\"]"));
@@ -88,31 +90,58 @@ public class Play {
         ActionsUtil.sleep(2000);
         AppUtil.captureScreenshot(driver);
         System.out.println("SL Feature Video Opened");
-
-        VideoTryCatch();
-        VideoTryCatch();
+        videoTryCatch();
+        videoTryCatch();
         ActionsUtil.sleep(5000);
-
         SLAppSetup.click();
         ActionsUtil.sleep(2000);
         AppUtil.captureScreenshot(driver);
         System.out.println("App Setup for Lock Video Opened");
-        VideoTryCatch();
-        VideoTryCatch();
-
+        videoTryCatch();
+        videoTryCatch();
     }
-    private void VideoTryCatch() {
-        WebElement VideoTutorials = null;
-
+    
+    private void videoTryCatch() {
+        WebElement VideoTutorials =null;
+        while(VideoTutorials == null)
+        {
+            try {
+                VideoTutorials = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Video tutorials\"]"));
+            }catch (Exception ignored) {}
+            if (VideoTutorials == null) {
+                System.out.println("Back");
+                driver.navigate().back(); // 180, 1550 860, 1960
+            }
+        }
+    }
+    
+    private void helpCheck(){
+        WebElement videoTutorials = null;
         try {
-            VideoTutorials = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Help\"]"));
-        } catch (Exception ignored) {
-        }
-        if (VideoTutorials == null) {
-            System.out.println("Back");
-            driver.navigate().back(); // 180, 1550 860, 1960
+            videoTutorials = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Video tutorials\"]"));
+        }catch (Exception ignored){}
+        if(videoTutorials==null){
+            List<WebElement> elementList = driver.findElements(By.className("android.view.View"));
+            List<WebElement> webElementList = elementList.stream().filter(Object-> Object.getAttribute("content-desc")!=null).collect(Collectors.toList());
+            for(WebElement webElement: webElementList){
+                 if(Objects.equals(webElement.getAttribute("content-desc"), "Select and link device")){
+                     ActionsUtil.Scroll.Up(driver);
+                     WebElement help = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Help\"]"));
+                     help.click();
+                     break;
+                 } else if (Objects.equals(webElement.getAttribute("content-desc"), "Options")) {
+                     WebElement help = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Help\"]"));
+                     help.click();
+                     break;
+                 }
+                 else if (Objects.equals(webElement.getAttribute("content-desc"), "Help")){
+                     webElement.click();
+                     break;
+                 }
 
-
+            }
         }
     }
+
+
 }
