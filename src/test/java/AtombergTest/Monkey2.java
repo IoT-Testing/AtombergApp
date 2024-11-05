@@ -16,7 +16,7 @@ public class Monkey2 {
 	// Running the adb monkey script
 	public static AppiumDriver driver;
 
-	public static void main(String[] args) {
+	public static void run() {
 		try {
 			String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 			System.out.println(" " + timestamp + " ");

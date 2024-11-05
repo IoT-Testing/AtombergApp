@@ -75,7 +75,7 @@ public class ActionsUtil {
             Dimension size = driver.manage().window().getSize();
             int startX = size.getWidth() / 2;
             int startY = size.getHeight() / 2;
-            int endY = (int) (size.getHeight() * 0.30);
+            int endY = (int) (size.getHeight() * 0.25);
             PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
             Sequence sequence = new Sequence(finger, 1)
                     .addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY))

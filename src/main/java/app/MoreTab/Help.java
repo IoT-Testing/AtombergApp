@@ -17,14 +17,13 @@ public class Help {
     }
 
     public void raiseAComplaint(){
-        WebElement RaiseComplaint = driver
-                .findElement(By.xpath("//android.view.View[@content-desc=\"Raise a complaint\"]"));
+        WebElement RaiseComplaint = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Raise a complaint\"]"));
         RaiseComplaint.click();
         AppUtil.captureScreenshot(driver);
         System.out.println("Tap on Raise Complaint");
         Awaitility.await().until(() -> driver.findElement(By.xpath("//android.widget.ScrollView/android.widget.EditText[1]")).isDisplayed());
-        driver.navigate().back();
-        ActionsUtil.sleep(5000);
+        videoTryCatch();
+        ActionsUtil.sleep(2000);
     }
 
     public void trackAComplaint(){
@@ -42,7 +41,7 @@ public class Help {
             System.out.println("No Complaints Raised.");
         }
         AppUtil.captureScreenshot(driver);
-        driver.navigate().back();
+        videoTryCatch();
     }
 
     public void manual(){
@@ -50,7 +49,7 @@ public class Help {
         manual.click();
         System.out.println("Manual Open");
         ActionsUtil.sleep(2500);
-        driver.navigate().back();
+        videoTryCatch();
     }
 
     public void troubleshoot(){
@@ -157,8 +156,7 @@ public class Help {
         lock.click();
         AppUtil.captureScreenshot(driver);
         System.out.println("Lock Troubleshoot");
-        driver.navigate().back();
-        driver.navigate().back();
+        videoTryCatch();
     }
 
     private void ReturnToHome() {
@@ -249,13 +247,6 @@ public class Help {
             if (Objects.equals(dialogueButtons.get(i).getAttribute("content-desc"), "Yes")) {
                 dialogueButtons.get(i).click();
                 driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Download\"]")).click();
-                WebElement cantFindSerialNumberLink = null;
-                while (cantFindSerialNumberLink == null) {
-                    try {
-                        cantFindSerialNumberLink = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Can't find serial number?\"]"));
-                    } catch (Exception ignored) {}
-                    if (cantFindSerialNumberLink == null) driver.navigate().back();
-                }
             }
             else if (Objects.equals(dialogueButtons.get(i).getAttribute("content-desc"), "No")) {
                 dialogueButtons.get(i).click();
@@ -275,17 +266,35 @@ public class Help {
                     } catch (Exception ignored) {}
                     if (contactSupport == null) driver.navigate().back();
                 }
-                WebElement cantFindSerialNumberLink = null;
-                while (cantFindSerialNumberLink == null) {
-                    try {
-                        cantFindSerialNumberLink = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Can't find serial number?\"]"));
-                    } catch (Exception ignored) {}
-                    if (cantFindSerialNumberLink == null) driver.navigate().back();
-                }
+            }
+            WebElement cantFindSerialNumberLink = null;
+            while (cantFindSerialNumberLink == null) {
+                try {
+                    cantFindSerialNumberLink = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Can't find serial number?\"]"));
+                } catch (Exception ignored) {}
+                if (cantFindSerialNumberLink == null) driver.navigate().back();
             }
             cantFindSerialNumber = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Can't find serial number?\"]"));
             cantFindSerialNumber.click();
         }
+    }
+
+    private void videoTryCatch() {
+        WebElement VideoTutorials =null;
+        while(VideoTutorials == null)
+        {
+            try {
+                VideoTutorials = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Video tutorials\"]"));
+            }catch (Exception ignored) {}
+            if (VideoTutorials == null) {
+                System.out.println("Back");
+                driver.navigate().back(); // 180, 1550 860, 1960
+            }
+        }
+    }
+
+    private void await(WebElement element){
+        Awaitility.await().until(element::isDisplayed);
     }
 }
 

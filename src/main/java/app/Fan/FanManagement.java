@@ -28,9 +28,7 @@ public class FanManagement {
         WebElement AddButton = null;
         try {
             AddButton = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]/android.widget.ImageView"));
-        } catch (Exception exp) {
-            System.out.println(exp.getMessage());
-        }
+        } catch (Exception ignored) {}
         if (AddButton != null) {
             AddButton.click();
             sleep(1000);
@@ -96,7 +94,8 @@ public class FanManagement {
                             System.out.println("Cancel button clicked");
                             sleep(1000);
                         }
-                    } else {
+                    }
+                    else {
                         System.out.println("Breaking the loop");
                         break;
                     }
@@ -343,7 +342,6 @@ public class FanManagement {
             driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Continue\"]")).click();
             FanModels fanModels = new FanModels(driver);
             fanModels.SixLEDColorSelect();
-
         }
     }
 

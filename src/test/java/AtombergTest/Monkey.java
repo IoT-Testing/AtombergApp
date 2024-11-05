@@ -17,7 +17,7 @@ import java.util.Random;
 public class Monkey {
 // this is for random taps and swipes on the screen to check if the app crashes with the randomness
 
-    public static void Run(AppiumDriver driver) {
+    public static void run(AppiumDriver driver) {
         System.out.println("Monkey: count=200\r\n" + "AllowPackage: com.atomberg.app");
         for (int i = 1; i < 100; i++) {
             switch (Case()) {
@@ -37,7 +37,7 @@ public class Monkey {
                     swipeToLeft(driver);
                     break;
                 case 5:
-                    Minimize(driver);
+//                    Minimize(driver);
                     break;
                 case 6:
                     Back(driver);
@@ -49,7 +49,7 @@ public class Monkey {
                     MinimizeandOpen(driver);
                     break;
                 case 9:
-                    killApp(driver);
+//                    killApp(driver);
                     break;
                 case 10:
                     OpenApp(driver);

@@ -6,6 +6,7 @@ import app.util.AppUtil;
 import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -13,20 +14,25 @@ import java.util.stream.Collectors;
 public class Manage {
     public AppiumDriver driver;
 
-    public Manage(AppiumDriver driver){
+    public Manage(AppiumDriver driver) {
         this.driver = driver;
     }
 
-    public void theme(){
+    public void theme() {
         WebElement Theme = driver.findElement(By.xpath("//android.widget.ScrollView/android.widget.ImageView[5]"));
         Theme.click();
         System.out.println("Theme");
-        ActionsUtil.Scroll.Up(driver);
+
     }
 
     public void electricityUnitPrice() {
-        WebElement UnitPrice = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Electricity unit price\"]"));
-        UnitPrice.click();
+        WebElement unitPrice = null;
+        try {
+            unitPrice = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Electricity unit price\"]"));
+        } catch (Exception ignored) {
+        }
+        if (unitPrice == null) ActionsUtil.Scroll.Up(driver);
+        driver.findElement(By.xpath("//android.view.View[@content-desc=\"Electricity unit price\"]")).click();
         AppUtil.captureScreenshot(driver);
         System.out.println("Tap on Unit Price");
 
@@ -42,7 +48,7 @@ public class Manage {
         driver.navigate().back();
     }
 
-    public void help(){
+    public void help() {
         ScreenCheck screenCheck = new ScreenCheck(driver);
         screenCheck.moreTab();
         List<WebElement> moreTab;
@@ -75,6 +81,7 @@ public class Manage {
         System.out.println("Tap on Change Password");
         driver.navigate().back();
     }
+
     public void deleteAccount() {
         /*
             CLICK ON DELETE ACCOUNT
@@ -148,57 +155,57 @@ public class Manage {
         List<WebElement> families = elements.stream().filter(element -> element.getAttribute("content-desc") != null).collect(Collectors.toList());
         System.out.println(families.size());
         int numberOfFamilies = families.size();
-        for(int i =0 ; i< numberOfFamilies; i++)
-        {
-        List<WebElement> familyElements = driver.findElements(By.className("android.widget.ImageView"));
-        List<WebElement> familyElement = familyElements.stream().filter(element -> element.getAttribute("content-desc") != null).collect(Collectors.toList());
-        String familyName = familyElement.get(i).getAttribute("content-desc");
-        ActionsUtil.sleep(500);
-        System.out.println(familyElement.get(i).getAttribute("content-desc"));
-        familyElement.get(i).click();
-        System.out.println(Objects.equals(familyName, "Add") && Objects.equals(familyName, "1\n" +
-                "Script"));
-        System.out.println(Objects.equals(familyName, "1\n" +
-                "Script"));
-        if (!Objects.equals(familyName, "Add") && !Objects.equals(familyName, "1\n" +
-                "Script")) {
-            home();
-            back();
-        } else if (Objects.equals(familyName, "1\n" +
-                "Script")) {
-            WebElement FamilyEdit = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View[2]"));
-            FamilyEdit.click();
-            System.out.println("Family Edit");
-            AppUtil.captureScreenshot(driver);
-            WebElement LeaveHome = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Leave home\"]"));
-            LeaveHome.click();
-            System.out.println("Leave home");
-            AppUtil.captureScreenshot(driver);
+        for (int i = 0; i < numberOfFamilies; i++) {
+            List<WebElement> familyElements = driver.findElements(By.className("android.widget.ImageView"));
+            List<WebElement> familyElement = familyElements.stream().filter(element -> element.getAttribute("content-desc") != null).collect(Collectors.toList());
+            String familyName = familyElement.get(i).getAttribute("content-desc");
+            ActionsUtil.sleep(500);
+            System.out.println(familyElement.get(i).getAttribute("content-desc"));
+            familyElement.get(i).click();
+            System.out.println(Objects.equals(familyName, "Add") && Objects.equals(familyName, "1\n" +
+                    "Script"));
+            System.out.println(Objects.equals(familyName, "1\n" +
+                    "Script"));
+            if (!Objects.equals(familyName, "Add") && !Objects.equals(familyName, "1\n" +
+                    "Script")) {
+                home();
+                back();
+            } else if (Objects.equals(familyName, "1\n" +
+                    "Script")) {
+                WebElement FamilyEdit = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View[2]"));
+                FamilyEdit.click();
+                System.out.println("Family Edit");
+                AppUtil.captureScreenshot(driver);
+                WebElement LeaveHome = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Leave home\"]"));
+                LeaveHome.click();
+                System.out.println("Leave home");
+                AppUtil.captureScreenshot(driver);
 
-            WebElement Cancel = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]"));
-            Cancel.click();
-            System.out.println("Cancel");
-            AppUtil.captureScreenshot(driver);
+                WebElement Cancel = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]"));
+                Cancel.click();
+                System.out.println("Cancel");
+                AppUtil.captureScreenshot(driver);
 
-            WebElement delete = null;
-            try {
-                delete = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Delete home\"]"));
-            } catch (Exception ignored) {}
-            if (delete != null) {
-                delete.click();
-                WebElement yes = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Yes\"]"));
-                yes.click(); // android.widget.Button[@content-desc="Cancel"]
-                ActionsUtil.sleep(3000);
+                WebElement delete = null;
+                try {
+                    delete = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Delete home\"]"));
+                } catch (Exception ignored) {
+                }
+                if (delete != null) {
+                    delete.click();
+                    WebElement yes = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Yes\"]"));
+                    yes.click(); // android.widget.Button[@content-desc="Cancel"]
+                    ActionsUtil.sleep(3000);
+                }
+                i--;
+                System.out.println(numberOfFamilies);
+                numberOfFamilies -= 1;
+                System.out.println(numberOfFamilies);
+
+            } else {
+                addHome();
             }
-            i--;
-            System.out.println(numberOfFamilies);
-            numberOfFamilies -= 1;
-            System.out.println(numberOfFamilies);
-
-        } else {
-            addHome();
         }
-    }
         driver.navigate().back();//Back to more tab from Manage Family
     }
 
@@ -238,9 +245,9 @@ public class Manage {
 
     private void addHome() {
         List<WebElement> accountCreation = driver.findElements(By.className("android.view.View"));
-        List<WebElement> buttons = accountCreation.stream().filter(element -> element.getAttribute("content-desc")!=null).collect(Collectors.toList());
-        List<WebElement> button = buttons.stream().filter(Object-> Objects.requireNonNull(Object.getAttribute("content-desc")).startsWith("Create a new smart home")).collect(Collectors.toList());
-        if(!button.isEmpty()) button.get(0).click();
+        List<WebElement> buttons = accountCreation.stream().filter(element -> element.getAttribute("content-desc") != null).collect(Collectors.toList());
+        List<WebElement> button = buttons.stream().filter(Object -> Objects.requireNonNull(Object.getAttribute("content-desc")).startsWith("Create a new smart home")).collect(Collectors.toList());
+        if (!button.isEmpty()) button.get(0).click();
         AppUtil.captureScreenshot(driver);
 //        ActionsUtil.Tap.withPercentage(driver, 0.50, 0.75); // Narzo 0.50, 0.625 Tab 0.50, 0.75
         AppUtil.captureScreenshot(driver);
@@ -270,35 +277,35 @@ public class Manage {
         System.out.println("Cancel");
         AppUtil.captureScreenshot(driver);
 
-        WebElement delete =null;
+        WebElement delete = null;
         try {
-            delete =driver.findElement(By.xpath("//android.view.View[@content-desc=\"Delete home\"]"));
-        }catch (Exception ignored){}
-        if (delete!=null) {
+            delete = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Delete home\"]"));
+        } catch (Exception ignored) {
+        }
+        if (delete != null) {
             delete.click();
             Cancel = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]"));
             Cancel.click(); // android.widget.Button[@content-desc="Cancel"]
         }
     }
 
-    private void countMember(){
+    private void countMember() {
         List<WebElement> Elements = driver.findElements(By.className("android.view.View"));
         List<WebElement> elements = Elements.stream().filter(element -> Objects.equals(element.getAttribute("clickable"), "true")).collect(Collectors.toList());
         System.out.println(elements.size());
-        for (WebElement e: elements){
+        for (WebElement e : elements) {
             System.out.println(e.getTagName());
         }
     }
 
-    private void back(){
-        WebElement manageFamily =null;
-        while(manageFamily == null)
-        {
+    private void back() {
+        WebElement manageFamily = null;
+        while (manageFamily == null) {
             try {
                 manageFamily = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.widget.ImageView"));
-            }catch (Exception ignored)
-            {}
-            if(manageFamily == null) driver.navigate().back();
+            } catch (Exception ignored) {
+            }
+            if (manageFamily == null) driver.navigate().back();
         }
     }
 

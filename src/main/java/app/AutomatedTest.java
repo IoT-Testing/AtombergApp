@@ -1,5 +1,6 @@
 package app;
 
+import app.Fan.FanManagement;
 import app.MoreTab.Help;
 import app.MoreTab.Manage;
 import app.MoreTab.Play;
@@ -18,10 +19,8 @@ public class AutomatedTest {
         appInitializer.openApp();
         driver = appInitializer.getDriver();
         appInitializer.checkMainScreen();
-        Help help = new Help(driver);
-        Profile profile = new Profile(driver);
         Manage manage = new Manage(driver);
-        Play play = new Play(driver);
+        FanManagement fan = new FanManagement(driver);
         ScreenCheck screen = new ScreenCheck(driver);
         List<List<String>> credentials = ReadFromCSV.readFromCSV();
         for (List<String> credential : credentials) {
@@ -29,29 +28,9 @@ public class AutomatedTest {
             String password = credential.get(1);
             appInitializer.login(email, password);
             ActionsUtil.sleep(1000);
-            screen.moreTab();
-            profile.edit();
-            manage.theme();
-            manage.electricityUnitPrice();
-            manage.changeCurrency();
-            driver.navigate().back();
-            driver.navigate().back();
-            manage.family();
-            manage.help();
-            help.raiseAComplaint();
-            help.trackAComplaint();
-            play.videos();
-            help.manual();//works properly till here : 22/10/2024: 15:00
-            help.troubleshoot();
-            ActionsUtil.Scroll.Up(driver);
-            help.email();
-            help.call();//works properly till here : 22/10/2024: 16:00
-            driver.navigate().back();
-            ActionsUtil.Scroll.Up(driver);
-            manage.changePassword();
-            manage.deleteAccount();
-            ActionsUtil.Scroll.Up(driver);
-            manage.developerOptions();
+            screen.homeScreen();
+            fan.addFan();
+            fan.additionProcess();
             manage.logout();
             ActionsUtil.sleep(2000);
         }

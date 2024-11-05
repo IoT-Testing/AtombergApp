@@ -2,25 +2,26 @@ package Login;
 
 //Add First Device
 
+import app.util.PermissionUtil;
+import io.appium.java_client.ios.IOSDriver;
 import org.awaitility.Awaitility;
 import org.openqa.selenium.By; //Selenium Dependencies
 import org.openqa.selenium.WebElement;
-import Actions.Tap;
 import AtombergTest.Method;
-import Permissions.Permission;
 import io.appium.java_client.AppiumDriver;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-import static org.awaitility.Awaitility.await;
+import java.util.stream.Collectors;
 
 public class Email {
-    public static AppiumDriver driver;
+    public static IOSDriver driver;
 
-    public static void Login(AppiumDriver driver) {//Main
+    public static void Login(IOSDriver driver) {//Main
 
         WebElement emailLoginButton = driver.findElement(By.xpath(
                 "//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[4]"));
+//        assert  emailLoginButton.isDisplayed();
         emailLoginButton.click();
 
         Method.captureScreenshot(driver);
@@ -47,7 +48,16 @@ public class Email {
         continueButton1.click(); // Continue to Log in
         System.out.println("Continue...");
 
-        Permission.Allow(driver);
+        PermissionUtil.allowForBrowswerStack(driver);
+        List<WebElement> dialogueBox = driver.findElements(By.className("android.view.View"));
+        List<WebElement> elementList = dialogueBox.stream().filter(element -> element.getAttribute("content-desc")!=null).collect(Collectors.toList());
+        for (WebElement element : elementList){
+            if (element.getAttribute("content-desc").equals("Use Alexa to control your smart fan(s) with voice"))
+            {
+                driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]")).click();
+                break;
+            }
+        }
     }
 
     private static void sleep(long millis) {

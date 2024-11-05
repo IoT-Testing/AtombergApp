@@ -10,10 +10,13 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static java.lang.Thread.sleep;
 
 public class AppInitializer {
-    private AppiumDriver driver;
+    public AppiumDriver driver;
 
     public AppiumDriver getDriver() {
         return driver;
@@ -48,7 +51,6 @@ public class AppInitializer {
         if (isMainScreenDisplayed) System.out.println("Main Screen Displayed");
         else System.out.println("No main screen yet");
     }
-
     public void login(String login, String pass) {
         WebElement emailLoginButton = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[4]"));
         emailLoginButton.click();
@@ -77,6 +79,15 @@ public class AppInitializer {
         continueButton1.click(); // Continue to Log in
         System.out.println("Continue...");
         ActionsUtil.sleep(5000);
-        PermissionUtil.allow(driver);
+        PermissionUtil.allowForBrowswerStack(driver);
+        List<WebElement> dialogueBox = driver.findElements(By.className("android.view.View"));
+        List<WebElement> elementList = dialogueBox.stream().filter(element -> element.getAttribute("content-desc")!=null).collect(Collectors.toList());
+        for (WebElement element : elementList){
+            if (element.getAttribute("content-desc").equals("Use Alexa to control your smart fan(s) with voice"))
+            {
+                driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]")).click();
+                break;
+            }
+        }
     }
 }

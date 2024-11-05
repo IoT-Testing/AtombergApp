@@ -45,7 +45,7 @@ public class Check {
 		openAtomberg();
 		Email.Login(driver);
 		sleep(5000);
-		Monkey.Run(driver);
+		Monkey.run(driver);
 	}
 
 	private static void sleep(long millis) {
