@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 import Login.*;
 
 public class Atomberg {
-	public static IOSDriver driver;
+	public static AppiumDriver driver;
 
 	public static void main(String[] args) {
 		openAtomberg(); // Open App through Appium
@@ -44,7 +44,7 @@ public class Atomberg {
 		try {
 			System.out.println("Initializing Appium driver..."); // Check if the Appium driver is initialized
 			URL url = new URL("https://ondemand.eu-central-1.saucelabs.com:443/wd/hub");
-			IOSDriver driver = new IOSDriver(url, caps);
+			AppiumDriver driver = new IOSDriver(url, caps);
 			driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
 			System.out.println("Appium driver initialized.");
 		} catch (MalformedURLException e) {

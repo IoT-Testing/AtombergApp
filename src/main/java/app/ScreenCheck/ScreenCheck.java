@@ -1,5 +1,7 @@
 package app.ScreenCheck;
 
+import app.Resources.CommonElements;
+import app.Resources.HomeELements;
 import app.ScreenCheckCallbackAction;
 import app.util.ActionsUtil;
 import io.appium.java_client.AppiumDriver;
@@ -15,6 +17,9 @@ import org.openqa.selenium.WebElement;
 
 public class ScreenCheck {
     public AppiumDriver driver;
+
+    CommonElements ce = new CommonElements();
+    HomeELements he = new HomeELements();
     ScreenCheckCallbackAction callbackAction;
     public ScreenCheck(AppiumDriver driver){
         this.driver = driver;
@@ -24,7 +29,7 @@ public class ScreenCheck {
     public void moreTab(){
         WebElement moreTab = null;
         try {
-            moreTab = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\nTab 3 of 3\"]"));
+            moreTab = driver.findElement(By.xpath(ce.moreTabId));
         } catch (Exception ignored) {}
         assert moreTab != null;
         System.out.println(moreTab.isSelected());
@@ -35,10 +40,10 @@ public class ScreenCheck {
         WebElement devices = null;
         WebElement addYourFirstSmartDevice = null;
         try {
-            addYourFirstSmartDevice = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Add your first smart device\"]"));
+            addYourFirstSmartDevice = driver.findElement(By.xpath(he.addYourFirstSmartDeviceId));
         }catch (Exception ignored){}
         try {
-            devices = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Devices\"]"));
+            devices = driver.findElement(By.xpath(he.devicesId));
         }catch (Exception ignored){}
         if(devices == null && addYourFirstSmartDevice == null){
             ActionsUtil.Tap.withCoordinates(driver,540,2150);
@@ -46,7 +51,7 @@ public class ScreenCheck {
     }
 
     public void analytics(){
-        WebElement analytics = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Analytics\nTab 1 of 3\"]"));
+        WebElement analytics = driver.findElement(By.xpath(ce.analyticsId));
         System.out.println(analytics.isSelected());
         if(!analytics.isSelected()){
             analytics.click();

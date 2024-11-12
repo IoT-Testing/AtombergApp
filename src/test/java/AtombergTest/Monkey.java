@@ -182,7 +182,6 @@ public class Monkey {
             App = driver.findElement(By.className("android.widget.ImageView"));
         } catch (Exception e) {
         }
-
         if (App == null) {
             Minimize(driver);
         }

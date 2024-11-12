@@ -2,6 +2,8 @@ package app.Automations;
 
 import java.util.*;
 import java.time.Duration;
+
+import app.Resources.HomeELements;
 import app.util.ActionsUtil;
 import org.openqa.selenium.By;
 import java.text.SimpleDateFormat;
@@ -17,10 +19,11 @@ public class Automation {
     private AppiumDriver driver;
     private WebElement automations;
     private WebElement quickAccess;
+    HomeELements he = new HomeELements();
     public Automation(AppiumDriver driver){
         this.driver = driver;
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(6));
-        automations = this.driver.findElement(By.xpath("//android.view.View[@content-desc=\"Automations\"]"));
+        automations = this.driver.findElement(By.xpath(he.automationId));
     }
 
     public void TimeOfDay(){
@@ -47,12 +50,11 @@ public class Automation {
         if (automations.isDisplayed()) {
             automations.click();
             System.out.println("Click on Automations");
-            quickAccess = this.driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Quick access\"]"));
+            quickAccess = this.driver.findElement(By.xpath(he.quickAccessId));
             quickAccess.click();
             WebElement newQuickAccess = null;
             try{
-                newQuickAccess = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Create 'Speed-dial' buttons for frequent actions\n" +
-                        "Example: 'Goodbye' button to turn off all fans with one click\"]/android.view.View[5]"));
+                newQuickAccess = driver.findElement(By.xpath(he.newQuickAccessId));
             }catch (Exception ignored){}
             if(newQuickAccess != null){
                 newQuickAccess.click();
@@ -60,11 +62,11 @@ public class Automation {
             else {
                 driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]/android.widget.ImageView")).click();
             }
-            WebElement quickAccessName = driver.findElement(By.xpath("//android.widget.EditText"));
-            quickAccessName.click();
+            WebElement quickAccessNameInput = driver.findElement(By.xpath("//android.widget.EditText"));
+            quickAccessNameInput.click();
             String timestamp = new SimpleDateFormat("HHmmss").format(new Date());
 
-            quickAccessName.sendKeys("QA" + timestamp);
+            quickAccessNameInput.sendKeys("QA" + timestamp);
             selectRandomFan();
             selectAction();
             driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Add\"]")).click();
@@ -77,9 +79,9 @@ public class Automation {
     private void newAutomation() {
         String timestamp = new SimpleDateFormat("HHmmss").format(new Date());
 
-        WebElement AutoName = driver.findElement(By.xpath("//android.widget.EditText"));
-        AutoName.click();
-        AutoName.sendKeys("Automation" + timestamp);
+        WebElement AutomationNameInput = driver.findElement(By.xpath("//android.widget.EditText"));
+        AutomationNameInput.click();
+        AutomationNameInput.sendKeys("Automation" + timestamp);
         selectRandomFan();
         driver.findElement(By.xpath("//android.view.View[@content-desc=\"Select time\"]")).click();
         seekBar();

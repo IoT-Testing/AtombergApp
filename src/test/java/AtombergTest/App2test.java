@@ -14,7 +14,6 @@ class App2test {
 	@BeforeMethod
 	public static void openAtomberg() {
 		DesiredCapabilities cap = new DesiredCapabilities();
-
 		cap.setCapability("platformName", "Android");
 		cap.setCapability("platformVersion", "14");
 		cap.setCapability("appPackage", "com.atomberg.app");
@@ -37,7 +36,7 @@ class App2test {
 		Method.captureScreenshot(driver);
 	}
 
-	
+
 	void App(String[] args) {
 		/**
 		 * @author Rohit
