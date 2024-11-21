@@ -9,8 +9,10 @@ import org.openqa.selenium.WebElement;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static app.util.ActionsUtil.sleep;
+import static app.util.AppUtil.Array;
 
 public class LockManagement {
     public AppiumDriver driver;
@@ -18,8 +20,7 @@ public class LockManagement {
         this.driver = driver;
     }
 
-    public void addLock(AppiumDriver driver){
-
+    public void addLock(){
         WebElement AddButton = null;
         try {
             AddButton = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]/android.widget.ImageView"));
@@ -93,7 +94,6 @@ public class LockManagement {
                         System.out.println("Breaking the loop");
                         break;
                     }
-
                 }
             } else {
                 WebElement DD = null;//discovered devices
@@ -115,7 +115,7 @@ public class LockManagement {
         }
     }
 
-    public void lock(AppiumDriver driver) {
+    public void lock() {
         driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Locks\"]")).click();
         WebElement LO = null;  // checks Lock availability
         try {
@@ -136,7 +136,7 @@ public class LockManagement {
                 System.out.println(element);
                 element.click(); // click and open lock control
                 System.out.println("Element clicked");
-                LockControl(driver);
+                LockControl();
             }
         } else {
             System.out.println("No Lock Available");
@@ -144,7 +144,7 @@ public class LockManagement {
         }
     }
     // inside the lock control
-    public void LockControl(AppiumDriver driver) {
+    public void LockControl() {
         sleep(7500);
         // click on the handle(tap to unlock)
         driver.findElement(By.xpath("//android.view.View[@content-desc=\"Pull down to unlock\"]")).click();
@@ -170,17 +170,17 @@ public class LockManagement {
             System.out.println("Error");
             driver.navigate().back();
         }
-        history(driver);  // history of lock
+        history();  // history of lock
         sleep(5000);
         driver.navigate().back();
-        AccessKeys(driver);  //Access keys of lock
-        lockSettings(driver);   // lock settings
+        AccessKeys();  //Access keys of lock
+        lockSettings();   // lock settings
         driver.navigate().back();
         driver.navigate().back();
 
     }
 
-    public void history(AppiumDriver driver) {
+    public void history() {
         WebElement history = null;
         try {// check in the history button is available
             history = driver.findElement(By.xpath("//android.view.View[@content-desc=\"History\"]"));
@@ -192,31 +192,31 @@ public class LockManagement {
         }
     }
 
-    public void lockSettings(AppiumDriver driver) {
+    public void lockSettings() {
         WebElement settings = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Settings\"]"));
         settings.click();  // tap on the Setting button
-        Passcode(driver);  // entering the passcode. specific to one plus, poco and redmi
+        Passcode();  // entering the passcode. specific to one plus, poco and redmi
         sleep(1000);
         WebElement users = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Users\"]"));
         users.click();
         sleep(1000);
         driver.navigate().back();
-        PBCSettings(driver);
+        PBCSettings();
 
 
     }
 
-    public void AccessKeys(AppiumDriver driver) {
+    public void AccessKeys() {
 
         WebElement AccessKeys = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Access\nkeys\"]"));
         AccessKeys.click();
-        Passcode(driver);
-        KeyType(driver);  // for clicking on all the types of keys
+        Passcode();
+        KeyType();  // for clicking on all the types of keys
 
 
     }
     // set for specific devices using the Coordinates
-    public void Passcode(AppiumDriver driver) {
+    public void Passcode() {
         ActionsUtil.Tap.withCoordinates(driver, 540, 880);
         sleep(500);
         AppUtil.NumberPad NumberPad = new AppUtil.NumberPad();
@@ -229,7 +229,7 @@ public class LockManagement {
         NumberPad.done(driver);
     }
 
-    public void KeyType(AppiumDriver driver) {
+    public void KeyType() {
         List<WebElement> KEYS = driver.findElements(By.className("android.widget.Button"));
         int i;
         int total = KEYS.size();
@@ -251,12 +251,12 @@ public class LockManagement {
             if (i < (total - 1)) { // to repeat the Access keys opening as once we go back it goes back to lock control screen
                 WebElement AccessKeys = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Access\nkeys\"]"));
                 AccessKeys.click();
-                Passcode(driver);
+                Passcode();
             }
         }
     }
 
-    public void PBCSettings(AppiumDriver driver) {
+    public void PBCSettings() {
         WebElement PBC = null; // Checks the availability on Pin, Biometrics & Cards in Lock Settings
         try {
             PBC = driver.findElement(By.xpath("//android.view.View[@content-desc=\"PINs, biometric and card settings\"]"));
@@ -273,19 +273,18 @@ public class LockManagement {
                     WebElement PassageMode = ts.get(i);
 
                     PassageMode.click();
-                    passageMode(driver);
+                    passageMode();
                     sleep(1000);
                 }
                 if (i == 1) {
                     WebElement FPEnable = ts.get(i);
                     FPEnable.click();
-                    fingerprint(driver);
+                    fingerprint();
                 }
                 if (i == 2) {
                     WebElement CardEnable = ts.get(i);
                     CardEnable.click();
-                    CardEnable(driver);
-
+                    CardEnable();
                 }
                 if (i == 3) {
                     WebElement Pins = ts.get(i);
@@ -295,7 +294,7 @@ public class LockManagement {
         }
     }
 
-    public void passageMode(AppiumDriver driver) {
+    public void passageMode() {
         WebElement PMDisabled = null;
         try {
             PMDisabled = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Passage Mode disabled successfully\"]"));
@@ -328,12 +327,12 @@ public class LockManagement {
             List<WebElement> TS = driver.findElements(By.className("android.widget.Switch"));
             WebElement PassageMode = TS.get(0);
             PassageMode.click();
-            passageMode(driver);
+            passageMode();
         }
 
     }
 
-    public void fingerprint(AppiumDriver driver) {
+    public void fingerprint() {
         WebElement FPDisabled = null;
         try {
             FPDisabled = driver.findElement(By.xpath("//android.view.View[@content-desc=\"All Fingerprints Disabled Successfully!\"]"));
@@ -354,7 +353,7 @@ public class LockManagement {
         }
     }
 
-    public void CardEnable(AppiumDriver driver) {
+    public void CardEnable() {
         WebElement CNotAvail = null;
         WebElement CDisable = null;
         WebElement CEnabled = null;
@@ -385,4 +384,27 @@ public class LockManagement {
             System.out.println("Cards Enabled");
         }
     }
+
+    public void lockAdditionProcess() {
+        for (int i = 1 ; i <7 ; i++)
+        {
+            WebElement Pin = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]/android.widget.EditText["+i+"]"));
+            String randomNumber = String.valueOf(Array());
+            Pin.sendKeys(randomNumber);
+        }
+        WebElement Save = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Save\"]"));
+        Save.click();
+        sleep(5000);
+        WebElement SuccessMessage = null;
+        try {
+            SuccessMessage = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Added Successfully \uD83D\uDC4D\"]"));
+        }
+        catch(Exception ignored){}
+        if (SuccessMessage != null) {
+            System.out.println("Lock Added Successfully");
+            sleep(1500);
+        }
+        sleep(3000);
+    }
+
 }

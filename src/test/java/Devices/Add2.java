@@ -229,5 +229,4 @@ public class Add2 {
 			e.printStackTrace();
 		}
 	}
-
 }

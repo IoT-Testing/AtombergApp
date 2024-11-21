@@ -4,3 +4,4 @@ reports/
 logs/
 /target/
 /target/surefire-reports/
+/target

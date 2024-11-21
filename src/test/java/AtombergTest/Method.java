@@ -170,7 +170,6 @@ public class Method {
 	public static void AddLock(AppiumDriver driver) {
 		for (int i = 3 ; i <9 ; i++)
 		{
-
 			WebElement Pin = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.EditText["+i+"]"));
 			String randomNumber = String.valueOf(Array());
 			Pin.sendKeys(randomNumber);
@@ -190,7 +189,5 @@ public class Method {
 			sleep(1500);
 		}
 		sleep(3000);
-
 	}
-
 }

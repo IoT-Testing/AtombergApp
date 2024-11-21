@@ -9,6 +9,7 @@ import java.time.Duration;
 import java.util.Collections;
 
 public class ActionsUtil {
+    public AppiumDriver driver;
     public static class Tap {
         public static void withCoordinates(AppiumDriver driver, int x, int y) {
             PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
@@ -194,13 +195,13 @@ public class ActionsUtil {
         }
     }
     public static void longPress(AppiumDriver driver, int x, int y){
-            PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
-            Sequence sequence = new Sequence(finger, 1)
-                    .addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), x, y))
-                    .addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
-                    .addAction(new Pause(finger, Duration.ofMillis(750)))
-                    .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
-            driver.perform(Collections.singletonList(sequence));
-            System.out.println("Tap with Coordinates");
+        PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+        Sequence sequence = new Sequence(finger, 1)
+            .addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), x, y))
+            .addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
+            .addAction(new Pause(finger, Duration.ofMillis(2000)))
+            .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+        driver.perform(Collections.singletonList(sequence));
+        System.out.println("Tap with Coordinates");
     }
 }

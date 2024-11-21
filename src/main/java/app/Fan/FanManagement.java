@@ -162,39 +162,31 @@ public class FanManagement {
         WebElement Speed1 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"1\"]"));
         Speed1.click();
         System.out.println("Speed1");
-//        AppUtil.captureScreenshot(driver);
 
         WebElement Speed2 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"2\"]"));
         Speed2.click();
         System.out.println("Speed2");
-//        AppUtil.captureScreenshot(driver);
 
         WebElement Speed3 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"3\"]"));
         Speed3.click();
         System.out.println("Speed3");
-//        AppUtil.captureScreenshot(driver);
 
         WebElement Speed4 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"4\"]"));
         Speed4.click();
         System.out.println("Speed4");
-//        AppUtil.captureScreenshot(driver);
 
         WebElement Speed5 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"5\"]"));
         Speed5.click();
         System.out.println("Speed5");
-//        AppUtil.captureScreenshot(driver);
 
         WebElement Boost = driver.findElement(By.xpath(
                 "//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.Button[5]"));
         Boost.click();
         System.out.println("Boost");
-//        AppUtil.captureScreenshot(driver);
 
         WebElement power = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.Button[4]"));
         power.click();
         System.out.println("Power");
-//        AppUtil.captureScreenshot(driver);
-//        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
     }
 
     public void checkFanOnline() {//Check Fan Online
@@ -226,7 +218,7 @@ public class FanManagement {
                 ActionsUtil.Scroll.Up(driver);
                 List<WebElement> NEWFANS = driver.findElements(By.className("android.widget.Button"));
                 List<WebElement> newfans = NEWFANS.stream().filter(dev -> dev.getAttribute("content-desc") != null).collect(Collectors.toList());
-                if (Objects.equals(newfans.get(newfans.size() - 1).getAttribute("content-desc"), lastFan)) {
+                if (Objects.equals(newfans.get(newfans.size() - 1).getAttribute("content-desc"), lastFan)) { // to check if there are more than 4 fans in family
                     System.out.println("No more devices");
                 }
                 System.out.println(newfans.size());

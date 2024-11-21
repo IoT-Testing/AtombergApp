@@ -11,6 +11,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static java.lang.Thread.sleep;
@@ -48,9 +49,49 @@ public class AppInitializer {
     }
 
     public void checkMainScreen() {
-        boolean isMainScreenDisplayed = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Experience smart living \n" + " with Atomberg\"]")).isDisplayed();
-        if (isMainScreenDisplayed) System.out.println("Main Screen Displayed");
-        else System.out.println("No main screen yet");
+        WebElement  isMainScreenDisplayed = null;
+        try{
+            isMainScreenDisplayed = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Experience smart living \n" + " with Atomberg\"]"));
+        }catch(Exception ignored){}
+        if (isMainScreenDisplayed != null) {
+            System.out.println("Main Screen Displayed");
+            Login login = new Login(driver);
+            login.email();
+        }
+        else {
+            System.out.println("Already logged in");
+        }
+    }
+
+    public void initializeDriver(){
+        DesiredCapabilities cap = new DesiredCapabilities();
+        cap.setCapability("platformName", "Android");
+        cap.setCapability("platformVersion", "14");
+
+        URL url = null;
+        try {
+            url = new URL("http://127.0.0.1:4723/wd/hub");
+        } catch (MalformedURLException e) {
+            System.out.println("Malformed URL exception " + e.getMessage());
+        }
+        assert url != null;
+        driver = new AppiumDriver(url, cap);
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+    }
+
+    public void tapOnAppLogo(){
+        //Prerequisites : The mobile screen should be on Home screen.
+        ActionsUtil.Tap.withCoordinates(driver, 550, 2350);
+        List<WebElement> elementList = driver.findElements(By.className("android.widget.TextView"));
+        List<WebElement> apps = elementList.stream().filter(object->object.getAttribute("content-desc")!=null).collect(Collectors.toList());
+        for(WebElement app : apps){
+            if(app.getAttribute("content-desc").equals("Atomberg Home")){
+                app.click();
+                break;
+            }
+        }
+        ActionsUtil.sleep(5000);
+        AppUtil.captureScreenshot(driver);
     }
 
     public void login(String login, String pass) {
@@ -85,7 +126,7 @@ public class AppInitializer {
         List<WebElement> dialogueBox = driver.findElements(By.className("android.view.View"));
         List<WebElement> elementList = dialogueBox.stream().filter(element -> element.getAttribute("content-desc")!=null).collect(Collectors.toList());
         for (WebElement element : elementList){
-            if (element.getAttribute("content-desc").equals("Use Alexa to control your smart fan(s) with voice"))
+            if (Objects.equals(element.getAttribute("content-desc"), "Use Alexa to control your smart fan(s) with voice"))
             {
                 driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]")).click();
                 break;
