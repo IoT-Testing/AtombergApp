@@ -20,13 +20,13 @@ public class ScreenCheck {
 
     CommonElements ce = new CommonElements();
     HomeELements he = new HomeELements();
-    ScreenCheckCallbackAction callbackAction;
+
     public ScreenCheck(AppiumDriver driver){
         this.driver = driver;
-        // Keep Empty is not using moreTab
     }
 
     public void moreTab(){
+        //Check for More Tab Screen
         WebElement moreTab = null;
         try {
             moreTab = driver.findElement(By.xpath(ce.moreTabId));
@@ -37,6 +37,7 @@ public class ScreenCheck {
     }
 
     public void homeScreen(){
+        //Check for Home Screen
         WebElement devices = null;
         WebElement addYourFirstSmartDevice = null;
         try {
@@ -51,6 +52,7 @@ public class ScreenCheck {
     }
 
     public void analytics(){
+        //Check for Analytics Screen
         WebElement analytics = driver.findElement(By.xpath(ce.analyticsId));
         System.out.println(analytics.isSelected());
         if(!analytics.isSelected()){

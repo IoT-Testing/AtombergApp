@@ -11,7 +11,9 @@ import java.util.Collections;
 public class ActionsUtil {
     public AppiumDriver driver;
     public static class Tap {
+        // TO perform a Tap action
         public static void withCoordinates(AppiumDriver driver, int x, int y) {
+            //To perform tap action at the specified coordinates.
             PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
             Sequence sequence = new Sequence(finger, 1)
                     .addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), x, y))
@@ -23,6 +25,7 @@ public class ActionsUtil {
         }
 
         public static void withPercentage(AppiumDriver driver, double x, double y) {
+            //To perform tap action on an element without locator, and is located according to the screen of the device
             Dimension size = driver.manage().window().getSize(); // Assuming getWindowSize() returns the window size
             int startY = (int) (size.getHeight() * y);
             int startX = (int) (size.getWidth() * x); // Adjusted to swipe left
@@ -38,6 +41,7 @@ public class ActionsUtil {
         }
     }
     public static  void refresh(AppiumDriver driver){
+        //Performs Refresh screen action.
         Dimension size = driver.manage().window().getSize();
         int startX = size.getWidth() / 2;
         int startY = (int) (size.getHeight() * 0.35);
@@ -54,6 +58,7 @@ public class ActionsUtil {
         System.out.println("Home Screen Refreshed");
     }
     public  static class Scroll{
+        //Performs Scroll actions
         public static void Down(AppiumDriver driver) {
             Dimension size = driver.manage().window().getSize(); // Assuming getWindowSize() returns the window size
             int startX = size.getHeight() / 2;
@@ -89,7 +94,7 @@ public class ActionsUtil {
         }
     }
     public static class Swipe {
-        // Screen swipes
+        // Performs Screen swipes
         public static void Left(AppiumDriver driver, double x, double y) {
             Dimension size = driver.manage().window().getSize(); // Assuming getWindowSize() returns the window size
             int startY = (int) (size.getHeight() * y);
@@ -166,6 +171,7 @@ public class ActionsUtil {
 
     }
     public static void minimize(AppiumDriver driver) {
+        //Taps on the minimize button (button mode)
             Tap.withPercentage(driver, 0.50, 1.05);// Tap on the minimize button on the navigation bar
             sleep(2000);
     }
@@ -195,6 +201,7 @@ public class ActionsUtil {
         }
     }
     public static void longPress(AppiumDriver driver, int x, int y){
+        //Performs Long Press action on the screen.
         PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
         Sequence sequence = new Sequence(finger, 1)
             .addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), x, y))

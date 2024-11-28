@@ -28,15 +28,18 @@ public class AppInitializer {
     }
 
     public void openApp() {
+        //Capabilities to bet set According to the device to be tested
         DesiredCapabilities cap = new DesiredCapabilities();
         cap.setCapability("platformName", "Android");
         cap.setCapability("platformVersion", "14");
+        //Below caps opens Atomberg Home app from Scratch as if freshly installed.
         cap.setCapability("appPackage", "com.atomberg.app");
         cap.setCapability("appActivity", "com.atomberg.app.MainActivity");
-//        cap.setCapability("automationName", "Flutter");
+        cap.setCapability("fullReset", "true");
 
         URL url = null;
         try {
+            //Prerequisite: Turn on the Appium Server
             url = new URL("http://127.0.0.1:4723/wd/hub");
         } catch (MalformedURLException e) {
             System.out.println("Malformed URL exception " + e.getMessage());
@@ -64,9 +67,30 @@ public class AppInitializer {
     }
 
     public void initializeDriver(){
+        //These caps only get the device, need to select Atomberg Home ap separately
         DesiredCapabilities cap = new DesiredCapabilities();
         cap.setCapability("platformName", "Android");
         cap.setCapability("platformVersion", "14");
+
+        URL url = null;
+        try {
+            url = new URL("http://192.168.9.234:7100/wd/hub");
+        } catch (MalformedURLException e) {
+            System.out.println("Malformed URL exception " + e.getMessage());
+        }
+        assert url != null;
+        driver = new AppiumDriver(url, cap);
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+    }
+
+    public void initializeApkFile(){
+        //These caps only get the device, need to select Atomberg Home ap separately
+        DesiredCapabilities cap = new DesiredCapabilities();
+        cap.setCapability("platformName", "Android");
+        cap.setCapability("platformVersion", "14");
+        cap.setCapability("noReset", "true");
+        String appPath = System.getProperty("user.dir") + "\\new_flutter_version.apk";
+        cap.setCapability("app",appPath);
 
         URL url = null;
         try {
@@ -76,11 +100,11 @@ public class AppInitializer {
         }
         assert url != null;
         driver = new AppiumDriver(url, cap);
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
     }
 
     public void tapOnAppLogo(){
-        //Prerequisites : The mobile screen should be on Home screen.
+        //Prerequisites : Atomberg App should be on Home screen.
         ActionsUtil.Tap.withCoordinates(driver, 550, 2350);
         List<WebElement> elementList = driver.findElements(By.className("android.widget.TextView"));
         List<WebElement> apps = elementList.stream().filter(object->object.getAttribute("content-desc")!=null).collect(Collectors.toList());

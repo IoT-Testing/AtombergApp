@@ -14,7 +14,7 @@ public class CreateWidget {
     public CreateWidget(AppiumDriver driver){
         this.driver = driver;
     }
-
+    // Create Atomberg Widget
     public void createWidget(){
         ActionsUtil.Tap.withCoordinates(driver, 540, 2350);
         ActionsUtil.sleep(1000);
