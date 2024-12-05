@@ -33,7 +33,6 @@ public class Monkey2 {
 			System.out.println("Monkey finished....");
 			driver.quit();
 		} catch (Exception exp) {
-			System.out.println(exp.getCause());
 			System.out.println(exp.getMessage());
 			exp.fillInStackTrace();
 		}

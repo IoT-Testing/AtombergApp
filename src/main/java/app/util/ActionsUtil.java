@@ -2,6 +2,8 @@ package app.util;
 
 import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Pause;
 import org.openqa.selenium.interactions.PointerInput;
 import org.openqa.selenium.interactions.Sequence;
@@ -200,6 +202,14 @@ public class ActionsUtil {
             throw new RuntimeException(e);
         }
     }
+    public static void SSleep(long seconds){
+        long millis = seconds*1000;
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
     public static void longPress(AppiumDriver driver, int x, int y){
         //Performs Long Press action on the screen.
         PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
@@ -211,4 +221,5 @@ public class ActionsUtil {
         driver.perform(Collections.singletonList(sequence));
         System.out.println("Tap with Coordinates");
     }
+
 }

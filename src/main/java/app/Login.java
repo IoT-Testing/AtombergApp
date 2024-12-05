@@ -21,6 +21,7 @@ public class Login {
         AppUtil.captureScreenshot(driver);
         WebElement emailField = driver.findElement(By.xpath("//android.widget.EditText"));
         emailField.click();
+        ActionsUtil.sleep(1500);
         emailField.sendKeys("tiposi3964@nozamas.com"); // Enter Email id
         AppUtil.captureScreenshot(driver);
         System.out.println(" " + emailField.getText() + " ");

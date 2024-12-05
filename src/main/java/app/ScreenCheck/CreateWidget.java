@@ -41,13 +41,13 @@ public class CreateWidget {
         while (atomberg==null){
             List<WebElement> elementList = driver.findElements(By.className("android.widget.TextView"));
             System.out.println(elementList.size());
-            List<WebElement> widgetsList = elementList.stream().filter(webElement -> webElement.getAttribute("content-desc")!=null).collect(Collectors.toList());
+            List<WebElement> widgetsList = elementList.stream().filter(webElement -> webElement.getDomAttribute("content-desc")!=null).collect(Collectors.toList());
             System.out.println(widgetsList.size());
             for (WebElement widget : widgetsList) {
-//                System.out.println(element.getAttribute("text"));
-                if (!widget.getAttribute("content-desc").equals("Atomberg Home widget")) {
+//                System.out.println(element.getDomAttribute("text"));
+                if (!widget.getDomAttribute("content-desc").equals("Atomberg Home widget")) {
                     ActionsUtil.Scroll.Up(driver);
-                } else if (widget.getAttribute("content-desc").equals("Atomberg Home widget")) {
+                } else if (widget.getDomAttribute("content-desc").equals("Atomberg Home widget")) {
                     widget.click();
                 }
                 break;

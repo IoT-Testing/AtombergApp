@@ -138,7 +138,7 @@ public class Automation {
             Actions.remove(0);
             Actions.remove(0);
             WebElement action = Actions.get(i);
-            System.out.println(action.getAttribute("content-desc"));
+            System.out.println(action.getDomAttribute("content-desc"));
             action.click();
             sleep(1000);
             if (i < total - 1) {
@@ -150,15 +150,15 @@ public class Automation {
     public static void switchFamily(AppiumDriver driver) {
         List<WebElement> elements = driver.findElements(By.className("android.view.View"));
         WebElement e = elements.get(0);
-        String fam1 = e.getAttribute("content-desc");
-        System.out.println(e.getAttribute("content-desc"));
+        String fam1 = e.getDomAttribute("content-desc");
+        System.out.println(e.getDomAttribute("content-desc"));
 
         e.click();
         // tap on the Family name on the screen (top right corner)
 
         // getting the availble family list
         List<WebElement> rawFamilies = driver.findElements(By.className("android.view.View"));
-        List<WebElement> FAMILIES = rawFamilies.stream().filter(fam -> fam.getAttribute("content-desc") != null).collect(Collectors.toList());
+        List<WebElement> FAMILIES = rawFamilies.stream().filter(fam -> fam.getDomAttribute("content-desc") != null).collect(Collectors.toList());
         FAMILIES.remove(FAMILIES.size() - 1);
         FAMILIES.remove(FAMILIES.size() - 1);
         int i;
@@ -166,23 +166,23 @@ public class Automation {
         System.out.println("number of FAMILIES present =" + total);
         for (i = 0; i < total; i++) {
             List<WebElement> rawFamily = driver.findElements(By.className("android.view.View"));
-            List<WebElement> families = rawFamily.stream().filter(fam -> fam.getAttribute("content-desc") != null).collect(Collectors.toList());
+            List<WebElement> families = rawFamily.stream().filter(fam -> fam.getDomAttribute("content-desc") != null).collect(Collectors.toList());
             System.out.println("number of families present =" + total);
             families.remove(families.size() - 1);
             families.remove(families.size() - 1);
             System.out.println("number of families1 present =" + total);
-            if (families.get(i).getAttribute("content-desc").equals(fam1)) {
+            if (families.get(i).getDomAttribute("content-desc").equals(fam1)) {
                 i++;
 
             }
-            System.out.println(families.get(i).getAttribute("content-desc") + " is clicked");
+            System.out.println(families.get(i).getDomAttribute("content-desc") + " is clicked");
             families.get(i).click();
 
             sleep(1500);
             if (i < total - 1) {
                 elements = driver.findElements(By.className("android.view.View"));
                 e = elements.get(0);
-                fam1 = e.getAttribute("content-desc");
+                fam1 = e.getDomAttribute("content-desc");
                 e.click();
             }
         }
@@ -196,7 +196,7 @@ public class Automation {
                 "Daily\n" +
                 "Activity\n" +
                 "Power Toggle\"]"));
-        String AutoName = ToD.getAttribute("content-desc");
+        String AutoName = ToD.getDomAttribute("content-desc");
         boolean check = AutoName.startsWith("Automation");
         if (check) {
             ToD.click();

@@ -238,17 +238,17 @@ public class Help {
         AppUtil.captureScreenshot(driver);
 
         List<WebElement> buttonList = driver.findElements(By.className("android.widget.Button"));
-        List<WebElement> buttons = buttonList.stream().filter(webElement -> webElement.getAttribute("content-desc")!=null).collect(Collectors.toList());
+        List<WebElement> buttons = buttonList.stream().filter(webElement -> webElement.getDomAttribute("content-desc")!=null).collect(Collectors.toList());
         System.out.println(buttons.size());
         for(int i =0 ; i< buttons.size(); i++){
             List<WebElement> dialogueButtonList = driver.findElements(By.className("android.widget.Button"));
-            List<WebElement> dialogueButtons = dialogueButtonList.stream().filter(elements -> elements.getAttribute("content-desc")!=null).collect(Collectors.toList());
+            List<WebElement> dialogueButtons = dialogueButtonList.stream().filter(elements -> elements.getDomAttribute("content-desc")!=null).collect(Collectors.toList());
             System.out.println(dialogueButtons.size());
-            if (Objects.equals(dialogueButtons.get(i).getAttribute("content-desc"), "Yes")) {
+            if (Objects.equals(dialogueButtons.get(i).getDomAttribute("content-desc"), "Yes")) {
                 dialogueButtons.get(i).click();
                 driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Download\"]")).click();
             }
-            else if (Objects.equals(dialogueButtons.get(i).getAttribute("content-desc"), "No")) {
+            else if (Objects.equals(dialogueButtons.get(i).getDomAttribute("content-desc"), "No")) {
                 dialogueButtons.get(i).click();
                 WebElement Email = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Email\"]"));
                 Email.click();

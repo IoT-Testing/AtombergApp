@@ -49,9 +49,9 @@ public class Email {
 
         PermissionUtil.allow(driver);
         List<WebElement> dialogueBox = driver.findElements(By.className("android.view.View"));
-        List<WebElement> elementList = dialogueBox.stream().filter(element -> element.getAttribute("content-desc")!=null).collect(Collectors.toList());
+        List<WebElement> elementList = dialogueBox.stream().filter(element -> element.getDomAttribute("content-desc")!=null).collect(Collectors.toList());
         for (WebElement element : elementList){
-            if (Objects.equals(element.getAttribute("content-desc"), "Use Alexa to control your smart fan(s) with voice"))
+            if (Objects.equals(element.getDomAttribute("content-desc"), "Use Alexa to control your smart fan(s) with voice"))
             {
                 driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]")).click();
                 sleep(10);

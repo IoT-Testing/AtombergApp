@@ -71,8 +71,8 @@ public class GoogleHome {
     private void googleHomeControl(){
         ActionsUtil.sleep(2500);
         List<WebElement> Services = driver.findElements(By.className("android.widget.TextView"));
-        List<WebElement> services = Services.stream().filter(Object-> Object.getAttribute("text")!=null).collect(Collectors.toList());
-        List<WebElement> atomberg = services.stream().filter(Object-> Objects.equals(Object.getAttribute("text"), "Atomberg Home")).collect(Collectors.toList());
+        List<WebElement> services = Services.stream().filter(Object-> Object.getDomAttribute("text")!=null).collect(Collectors.toList());
+        List<WebElement> atomberg = services.stream().filter(Object-> Objects.equals(Object.getDomAttribute("text"), "Atomberg Home")).collect(Collectors.toList());
         System.out.println(atomberg.size());
         if(!atomberg.isEmpty()){
             atomberg.get(0).click();
@@ -105,9 +105,9 @@ public class GoogleHome {
 
     private void accountLinkingGuide() {//Account Linking Guide
         List<WebElement> Elements = driver.findElements(By.className("android.view.View"));
-        List<WebElement> elements = Elements.stream().filter(element -> element.getAttribute("content-desc")!=null).collect(Collectors.toList());
+        List<WebElement> elements = Elements.stream().filter(element -> element.getDomAttribute("content-desc")!=null).collect(Collectors.toList());
         System.out.println(elements.size());
-        List<WebElement> accountLinkingGuideList = elements.stream().filter(element -> Objects.equals(element.getAttribute("content-desc"), "Account linking guide")).collect(Collectors.toList());
+        List<WebElement> accountLinkingGuideList = elements.stream().filter(element -> Objects.equals(element.getDomAttribute("content-desc"), "Account linking guide")).collect(Collectors.toList());
         if (!accountLinkingGuideList.isEmpty())
         {
             WebElement OK = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"OK\"]"));
@@ -138,7 +138,7 @@ public class GoogleHome {
             List<WebElement> previousLoginCheckList =driver.findElements(By.className("android.widget.Button"));
             System.out.println(previousLoginCheckList.size());
             for(WebElement email : previousLoginCheckList){
-                if(Objects.requireNonNull(email.getAttribute("text")).startsWith("Sign In as")){
+                if(Objects.requireNonNull(email.getDomAttribute("text")).startsWith("Sign In as")){
                     email.click();
                 }
             }

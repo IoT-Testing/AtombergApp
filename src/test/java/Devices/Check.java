@@ -137,8 +137,8 @@ public class Check {
 		List<WebElement> elements = driver.findElements(By.xpath("//android.view.View"));
 		for (WebElement element : elements) {
 
-			System.out.println(element.getAttribute("content-desc"));
-		if (element.getAttribute("content-desc")== "Only the latest 404 history logs are synced")
+			System.out.println(element.getDomAttribute("content-desc"));
+		if (element.getDomAttribute("content-desc")== "Only the latest 404 history logs are synced")
 		{
 			break;
 		}

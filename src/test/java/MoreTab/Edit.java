@@ -16,12 +16,12 @@ public class Edit {
 	{
 
 		List<WebElement> ELEMENTS = driver.findElements(By.className("android.widget.ImageView"));
-		List<WebElement> elements = ELEMENTS.stream().filter(element -> element.getAttribute("content-desc") != null).collect(Collectors.toList());
+		List<WebElement> elements = ELEMENTS.stream().filter(element -> element.getDomAttribute("content-desc") != null).collect(Collectors.toList());
 		System.out.println(elements.size());
-		List<WebElement> ele = elements.stream().filter(element -> element.getAttribute("content-desc").startsWith("Hi,")).collect(Collectors.toList());
+		List<WebElement> ele = elements.stream().filter(element -> element.getDomAttribute("content-desc").startsWith("Hi,")).collect(Collectors.toList());
 		for (WebElement e : elements) {
-			System.out.println(e.getAttribute("content-desc"));
-			if (e.getAttribute("content-desc").startsWith("Hi,")) {
+			System.out.println(e.getDomAttribute("content-desc"));
+			if (e.getDomAttribute("content-desc").startsWith("Hi,")) {
 				e.click();
 				System.out.println("Edit Profile");
 			}

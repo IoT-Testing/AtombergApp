@@ -39,8 +39,8 @@ public class Analytics {
 
     private void fanChange() {
         List<WebElement> FANS = driver.findElements(By.className("android.view.View"));
-        List<WebElement> Fans = FANS.stream().filter(ele -> ele.getAttribute("content-desc") != null).collect(Collectors.toList());
-        List<WebElement> fans = Fans.stream().filter(ele -> Objects.requireNonNull(ele.getAttribute("content-desc")).endsWith("Fan")).collect(Collectors.toList());
+        List<WebElement> Fans = FANS.stream().filter(ele -> ele.getDomAttribute("content-desc") != null).collect(Collectors.toList());
+        List<WebElement> fans = Fans.stream().filter(ele -> Objects.requireNonNull(ele.getDomAttribute("content-desc")).endsWith("Fan")).collect(Collectors.toList());
 
         for (WebElement fan : fans) {
             fan.click();
@@ -50,17 +50,17 @@ public class Analytics {
     private void nextFan() {
         fanChange(); //to click on the fan name to get the list of available fans
         List<WebElement> availFans = driver.findElements(By.className("android.view.View"));
-        List<WebElement> fans = availFans.stream().filter(ele -> ele.getAttribute("content-desc") != null).collect(Collectors.toList());
+        List<WebElement> fans = availFans.stream().filter(ele -> ele.getDomAttribute("content-desc") != null).collect(Collectors.toList());
         fans.remove(fans.size() - 1);
         System.out.println(fans.size());
         for (int i = 0; i < fans.size(); i++) {
             ActionsUtil.sleep(2000);
             List<WebElement> availFans1 = driver.findElements(By.className("android.view.View"));
-            List<WebElement> anaFans = availFans1.stream().filter(ele -> ele.getAttribute("content-desc") != null).collect(Collectors.toList());
+            List<WebElement> anaFans = availFans1.stream().filter(ele -> ele.getDomAttribute("content-desc") != null).collect(Collectors.toList());
             System.out.println(anaFans.size());
             anaFans.remove(anaFans.size() - 1);
             System.out.println(i);//To check which iteration is running
-            System.out.println(anaFans.get(i).getAttribute("content-desc"));
+            System.out.println(anaFans.get(i).getDomAttribute("content-desc"));
             anaFans.get(i).click();
             info();
             System.out.println(i < (anaFans.size() - 1));
@@ -77,9 +77,9 @@ public class Analytics {
 
     private void rateUs() {
         List<WebElement> dialogueBox = driver.findElements(By.className("android.widget.Button"));
-        List<WebElement> cancel = dialogueBox.stream().filter(webElement -> Objects.equals(webElement.getAttribute("content-desc"), "Cancel")).collect(Collectors.toList());
+        List<WebElement> cancel = dialogueBox.stream().filter(webElement -> Objects.equals(webElement.getDomAttribute("content-desc"), "Cancel")).collect(Collectors.toList());
         for (WebElement ele : cancel) {
-            if (Objects.equals(ele.getAttribute("content-desc"), "Cancel")) { //checks for the cancel button and the clicks on it if there
+            if (Objects.equals(ele.getDomAttribute("content-desc"), "Cancel")) { //checks for the cancel button and the clicks on it if there
                 ele.click();
                 System.out.println("Canceled Rate us");
                 analytics = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Analytics\n" +
@@ -95,10 +95,10 @@ public class Analytics {
         for (i = 0; i < 4; i++) {// there are 4 screens in analytics
             ActionsUtil.sleep(2000);
             List<WebElement> ICONS = driver.findElements(By.xpath("//android.view.View[@clickable=\"true\"]"));
-            List<WebElement> icons = ICONS.stream().filter(element -> element.getAttribute("content-desc") == null).collect(Collectors.toList());
+            List<WebElement> icons = ICONS.stream().filter(element -> element.getDomAttribute("content-desc") == null).collect(Collectors.toList());
 //            icons.remove(icons.size() - 1);
             for (WebElement icon : icons) {
-                System.out.println(icon.getAttribute("content-desc"));
+                System.out.println(icon.getDomAttribute("content-desc"));
                 icon.click();
                 ActionsUtil.sleep(2000);
                 driver.navigate().back();
@@ -107,7 +107,7 @@ public class Analytics {
             }
             if (i < 3) {// only three swipes for the screen
                 ActionsUtil.Swipe.Left(driver, 0.75, 0.50);
-                //TODO : try the screen change buttons for in the analytics
+                //TODO : try the screen change buttons in the analytics
                 ActionsUtil.sleep(1500);
             }
         }
@@ -116,13 +116,13 @@ public class Analytics {
     private void confetti(){
         System.out.println("checking confetti");
         List<WebElement> CONFETTI = driver.findElements(By.className("android.widget.ImageView"));
-        List<WebElement> confetti1 = CONFETTI.stream().filter(element -> element.getAttribute("content-desc")==null).collect(Collectors.toList());
-        List<WebElement> confetti2 = confetti1.stream().filter(webElement -> Objects.requireNonNull(webElement.getAttribute("bounds")).endsWith("482]")).collect(Collectors.toList());
-        System.out.println("confetti size "+ confetti2.size());     //[380,410][452,482] TODO : Try and get a dynamic value for confetti, it is a static value at present
-
+        List<WebElement> confetti1 = CONFETTI.stream().filter(element -> element.getDomAttribute("content-desc")==null).collect(Collectors.toList());
+        List<WebElement> confetti2 = confetti1.stream().filter(webElement -> Objects.requireNonNull(webElement.getDomAttribute("bounds")).endsWith("482]")).collect(Collectors.toList());
+        System.out.println("confetti size "+ confetti2.size());
+        //[380,410][452,482] TODO : Try and get a dynamic value for confetti, it is a static value at present
         for (WebElement e: confetti2)
         {
-            System.out.println(e.getAttribute("bounds"));
+            System.out.println(e.getDomAttribute("bounds"));
             e.click();
             ActionsUtil.sleep(2000);
             driver.navigate().back();

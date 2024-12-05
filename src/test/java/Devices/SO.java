@@ -52,34 +52,34 @@ public class SO {//Search Online Fan
         sleep(3000);
         List<WebElement> FANS = driver.findElements(By.className("android.widget.Button"));
         System.out.println(FANS.size());
-        List<WebElement> fans = FANS.stream().filter(dev -> dev.getAttribute("content-desc") != null).collect(Collectors.toList());
+        List<WebElement> fans = FANS.stream().filter(dev -> dev.getDomAttribute("content-desc") != null).collect(Collectors.toList());
 
         if (fans.size() > 1) {
             System.out.println("Fan Available " + fans.size());
         }
         for (WebElement element : fans) {
-            System.out.println(element.getAttribute("content-desc"));
+            System.out.println(element.getDomAttribute("content-desc"));
             element.click(); // Clicks on the for and opens device control
             Method.FanControl(driver); // Controls the fan
             driver.navigate().back();            // back
         }
-        String previousFan = fans.get(fans.size()-2).getAttribute("content-desc");
-        String lastFan = fans.get(fans.size() - 1).getAttribute("content-desc");
+        String previousFan = fans.get(fans.size()-2).getDomAttribute("content-desc");
+        String lastFan = fans.get(fans.size() - 1).getDomAttribute("content-desc");
         System.out.println(previousFan);
         System.out.println(lastFan);
         if (fans.size() >= 4) // only 4 devices are visible on the screen
         {
             Scroll.Up(driver);
             List<WebElement> NEWFANS = driver.findElements(By.className("android.widget.Button"));
-            List<WebElement> newfans = NEWFANS.stream().filter(dev -> dev.getAttribute("content-desc") != null).collect(Collectors.toList());
-            if (newfans.get(newfans.size() - 1).getAttribute("content-desc").equals(lastFan)) {
+            List<WebElement> newfans = NEWFANS.stream().filter(dev -> dev.getDomAttribute("content-desc") != null).collect(Collectors.toList());
+            if (newfans.get(newfans.size() - 1).getDomAttribute("content-desc").equals(lastFan)) {
                 System.out.println("No more devices");
             }
             System.out.println(newfans.size());
             int count = 0;
             for (WebElement fan : newfans) {
 
-                String name = fan.getAttribute("content-desc");
+                String name = fan.getDomAttribute("content-desc");
                 if (name.equals(previousFan) || name.equals(lastFan)) {
                     count ++;
                 }
@@ -90,7 +90,7 @@ public class SO {//Search Online Fan
             }
             System.out.println(newfans.size());
             for (int i = 0; i < newfans.size(); i++) {
-                String name = newfans.get(i).getAttribute("content-desc");
+                String name = newfans.get(i).getDomAttribute("content-desc");
                 System.out.println(i + name);
                 newfans.get(i).click(); // Clicks on the for and opens device control
                 Method.FanControl(driver); // Controls the fan
@@ -223,15 +223,15 @@ public class SO {//Search Online Fan
         for (i = 0; i < total; i++) {
             List<WebElement> Keys = driver.findElements(By.className("android.widget.Button"));
             WebElement key = Keys.get(i);
-            boolean OTP = key.getAttribute("content-desc").endsWith("OTP"); // checks if the last string is OTP
-            boolean New = key.getAttribute("content-desc").endsWith("NEW"); // checks if the last string is NEW
+            boolean OTP = key.getDomAttribute("content-desc").endsWith("OTP"); // checks if the last string is OTP
+            boolean New = key.getDomAttribute("content-desc").endsWith("NEW"); // checks if the last string is NEW
             System.out.println(OTP || New); // When opened 1st time the last string is NEW while in the second attempt it is OTP
             key.click();
             if (OTP || New) {
                 sleep(1000);
                 List<WebElement> RemoteOTPs = driver.findElements(By.className("android.view.View"));
                 for (WebElement otp : RemoteOTPs) {
-                    System.out.println(otp.getAttribute("content-desc"));
+                    System.out.println(otp.getDomAttribute("content-desc"));
                 }
             }
 
@@ -292,13 +292,13 @@ public class SO {//Search Online Fan
         }
         if (PMDisabled == null) {
             WebElement psmText = driver.findElement(By.xpath("//android.view.View[@content-desc=\"You are enabling passage mode. Enabling this mode will allow anyone to enter the house without any authentication. Do you want to continue?\"]"));
-            boolean allow = psmText.getAttribute("content-desc").endsWith("Do you want to continue?");
+            boolean allow = psmText.getDomAttribute("content-desc").endsWith("Do you want to continue?");
             if (allow) {
                 WebElement Yes = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Yes\"]"));
                 Yes.click();
             }
             WebElement psmText2 = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Please read this below. Do you still want to continue?\"]"));
-            boolean allow2 = psmText2.getAttribute("content-desc").startsWith("Please read this below");
+            boolean allow2 = psmText2.getDomAttribute("content-desc").startsWith("Please read this below");
             if (allow2) {
                 WebElement Yes2 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Yes\"]"));
                 Yes2.click();

@@ -78,8 +78,8 @@ public class Alexa {
     private void accountLinkingGuide() {
 
         List<WebElement> Elements = driver.findElements(By.className("android.view.View"));
-        List<WebElement> elements = Elements.stream().filter(element -> element.getAttribute("content-desc")!=null).collect(Collectors.toList());
-        List<WebElement> algL = elements.stream().filter(element -> Objects.equals(element.getAttribute("content-desc"), "Account linking guide")).collect(Collectors.toList());
+        List<WebElement> elements = Elements.stream().filter(element -> element.getDomAttribute("content-desc")!=null).collect(Collectors.toList());
+        List<WebElement> algL = elements.stream().filter(element -> Objects.equals(element.getDomAttribute("content-desc"), "Account linking guide")).collect(Collectors.toList());
         System.out.println(algL.size());
         if (!algL.isEmpty())
         {
@@ -123,9 +123,9 @@ public class Alexa {
 
     private void linkCheck(){
         List<WebElement> Success = driver.findElements(By.className("android.view.View"));
-        List<WebElement> successM = Success.stream().filter(element -> element.getAttribute("content-desc")!=null).collect(Collectors.toList());
+        List<WebElement> successM = Success.stream().filter(element -> element.getDomAttribute("content-desc")!=null).collect(Collectors.toList());
         for(WebElement e:successM) {
-            if (Objects.equals(e.getAttribute("content-desc"), "Alexa Linked Successfully")) {
+            if (Objects.equals(e.getDomAttribute("content-desc"), "Alexa Linked Successfully")) {
                 System.out.println("Alexa Linked Successfully");
                 ActionsUtil.Tap.withPercentage(driver, 0.20, 0.20);
             }

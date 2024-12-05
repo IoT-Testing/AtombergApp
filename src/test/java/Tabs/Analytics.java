@@ -38,8 +38,8 @@ public class Analytics {
 
     private static void fanChange(AppiumDriver driver) {
         List<WebElement> FANS = driver.findElements(By.className("android.view.View"));
-        List<WebElement> Fans = FANS.stream().filter(ele -> ele.getAttribute("content-desc") != null).collect(Collectors.toList());
-        List<WebElement> fans = Fans.stream().filter(ele -> ele.getAttribute("content-desc").endsWith("Fan")).collect(Collectors.toList());
+        List<WebElement> Fans = FANS.stream().filter(ele -> ele.getDomAttribute("content-desc") != null).collect(Collectors.toList());
+        List<WebElement> fans = Fans.stream().filter(ele -> ele.getDomAttribute("content-desc").endsWith("Fan")).collect(Collectors.toList());
 
         for (WebElement fan : fans) {
             fan.click();
@@ -49,16 +49,16 @@ public class Analytics {
     private static void nextFan(AppiumDriver driver) {
         fanChange(driver);
         List<WebElement> availFans = driver.findElements(By.className("android.view.View"));
-        List<WebElement> fans = availFans.stream().filter(ele -> ele.getAttribute("content-desc") != null).collect(Collectors.toList());
+        List<WebElement> fans = availFans.stream().filter(ele -> ele.getDomAttribute("content-desc") != null).collect(Collectors.toList());
         fans.remove(fans.size() - 1);
         System.out.println(fans.size());
 
         for (int i = 0; i < fans.size(); i++) {
 
             List<WebElement> availFans1 = driver.findElements(By.className("android.view.View"));
-            List<WebElement> anaFans = availFans1.stream().filter(ele -> ele.getAttribute("content-desc") != null).collect(Collectors.toList());
+            List<WebElement> anaFans = availFans1.stream().filter(ele -> ele.getDomAttribute("content-desc") != null).collect(Collectors.toList());
             anaFans.remove(anaFans.size() - 1);
-            System.out.println(anaFans.get(i).getAttribute("content-desc"));
+            System.out.println(anaFans.get(i).getDomAttribute("content-desc"));
             anaFans.get(i).click();
             System.out.println(i);
             info(driver);
@@ -76,9 +76,9 @@ public class Analytics {
 
     private static void rateUs(AppiumDriver driver) {
         List<WebElement> dialogueBox = driver.findElements(By.className("android.widget.Button"));
-        List<WebElement> cancel = dialogueBox.stream().filter(webElement -> webElement.getAttribute("content-desc").equals("Cancel")).collect(Collectors.toList());
+        List<WebElement> cancel = dialogueBox.stream().filter(webElement -> webElement.getDomAttribute("content-desc").equals("Cancel")).collect(Collectors.toList());
         for (WebElement ele : cancel) {
-            if (ele.getAttribute("content-desc").equals("Cancel")) {
+            if (ele.getDomAttribute("content-desc").equals("Cancel")) {
                 ele.click();
                 System.out.println("Canceled Rate us");
                 analytics = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Analytics\n" +
@@ -93,11 +93,11 @@ public class Analytics {
         int i;
         for (i = 0; i < 4; i++) {// there are 4 screens in analytics
             List<WebElement> ICONS = driver.findElements(By.xpath("//android.view.View[@clickable=\"true\"]"));
-            List<WebElement> icons = ICONS.stream().filter(element -> element.getAttribute("content-desc") == null).collect(Collectors.toList());
+            List<WebElement> icons = ICONS.stream().filter(element -> element.getDomAttribute("content-desc") == null).collect(Collectors.toList());
             System.out.println(icons.size());
 //            icons.remove(icons.size() - 1);
             for (WebElement icon : icons) {
-                System.out.println(icon.getAttribute("content-desc"));
+                System.out.println(icon.getDomAttribute("content-desc"));
                 icon.click();
                 sleep(2000);
                 driver.navigate().back();
@@ -118,12 +118,12 @@ public class Analytics {
     private static void confetti(AppiumDriver driver){
         System.out.println("checking confetti");
         List<WebElement> CONFETTI = driver.findElements(By.className("android.widget.ImageView"));
-        List<WebElement> confetti1 = CONFETTI.stream().filter(element -> element.getAttribute("content-desc")==null).collect(Collectors.toList());
-        List<WebElement> confetti2 = confetti1.stream().filter(webElement -> webElement.getAttribute("bounds").endsWith("482]")).collect(Collectors.toList());
+        List<WebElement> confetti1 = CONFETTI.stream().filter(element -> element.getDomAttribute("content-desc")==null).collect(Collectors.toList());
+        List<WebElement> confetti2 = confetti1.stream().filter(webElement -> webElement.getDomAttribute("bounds").endsWith("482]")).collect(Collectors.toList());
         System.out.println("confetti size "+ confetti2.size());                                                             //[380,410][452,482]
         for (WebElement e: confetti2)
         {
-            System.out.println(e.getAttribute("bounds"));
+            System.out.println(e.getDomAttribute("bounds"));
             e.click();
             ActionsUtil.sleep(2000);
             driver.navigate().back();

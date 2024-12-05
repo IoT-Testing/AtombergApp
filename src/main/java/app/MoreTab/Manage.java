@@ -55,9 +55,9 @@ public class Manage {
         do {
             List<WebElement> MT = driver.findElements(By.className("android.view.View"));
             System.out.println(MT.size());
-            List<WebElement> mt = MT.stream().filter(webElement -> webElement.getAttribute("content-desc") != null).collect(Collectors.toList());
+            List<WebElement> mt = MT.stream().filter(webElement -> webElement.getDomAttribute("content-desc") != null).collect(Collectors.toList());
             System.out.println(mt.size());
-            moreTab = mt.stream().filter(webElement -> Objects.equals(webElement.getAttribute("content-desc"), "Help")).collect(Collectors.toList());
+            moreTab = mt.stream().filter(webElement -> Objects.equals(webElement.getDomAttribute("content-desc"), "Help")).collect(Collectors.toList());
             System.out.println(moreTab.size());
             if (moreTab.isEmpty()) {
                 ActionsUtil.Scroll.Up(driver);
@@ -152,15 +152,15 @@ public class Manage {
         System.out.println("Tap on Manage Family");
 
         List<WebElement> elements = driver.findElements(By.className("android.widget.ImageView"));
-        List<WebElement> families = elements.stream().filter(element -> element.getAttribute("content-desc") != null).collect(Collectors.toList());
+        List<WebElement> families = elements.stream().filter(element -> element.getDomAttribute("content-desc") != null).collect(Collectors.toList());
         System.out.println(families.size());
         int numberOfFamilies = families.size();
         for (int i = 0; i < numberOfFamilies; i++) {
             List<WebElement> familyElements = driver.findElements(By.className("android.widget.ImageView"));
-            List<WebElement> familyElement = familyElements.stream().filter(element -> element.getAttribute("content-desc") != null).collect(Collectors.toList());
-            String familyName = familyElement.get(i).getAttribute("content-desc");
+            List<WebElement> familyElement = familyElements.stream().filter(element -> element.getDomAttribute("content-desc") != null).collect(Collectors.toList());
+            String familyName = familyElement.get(i).getDomAttribute("content-desc");
             ActionsUtil.sleep(500);
-            System.out.println(familyElement.get(i).getAttribute("content-desc"));
+            System.out.println(familyElement.get(i).getDomAttribute("content-desc"));
             familyElement.get(i).click();
             System.out.println(Objects.equals(familyName, "Add") && Objects.equals(familyName, "1\n" +
                     "Script"));
@@ -245,8 +245,8 @@ public class Manage {
 
     private void addHome() {
         List<WebElement> accountCreation = driver.findElements(By.className("android.view.View"));
-        List<WebElement> buttons = accountCreation.stream().filter(element -> element.getAttribute("content-desc") != null).collect(Collectors.toList());
-        List<WebElement> button = buttons.stream().filter(Object -> Objects.requireNonNull(Object.getAttribute("content-desc")).startsWith("Create a new smart home")).collect(Collectors.toList());
+        List<WebElement> buttons = accountCreation.stream().filter(element -> element.getDomAttribute("content-desc") != null).collect(Collectors.toList());
+        List<WebElement> button = buttons.stream().filter(Object -> Objects.requireNonNull(Object.getDomAttribute("content-desc")).startsWith("Create a new smart home")).collect(Collectors.toList());
         if (!button.isEmpty()) button.get(0).click();
         AppUtil.captureScreenshot(driver);
 //        ActionsUtil.Tap.withPercentage(driver, 0.50, 0.75); // Narzo 0.50, 0.625 Tab 0.50, 0.75
@@ -291,7 +291,7 @@ public class Manage {
 
     private void countMember() {
         List<WebElement> Elements = driver.findElements(By.className("android.view.View"));
-        List<WebElement> elements = Elements.stream().filter(element -> Objects.equals(element.getAttribute("clickable"), "true")).collect(Collectors.toList());
+        List<WebElement> elements = Elements.stream().filter(element -> Objects.equals(element.getDomAttribute("clickable"), "true")).collect(Collectors.toList());
         System.out.println(elements.size());
         for (WebElement e : elements) {
             System.out.println(e.getTagName());
@@ -316,9 +316,9 @@ public class Manage {
         do {
             List<WebElement> MT = driver.findElements(By.className("android.view.View"));
             System.out.println(MT.size());
-            List<WebElement> mt = MT.stream().filter(webElement -> webElement.getAttribute("content-desc") != null).collect(Collectors.toList());
+            List<WebElement> mt = MT.stream().filter(webElement -> webElement.getDomAttribute("content-desc") != null).collect(Collectors.toList());
             System.out.println(mt.size());
-            moreTab = mt.stream().filter(webElement -> Objects.equals(webElement.getAttribute("content-desc"), "Logout")).collect(Collectors.toList());
+            moreTab = mt.stream().filter(webElement -> Objects.equals(webElement.getDomAttribute("content-desc"), "Logout")).collect(Collectors.toList());
             System.out.println(moreTab.size());
             if (moreTab.isEmpty()) {
                 ActionsUtil.Scroll.Up(driver);

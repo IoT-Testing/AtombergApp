@@ -200,32 +200,32 @@ public class FanManagement {
         if(buyNow==null) {
             List<WebElement> FANS = driver.findElements(By.className("android.widget.Button"));
             System.out.println(FANS.size());
-            List<WebElement> fans = FANS.stream().filter(dev -> dev.getAttribute("content-desc") != null).collect(Collectors.toList());
+            List<WebElement> fans = FANS.stream().filter(dev -> dev.getDomAttribute("content-desc") != null).collect(Collectors.toList());
 
             if (fans.size() > 1) {
                 System.out.println("Fan Available " + fans.size());
             }
             for (WebElement element : fans) {
-                System.out.println(element.getAttribute("content-desc"));
+                System.out.println(element.getDomAttribute("content-desc"));
                 element.click(); // Clicks on the for and opens device control
                 repeatCommands(10);
                 driver.navigate().back();            // back
             }
             if (fans.size() >= 4) // only 4 devices are visible on the screen
             {
-                String previousFan = fans.get(fans.size() - 2).getAttribute("content-desc");
-                String lastFan = fans.get(fans.size() - 1).getAttribute("content-desc");
+                String previousFan = fans.get(fans.size() - 2).getDomAttribute("content-desc");
+                String lastFan = fans.get(fans.size() - 1).getDomAttribute("content-desc");
                 ActionsUtil.Scroll.Up(driver);
                 List<WebElement> NEWFANS = driver.findElements(By.className("android.widget.Button"));
-                List<WebElement> newfans = NEWFANS.stream().filter(dev -> dev.getAttribute("content-desc") != null).collect(Collectors.toList());
-                if (Objects.equals(newfans.get(newfans.size() - 1).getAttribute("content-desc"), lastFan)) { // to check if there are more than 4 fans in family
+                List<WebElement> newfans = NEWFANS.stream().filter(dev -> dev.getDomAttribute("content-desc") != null).collect(Collectors.toList());
+                if (Objects.equals(newfans.get(newfans.size() - 1).getDomAttribute("content-desc"), lastFan)) { // to check if there are more than 4 fans in family
                     System.out.println("No more devices");
                 }
                 System.out.println(newfans.size());
                 int count = 0;
                 for (WebElement fan : newfans) {
 
-                    String name = fan.getAttribute("content-desc");
+                    String name = fan.getDomAttribute("content-desc");
                     assert name != null;
                     if (name.equals(previousFan) || name.equals(lastFan)) {
                         count++;
@@ -237,7 +237,7 @@ public class FanManagement {
                 }
                 System.out.println(newfans.size());
                 for (int i = 0; i < newfans.size(); i++) {
-                    String name = newfans.get(i).getAttribute("content-desc");
+                    String name = newfans.get(i).getDomAttribute("content-desc");
                     System.out.println(i + name);
                     newfans.get(i).click(); // Clicks on the for and opens device control
                     fanControl(); // Controls the fan
@@ -421,5 +421,10 @@ public class FanManagement {
             Boost.click();
             power.click();
         }
+    }
+
+    public void LED(){
+        ActionsUtil.Tap.withCoordinates(driver, 540, 1800);
+        ActionsUtil.SSleep(10);
     }
 }

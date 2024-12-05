@@ -161,7 +161,7 @@ public class Automation {
             Actions.remove(0);
             Actions.remove(0);
             WebElement action = Actions.get(i);
-            System.out.println(action.getAttribute("content-desc"));
+            System.out.println(action.getDomAttribute("content-desc"));
 //            action.click();
             ActionsUtil.sleep(1000);
             if (i < total - 1) {
@@ -180,13 +180,13 @@ public class Automation {
         else timeOfDay.click();
 
         List<WebElement> Elements = driver.findElements(By.className("android.widget.ImageView"));
-        List<WebElement> Elements2 = Elements.stream().filter(element -> element.getAttribute("content-desc")!=null).collect(Collectors.toList());
-        List<WebElement> elements = Elements2.stream().filter(element -> Objects.requireNonNull(element.getAttribute("content-desc")).startsWith("Automation")).collect(Collectors.toList());
+        List<WebElement> Elements2 = Elements.stream().filter(element -> element.getDomAttribute("content-desc")!=null).collect(Collectors.toList());
+        List<WebElement> elements = Elements2.stream().filter(element -> Objects.requireNonNull(element.getDomAttribute("content-desc")).startsWith("Automation")).collect(Collectors.toList());
         int size = elements.size();
         for (int i = 0; i < size; i++) {
             List<WebElement> ELEMENTS= driver.findElements(By.className("android.widget.ImageView"));
-            List<WebElement> ELEMENTS2 = ELEMENTS.stream().filter(element -> element.getAttribute("content-desc")!=null).collect(Collectors.toList());
-            List<WebElement> Automations = ELEMENTS2.stream().filter(element -> Objects.requireNonNull(element.getAttribute("content-desc")).startsWith("Automation")).collect(Collectors.toList());
+            List<WebElement> ELEMENTS2 = ELEMENTS.stream().filter(element -> element.getDomAttribute("content-desc")!=null).collect(Collectors.toList());
+            List<WebElement> Automations = ELEMENTS2.stream().filter(element -> Objects.requireNonNull(element.getDomAttribute("content-desc")).startsWith("Automation")).collect(Collectors.toList());
 
             Automations.get(0).click();
             driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.Button")).click();
@@ -196,8 +196,8 @@ public class Automation {
             System.out.println("Automation Deleted");
         }
         Elements = driver.findElements(By.className("android.widget.ImageView"));
-        Elements2 = Elements.stream().filter(element -> element.getAttribute("content-desc")!=null).collect(Collectors.toList());
-        elements = Elements2.stream().filter(element -> Objects.requireNonNull(element.getAttribute("content-desc")).startsWith("Automation")).collect(Collectors.toList());
+        Elements2 = Elements.stream().filter(element -> element.getDomAttribute("content-desc")!=null).collect(Collectors.toList());
+        elements = Elements2.stream().filter(element -> Objects.requireNonNull(element.getDomAttribute("content-desc")).startsWith("Automation")).collect(Collectors.toList());
         size = elements.size();
         if (size != 0) deleteTimeOfDay();
     }
@@ -206,13 +206,13 @@ public class Automation {
         driver.findElement(By.xpath("//android.view.View[@content-desc=\"Automations\"]")).click();
         driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Quick access\"]")).click();
         List<WebElement> Elements = driver.findElements(By.className("android.widget.ImageView"));
-        List<WebElement> Elements2 = Elements.stream().filter(element -> element.getAttribute("content-desc") != null).collect(Collectors.toList());
-        List<WebElement> elements = Elements2.stream().filter(element -> Objects.requireNonNull(element.getAttribute("content-desc")).startsWith("QA")).collect(Collectors.toList());
+        List<WebElement> Elements2 = Elements.stream().filter(element -> element.getDomAttribute("content-desc") != null).collect(Collectors.toList());
+        List<WebElement> elements = Elements2.stream().filter(element -> Objects.requireNonNull(element.getDomAttribute("content-desc")).startsWith("QA")).collect(Collectors.toList());
         int size = elements.size();
         for (int i = 0; i < size; i++) {
             List<WebElement> ELEMENTS = driver.findElements(By.className("android.widget.ImageView"));
-            List<WebElement> ELEMENTS2 = ELEMENTS.stream().filter(element -> element.getAttribute("content-desc") != null).collect(Collectors.toList());
-            List<WebElement> Automations = ELEMENTS2.stream().filter(element -> Objects.requireNonNull(element.getAttribute("content-desc")).startsWith("QA")).collect(Collectors.toList());
+            List<WebElement> ELEMENTS2 = ELEMENTS.stream().filter(element -> element.getDomAttribute("content-desc") != null).collect(Collectors.toList());
+            List<WebElement> Automations = ELEMENTS2.stream().filter(element -> Objects.requireNonNull(element.getDomAttribute("content-desc")).startsWith("QA")).collect(Collectors.toList());
 
             Automations.get(0).click();
             driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.widget.Button")).click();
@@ -222,8 +222,8 @@ public class Automation {
             System.out.println("Quick Access Deleted");
         }
         Elements = driver.findElements(By.className("android.widget.ImageView"));
-        Elements2 = Elements.stream().filter(element -> element.getAttribute("content-desc") != null).collect(Collectors.toList());
-        elements = Elements2.stream().filter(element -> Objects.requireNonNull(element.getAttribute("content-desc")).startsWith("QA")).collect(Collectors.toList());
+        Elements2 = Elements.stream().filter(element -> element.getDomAttribute("content-desc") != null).collect(Collectors.toList());
+        elements = Elements2.stream().filter(element -> Objects.requireNonNull(element.getDomAttribute("content-desc")).startsWith("QA")).collect(Collectors.toList());
         size = elements.size();
         if (size!=0) deleteQuickAccess();
     }

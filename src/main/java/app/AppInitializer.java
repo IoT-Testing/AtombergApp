@@ -27,30 +27,6 @@ public class AppInitializer {
         this.driver = driver;
     }
 
-    public void openApp() {
-        //Capabilities to bet set According to the device to be tested
-        DesiredCapabilities cap = new DesiredCapabilities();
-        cap.setCapability("platformName", "Android");
-        cap.setCapability("platformVersion", "14");
-        //Below caps opens Atomberg Home app from Scratch as if freshly installed.
-        cap.setCapability("appPackage", "com.atomberg.app");
-        cap.setCapability("appActivity", "com.atomberg.app.MainActivity");
-        cap.setCapability("fullReset", "true");
-
-        URL url = null;
-        try {
-            //Prerequisite: Turn on the Appium Server
-            url = new URL("http://127.0.0.1:4723/wd/hub");
-        } catch (MalformedURLException e) {
-            System.out.println("Malformed URL exception " + e.getMessage());
-        }
-        assert url != null;
-        driver = new AppiumDriver(url, cap);
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
-        ActionsUtil.sleep(5000);
-        AppUtil.captureScreenshot(driver);
-    }
-
     public void checkMainScreen() {
         WebElement  isMainScreenDisplayed = null;
         try{
@@ -70,27 +46,6 @@ public class AppInitializer {
         //These caps only get the device, need to select Atomberg Home ap separately
         DesiredCapabilities cap = new DesiredCapabilities();
         cap.setCapability("platformName", "Android");
-        cap.setCapability("platformVersion", "14");
-
-        URL url = null;
-        try {
-            url = new URL("http://192.168.9.234:7100/wd/hub");
-        } catch (MalformedURLException e) {
-            System.out.println("Malformed URL exception " + e.getMessage());
-        }
-        assert url != null;
-        driver = new AppiumDriver(url, cap);
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
-    }
-
-    public void initializeApkFile(){
-        //These caps only get the device, need to select Atomberg Home ap separately
-        DesiredCapabilities cap = new DesiredCapabilities();
-        cap.setCapability("platformName", "Android");
-        cap.setCapability("platformVersion", "14");
-        cap.setCapability("noReset", "true");
-        String appPath = System.getProperty("user.dir") + "\\new_flutter_version.apk";
-        cap.setCapability("app",appPath);
 
         URL url = null;
         try {
@@ -100,16 +55,16 @@ public class AppInitializer {
         }
         assert url != null;
         driver = new AppiumDriver(url, cap);
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
     }
 
     public void tapOnAppLogo(){
         //Prerequisites : Atomberg App should be on Home screen.
         ActionsUtil.Tap.withCoordinates(driver, 550, 2350);
         List<WebElement> elementList = driver.findElements(By.className("android.widget.TextView"));
-        List<WebElement> apps = elementList.stream().filter(object->object.getAttribute("content-desc")!=null).collect(Collectors.toList());
+        List<WebElement> apps = elementList.stream().filter(object->object.getDomAttribute("content-desc")!=null).collect(Collectors.toList());
         for(WebElement app : apps){
-            if(app.getAttribute("content-desc").equals("Atomberg Home")){
+            if(Objects.equals(app.getDomAttribute("content-desc"), "Atomberg Home")){
                 app.click();
                 break;
             }
@@ -148,9 +103,9 @@ public class AppInitializer {
         ActionsUtil.sleep(5000);
         PermissionUtil.allow(driver);
         List<WebElement> dialogueBox = driver.findElements(By.className("android.view.View"));
-        List<WebElement> elementList = dialogueBox.stream().filter(element -> element.getAttribute("content-desc")!=null).collect(Collectors.toList());
+        List<WebElement> elementList = dialogueBox.stream().filter(element -> element.getDomAttribute("content-desc")!=null).collect(Collectors.toList());
         for (WebElement element : elementList){
-            if (Objects.equals(element.getAttribute("content-desc"), "Use Alexa to control your smart fan(s) with voice"))
+            if (Objects.equals(element.getDomAttribute("content-desc"), "Use Alexa to control your smart fan(s) with voice"))
             {
                 driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]")).click();
                 break;

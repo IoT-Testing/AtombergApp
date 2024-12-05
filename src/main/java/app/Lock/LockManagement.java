@@ -236,15 +236,15 @@ public class LockManagement {
         for (i = 0; i < total; i++) {
             List<WebElement> Keys = driver.findElements(By.className("android.widget.Button"));
             WebElement key = Keys.get(i);
-            boolean OTP = Objects.requireNonNull(key.getAttribute("content-desc")).endsWith("OTP"); // checks if the last string is OTP
-            boolean New = Objects.requireNonNull(key.getAttribute("content-desc")).endsWith("NEW"); // checks if the last string is NEW
+            boolean OTP = Objects.requireNonNull(key.getDomAttribute("content-desc")).endsWith("OTP"); // checks if the last string is OTP
+            boolean New = Objects.requireNonNull(key.getDomAttribute("content-desc")).endsWith("NEW"); // checks if the last string is NEW
             System.out.println(OTP || New); // When opened 1st time the last string is NEW while in the second attempt it is OTP
             key.click();
             if (OTP || New) {
                 sleep(1000);
                 List<WebElement> RemoteOTPs = driver.findElements(By.className("android.view.View"));
                 for (WebElement otp : RemoteOTPs) {
-                    System.out.println(otp.getAttribute("content-desc"));
+                    System.out.println(otp.getDomAttribute("content-desc"));
                 }
             }
             driver.navigate().back();
@@ -302,13 +302,13 @@ public class LockManagement {
         }
         if (PMDisabled == null) {
             WebElement psmText = driver.findElement(By.xpath("//android.view.View[@content-desc=\"You are enabling passage mode. Enabling this mode will allow anyone to enter the house without any authentication. Do you want to continue?\"]"));
-            boolean allow = Objects.requireNonNull(psmText.getAttribute("content-desc")).endsWith("Do you want to continue?");
+            boolean allow = Objects.requireNonNull(psmText.getDomAttribute("content-desc")).endsWith("Do you want to continue?");
             if (allow) {
                 WebElement Yes = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Yes\"]"));
                 Yes.click();
             }
             WebElement psmText2 = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Please read this below. Do you still want to continue?\"]"));
-            boolean allow2 = Objects.requireNonNull(psmText2.getAttribute("content-desc")).startsWith("Please read this below");
+            boolean allow2 = Objects.requireNonNull(psmText2.getDomAttribute("content-desc")).startsWith("Please read this below");
             if (allow2) {
                 WebElement Yes2 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Yes\"]"));
                 Yes2.click();

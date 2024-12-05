@@ -122,19 +122,19 @@ public class Play {
         }catch (Exception ignored){}
         if(videoTutorials==null){
             List<WebElement> elementList = driver.findElements(By.className("android.view.View"));
-            List<WebElement> webElementList = elementList.stream().filter(Object-> Object.getAttribute("content-desc")!=null).collect(Collectors.toList());
+            List<WebElement> webElementList = elementList.stream().filter(Object-> Object.getDomAttribute("content-desc")!=null).collect(Collectors.toList());
             for(WebElement webElement: webElementList){
-                 if(Objects.equals(webElement.getAttribute("content-desc"), "Select and link device")){
+                 if(Objects.equals(webElement.getDomAttribute("content-desc"), "Select and link device")){
                      ActionsUtil.Scroll.Up(driver);
                      WebElement help = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Help\"]"));
                      help.click();
                      break;
-                 } else if (Objects.equals(webElement.getAttribute("content-desc"), "Options")) {
+                 } else if (Objects.equals(webElement.getDomAttribute("content-desc"), "Options")) {
                      WebElement help = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Help\"]"));
                      help.click();
                      break;
                  }
-                 else if (Objects.equals(webElement.getAttribute("content-desc"), "Help")){
+                 else if (Objects.equals(webElement.getDomAttribute("content-desc"), "Help")){
                      webElement.click();
                      break;
                  }

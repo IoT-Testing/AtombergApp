@@ -37,7 +37,6 @@ public class AppTest {
         cap.setCapability("platformVersion", "14");
         cap.setCapability("appPackage", "com.atomberg.app");
         cap.setCapability("appActivity", "com.atomberg.app.MainActivity");
-        cap.setCapability("apksigner", "/Users/himanshuchoudhary/apksigner.jar");
         URL url = null;
         try{
             url = new URL("http://localhost:4723/wd/hub");
