@@ -5,6 +5,7 @@ import Actions.Tap;
 import AtombergTest.Method;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -72,7 +73,7 @@ public class SO {//Search Online Fan
             Scroll.Up(driver);
             List<WebElement> NEWFANS = driver.findElements(By.className("android.widget.Button"));
             List<WebElement> newfans = NEWFANS.stream().filter(dev -> dev.getDomAttribute("content-desc") != null).collect(Collectors.toList());
-            if (newfans.get(newfans.size() - 1).getDomAttribute("content-desc").equals(lastFan)) {
+            if (Objects.equals(newfans.get(newfans.size() - 1).getDomAttribute("content-desc"), lastFan)) {
                 System.out.println("No more devices");
             }
             System.out.println(newfans.size());
@@ -80,6 +81,7 @@ public class SO {//Search Online Fan
             for (WebElement fan : newfans) {
 
                 String name = fan.getDomAttribute("content-desc");
+                assert name != null;
                 if (name.equals(previousFan) || name.equals(lastFan)) {
                     count ++;
                 }
@@ -223,8 +225,8 @@ public class SO {//Search Online Fan
         for (i = 0; i < total; i++) {
             List<WebElement> Keys = driver.findElements(By.className("android.widget.Button"));
             WebElement key = Keys.get(i);
-            boolean OTP = key.getDomAttribute("content-desc").endsWith("OTP"); // checks if the last string is OTP
-            boolean New = key.getDomAttribute("content-desc").endsWith("NEW"); // checks if the last string is NEW
+            boolean OTP = Objects.requireNonNull(key.getDomAttribute("content-desc")).endsWith("OTP"); // checks if the last string is OTP
+            boolean New = Objects.requireNonNull(key.getDomAttribute("content-desc")).endsWith("NEW"); // checks if the last string is NEW
             System.out.println(OTP || New); // When opened 1st time the last string is NEW while in the second attempt it is OTP
             key.click();
             if (OTP || New) {
@@ -292,13 +294,13 @@ public class SO {//Search Online Fan
         }
         if (PMDisabled == null) {
             WebElement psmText = driver.findElement(By.xpath("//android.view.View[@content-desc=\"You are enabling passage mode. Enabling this mode will allow anyone to enter the house without any authentication. Do you want to continue?\"]"));
-            boolean allow = psmText.getDomAttribute("content-desc").endsWith("Do you want to continue?");
+            boolean allow = Objects.requireNonNull(psmText.getDomAttribute("content-desc")).endsWith("Do you want to continue?");
             if (allow) {
                 WebElement Yes = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Yes\"]"));
                 Yes.click();
             }
             WebElement psmText2 = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Please read this below. Do you still want to continue?\"]"));
-            boolean allow2 = psmText2.getDomAttribute("content-desc").startsWith("Please read this below");
+            boolean allow2 = Objects.requireNonNull(psmText2.getDomAttribute("content-desc")).startsWith("Please read this below");
             if (allow2) {
                 WebElement Yes2 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Yes\"]"));
                 Yes2.click();

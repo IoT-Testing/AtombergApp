@@ -2,8 +2,6 @@ package app.util;
 
 import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.Dimension;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Pause;
 import org.openqa.selenium.interactions.PointerInput;
 import org.openqa.selenium.interactions.Sequence;
@@ -42,6 +40,7 @@ public class ActionsUtil {
             System.out.println("Tap With %");
         }
     }
+
     public static  void refresh(AppiumDriver driver){
         //Performs Refresh screen action.
         Dimension size = driver.manage().window().getSize();
@@ -59,7 +58,8 @@ public class ActionsUtil {
         driver.perform(Collections.singletonList(sequence));
         System.out.println("Home Screen Refreshed");
     }
-    public  static class Scroll{
+
+    public static class Scroll{
         //Performs Scroll actions
         public static void Down(AppiumDriver driver) {
             Dimension size = driver.manage().window().getSize(); // Assuming getWindowSize() returns the window size
@@ -95,6 +95,7 @@ public class ActionsUtil {
             System.out.println("Scrolled Up");
         }
     }
+
     public static class Swipe {
         // Performs Screen swipes
         public static void Left(AppiumDriver driver, double x, double y) {
@@ -135,7 +136,7 @@ public class ActionsUtil {
             System.out.println("Right Swipe");
         }
 
-        public void screenRight(AppiumDriver driver) {
+        public static void screenRight(AppiumDriver driver) {
             Dimension size = driver.manage().window().getSize(); // Assuming getWindowSize() returns the window size
 
             int startY = (int) (size.getHeight() * 0.5);
@@ -153,7 +154,7 @@ public class ActionsUtil {
             System.out.println("Right Swipe");
         }
 
-        public void screenLeft(AppiumDriver driver) {
+        public static void screenLeft(AppiumDriver driver) {
             Dimension size = driver.manage().window().getSize(); // Assuming getWindowSize() returns the window size
 
             int startY = (int) (size.getHeight() * 0.5);
@@ -171,12 +172,32 @@ public class ActionsUtil {
             System.out.println("Left Swipe");
         }
 
+        public static void Notifications(AppiumDriver driver, double x,double y) {
+            Dimension size = driver.manage().window().getSize(); // Assuming getWindowSize() returns the window size
+            int startX = (int) (size.getWidth() * x);
+            int startY = (int) (size.getHeight() * y);
+            int endY = size.getHeight() /2; // Adjusted to scroll down
+
+            PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+            Sequence sequence = new Sequence(finger, 1)
+                    .addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY))
+                    .addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
+                    .addAction(new Pause(finger, Duration.ofMillis(200)))
+                    .addAction(finger.createPointerMove(Duration.ofMillis(250), PointerInput.Origin.viewport(), startX, endY))
+                    .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+            driver.perform(Collections.singletonList(sequence));
+
+            System.out.println("Notifications");
+        }
+
     }
+
     public static void minimize(AppiumDriver driver) {
         //Taps on the minimize button (button mode)
             Tap.withPercentage(driver, 0.50, 1.05);// Tap on the minimize button on the navigation bar
             sleep(2000);
     }
+
     public static void killApp(AppiumDriver driver) {
         // this is to minimize the app and kill the main activity of the app
         Tap.withPercentage(driver, 0.28, 1.05);// Tap on the recent button on the navigation bar
@@ -195,6 +216,7 @@ public class ActionsUtil {
                     .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
             driver.perform(Collections.singletonList(sequence));
     }
+
     public static void sleep(long millis){
         try {
             Thread.sleep(millis);
@@ -202,6 +224,7 @@ public class ActionsUtil {
             throw new RuntimeException(e);
         }
     }
+
     public static void SSleep(long seconds){
         long millis = seconds*1000;
         try {
@@ -210,6 +233,7 @@ public class ActionsUtil {
             throw new RuntimeException(e);
         }
     }
+
     public static void longPress(AppiumDriver driver, int x, int y){
         //Performs Long Press action on the screen.
         PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");

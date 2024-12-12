@@ -97,8 +97,9 @@ public class Manage {
         /*
             CLICK ON DEVELOPER OPTIONS
         */
-        WebElement DevOps = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Developer options\"]"));
-        DevOps.click();
+        WebElement developerOptionss = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Developer options\"]"));
+        assert developerOptionss.isDisplayed();
+        developerOptionss.click();
         AppUtil.captureScreenshot(driver);
         System.out.println("Tap on Developer Options");
         ActionsUtil.sleep(1000);
@@ -111,8 +112,9 @@ public class Manage {
             CONFIRM LOGOUT
         */
         checkLogout();
-        WebElement Logout = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Logout\"]"));
-        Logout.click();
+        WebElement logout = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Logout\"]"));
+        assert logout.isDisplayed();
+        logout.click();
         AppUtil.captureScreenshot(driver);
         System.out.println("Tap on Logout");
         WebElement yes = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Yes\"]"));
@@ -122,30 +124,35 @@ public class Manage {
 
     public void family() {
         /*
-        GO TO MORE TAB
-        SCROLL TILL MANAGE FAMILY IS IN THE SCREEN
-        TAP ON MANAGE FAMILY
-        CHECK AVAILABLE FAMILIES
-        CLICK ON FAMILY
-        CLICK ON FAMILY OPTIONS
-        CLICK ON LEAVE FAMILY
-        CANCEL
-        CLICK ON DELETE
-        CANCEL
-        IF SCRIPT
-        DELETE FAMILY
-        IF ADD
-        DO ADD HOME PROCESS WITH HOME NAME -> SCRIPT
+            GO TO MORE TAB
+            SCROLL TILL MANAGE FAMILY IS IN THE SCREEN
+            TAP ON MANAGE FAMILY
+            CHECK AVAILABLE FAMILIES
+            CLICK ON FAMILY
+            CLICK ON FAMILY OPTIONS
+            CLICK ON LEAVE FAMILY
+            CANCEL
+            CLICK ON DELETE
+            CANCEL
+            IF SCRIPT
+            DELETE FAMILY
+            IF ADD
+            DO ADD HOME PROCESS WITH HOME NAME -> SCRIPT
         */
         ScreenCheck screen = new ScreenCheck(driver);
         screen.moreTab();
         WebElement ManageFamily = null;
+        WebElement logout = null;
         while (ManageFamily == null) {
             try {
                 ManageFamily = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Manage family\"]"));
             } catch (Exception ignored) {
             }
+            try {
+                logout = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Logout\"]"));
+            }catch (Exception ignored){}
             if (ManageFamily == null) ActionsUtil.Scroll.Up(driver);
+            else if (ManageFamily == null && logout != null) ActionsUtil.Scroll.Down(driver);
         }
         ManageFamily.click();
         AppUtil.captureScreenshot(driver);

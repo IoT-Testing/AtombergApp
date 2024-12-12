@@ -18,26 +18,30 @@ public class Profile {
     }
 
     public void edit(){
+        ScreenCheck screenCheck = new ScreenCheck(driver);
+        screenCheck.moreTab();
+
         List<WebElement> ELEMENTS = driver.findElements(By.className("android.widget.ImageView"));
         List<WebElement> elements = ELEMENTS.stream().filter(element -> element.getDomAttribute("content-desc") != null).collect(Collectors.toList());
         System.out.println(elements.size());
         List<WebElement> ele = elements.stream().filter(element -> Objects.requireNonNull(element.getDomAttribute("content-desc")).startsWith("Hi,")).collect(Collectors.toList());
-        System.out.println(elements.size());
+        System.out.println(ele.size());
         for (WebElement e : ele) {
             if (Objects.requireNonNull(e.getDomAttribute("content-desc")).startsWith("Hi,")) {
+                assert e.isDisplayed();
                 e.click();
                 System.out.println("Edit Profile");
                 break;
             }
         }
         ActionsUtil.sleep(3000);
-
         WebElement ChangeAvatar = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Change avatar\"]"));
         ChangeAvatar.click();
         AppUtil.captureScreenshot(driver);
         System.out.println("Tap On Change Avatar");
         for (int i = 1; i < 25; i++) {
             WebElement Avatar1 = driver.findElement(By.xpath("//android.widget.ScrollView/android.view.View[2]/android.view.View/android.view.View/android.widget.ImageView[" + i + "]"));
+            assert Avatar1.isDisplayed();
             Avatar1.click();
             AppUtil.captureScreenshot(driver);
         }

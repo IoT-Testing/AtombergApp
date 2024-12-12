@@ -37,7 +37,6 @@ public class Automation {
             }catch(Exception ignored){}
             if (newAutomation == null )
                 driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]/android.widget.ImageView")).click();
-
             else newAutomation.click();
             newAutomation();
             WebElement dialogueBox = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Scheduled Automation Added Successfully\"]"));

@@ -3,9 +3,11 @@ package AtombergTest; //To check
 import java.net.URL;
 import java.time.Duration;
 
+import app.AppInitializer;
 import app.STF.Connect;
 import app.util.ActionsUtil;
 import app.util.AppUtil;
+import app.util.ScreenRecording;
 import org.awaitility.Awaitility;
 import java.util.List;
 import java.util.Objects;
@@ -30,7 +32,9 @@ public class App {
     public static void main(String[] args) {
         try {
             initializeDriver();
-            tapOnAppLogo();
+            ScreenRecording.start(driver);
+            ActionsUtil.SSleep(5);
+            ScreenRecording.stop(driver);
        } catch (Exception e) {
             e.printStackTrace();
         }

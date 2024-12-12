@@ -22,7 +22,6 @@ public class Listeners implements ITestListener {
     public void onTestSuccess(ITestResult result)
     {
         test.log(Status.PASS, "Test Passed");
-
     }
     @Override
     public void onTestFailure(ITestResult result) {

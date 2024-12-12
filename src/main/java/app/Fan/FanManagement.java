@@ -1,5 +1,6 @@
 package app.Fan;
 
+import app.ScreenCheck.ScreenCheck;
 import app.util.ActionsUtil;
 import app.util.AppUtil;
 import io.appium.java_client.AppiumDriver;
@@ -338,14 +339,15 @@ public class FanManagement {
     }
 
     public void checkFan() {
+        ScreenCheck screen = new ScreenCheck(driver);
+        screen.homeScreen();
         WebElement emptyFamily = null;
         try {
             emptyFamily = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Add your first smart device\"]"));
         } catch (Exception ignored) {}
         if (emptyFamily==null)
         {
-            FanManagement fan = new FanManagement(driver);
-            fan.checkFanOnline();
+            checkFanOnline();
         }
     }
 

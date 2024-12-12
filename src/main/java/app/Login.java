@@ -17,12 +17,12 @@ public class Login {
 
     public void email() {
         WebElement emailLoginButton = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[4]"));
-        emailLoginButton.click();
+        emailLoginButton.click(); //
         AppUtil.captureScreenshot(driver);
         WebElement emailField = driver.findElement(By.xpath("//android.widget.EditText"));
         emailField.click();
         ActionsUtil.sleep(1500);
-        emailField.sendKeys("tiposi3964@nozamas.com"); // Enter Email id
+        emailField.sendKeys("hiwitaw422@wuzak.com"); // Enter Email id
         AppUtil.captureScreenshot(driver);
         System.out.println(" " + emailField.getText() + " ");
         System.out.println("Email Entered...");
@@ -37,7 +37,7 @@ public class Login {
         }
         WebElement passwordField = driver.findElement(By.xpath("//android.widget.EditText"));
         passwordField.click();
-        passwordField.sendKeys("Atomberg@123");
+        passwordField.sendKeys("Atomberg@1234");
         AppUtil.captureScreenshot(driver);
         System.out.println("Password entered..."); // Enter Password
         WebElement continueButton1 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Continue\"]"));

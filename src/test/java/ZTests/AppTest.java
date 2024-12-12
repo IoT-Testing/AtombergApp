@@ -1,20 +1,19 @@
 package ZTests;
 
-import Devices.SO;
-import Login.Email;
-import MoreTab.*;
-import Tabs.Analytics;
-import Tabs.MoreTab;
+import app.Analytics.Analytics;
+import app.Fan.FanManagement;
+import app.MoreTab.Help;
+import app.MoreTab.Manage;
+import app.MoreTab.Play;
+import app.MoreTab.Profile;
+import app.AppInitializer;
+import app.STF.Connect;
+import app.util.ActionsUtil;
+import app.util.ScreenRecording;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.Status;
 import io.appium.java_client.AppiumDriver;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.time.Duration;
 import org.junit.jupiter.api.*;
-import org.openqa.selenium.By;
-import org.openqa.selenium.remote.DesiredCapabilities;
-import AtombergTest.Method;
 import static ZTests.ExtentReportAT.*;
 
 
@@ -31,55 +30,45 @@ public class AppTest {
         }
     }
 
-    private static void openAtomberg() {
-        DesiredCapabilities cap = new DesiredCapabilities();
-        cap.setCapability("platformName", "Android");
-        cap.setCapability("platformVersion", "14");
-        cap.setCapability("appPackage", "com.atomberg.app");
-        cap.setCapability("appActivity", "com.atomberg.app.MainActivity");
-        URL url = null;
-        try{
-            url = new URL("http://localhost:4723/wd/hub");
-        } catch (MalformedURLException e) {
-            System.out.println("Malformed URL exception " + e.getMessage());
-        }
-        System.out.println("Initializing Appium driver..."); // Check if the Appium driver is initialized
-        try {
-            driver = new AppiumDriver(url, cap);
-        } catch (Exception e) {
-            System.out.println("error in initializing driver e = " + e.getMessage());
-        }
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
-        System.out.println("Appium driver initialized.");
-        System.out.println("Atomberg App Opened...");
-        assert driver.findElement(By.xpath("//android.view.View[@content-desc=\"Experience smart living \n" +
-                " with Atomberg\"]")).isDisplayed();
-        sleep(6000);
-        Method.captureScreenshot(driver);
-    }
 
     @Order(1)
-    @Test
+    @Test// This test is for Opening the Atomberg Home App
     void testOpenApp() {
         try {
             startTest("Open App");
-            openAtomberg();
+            System.out.println("OpenApp test start");
+            Connect connect = new Connect();
+            connect.ipAddress();
+            String command = connect.copiedText;
+            Runtime.getRuntime().exec(command);
+            ActionsUtil.sleep(1000);
+            AppInitializer appInitializer = new AppInitializer();
+            //TODO: do not use "openApp()" if "initializeDriver()" is used.
+            appInitializer.openApp();
+            driver = appInitializer.getDriver();
+            ActionsUtil.SSleep(2);
+            //TODO: Use tapOpAppLogo() if you are using initializeDriver()
+            appInitializer.checkMainScreen();
         } catch (Exception e) {
             getTest().log(Status.FAIL, "App Open failed: " + e.getMessage());
         } finally {
+            System.out.println("OpenApp test end");
             endTest();
         }
     }
 
     @Order(2)
     @Test
-    void testLogin() {
+    void testManageProfile(){
         try {
-            startTest("Login");
-            Email.Login(driver);
+            startTest("Profile Edit");
+            System.out.println("Profile Edit test start");
+            Profile profile = new Profile(driver);
+            profile.edit();
         } catch (Exception e) {
-            getTest().log(Status.FAIL, "Login failed: " + e.getMessage());
+            getTest().log(Status.FAIL, "Logout failed: " + e.getMessage());
         } finally {
+            System.out.println("Profile Edit test end");
             endTest();
         }
     }
@@ -89,10 +78,14 @@ public class AppTest {
     void testManageFamily(){
         try {
             startTest("Family");
-            Manage.Family(driver);
+            System.out.println("Family test start");
+            Manage manage = new Manage(driver);
+            manage.family();
         } catch (Exception e) {
-            getTest().log(Status.FAIL, "Logout failed: " + e.getMessage());
+            getTest().log(Status.FAIL, "Family Management failed: " + e.getMessage());
         } finally {
+            System.out.println("Family test end");
+
             endTest();
         }
     }
@@ -102,10 +95,13 @@ public class AppTest {
     void testFanControl() {
         try {
             startTest("Fan Control");
-            SO.Fan(driver);
+            System.out.println("Fan Control test start");
+            FanManagement fan = new FanManagement(driver);
+            fan.checkFan();
         } catch (Exception e) {
             getTest().log(Status.FAIL, "Fan Control failed: " + e.getMessage());
         } finally {
+            System.out.println("Fan Control test end");
             endTest();
         }
     }
@@ -115,27 +111,42 @@ public class AppTest {
     void testAnalytics() {
         try {
             startTest("Analytics");
-            Analytics.Show(driver);
+            System.out.println("Analytics test start");
+            Analytics analytics = new Analytics(driver);
+            analytics.Show();
         } catch (Exception e) {
-            e.printStackTrace();
             getTest().log(Status.FAIL, "Analytics failed: " + e.getMessage());
         } finally {
+            System.out.println("Analytics test end");
             endTest();
         }
     }
 
     @Order(6)
     @Test // Preconditions: Please Unlink Alexa and google home sor testing the linking process
-
-    void testMoreTab() {
+    void testHelp() {
         try {
             startTest("More Tab");
-            MoreTab.Options(driver);
-
+            System.out.println("Help Section test start");
+            Manage manage = new Manage(driver);
+            Help help = new Help(driver);
+            Play play = new Play(driver);
+            manage.help();
+            help.raiseAComplaint();
+            help.trackAComplaint();
+            play.videos();
+            help.manual();
+//            help.troubleshoot();
+            ActionsUtil.Scroll.Up(driver);
+            help.email();
+            help.call();
+            driver.navigate().back();
         } catch (Exception e) {
             getTest().log(Status.FAIL, "More Tab failed: " + e.getMessage());
         } finally {
             {
+                System.out.println("Help Section test end");
+
                 endTest();
             }
         }
@@ -146,10 +157,14 @@ public class AppTest {
     void testLogout() {
         try {
             startTest("Logout");
-            AccManage.Logout(driver);
+            System.out.println("Logout test start");
+            Manage manage = new Manage(driver);
+            manage.logout();
+            ActionsUtil.SSleep(5);
         } catch (Exception e) {
             getTest().log(Status.FAIL, "Logout failed: " + e.getMessage());
         } finally {
+            System.out.println("Logout test end");
             endTest();
         }
     }
@@ -162,6 +177,7 @@ public class AppTest {
 
     @AfterAll
     static void tearDown() {
+
         if (extent != null) {
             extent.flush();
         }

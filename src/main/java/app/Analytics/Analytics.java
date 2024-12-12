@@ -51,6 +51,7 @@ public class Analytics {
         fanChange(); //to click on the fan name to get the list of available fans
         List<WebElement> availFans = driver.findElements(By.className("android.view.View"));
         List<WebElement> fans = availFans.stream().filter(ele -> ele.getDomAttribute("content-desc") != null).collect(Collectors.toList());
+        System.out.println(fans.size());
         fans.remove(fans.size() - 1);
         System.out.println(fans.size());
         for (int i = 0; i < fans.size(); i++) {
@@ -59,11 +60,12 @@ public class Analytics {
             List<WebElement> anaFans = availFans1.stream().filter(ele -> ele.getDomAttribute("content-desc") != null).collect(Collectors.toList());
             System.out.println(anaFans.size());
             anaFans.remove(anaFans.size() - 1);
+            System.out.println(anaFans.size());
             System.out.println(i);//To check which iteration is running
             System.out.println(anaFans.get(i).getDomAttribute("content-desc"));
             anaFans.get(i).click();
             info();
-            System.out.println(i < (anaFans.size() - 1));
+            System.out.println(i < (anaFans.size()));
             if (i < (anaFans.size() - 1)) { // to go to the analytics screen and
                 moreTab.click();
                 rateUs(); //check for rate us pop-up
@@ -71,11 +73,14 @@ public class Analytics {
                 analytics.click();
                 rateUs(); //check for rate us pop-up
             }
+            System.out.println(anaFans.size() > 1);
+            if (anaFans.size() > 1){
             fanChange();
+            }
         }
     }
 
-    private void rateUs() {
+    public void rateUs() {
         List<WebElement> dialogueBox = driver.findElements(By.className("android.widget.Button"));
         List<WebElement> cancel = dialogueBox.stream().filter(webElement -> Objects.equals(webElement.getDomAttribute("content-desc"), "Cancel")).collect(Collectors.toList());
         for (WebElement ele : cancel) {

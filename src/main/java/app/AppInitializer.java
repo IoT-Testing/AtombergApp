@@ -4,6 +4,7 @@ import app.util.ActionsUtil;
 import app.util.AppUtil;
 import app.util.PermissionUtil;
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.options.UiAutomator2Options;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -27,13 +28,28 @@ public class AppInitializer {
         this.driver = driver;
     }
 
+    public void openApp(){
+        UiAutomator2Options options = new UiAutomator2Options();
+        options.setAppPackage("com.atomberg.app");
+        options.setAppActivity("com.atomberg.app.MainActivity");
+        URL url = null;
+        try {
+            url = new URL("http://127.0.0.1:4723/wd/hub");
+        } catch (MalformedURLException e) {
+            System.out.println("Malformed URL exception " + e.getMessage());
+        }
+        assert url != null;
+        driver = new AppiumDriver(url, options);
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+    }
+
     public void checkMainScreen() {
         WebElement  isMainScreenDisplayed = null;
         try{
             isMainScreenDisplayed = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Experience smart living \n" + " with Atomberg\"]"));
         }catch(Exception ignored){}
         if (isMainScreenDisplayed != null) {
-            System.out.println("Main Screen Displayed");
+            System.out.println("Login Screen Displayed");
             Login login = new Login(driver);
             login.email();
         }
@@ -44,8 +60,10 @@ public class AppInitializer {
 
     public void initializeDriver(){
         //These caps only get the device, need to select Atomberg Home ap separately
+        UiAutomator2Options options = new UiAutomator2Options();
         DesiredCapabilities cap = new DesiredCapabilities();
         cap.setCapability("platformName", "Android");
+        cap.setCapability("appPackage", "com.atomberg.app");
 
         URL url = null;
         try {
@@ -61,7 +79,7 @@ public class AppInitializer {
     public void tapOnAppLogo(){
         //Prerequisites : Atomberg App should be on Home screen.
         ActionsUtil.Tap.withCoordinates(driver, 550, 2350);
-        List<WebElement> elementList = driver.findElements(By.className("android.widget.TextView"));
+        List<WebElement> elementList = driver.findElements(By.className("android.widget.ImageView"));
         List<WebElement> apps = elementList.stream().filter(object->object.getDomAttribute("content-desc")!=null).collect(Collectors.toList());
         for(WebElement app : apps){
             if(Objects.equals(app.getDomAttribute("content-desc"), "Atomberg Home")){

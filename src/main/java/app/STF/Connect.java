@@ -1,7 +1,6 @@
 package app.STF;
 
 import app.util.ActionsUtil;
-import org.checkerframework.checker.units.qual.C;
 import org.openqa.selenium.*;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Point;
@@ -18,16 +17,39 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Connect{
-    private final String URL = "http://192.168.8.166:7100/";
-    private final String AUTH_TOKEN = "c30e0ae94b1a4174a81d831af4a1e62ec1b988ce939b460ca5daafab39719cc0";
     WebDriver driver1 = new ChromeDriver();
     public String copiedText;
 
-    public String ipAddress() throws IOException, UnsupportedFlavorException {
+    public void ipAddress() throws IOException, UnsupportedFlavorException {
         driver1.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        String URL = "http://192.168.8.166:7100/";
         driver1.get(URL);
         System.out.println("Website Opened");
         driver1.manage().window().maximize();
+        stfLogin();
+        List<WebElement> elementList = driver1.findElements(By.tagName("li"));
+        List<WebElement> devicesList = elementList.stream().filter(webElement -> webElement.getDomAttribute("id")!=null).collect(Collectors.toList());
+        devicesList.get(0).click();
+        List<WebElement> listOfTextBox = driver1.findElements(By.tagName("textarea"));
+        WebElement ip = listOfTextBox.get(1);
+        Point ipLocation = ip.getLocation();
+        Dimension ipSize = ip.getSize();
+        int x = ipLocation.getX() + ipSize.getWidth()/4;
+        int y = ipLocation.getY() + ipSize.getHeight()/2;
+        System.out.println(ipLocation);
+        System.out.println(ipSize);
+        Actions actions = new Actions(driver1);
+        actions.moveToElement(ip);
+        actions.click(ip);
+        actions.perform();
+        actions.setActivePointer(PointerInput.Kind.MOUSE, "mouse");
+        actions.keyDown(Keys.CONTROL).sendKeys("c").keyUp(Keys.CONTROL).perform();
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        // Retrieve the copied text
+        copiedText = (String) clipboard.getData(DataFlavor.stringFlavor);
+        System.out.println(copiedText);
+    }
+    void stfLogin(){
         ActionsUtil.sleep(1000);
         WebElement username = driver1.findElement(By.name("username"));
         username.click();
@@ -39,32 +61,14 @@ public class Connect{
         ActionsUtil.sleep(1000);
         driver1.findElement(By.xpath("//input[@value='Log In']")).click();
         ActionsUtil.SSleep(1);
+    }
+    void selectDevices(){
         List<WebElement> elementList = driver1.findElements(By.tagName("li"));
         List<WebElement> devicesList = elementList.stream().filter(webElement -> webElement.getDomAttribute("id")!=null).collect(Collectors.toList());
-        devicesList.get(0).click();
-
-        List<WebElement> listOfTextBox = driver1.findElements(By.tagName("textarea"));
-        WebElement ip = listOfTextBox.get(1);
-        Point ipLocation = ip.getLocation();
-        Dimension ipSize = ip.getSize();
-        int x = ipLocation.getX() + ipSize.getWidth()/4;
-        int y = ipLocation.getY() + ipSize.getHeight()/2;
-        System.out.println(ipLocation);
-        System.out.println(ipSize);
-
-        Actions actions = new Actions(driver1);
-        actions.moveToElement(ip);
-        actions.click(ip);
-        actions.perform();
-        actions.setActivePointer(PointerInput.Kind.MOUSE, "mouse");
-        actions.keyDown(Keys.CONTROL).sendKeys("c").keyUp(Keys.CONTROL).perform();
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-
-        // Retrieve the copied text
-        copiedText = (String) clipboard.getData(DataFlavor.stringFlavor);
-        System.out.println(copiedText);
-//        driver1.manage().window().minimize();
-        return copiedText;
+        for(WebElement device:devicesList){
+            driver1.switchTo().frame(device);
+            
+        }
     }
 }
 
