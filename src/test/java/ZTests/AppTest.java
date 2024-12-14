@@ -9,7 +9,6 @@ import app.MoreTab.Profile;
 import app.AppInitializer;
 import app.STF.Connect;
 import app.util.ActionsUtil;
-import app.util.ScreenRecording;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.Status;
 import io.appium.java_client.AppiumDriver;
@@ -19,7 +18,7 @@ import static ZTests.ExtentReportAT.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AppTest {
-    public static AppiumDriver driver;
+    public static AppiumDriver atomberg;
     public static final ExtentReports extent = getReportObjects();
 
     private static void sleep(long millis) {
@@ -45,7 +44,7 @@ public class AppTest {
             AppInitializer appInitializer = new AppInitializer();
             //TODO: do not use "openApp()" if "initializeDriver()" is used.
             appInitializer.openApp();
-            driver = appInitializer.getDriver();
+            atomberg = appInitializer.getDriver();
             ActionsUtil.SSleep(2);
             //TODO: Use tapOpAppLogo() if you are using initializeDriver()
             appInitializer.checkMainScreen();
@@ -63,7 +62,7 @@ public class AppTest {
         try {
             startTest("Profile Edit");
             System.out.println("Profile Edit test start");
-            Profile profile = new Profile(driver);
+            Profile profile = new Profile(atomberg);
             profile.edit();
         } catch (Exception e) {
             getTest().log(Status.FAIL, "Logout failed: " + e.getMessage());
@@ -79,7 +78,7 @@ public class AppTest {
         try {
             startTest("Family");
             System.out.println("Family test start");
-            Manage manage = new Manage(driver);
+            Manage manage = new Manage(atomberg);
             manage.family();
         } catch (Exception e) {
             getTest().log(Status.FAIL, "Family Management failed: " + e.getMessage());
@@ -96,7 +95,7 @@ public class AppTest {
         try {
             startTest("Fan Control");
             System.out.println("Fan Control test start");
-            FanManagement fan = new FanManagement(driver);
+            FanManagement fan = new FanManagement(atomberg);
             fan.checkFan();
         } catch (Exception e) {
             getTest().log(Status.FAIL, "Fan Control failed: " + e.getMessage());
@@ -112,7 +111,7 @@ public class AppTest {
         try {
             startTest("Analytics");
             System.out.println("Analytics test start");
-            Analytics analytics = new Analytics(driver);
+            Analytics analytics = new Analytics(atomberg);
             analytics.Show();
         } catch (Exception e) {
             getTest().log(Status.FAIL, "Analytics failed: " + e.getMessage());
@@ -123,24 +122,24 @@ public class AppTest {
     }
 
     @Order(6)
-    @Test // Preconditions: Please Unlink Alexa and google home sor testing the linking process
+    @Test
     void testHelp() {
         try {
             startTest("More Tab");
             System.out.println("Help Section test start");
-            Manage manage = new Manage(driver);
-            Help help = new Help(driver);
-            Play play = new Play(driver);
+            Manage manage = new Manage(atomberg);
+            Help help = new Help(atomberg);
+            Play play = new Play(atomberg);
             manage.help();
             help.raiseAComplaint();
             help.trackAComplaint();
             play.videos();
             help.manual();
 //            help.troubleshoot();
-            ActionsUtil.Scroll.Up(driver);
+            ActionsUtil.Scroll.Up(atomberg);
             help.email();
             help.call();
-            driver.navigate().back();
+            atomberg.navigate().back();
         } catch (Exception e) {
             getTest().log(Status.FAIL, "More Tab failed: " + e.getMessage());
         } finally {
@@ -158,7 +157,7 @@ public class AppTest {
         try {
             startTest("Logout");
             System.out.println("Logout test start");
-            Manage manage = new Manage(driver);
+            Manage manage = new Manage(atomberg);
             manage.logout();
             ActionsUtil.SSleep(5);
         } catch (Exception e) {
@@ -172,7 +171,7 @@ public class AppTest {
     @Order(8)
     @Test
     void testDriverClose() {
-        driver.quit();
+        atomberg.quit();
     }
 
     @AfterAll

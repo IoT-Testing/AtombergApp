@@ -14,24 +14,22 @@ import java.util.concurrent.TimeUnit;
 
 public class Widgets {
 
-    public static void Home(AppiumDriver driver) {
+    public static void Home(AppiumDriver atomberg) {
         WebElement widget = null;
-        do {
-            try {
-                widget = driver.findElement(By.className("android.widget.RelativeLayout"));
-            } catch (Exception e) {
-            }
-            if (widget.equals(null)) {
-                Swipe.Right(driver, 0.50, 0.80);
-            }
+        try {
+            widget = atomberg.findElement(By.className("android.widget.RelativeLayout"));
+        } catch (Exception e) {
+        }
+        assert widget != null;
+        if (widget.equals(null)) {
+            Swipe.Right(atomberg, 0.50, 0.80);
+        }
 
-        }while(widget.equals(null));
-
-        WebElement spdBtUp= driver.findElement(By.id("com.atomberg.app:id/bt_up"));
-        WebElement spdBtDown = driver.findElement(By.id("com.atomberg.app:id/bt_down"));
-        WebElement prevFan = driver.findElement(By.id("com.atomberg.app:id/bt_prev"));
-        WebElement nextFan = driver.findElement(By.id("com.atomberg.app:id/bt_next"));
-        WebElement powerBt = driver.findElement(By.id("com.atomberg.app:id/bt_power"));
+        WebElement spdBtUp= atomberg.findElement(By.id("com.atomberg.app:id/bt_up"));
+        WebElement spdBtDown = atomberg.findElement(By.id("com.atomberg.app:id/bt_down"));
+        WebElement prevFan = atomberg.findElement(By.id("com.atomberg.app:id/bt_prev"));
+        WebElement nextFan = atomberg.findElement(By.id("com.atomberg.app:id/bt_next"));
+        WebElement powerBt = atomberg.findElement(By.id("com.atomberg.app:id/bt_power"));
 
         prevFan.click();
         sleep(1000);
@@ -43,7 +41,7 @@ public class Widgets {
         sleep(1000);
         nextFan.click();
 
-/*        List<WebElement> widgetButtons = driver.findElements(By.className("android.widget.ImageButton"));
+/*        List<WebElement> widgetButtons = atomberg.findElements(By.className("android.widget.ImageButton"));
         System.out.println(widgetButtons.size());
         for(int i=0; i<widgetButtons.size(); i++)
         {

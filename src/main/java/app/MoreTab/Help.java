@@ -216,18 +216,25 @@ public class Help {
     public void email() {
         WebElement emailUs = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Email us\"]"));
         emailUs.click();
-        driver.navigate().back();
+        WebElement helpbt = null;
+        while(helpbt == null)
+        {
+            driver.navigate().back();
+            try {
+                helpbt=driver.findElement(By.xpath("//android.view.View[@content-desc=\"Help\"]"));
+            }catch (Exception ignored)            {}
+        }
     }
 
     public void call() {
         WebElement callUs =driver.findElement(By.xpath("//android.view.View[@content-desc=\"Call us\"]"));
         callUs.click();
-        WebElement id = null;
-        while(id == null)
+        WebElement helpbt = null;
+        while(helpbt == null)
         {
             driver.navigate().back();
             try {
-                id=driver.findElement(By.xpath("//android.view.View[@content-desc=\"Help\"]"));
+                helpbt=driver.findElement(By.xpath("//android.view.View[@content-desc=\"Help\"]"));
             }catch (Exception ignored)            {}
         }
     }

@@ -14,60 +14,60 @@ import static org.awaitility.Awaitility.await;
 
 public class Apple {
 
-	public static void Login(AppiumDriver driver) // Main
+	public static void Login(AppiumDriver atomberg) // Main
 	{
-		WebElement AppleLogin = driver.findElement(By.xpath(
+		WebElement AppleLogin = atomberg.findElement(By.xpath(
 				"//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[1]")); 
 		AppleLogin.click();
-		Method.captureScreenshot(driver);
+		Method.captureScreenshot(atomberg);
 		sleep(5000);
 
 		WebElement Home = null;
 		try {
-			Home = driver.findElement(By.xpath(
+			Home = atomberg.findElement(By.xpath(
 					"//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.widget.ImageView"));
 		} catch (Exception exp) {
 		}
 		if (Home != null) {
-			Permission.Allow(driver);
+			Permission.Allow(atomberg);
 		} else {
-			WebElement emailField = driver.findElement(By.className("android.widget.EditText"));
+			WebElement emailField = atomberg.findElement(By.className("android.widget.EditText"));
 			emailField.sendKeys("bhagatrb4174@gmail.com"); // Enter Email id
-			Method.captureScreenshot(driver);
+			Method.captureScreenshot(atomberg);
 			emailField.getText();
 			System.out.println("" + emailField.getText() + "");
 			sleep(1000);
 			System.out.println("Email Entered...");
-			Method.captureScreenshot(driver);
+			Method.captureScreenshot(atomberg);
 			sleep(1000);
 
-			WebElement continueButton = driver.findElement(By.xpath("//android.widget.Button[@text=\"Continue\"]"));
+			WebElement continueButton = atomberg.findElement(By.xpath("//android.widget.Button[@text=\"Continue\"]"));
 			continueButton.click(); // Continue button //android.widget.Button[@text="Continue"]
 			sleep(2000);
-			Method.captureScreenshot(driver);
+			Method.captureScreenshot(atomberg);
 
-			WebElement passwordField = driver.findElement(By.xpath(
+			WebElement passwordField = atomberg.findElement(By.xpath(
 					"//android.webkit.WebView[@text=\"Sign in with Apple ID\"]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View[2]/android.view.View/android.widget.EditText"));
 			passwordField.click();
 			passwordField.sendKeys("SumitaBH@133");
-			Method.captureScreenshot(driver);
+			Method.captureScreenshot(atomberg);
 			System.out.println("Password entered..."); // Enter Password
 
-			WebElement SignIn = driver.findElement(By.xpath("//android.widget.Button[@text=\"Sign In\"]"));
+			WebElement SignIn = atomberg.findElement(By.xpath("//android.widget.Button[@text=\"Sign In\"]"));
 			SignIn.click(); // Continue to Login
 			sleep(2000);
 			System.out.println("On Home Screen");
-			Method.captureScreenshot(driver);
-			WebElement continueButton1 = driver.findElement(By.xpath("//android.widget.Button[@text=\"Continue\"]"));
+			Method.captureScreenshot(atomberg);
+			WebElement continueButton1 = atomberg.findElement(By.xpath("//android.widget.Button[@text=\"Continue\"]"));
 			continueButton1.click(); // Continue button //android.widget.Button[@text="Continue"]
 			sleep(10000);
-			Method.captureScreenshot(driver);
+			Method.captureScreenshot(atomberg);
 
-			WebElement appLogo =driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.widget.ImageView"));
+			WebElement appLogo =atomberg.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.widget.ImageView"));
 			assert appLogo.isDisplayed();
 			await().atMost(10, TimeUnit.SECONDS).until(appLogo::isDisplayed);
 			System.out.println("Test Passed");
-			Permission.Allow(driver);
+			Permission.Allow(atomberg);
 		}
 	}
 

@@ -7,109 +7,107 @@ import AtombergTest.Method;
 import io.appium.java_client.AppiumDriver;
 
 public class Play {
-	public static void Videos(AppiumDriver driver) {
-		WebElement AppTour = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"App Tour\"]"));
+	public static void Videos(AppiumDriver atomberg) {
+		WebElement AppTour = atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"App Tour\"]"));
 		AppTour.click();
 		
-		Method.captureScreenshot(driver);
+		Method.captureScreenshot(atomberg);
 		System.out.println("App Video Opened");
 		
-		videoTryCatch(driver);
-		videoTryCatch(driver);
+		videoTryCatch(atomberg);
+		videoTryCatch(atomberg);
 		sleep(5000);
 
-		WebElement ConnectAlexa = driver
+		WebElement ConnectAlexa = atomberg
 				.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Connect Alexa\"]"));
 		ConnectAlexa.click();
 		
-		Method.captureScreenshot(driver);
+		Method.captureScreenshot(atomberg);
 		System.out.println("Alexa Video Opened");
 		
-		videoTryCatch(driver);
-		videoTryCatch(driver);
-		videoTryCatch(driver);
+		videoTryCatch(atomberg);
+		videoTryCatch(atomberg);
+		videoTryCatch(atomberg);
 		sleep(5000);
 
-		WebElement ConnectGoogle = driver
+		WebElement ConnectGoogle = atomberg
 				.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Connect Google\"]"));
 		ConnectGoogle.click();
 		
-		Method.captureScreenshot(driver);
+		Method.captureScreenshot(atomberg);
 		System.out.println("Google Home Video Opened");
 		
-		videoTryCatch(driver);
-		videoTryCatch(driver);
+		videoTryCatch(atomberg);
+		videoTryCatch(atomberg);
 		sleep(5000);
 
 		WebElement SLAppSetup = null;
 		try {
-			SLAppSetup = driver
+			SLAppSetup = atomberg
 					.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Smart Locks App Setup\"]"));
 		} catch (Exception exp) {
 		}
 		if (SLAppSetup == null) {
-			Swipe.Left(driver, 0.80, 0.50);// Tab 0.35 narzo 0.50
+			Swipe.Left(atomberg, 0.80, 0.50);// Tab 0.35 narzo 0.50
 			
-			WebElement SLInstall = driver
+			WebElement SLInstall = atomberg
 					.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Smart Locks Installation\"]"));
 			SLInstall.click();
 			sleep(2000);
 		} else {
-			WebElement SLInstall = driver
+			WebElement SLInstall = atomberg
 					.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Smart Locks Installation\"]"));
 			SLInstall.click();
 		}
 
-		Method.captureScreenshot(driver);
+		Method.captureScreenshot(atomberg);
 		System.out.println("SL installation Video Opened");
 		
-		videoTryCatch(driver);
-		videoTryCatch(driver);
+		videoTryCatch(atomberg);
+		videoTryCatch(atomberg);
 		sleep(5000);
 
 		SLAppSetup = null;
 		try {
-			SLAppSetup = driver
+			SLAppSetup = atomberg
 					.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Smart Locks App Setup\"]"));
 		} catch (Exception exp) {
 		}
 		if (SLAppSetup == null) {
-			Swipe.Left(driver, 0.80, 0.45);// Tab 0.35 narzo 0.50
+			Swipe.Left(atomberg, 0.80, 0.45);// Tab 0.35 narzo 0.50
 			sleep(2000);
-			SLAppSetup = driver
+			SLAppSetup = atomberg
 					.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Smart Locks App Setup\"]"));
 		}
-		WebElement SLFeatures = driver
+		WebElement SLFeatures = atomberg
 				.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Smart Locks Features\"]"));
 		SLFeatures.click();
 		sleep(2000);
-		Method.captureScreenshot(driver);
+		Method.captureScreenshot(atomberg);
 		System.out.println("SL Feature Video Opened");
 		
-		videoTryCatch(driver);
-		videoTryCatch(driver);
+		videoTryCatch(atomberg);
+		videoTryCatch(atomberg);
 		sleep(5000);
 
 		SLAppSetup.click();
 		sleep(2000);
-		Method.captureScreenshot(driver);
+		Method.captureScreenshot(atomberg);
 		System.out.println("App Setup for Lock Video Opened");
-		videoTryCatch(driver);
-		videoTryCatch(driver);
+		videoTryCatch(atomberg);
+		videoTryCatch(atomberg);
 
 	}
-	public static void videoTryCatch(AppiumDriver driver) {
+	public static void videoTryCatch(AppiumDriver atomberg) {
 		WebElement VideoTutorials = null;
 
 		try {
-			VideoTutorials = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Help\"]"));
+			VideoTutorials = atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Help\"]"));
 		} catch (Exception exp) {
 		}
 		if (VideoTutorials == null) {
 			System.out.println("Back");
-			driver.navigate().back(); // 180, 1550 860, 1960
-			
-
+			atomberg.navigate().back(); // 180, 1550 860, 1960
 		}
 	}
 	private static void sleep(long millis) {

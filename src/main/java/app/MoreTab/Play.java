@@ -100,7 +100,7 @@ public class Play {
         videoTryCatch();
         videoTryCatch();
     }
-    
+
     private void videoTryCatch() {
         WebElement VideoTutorials =null;
         while(VideoTutorials == null)

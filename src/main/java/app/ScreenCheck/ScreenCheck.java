@@ -20,21 +20,20 @@ import java.util.stream.Collectors;
 */
 
 public class ScreenCheck {
-    public AppiumDriver driver;
-
+    public AppiumDriver atomberg;
     CommonElements ce = new CommonElements();
     HomeELements he = new HomeELements();
 
-    public ScreenCheck(AppiumDriver driver){
-        this.driver = driver;
+    public ScreenCheck(AppiumDriver atomberg){
+        this.atomberg = atomberg;
     }
 
     public void moreTab(){
-        rateUs();
+
         //Check for More Tab Screen
         WebElement moreTab = null;
         try {
-            moreTab = driver.findElement(By.xpath(ce.moreTabId));
+            moreTab = atomberg.findElement(By.xpath(ce.moreTabId));
         } catch (Exception ignored) {}
         assert moreTab != null;
         System.out.println(moreTab.isSelected());
@@ -45,16 +44,13 @@ public class ScreenCheck {
     public void homeScreen(){
         //Check for Home Screen
         rateUs();
-        WebElement devices = null;
-        WebElement addYourFirstSmartDevice = null;
-        try {
-            addYourFirstSmartDevice = driver.findElement(By.xpath(he.addYourFirstSmartDeviceId));
-        }catch (Exception ignored){}
-        try {
-            devices = driver.findElement(By.xpath(he.devicesId));
-        }catch (Exception ignored){}
-        if(devices == null && addYourFirstSmartDevice == null){
-            ActionsUtil.Tap.withCoordinates(driver,540,2150);
+        List<WebElement> elementList = atomberg.findElements(By.className("android.widget.ImageView"));
+        List<WebElement> tabs = elementList.stream().filter(webElement -> webElement.getDomAttribute("content-desc")!=null).collect(Collectors.toList());
+        List<WebElement> home = tabs.stream().filter(webElement -> Objects.requireNonNull(webElement.getDomAttribute("content-desc")).startsWith("Hi")).collect(Collectors.toList());
+        System.out.println(home.size());
+        assert home.size() == 1;
+        for (WebElement e:home){
+            e.click();
         }
         rateUs();
     }
@@ -62,7 +58,7 @@ public class ScreenCheck {
     public void analytics(){
         //Check for Analytics Screen
         rateUs();
-        WebElement analytics = driver.findElement(By.xpath(ce.analyticsId));
+        WebElement analytics = atomberg.findElement(By.xpath(ce.analyticsId));
         System.out.println(analytics.isSelected());
         if(!analytics.isSelected()){
             analytics.click();
@@ -71,7 +67,7 @@ public class ScreenCheck {
     }
 
     private void rateUs() {
-        List<WebElement> dialogueBox = driver.findElements(By.className("android.widget.Button"));
+        List<WebElement> dialogueBox = atomberg.findElements(By.className("android.widget.Button"));
         List<WebElement> cancel = dialogueBox.stream().filter(webElement -> Objects.equals(webElement.getDomAttribute("content-desc"), "Cancel")).collect(Collectors.toList());
         for (WebElement ele : cancel) {
             if (Objects.equals(ele.getDomAttribute("content-desc"), "Cancel")) { //checks for the cancel button and the clicks on it if there

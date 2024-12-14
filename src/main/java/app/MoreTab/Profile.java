@@ -11,17 +11,16 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class Profile {
-    public AppiumDriver driver;
+    public AppiumDriver atomberg;
 
     public Profile(AppiumDriver driver) {
-        this.driver = driver;
+        this.atomberg = driver;
     }
 
     public void edit(){
-        ScreenCheck screenCheck = new ScreenCheck(driver);
+        ScreenCheck screenCheck = new ScreenCheck(atomberg);
         screenCheck.moreTab();
-
-        List<WebElement> ELEMENTS = driver.findElements(By.className("android.widget.ImageView"));
+        List<WebElement> ELEMENTS = atomberg.findElements(By.className("android.widget.ImageView"));
         List<WebElement> elements = ELEMENTS.stream().filter(element -> element.getDomAttribute("content-desc") != null).collect(Collectors.toList());
         System.out.println(elements.size());
         List<WebElement> ele = elements.stream().filter(element -> Objects.requireNonNull(element.getDomAttribute("content-desc")).startsWith("Hi,")).collect(Collectors.toList());
@@ -35,29 +34,29 @@ public class Profile {
             }
         }
         ActionsUtil.sleep(3000);
-        WebElement ChangeAvatar = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Change avatar\"]"));
+        WebElement ChangeAvatar = atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Change avatar\"]"));
         ChangeAvatar.click();
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
         System.out.println("Tap On Change Avatar");
-        for (int i = 1; i < 25; i++) {
-            WebElement Avatar1 = driver.findElement(By.xpath("//android.widget.ScrollView/android.view.View[2]/android.view.View/android.view.View/android.widget.ImageView[" + i + "]"));
-            assert Avatar1.isDisplayed();
-            Avatar1.click();
-            AppUtil.captureScreenshot(driver);
+        List<WebElement> elementList = atomberg.findElements(By.className("android.widget.ImageView"));
+        for (WebElement avatar: elementList){
+            assert avatar.isDisplayed();
+            avatar.click();
+            AppUtil.captureScreenshot(atomberg);
         }
-        driver.navigate().back();
-        WebElement editName = driver.findElement(By.xpath("//android.widget.EditText[@index=\"1\"]"));
+        atomberg.navigate().back();
+        WebElement editName = atomberg.findElement(By.xpath("//android.widget.EditText[@index=\"1\"]"));
         editName.click();
         editName.clear();
         editName.sendKeys("Hi Hi Hi");
 
-        WebElement EditNumber = driver.findElement(By.xpath("//android.view.View[@index=\"2\"]"));
+        WebElement EditNumber = atomberg.findElement(By.xpath("//android.view.View[@index=\"2\"]"));
         EditNumber.click();
-        AppUtil.captureScreenshot(driver);
-        driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Update\"]")).click();
+        AppUtil.captureScreenshot(atomberg);
+        atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Update\"]")).click();
         ActionsUtil.sleep(250);
 
-        back(driver);
+        back(atomberg);
     }
 
     private void back(AppiumDriver driver){
