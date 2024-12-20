@@ -2,6 +2,7 @@ package ZTests;
 
 import app.Analytics.Analytics;
 import app.Fan.FanManagement;
+import app.Lock.LockManagement;
 import app.MoreTab.Help;
 import app.MoreTab.Manage;
 import app.MoreTab.Play;
@@ -21,15 +22,6 @@ public class AppTest {
     public static AppiumDriver atomberg;
     public static final ExtentReports extent = getReportObjects();
 
-    private static void sleep(long millis) {
-        try {
-            Thread.sleep(millis);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-
     @Order(1)
     @Test// This test is for Opening the Atomberg Home App
     void testOpenApp() {
@@ -41,6 +33,7 @@ public class AppTest {
             String command = connect.copiedText;
             Runtime.getRuntime().exec(command);
             ActionsUtil.sleep(1000);
+
             AppInitializer appInitializer = new AppInitializer();
             //TODO: do not use "openApp()" if "initializeDriver()" is used.
             appInitializer.openApp();
@@ -107,6 +100,22 @@ public class AppTest {
 
     @Order(5)
     @Test
+    void testLockControl(){
+        try {
+            startTest("Lock Control");
+            System.out.println("Lock Control test start");
+            LockManagement lock = new LockManagement(atomberg);
+            lock.checkLock();
+        } catch (Exception e) {
+            getTest().log(Status.FAIL, "Lock Control failed: " + e.getMessage());
+        } finally {
+            System.out.println("Lock Control test end");
+            endTest();
+        }
+    }
+
+    @Order(6)
+    @Test
     void testAnalytics() {
         try {
             startTest("Analytics");
@@ -121,7 +130,7 @@ public class AppTest {
         }
     }
 
-    @Order(6)
+    @Order(7)
     @Test
     void testHelp() {
         try {
@@ -151,7 +160,7 @@ public class AppTest {
         }
     }
 
-    @Order(7)
+    @Order(8)
     @Test
     void testLogout() {
         try {
@@ -168,7 +177,7 @@ public class AppTest {
         }
     }
 
-    @Order(8)
+    @Order(9)
     @Test
     void testDriverClose() {
         atomberg.quit();

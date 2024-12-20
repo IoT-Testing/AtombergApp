@@ -3,13 +3,11 @@ package Actions;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
-
 import org.awaitility.Awaitility;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.interactions.Pause;
 import org.openqa.selenium.interactions.PointerInput;
 import org.openqa.selenium.interactions.Sequence;
-
 import io.appium.java_client.AppiumDriver;
 
 public class Kill {

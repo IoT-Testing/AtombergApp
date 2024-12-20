@@ -12,14 +12,14 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class Manage {
-    public AppiumDriver driver;
+    public AppiumDriver atomberg;
 
     public Manage(AppiumDriver driver) {
-        this.driver = driver;
+        this.atomberg = driver;
     }
 
     public void theme() {
-        WebElement Theme = driver.findElement(By.xpath("//android.widget.ScrollView/android.widget.ImageView[5]"));
+        WebElement Theme = atomberg.findElement(By.xpath("//android.widget.ScrollView/android.widget.ImageView[5]"));
         Theme.click();
         System.out.println("Theme");
 
@@ -28,46 +28,46 @@ public class Manage {
     public void electricityUnitPrice() {
         WebElement unitPrice = null;
         try {
-            unitPrice = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Electricity unit price\"]"));
+            unitPrice = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Electricity unit price\"]"));
         } catch (Exception ignored) {
         }
-        if (unitPrice == null) ActionsUtil.Scroll.Up(driver);
-        driver.findElement(By.xpath("//android.view.View[@content-desc=\"Electricity unit price\"]")).click();
-        AppUtil.captureScreenshot(driver);
+        if (unitPrice == null) ActionsUtil.Scroll.Up(atomberg);
+        atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Electricity unit price\"]")).click();
+        AppUtil.captureScreenshot(atomberg);
         System.out.println("Tap on Unit Price");
 
-        WebElement ChangeAmount = driver.findElement(By.xpath("//android.widget.EditText[@text=\"7.0\"]"));
+        WebElement ChangeAmount = atomberg.findElement(By.xpath("//android.widget.EditText[@text=\"7.0\"]"));
         ChangeAmount.click();
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
     }
 
     public void changeCurrency() {
-        WebElement ChangeCurrency = driver.findElement(By.xpath("//android.view.View[@content-desc=\"INR\"]"));
+        WebElement ChangeCurrency = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"INR\"]"));
         ChangeCurrency.click();
-        AppUtil.captureScreenshot(driver);
-        driver.navigate().back();
+        AppUtil.captureScreenshot(atomberg);
+        atomberg.navigate().back();
     }
 
     public void help() {
-        ScreenCheck screenCheck = new ScreenCheck(driver);
+        ScreenCheck screenCheck = new ScreenCheck(atomberg);
         screenCheck.moreTab();
         List<WebElement> moreTab;
         do {
-            List<WebElement> MT = driver.findElements(By.className("android.view.View"));
+            List<WebElement> MT = atomberg.findElements(By.className("android.view.View"));
             System.out.println(MT.size());
             List<WebElement> mt = MT.stream().filter(webElement -> webElement.getDomAttribute("content-desc") != null).collect(Collectors.toList());
             System.out.println(mt.size());
             moreTab = mt.stream().filter(webElement -> Objects.equals(webElement.getDomAttribute("content-desc"), "Help")).collect(Collectors.toList());
             System.out.println(moreTab.size());
             if (moreTab.isEmpty()) {
-                ActionsUtil.Scroll.Up(driver);
+                ActionsUtil.Scroll.Up(atomberg);
             } else if (!moreTab.get(0).isDisplayed()) // Rare case where the Logout button is in the DOM but not on the Screen
             {
                 System.out.println(!moreTab.get(0).isDisplayed());
-                ActionsUtil.Scroll.Up(driver);
+                ActionsUtil.Scroll.Up(atomberg);
             }
         } while (moreTab.isEmpty());
-        driver.findElement(By.xpath("//android.view.View[@content-desc=\"Help\"]")).click();
+        atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Help\"]")).click();
     }
 
     public void changePassword() {
@@ -75,35 +75,35 @@ public class Manage {
           CLICK ON THE CHANGE PASSWORD
         */
         checkLogout();
-        WebElement ChangePassword = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Change password\"]"));
+        WebElement ChangePassword = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Change password\"]"));
         ChangePassword.click();
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
         System.out.println("Tap on Change Password");
-        driver.navigate().back();
+        atomberg.navigate().back();
     }
 
     public void deleteAccount() {
         /*
             CLICK ON DELETE ACCOUNT
         */
-        WebElement DeleteAccount = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Delete account\"]"));
+        WebElement DeleteAccount = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Delete account\"]"));
         DeleteAccount.click();
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
         System.out.println("Tap on Delete Account");
-        driver.navigate().back();
+        atomberg.navigate().back();
     }
 
     public void developerOptions() {
         /*
             CLICK ON DEVELOPER OPTIONS
         */
-        WebElement developerOptionss = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Developer options\"]"));
+        WebElement developerOptionss = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Developer options\"]"));
         assert developerOptionss.isDisplayed();
         developerOptionss.click();
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
         System.out.println("Tap on Developer Options");
         ActionsUtil.sleep(1000);
-        driver.navigate().back();
+        atomberg.navigate().back();
     }
 
     public void logout() {
@@ -112,12 +112,12 @@ public class Manage {
             CONFIRM LOGOUT
         */
         checkLogout();
-        WebElement logout = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Logout\"]"));
+        WebElement logout = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Logout\"]"));
         assert logout.isDisplayed();
         logout.click();
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
         System.out.println("Tap on Logout");
-        WebElement yes = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Yes\"]"));
+        WebElement yes = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Yes\"]"));
         yes.click();
         /*driver.navigate().back();*/
     }
@@ -139,31 +139,34 @@ public class Manage {
             IF ADD
             DO ADD HOME PROCESS WITH HOME NAME -> SCRIPT
         */
-        ScreenCheck screen = new ScreenCheck(driver);
+        ScreenCheck screen = new ScreenCheck(atomberg);
         screen.moreTab();
         WebElement ManageFamily = null;
-        WebElement logout = null;
+
         while (ManageFamily == null) {
             try {
-                ManageFamily = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Manage family\"]"));
+                ManageFamily = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Manage family\"]"));
             } catch (Exception ignored) {
             }
-            try {
-                logout = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Logout\"]"));
-            }catch (Exception ignored){}
-            if (ManageFamily == null) ActionsUtil.Scroll.Up(driver);
-            else if (ManageFamily == null && logout != null) ActionsUtil.Scroll.Down(driver);
+            if (ManageFamily == null) {
+                ActionsUtil.Scroll.Up(atomberg);
+                WebElement logout = null;
+                try {
+                    logout = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Logout\"]"));
+                }catch (Exception ignored){}
+                if(logout!=null)ActionsUtil.Scroll.Down(atomberg);
+            }
         }
         ManageFamily.click();
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
         System.out.println("Tap on Manage Family");
 
-        List<WebElement> elements = driver.findElements(By.className("android.widget.ImageView"));
+        List<WebElement> elements = atomberg.findElements(By.className("android.widget.ImageView"));
         List<WebElement> families = elements.stream().filter(element -> element.getDomAttribute("content-desc") != null).collect(Collectors.toList());
         System.out.println(families.size());
         int numberOfFamilies = families.size();
         for (int i = 0; i < numberOfFamilies; i++) {
-            List<WebElement> familyElements = driver.findElements(By.className("android.widget.ImageView"));
+            List<WebElement> familyElements = atomberg.findElements(By.className("android.widget.ImageView"));
             List<WebElement> familyElement = familyElements.stream().filter(element -> element.getDomAttribute("content-desc") != null).collect(Collectors.toList());
             String familyName = familyElement.get(i).getDomAttribute("content-desc");
             ActionsUtil.sleep(500);
@@ -179,28 +182,28 @@ public class Manage {
                 back();
             } else if (Objects.equals(familyName, "1\n" +
                     "Script")) {
-                WebElement FamilyEdit = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View[2]"));
+                WebElement FamilyEdit = atomberg.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View[2]"));
                 FamilyEdit.click();
                 System.out.println("Family Edit");
-                AppUtil.captureScreenshot(driver);
-                WebElement LeaveHome = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Leave home\"]"));
+                AppUtil.captureScreenshot(atomberg);
+                WebElement LeaveHome = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Leave home\"]"));
                 LeaveHome.click();
                 System.out.println("Leave home");
-                AppUtil.captureScreenshot(driver);
+                AppUtil.captureScreenshot(atomberg);
 
-                WebElement Cancel = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]"));
+                WebElement Cancel = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]"));
                 Cancel.click();
                 System.out.println("Cancel");
-                AppUtil.captureScreenshot(driver);
+                AppUtil.captureScreenshot(atomberg);
 
                 WebElement delete = null;
                 try {
-                    delete = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Delete home\"]"));
+                    delete = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Delete home\"]"));
                 } catch (Exception ignored) {
                 }
                 if (delete != null) {
                     delete.click();
-                    WebElement yes = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Yes\"]"));
+                    WebElement yes = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Yes\"]"));
                     yes.click(); // android.widget.Button[@content-desc="Cancel"]
                     ActionsUtil.sleep(3000);
                 }
@@ -213,91 +216,91 @@ public class Manage {
                 addHome();
             }
         }
-        driver.navigate().back();//Back to more tab from Manage Family
+        atomberg.navigate().back();//Back to more tab from Manage Family
     }
 
     private void member() {
 
-        WebElement RemoveMember = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Remove Member\"]"));
+        WebElement RemoveMember = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Remove Member\"]"));
         RemoveMember.click();
         System.out.println("Remove Member");
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
 
-        WebElement Cancel2 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]"));
+        WebElement Cancel2 = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]"));
         Cancel2.click();
-        WebElement MakeAdmin = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Make Admin\"]"));
+        WebElement MakeAdmin = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Make Admin\"]"));
         MakeAdmin.click();
 
         System.out.println("Make Admin");
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
 
-        WebElement Cancel3 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]"));
+        WebElement Cancel3 = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]"));
         Cancel3.click();
-        driver.navigate().back();
+        atomberg.navigate().back();
 
-        WebElement AddMember = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]"));
+        WebElement AddMember = atomberg.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]"));
         AddMember.click();
 
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
         ActionsUtil.sleep(3000);
 
-        WebElement Share = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Share\"]"));
+        WebElement Share = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Share\"]"));
         Share.click();
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
 
-        driver.navigate().back();
-        driver.navigate().back();
-        driver.navigate().back();
+        atomberg.navigate().back();
+        atomberg.navigate().back();
+        atomberg.navigate().back();
     }
 
     private void addHome() {
-        List<WebElement> accountCreation = driver.findElements(By.className("android.view.View"));
+        List<WebElement> accountCreation = atomberg.findElements(By.className("android.view.View"));
         List<WebElement> buttons = accountCreation.stream().filter(element -> element.getDomAttribute("content-desc") != null).collect(Collectors.toList());
         List<WebElement> button = buttons.stream().filter(Object -> Objects.requireNonNull(Object.getDomAttribute("content-desc")).startsWith("Create a new smart home")).collect(Collectors.toList());
         if (!button.isEmpty()) button.get(0).click();
-        AppUtil.captureScreenshot(driver);
-//        ActionsUtil.Tap.withPercentage(driver, 0.50, 0.75); // Narzo 0.50, 0.625 Tab 0.50, 0.75
-        AppUtil.captureScreenshot(driver);
-        WebElement HomeName = driver.findElement(By.xpath("//android.widget.EditText"));
+        AppUtil.captureScreenshot(atomberg);
+//        ActionsUtil.Tap.withPercentage(atomberg, 0.50, 0.75); // Narzo 0.50, 0.625 Tab 0.50, 0.75
+        AppUtil.captureScreenshot(atomberg);
+        WebElement HomeName = atomberg.findElement(By.xpath("//android.widget.EditText"));
         HomeName.click();
         HomeName.sendKeys("Script");
-        AppUtil.captureScreenshot(driver);
-        WebElement Create = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Create\"]"));
+        AppUtil.captureScreenshot(atomberg);
+        WebElement Create = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Create\"]"));
         Create.click();
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
         ActionsUtil.sleep(5000);
     }
 
     private void home() {
-        WebElement FamilyEdit = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View[2]"));
+        WebElement FamilyEdit = atomberg.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View[2]"));
         FamilyEdit.click();
         System.out.println("Family Edit");
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
 
-        WebElement LeaveHome = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Leave home\"]"));
+        WebElement LeaveHome = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Leave home\"]"));
         LeaveHome.click();
         System.out.println("Leave home");
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
 
-        WebElement Cancel = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]"));
+        WebElement Cancel = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]"));
         Cancel.click();
         System.out.println("Cancel");
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
 
         WebElement delete = null;
         try {
-            delete = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Delete home\"]"));
+            delete = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Delete home\"]"));
         } catch (Exception ignored) {
         }
         if (delete != null) {
             delete.click();
-            Cancel = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]"));
+            Cancel = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]"));
             Cancel.click(); // android.widget.Button[@content-desc="Cancel"]
         }
     }
 
     private void countMember() {
-        List<WebElement> Elements = driver.findElements(By.className("android.view.View"));
+        List<WebElement> Elements = atomberg.findElements(By.className("android.view.View"));
         List<WebElement> elements = Elements.stream().filter(element -> Objects.equals(element.getDomAttribute("clickable"), "true")).collect(Collectors.toList());
         System.out.println(elements.size());
         for (WebElement e : elements) {
@@ -309,30 +312,30 @@ public class Manage {
         WebElement manageFamily = null;
         while (manageFamily == null) {
             try {
-                manageFamily = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.widget.ImageView"));
+                manageFamily = atomberg.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.widget.ImageView"));
             } catch (Exception ignored) {
             }
-            if (manageFamily == null) driver.navigate().back();
+            if (manageFamily == null) atomberg.navigate().back();
         }
     }
 
     private void checkLogout() {
-        ScreenCheck screen = new ScreenCheck(driver);
+        ScreenCheck screen = new ScreenCheck(atomberg);
         screen.moreTab();
         List<WebElement> moreTab;
         do {
-            List<WebElement> MT = driver.findElements(By.className("android.view.View"));
+            List<WebElement> MT = atomberg.findElements(By.className("android.view.View"));
             System.out.println(MT.size());
             List<WebElement> mt = MT.stream().filter(webElement -> webElement.getDomAttribute("content-desc") != null).collect(Collectors.toList());
             System.out.println(mt.size());
             moreTab = mt.stream().filter(webElement -> Objects.equals(webElement.getDomAttribute("content-desc"), "Logout")).collect(Collectors.toList());
             System.out.println(moreTab.size());
             if (moreTab.isEmpty()) {
-                ActionsUtil.Scroll.Up(driver);
+                ActionsUtil.Scroll.Up(atomberg);
             } else if (!moreTab.get(0).isDisplayed()) // Rare case where the Logout button is in the DOM but not on the Screen
             {
                 System.out.println(!moreTab.get(0).isDisplayed());
-                ActionsUtil.Scroll.Up(driver);
+                ActionsUtil.Scroll.Up(atomberg);
             }
         } while (moreTab.isEmpty());
     }

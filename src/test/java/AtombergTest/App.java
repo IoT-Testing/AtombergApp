@@ -2,9 +2,6 @@ package AtombergTest; //To check
 
 import java.net.URL;
 import java.time.Duration;
-
-import app.AppInitializer;
-import app.STF.Connect;
 import app.util.ActionsUtil;
 import app.util.AppUtil;
 import app.util.ScreenRecording;

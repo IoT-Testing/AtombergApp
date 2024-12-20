@@ -22,7 +22,7 @@ public class Connect{
 
     public void ipAddress() throws IOException, UnsupportedFlavorException {
         driver1.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-        String URL = "http://192.168.1.106:7100/";
+        String URL = "http://192.168.11.9:7100/";
         driver1.get(URL);
         System.out.println("Website Opened");
         driver1.manage().window().maximize();

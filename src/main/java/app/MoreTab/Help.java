@@ -11,41 +11,45 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 public class Help {
-    public AppiumDriver driver;
+    public AppiumDriver atomberg;
     public Help(AppiumDriver driver){
-        this.driver = driver;
+        this.atomberg = driver;
     }
 
     public void raiseAComplaint(){
-        WebElement RaiseComplaint = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Raise a complaint\"]"));
+        WebElement RaiseComplaint = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Raise a complaint\"]"));
         RaiseComplaint.click();
-        AppUtil.captureScreenshot(driver);
+        WebElement newComplaint = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"New Complaint\"]"));
+        await(newComplaint);
+        assert newComplaint.isDisplayed();
+        AppUtil.captureScreenshot(atomberg);
         System.out.println("Tap on Raise Complaint");
-        Awaitility.await().until(() -> driver.findElement(By.xpath("//android.widget.ScrollView/android.widget.EditText[1]")).isDisplayed());
         videoTryCatch();
         ActionsUtil.sleep(2000);
     }
 
     public void trackAComplaint(){
-        WebElement TrackComplaint = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Track complaints\"]"));
+        WebElement TrackComplaint = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Track complaints\"]"));
         TrackComplaint.click();
-        AppUtil.captureScreenshot(driver);
+        WebElement complaintStatus = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Complaint status\"]"));
+        await(complaintStatus);
+        AppUtil.captureScreenshot(atomberg);
         System.out.println("Tap on Track Complaint");
         ActionsUtil.sleep(2000);
         WebElement NoComplaints = null;
         try {
-            NoComplaints = driver.findElement(By.xpath(
+            NoComplaints = atomberg.findElement(By.xpath(
                     "//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View[1]"));
         } catch (Exception ignored) {        }
         if (NoComplaints != null) {
             System.out.println("No Complaints Raised.");
         }
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
         videoTryCatch();
     }
 
     public void manual(){
-        WebElement manual = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Manual\"]"));
+        WebElement manual = atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Manual\"]"));
         manual.click();
         System.out.println("Manual Open");
         ActionsUtil.sleep(2500);
@@ -53,235 +57,235 @@ public class Help {
     }
 
     public void troubleshoot(){
-        driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Troubleshoot\"]")).click();
+        atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Troubleshoot\"]")).click();
         // Troubleshoot for Fans
-        WebElement fan = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Atomberg Fan\"]"));
+        WebElement fan = atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Atomberg Fan\"]"));
         fan.click();
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
         System.out.println("Fan Troubleshoot");
-        WebElement renesa = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Renesa\"]"));
+        WebElement renesa = atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Renesa\"]"));
         renesa.click();
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
         System.out.println("Renesa");
         OK();
-        WebElement renesaSmart = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Renesa Smart\"]"));
+        WebElement renesaSmart = atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Renesa Smart\"]"));
         renesaSmart.click();
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
         System.out.println("Renesa Smart");
         ReturnToHome();
-        WebElement renesaPlus = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Renesa+\"]"));
+        WebElement renesaPlus = atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Renesa+\"]"));
         renesaPlus.click();
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
         System.out.println("Renesa Plus");
         OK();
-        WebElement renesaSmartPlus = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Renesa Smart+\"]"));
+        WebElement renesaSmartPlus = atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Renesa Smart+\"]"));
         renesaSmartPlus.click();
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
         System.out.println("Renesa Smart +");
         EnterSerialNumber();
-        WebElement studioPlus = driver
+        WebElement studioPlus = atomberg
                 .findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Studio+\"]"));
         studioPlus.click();
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
         OK();
-        WebElement studioSmartPlus = driver
+        WebElement studioSmartPlus = atomberg
                 .findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Studio Smart+\"]"));
         studioSmartPlus.click();
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
         System.out.println("Studio Plus");
         ReturnToHome();
-        WebElement erica =driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Erica\"]"));
+        WebElement erica =atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Erica\"]"));
         erica.click();
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
         System.out.println("Erica");
         OK();
-        WebElement ericaSmart =driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Erica Smart\"]"));
+        WebElement ericaSmart =atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Erica Smart\"]"));
         ericaSmart.click();
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
         System.out.println("Erica Smart");
         ReturnToHome();
-        ActionsUtil.Scroll.Up(driver);
-        WebElement starlight = driver
+        ActionsUtil.Scroll.Up(atomberg);
+        WebElement starlight = atomberg
                 .findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Aris Starlight\"]"));
         starlight.click();
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
         System.out.println("Starlight");
         ReturnToHome();
-        WebElement aris = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Aris\"]"));
+        WebElement aris = atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Aris\"]"));
         aris.click();
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
         System.out.println("Aris");
         ReturnToHome();
-        WebElement arisContour = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Aris Contour\"]"));
+        WebElement arisContour = atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Aris Contour\"]"));
         arisContour.click();
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
         System.out.println("Aris");
         ReturnToHome();
-        WebElement renesaAlpha = driver
+        WebElement renesaAlpha = atomberg
                 .findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Renesa Alpha\"]"));
         renesaAlpha.click();
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
         System.out.println("RenesaAlpha");
         OK();
-        WebElement efficio = driver
+        WebElement efficio = atomberg
                 .findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Efficio\"]"));
         efficio.click();
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
         System.out.println("Efficio");
         OK();
-        WebElement ikano = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Ikano\"]"));
+        WebElement ikano = atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Ikano\"]"));
         ikano.click();
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
         System.out.println("Ikano");
         OK();
-        ActionsUtil.Scroll.Up(driver);
-        WebElement ozeo = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Ozeo\"]"));
+        ActionsUtil.Scroll.Up(atomberg);
+        WebElement ozeo = atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Ozeo\"]"));
         ozeo.click();
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
         System.out.println("Ozeo");
         OK();
-        WebElement ameza = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Ameza\"]"));
+        WebElement ameza = atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Ameza\"]"));
         ameza.click();
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
         System.out.println("Ameza");
         OK();
-        WebElement other = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Other\"]"));
+        WebElement other = atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Other\"]"));
         other.click();
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
         System.out.println("Other");
         OK();
-        driver.navigate().back();
+        atomberg.navigate().back();
         // Troubleshoot for Locks
-        WebElement lock = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Atomberg Lock\"]"));
+        WebElement lock = atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Atomberg Lock\"]"));
         lock.click();
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
         System.out.println("Lock Troubleshoot");
         videoTryCatch();
     }
 
     private void ReturnToHome() {
-        WebElement ReturnToHome = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Return to home\"]"));
+        WebElement ReturnToHome = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Return to home\"]"));
         ReturnToHome.click();
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
         System.out.println("Return To Home");
     }
 
     private void EnterSerialNumber() {
-        WebElement ManualEnter = driver.findElement(By.xpath("//android.widget.EditText"));
+        WebElement ManualEnter = atomberg.findElement(By.xpath("//android.widget.EditText"));
         ManualEnter.click();
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
         System.out.println("Enter Barcode Manually...");
 
-        WebElement ScanBarcode = driver.findElement(By.xpath("//android.widget.EditText/android.widget.ImageView"));
+        WebElement ScanBarcode = atomberg.findElement(By.xpath("//android.widget.EditText/android.widget.ImageView"));
         ScanBarcode.click();
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
         System.out.println("Scan Barcode ...");
 
         WebElement AllowCamera = null;
         try {
             ActionsUtil.sleep(2000);
-            AllowCamera = driver.findElement(By.id("com.android.permissioncontroller:id/permission_message"));
+            AllowCamera = atomberg.findElement(By.id("com.android.permissioncontroller:id/permission_message"));
 
         } catch (Exception ignored) {}
         if (AllowCamera != null) {
 
-            AppUtil.captureScreenshot(driver);
-            WebElement Camera = driver
+            AppUtil.captureScreenshot(atomberg);
+            WebElement Camera = atomberg
                     .findElement(By.id("com.android.permissioncontroller:id/permission_allow_foreground_only_button"));
             Camera.click();
-            AppUtil.captureScreenshot(driver);
+            AppUtil.captureScreenshot(atomberg);
             ActionsUtil.sleep(2000);
         }
-        driver.navigate().back();
+        atomberg.navigate().back();
         cantFindSerialNumber();
         WebElement id = null;
         while(id == null)
         {
-            driver.navigate().back();
+            atomberg.navigate().back();
             try {
-                id=driver.findElement(By.xpath("//android.view.View[@content-desc=\"Identify your device\"]"));
+                id=atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Identify your device\"]"));
             }catch (Exception ignored)
             {}
         }
     }
 
     private void OK() {
-        WebElement OK = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Ok\"]"));
+        WebElement OK = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Ok\"]"));
         OK.click();
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
         System.out.println("OK ...");
 
     }
 
     public void email() {
-        WebElement emailUs = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Email us\"]"));
+        WebElement emailUs = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Email us\"]"));
         emailUs.click();
         WebElement helpbt = null;
         while(helpbt == null)
         {
-            driver.navigate().back();
+            atomberg.navigate().back();
             try {
-                helpbt=driver.findElement(By.xpath("//android.view.View[@content-desc=\"Help\"]"));
+                helpbt=atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Help\"]"));
             }catch (Exception ignored)            {}
         }
     }
 
     public void call() {
-        WebElement callUs =driver.findElement(By.xpath("//android.view.View[@content-desc=\"Call us\"]"));
+        WebElement callUs =atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Call us\"]"));
         callUs.click();
         WebElement helpbt = null;
         while(helpbt == null)
         {
-            driver.navigate().back();
+            atomberg.navigate().back();
             try {
-                helpbt=driver.findElement(By.xpath("//android.view.View[@content-desc=\"Help\"]"));
+                helpbt=atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Help\"]"));
             }catch (Exception ignored)            {}
         }
     }
 
     private void cantFindSerialNumber(){
-        WebElement cantFindSerialNumber = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Can't find serial number?\"]"));
+        WebElement cantFindSerialNumber = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Can't find serial number?\"]"));
         cantFindSerialNumber.click();
-        AppUtil.captureScreenshot(driver);
+        AppUtil.captureScreenshot(atomberg);
 
-        List<WebElement> buttonList = driver.findElements(By.className("android.widget.Button"));
+        List<WebElement> buttonList = atomberg.findElements(By.className("android.widget.Button"));
         List<WebElement> buttons = buttonList.stream().filter(webElement -> webElement.getDomAttribute("content-desc")!=null).collect(Collectors.toList());
         System.out.println(buttons.size());
         for(int i =0 ; i< buttons.size(); i++){
-            List<WebElement> dialogueButtonList = driver.findElements(By.className("android.widget.Button"));
+            List<WebElement> dialogueButtonList = atomberg.findElements(By.className("android.widget.Button"));
             List<WebElement> dialogueButtons = dialogueButtonList.stream().filter(elements -> elements.getDomAttribute("content-desc")!=null).collect(Collectors.toList());
             System.out.println(dialogueButtons.size());
             if (Objects.equals(dialogueButtons.get(i).getDomAttribute("content-desc"), "Yes")) {
                 dialogueButtons.get(i).click();
-                driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Download\"]")).click();
+                atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Download\"]")).click();
             }
             else if (Objects.equals(dialogueButtons.get(i).getDomAttribute("content-desc"), "No")) {
                 dialogueButtons.get(i).click();
-                WebElement Email = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Email\"]"));
+                WebElement Email = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Email\"]"));
                 Email.click();
-                AppUtil.captureScreenshot(driver);
+                AppUtil.captureScreenshot(atomberg);
                 System.out.println("Email ...");
-                driver.navigate().back();
-                WebElement Call = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Call\"]"));
+                atomberg.navigate().back();
+                WebElement Call = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Call\"]"));
                 Call.click();
-                AppUtil.captureScreenshot(driver);
+                AppUtil.captureScreenshot(atomberg);
                 System.out.println("Call ...");
                 WebElement contactSupport = null;
                 while (contactSupport == null) {
                     try {
-                        contactSupport = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Contact Support\"]"));
+                        contactSupport = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Contact Support\"]"));
                     } catch (Exception ignored) {}
-                    if (contactSupport == null) driver.navigate().back();
+                    if (contactSupport == null) atomberg.navigate().back();
                 }
             }
             WebElement cantFindSerialNumberLink = null;
             while (cantFindSerialNumberLink == null) {
                 try {
-                    cantFindSerialNumberLink = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Can't find serial number?\"]"));
+                    cantFindSerialNumberLink = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Can't find serial number?\"]"));
                 } catch (Exception ignored) {}
-                if (cantFindSerialNumberLink == null) driver.navigate().back();
+                if (cantFindSerialNumberLink == null) atomberg.navigate().back();
             }
-            cantFindSerialNumber = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Can't find serial number?\"]"));
+            cantFindSerialNumber = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Can't find serial number?\"]"));
             cantFindSerialNumber.click();
         }
     }
@@ -291,11 +295,11 @@ public class Help {
         while(VideoTutorials == null)
         {
             try {
-                VideoTutorials = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Video tutorials\"]"));
+                VideoTutorials = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Video tutorials\"]"));
             }catch (Exception ignored) {}
             if (VideoTutorials == null) {
                 System.out.println("Back");
-                driver.navigate().back(); // 180, 1550 860, 1960
+                atomberg.navigate().back(); // 180, 1550 860, 1960
             }
         }
     }
