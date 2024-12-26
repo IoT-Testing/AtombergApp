@@ -85,5 +85,4 @@ public class Swipe {
 		driver.perform(Collections.singletonList(sequence));
 		System.out.println("Left Swipe");
 	}
-
 }

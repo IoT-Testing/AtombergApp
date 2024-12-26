@@ -63,5 +63,4 @@ class App2test {
 		}
 		System.out.println("......");
 	}
-
 }

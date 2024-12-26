@@ -16,8 +16,8 @@ import org.openqa.selenium.interactions.Sequence;
 import org.openqa.selenium.interactions.PointerInput;
 
 public class Automation {
-    private AppiumDriver driver;
-    private WebElement automations;
+    public AppiumDriver driver;
+    public WebElement automations;
     private WebElement quickAccess;
     HomeELements he = new HomeELements();
     public Automation(AppiumDriver driver){
@@ -226,6 +226,4 @@ public class Automation {
         size = elements.size();
         if (size!=0) deleteQuickAccess();
     }
-
-
 }

@@ -82,7 +82,6 @@ public class Check {
 		System.out.println("Atomberg App Opened...");
 		sleep(6000);
 		Method.captureScreenshot(driver);
-
 	}
 
 	public static void CLA(AppiumDriver driver) {
@@ -115,8 +114,8 @@ public class Check {
 	public static void LockControl(AppiumDriver driver) {// driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
 		sleep(12000);
 		driver.findElement(By.xpath("//android.view.View[@content-desc=\"Pull down to unlock\"]")).click();
-		Boolean Unlock = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Unlocked\"]")).isDisplayed();
-		if (Unlock == true) {
+		boolean Unlock = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Unlocked\"]")).isDisplayed();
+		if (Unlock) {
 			System.out.println("Successfully unlocked");
 		} else {
 			System.out.println("Some error");
@@ -143,7 +142,6 @@ public class Check {
 			break;
 		}
 		}
-
 	}
 
 }

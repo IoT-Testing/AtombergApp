@@ -18,7 +18,6 @@ public class AIConnectivity {
     }
     public void GoogleHome(){
         GoogleHome googleHome = new GoogleHome(driver);
-
         googleHome.Connect();
         googleHome.Disconnect();
     }

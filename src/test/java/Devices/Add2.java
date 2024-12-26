@@ -11,9 +11,7 @@ import io.appium.java_client.AppiumDriver;
 
 public class Add2 {
 	public static AppiumDriver driver;
-	public static void Fan(AppiumDriver driver)
-	{
-
+	public static void Fan(AppiumDriver driver){
 		WebElement AddButton = null;
 		try {
 			AddButton = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]/android.widget.ImageView"));
@@ -43,7 +41,6 @@ public class Add2 {
 				System.out.println("Fans Available");
 				List<WebElement> Connects = driver.findElements(By.xpath("(//android.view.View[@content-desc=\"Connect\"])"));
 				for(int i = 1; i<=Connects.size();i++ ) {
-					
 					WebElement Connect = driver.findElement(By.xpath("(//android.view.View[@content-desc=\"Connect\"])["+i+"]"));
 					System.out.println("Connect button at : "+i);
 					Connect.click();
@@ -86,8 +83,6 @@ public class Add2 {
 							System.out.println("Cancel button clicked");
 							sleep(1000);
 						}
-
-
 					}
 					else {
 						System.out.println("Breaking the loop");
@@ -120,7 +115,6 @@ public class Add2 {
 
 	public static void Lock(AppiumDriver driver)
 	{
-
 		WebElement AddButton = null;
 		try {
 			AddButton = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]/android.widget.ImageView"));
@@ -141,16 +135,12 @@ public class Add2 {
 			// Search Fan Only
 			try {
 				element = driver.findElement(By.xpath(xpathExpression));
-			} catch (NoSuchElementException ignored) {
-			}
-
+			} catch (NoSuchElementException ignored) {}
 			if (element != null) // if device is available
 			{
 				System.out.println("Lock Available");
 				List<WebElement> Connects = driver.findElements(By.xpath("(//android.view.View[@content-desc=\"Connect\"])"));
-
 				for(int i = 1; i<=Connects.size();i++ ) {
-
 					WebElement Connect = driver.findElement(By.xpath("(//android.view.View[@content-desc=\"Connect\"])["+i+"]"));
 					System.out.println("Connect button at : "+i);
 					Connect.click();
@@ -171,7 +161,6 @@ public class Add2 {
 						Reach = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Could not reach\r\n"
 								+ "the device\"]"));
 					}catch(Exception e) {}
-
 					if(FAdd !=null || LReset != null || FReset!=null || Reach != null)
 					{
 						if(FAdd != null)
@@ -197,7 +186,6 @@ public class Add2 {
 						System.out.println("Breaking the loop");
 						break;
 					}
-
 				}
 			}
 			else

@@ -58,7 +58,6 @@ public class Monkey2 {
 		}
 		System.out.println("Atomberg App Opened...");
 		sleep(6000);
-
 	}
 
 	private static void sleep(long millis) {

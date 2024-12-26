@@ -1,30 +1,22 @@
 package Widget;
 
 import Actions.Swipe;
-import AtombergTest.Method;
-import AtombergTest.Monkey;
 import io.appium.java_client.AppiumDriver;
 import org.awaitility.Awaitility;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-
-import java.util.List;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public class Widgets {
-
     public static void Home(AppiumDriver atomberg) {
         WebElement widget = null;
         try {
             widget = atomberg.findElement(By.className("android.widget.RelativeLayout"));
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {}
         assert widget != null;
-        if (widget.equals(null)) {
+        if(widget.equals(null)) {
             Swipe.Right(atomberg, 0.50, 0.80);
         }
-
         WebElement spdBtUp= atomberg.findElement(By.id("com.atomberg.app:id/bt_up"));
         WebElement spdBtDown = atomberg.findElement(By.id("com.atomberg.app:id/bt_down"));
         WebElement prevFan = atomberg.findElement(By.id("com.atomberg.app:id/bt_prev"));

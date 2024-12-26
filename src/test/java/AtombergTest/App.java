@@ -95,14 +95,12 @@ public class App {
     }
 
     void repeatStep(){
-
         if (i < total - 1) {
             elements = driver.findElements(By.className("android.view.View"));
             element = elements.get(i);
             fam1 = element.getDomAttribute("content-desc");
             element.click();
         }
-
     }
 
     int clickOnFamily(){
@@ -122,7 +120,6 @@ public class App {
             ActionsUtil.sleep(1500);
             return i;
     }
-
 }
 
 

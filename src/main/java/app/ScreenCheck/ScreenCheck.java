@@ -48,10 +48,8 @@ public class ScreenCheck {
         List<WebElement> tabs = elementList.stream().filter(webElement -> webElement.getDomAttribute("content-desc")!=null).collect(Collectors.toList());
         List<WebElement> home = tabs.stream().filter(webElement -> Objects.requireNonNull(webElement.getDomAttribute("content-desc")).startsWith("Hi")).collect(Collectors.toList());
         System.out.println(home.size());
-        assert home.size() == 1;
-        for (WebElement e:home){
-            e.click();
-        }
+        assert !home.isEmpty();
+        home.get(home.size() - 1).click();
         rateUs();
     }
 

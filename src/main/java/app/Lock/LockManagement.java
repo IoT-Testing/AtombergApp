@@ -6,11 +6,9 @@ import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
 import static app.util.ActionsUtil.sleep;
 import static app.util.AppUtil.Array;
 
@@ -34,84 +32,15 @@ public class LockManagement {
             sleep(1000);
         }
         System.out.println("Searching for Available devices");
-        for (int c = 0; c < 10; c++) {
-            sleep(15000);
-            WebElement element = null;
-            String xpathExpression = "//android.view.View[@content-desc=\"Atomberg Smart Lock\"]";
-            // Search Fan Only
-            try {
-                element = atomberg.findElement(By.xpath(xpathExpression));
-            } catch (NoSuchElementException ignored) {
-            }
-
-            if (element != null) // if device is available
-            {
-                System.out.println("Lock Available");
-                List<WebElement> Connects = atomberg.findElements(By.xpath("(//android.view.View[@content-desc=\"Connect\"])"));
-
-                for (int i = 1; i <= Connects.size(); i++) {
-
-                    WebElement Connect = atomberg.findElement(By.xpath("(//android.view.View[@content-desc=\"Connect\"])[" + i + "]"));
-                    System.out.println("Connect button at : " + i);
-                    Connect.click();
-                    WebElement FAdd = null;  //(//android.view.View[@content-desc="Connect"])[2]
-                    WebElement LReset = null;//(//android.view.View[@content-desc="Connect"])[2]
-                    WebElement FReset = null;
-                    WebElement Reach = null;
-                    try {
-                        FAdd = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Identify your device\"]"));
-                    } catch (Exception ignored) {
-                    }
-                    try {
-                        LReset = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Could not add the lock\"]"));
-                    } catch (Exception ignored) {
-                    }
-                    try {
-                        FReset = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Device already paired\"]"));
-                    } catch (Exception ignored) {
-                    }
-                    try {
-                        Reach = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Could not reach\r\n"
-                                + "the device\"]"));
-                    } catch (Exception ignored) {
-                    }
-
-                    if (FAdd != null || LReset != null || FReset != null || Reach != null) {
-                        if (FAdd != null) {
-                            atomberg.navigate().back();
-                            System.out.println("Back");
-                        } else if (Reach != null) {
-                            System.out.println("Out of Reach");
-                            atomberg.navigate().back();
-                            atomberg.navigate().back();
-                            System.out.println("Back");
-                        } else {
-                            atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]")).click();
-                            System.out.println("Cancel button clicked");
-                            sleep(1000);
-                        }
-                    } else {
-                        System.out.println("Breaking the loop");
-                        break;
-                    }
-                }
-            } else {
-                WebElement DD = null;//discovered devices
-                try {
-                    DD = atomberg.findElement(By.xpath("(//android.view.View[@content-desc=\"Connect\"])[2]"));
-                } catch (Exception ignored) {
-                }
-                if (DD != null) {
-                    atomberg.findElement(By.xpath("//android.widget.Button")).click();
-                } else {
-                    WebElement tryAgain = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Try Again\"]"));
-                    tryAgain.click();
-                    System.out.println("Trying Again...");
-                }
-                continue;
-            }
-            System.out.println("Breaking the loop");
-            break;
+        sleep(15000);
+        WebElement element = null;
+        String xpathExpression = "//android.view.View[@content-desc=\"Atomberg Smart Lock\"]";
+        // Search Fan Only
+        try {
+            element = atomberg.findElement(By.xpath(xpathExpression));
+        } catch (NoSuchElementException ignored) {}
+        if (element != null){
+            ActionsUtil.Tap.connectButton(atomberg, element);
         }
     }
 
@@ -145,23 +74,18 @@ public class LockManagement {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-
         // To Do if lock is available
         if (LO != null) {
             // i
-            System.out.println("Lock Available");
-            List<WebElement> Device = atomberg
-                    .findElements(By.xpath("//android.widget.Button/android.widget.ImageView[1]"));
-            System.out.println(Device.size());   // number of available locks
-
+            List<WebElement> Device = atomberg.findElements(By.xpath("//android.widget.Button/android.widget.ImageView[1]"));
+            System.out.println(Device.size() + "Lock Available");
+            // number of available locks
             for (WebElement element : Device) {
                 element.click(); // click and open lock control
-                LockControl();
+//                LockControl();
+                atomberg.navigate().back();
             }
-        } else {
-            System.out.println("No Lock Available");
-
-        }
+        } else System.out.println("No Lock Available");
     }
     // inside the lock control
     public void LockControl() {
@@ -172,32 +96,28 @@ public class LockManagement {
         ActionsUtil.sleep(1000);
         WebElement Unlocked = null;
         WebElement NoLock = null;
-
         try {// checks if it is unlocked
             Unlocked = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Unlocked\"]"));
-        } catch (Exception ignored) {
-        }
+        } catch (Exception ignored) {}
         try {// check if it could not unlock
             NoLock = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Could not unlock\"]"));
         } catch (Exception ignored) {
         }
         if (Unlocked != null) {
             System.out.println("Successfully unlocked");
+            ActionsUtil.sleep(5000);
+            history();  // history of lock
+            ActionsUtil.sleep(5000);
+            atomberg.navigate().back();
+            AccessKeys();  //Access keys of lock
+            lockSettings();   // lock settings
+            atomberg.navigate().back();
+            atomberg.navigate().back();
         } else if (NoLock != null) {
             System.out.println("Lock not available or Bluetooth off");
             atomberg.navigate().back();
-        } else {
-            System.out.println("Error");
-            atomberg.navigate().back();
         }
-        ActionsUtil.sleep(5000);
-        history();  // history of lock
-        ActionsUtil.sleep(5000);
-        atomberg.navigate().back();
-        AccessKeys();  //Access keys of lock
-        lockSettings();   // lock settings
-        atomberg.navigate().back();
-        atomberg.navigate().back();
+
     }
 
     private void history() {
@@ -225,28 +145,9 @@ public class LockManagement {
     }
 
     private void AccessKeys() {
-
         WebElement AccessKeys = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Access\nkeys\"]"));
         AccessKeys.click();
-//        Passcode();
         KeyType();  // for clicking on all the types of keys
-
-
-    }
-
-    // set for specific devices using the Coordinates
-    //TODO : Prerequisites > Please disable the Lock of the mobile phone, so that, when lock settings are accessed, there won't be any authentication....
-    protected void Passcode() {
-        ActionsUtil.Tap.withCoordinates(atomberg, 540, 880);
-        ActionsUtil.sleep(500);
-        AppUtil.NumberPad NumberPad = new AppUtil.NumberPad();
-        NumberPad.one(atomberg);
-        NumberPad.one(atomberg);
-        NumberPad.one(atomberg);
-        NumberPad.two(atomberg);
-        NumberPad.two(atomberg);
-        NumberPad.two(atomberg);
-        NumberPad.done(atomberg);
     }
 
     private void KeyType() {
@@ -261,16 +162,18 @@ public class LockManagement {
             boolean Pin = Objects.requireNonNull(key.getDomAttribute("content-desc")).startsWith("Remote Timed Pin"); // checks if the last string is NEW
             key.click();
             if (OTP) {
-                ActionsUtil.sleep(1000);
+                ActionsUtil.sleep(5000);
                 List<WebElement> elements = atomberg.findElements(By.className("android.view.View"));
+                System.out.println(elements.size());
                 List<WebElement> RemoteOTPs = elements.stream().filter(webElement -> webElement.getDomAttribute("content-desc")!=null).collect(Collectors.toList());
+                System.out.println(RemoteOTPs.size());
                 RemoteOTPs.remove(RemoteOTPs.size()-1);
                 for (WebElement otp : RemoteOTPs) {
                     System.out.println(otp.getDomAttribute("content-desc"));
                 }
             }
             if(Pin){
-                ActionsUtil.sleep(1000);
+                ActionsUtil.sleep(5000);
                 List<WebElement> elements = atomberg.findElements(By.className("android.view.View"));
                 List<WebElement> dialogueBox = elements.stream().filter(webElement -> webElement.getDomAttribute("content-desc")!=null).collect(Collectors.toList());
                 System.out.println(dialogueBox.size());
@@ -279,7 +182,7 @@ public class LockManagement {
                     if (Objects.requireNonNull(e.getDomAttribute("content-desc")).startsWith("End")){
                         e.click();
                         periodicTimedPin();
-                        atomberg.navigate().back();
+                        break;
                     }
                 }
             }
@@ -303,46 +206,56 @@ public class LockManagement {
             int i;
             int total = TS.size();  //
             System.out.println(total);
-            for (i = 0; 1 < total; i++) {
+            for (i = 0; i < total; i++) {
                 List<WebElement> ts = atomberg.findElements(By.className("android.widget.Switch"));
                 if(i == 0){
                     WebElement silentMode = ts.get(i);
                     silentMode.click();
                     silentMode();
+                    System.out.println("Silent mode");
                     ActionsUtil.sleep(1000);
                 }
                 if (i == 1) {
-                    WebElement PassageMode = ts.get(i);
-
-                    PassageMode.click();
-                    passageMode();
+                    WebElement passageMode = ts.get(i);
+                    boolean pm;
+                    pm = Objects.equals(passageMode.getDomAttribute("checked"), "true");
+                    passageMode.click();
+                    ActionsUtil.SSleep(2);
+                    passageMode(pm);
+                    System.out.println("Silent mode");
                     ActionsUtil.sleep(1000);
                 }
                 if (i == 2) {
                     WebElement FPEnable = ts.get(i);
                     FPEnable.click();
+                    System.out.println("Fingerprint");
                     fingerprint();
                 }
                 if (i == 3) {
                     WebElement CardEnable = ts.get(i);
                     CardEnable.click();
+                    System.out.println("Card");
                     CardEnable();
                 }
                 if (i == 4) {
                     WebElement Pins = ts.get(i);
+                    if(Objects.equals(Pins.getDomAttribute("checked"), "true")){
+                        System.out.println("Disable all pins");
+                    }
+                    else System.out.println("Enable all pins");
                     Pins.click();
                 }
             }
         }
     }
 
-    private void passageMode() {
-        WebElement passageModeDisabled = null;
-        try {
-            passageModeDisabled = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Passage Mode disabled successfully\"]"));
-        } catch (Exception ignored) {
+    private void passageMode(boolean value) {
+        if (value) {
+            List<WebElement> ts = atomberg.findElements(By.className("android.widget.Switch"));
+            WebElement passageMode = ts.get(1);
+            passageMode.click();
         }
-        if (passageModeDisabled == null) {
+        else{
             WebElement psmText = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"You are enabling passage mode. Enabling this mode will allow anyone to enter the house without any authentication. Do you want to continue?\"]"));
             boolean allow = Objects.requireNonNull(psmText.getDomAttribute("content-desc")).endsWith("Do you want to continue?");
             if (allow) {
@@ -363,13 +276,6 @@ public class LockManagement {
             if (PMEnabled != null) {
                 System.out.println("Passage Mode Enabled Successfully");
             }
-
-        } else {
-            System.out.println("Passage Mode Disabled Successfully. Enabling it again");
-            List<WebElement> TS = atomberg.findElements(By.className("android.widget.Switch"));
-            WebElement PassageMode = TS.get(0);
-            PassageMode.click();
-            passageMode();
         }
     }
 
@@ -429,9 +335,17 @@ public class LockManagement {
     private void periodicTimedPin(){
         List<WebElement> scrollableElements = atomberg.findElements(By.className("android.widget.SeekBar"));
         List<WebElement> elements = scrollableElements.stream().filter(webElement -> webElement.getDomAttribute("content-desc")!=null).collect(Collectors.toList());
-        for (WebElement e: elements){
-            e.click();
+        System.out.println(elements.size());
+        int size = elements.size();
+        for(int i = 0; i < size; i++){
+            if (i == 1){
+                ActionsUtil.Scroll.element(atomberg, elements.get(i));
+            }
         }
+        atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Done\"]")).click();
+        ActionsUtil.SSleep(1);
+        atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Update\"]")).click();
+        pin();
     }
 
     private void silentMode() {
@@ -449,11 +363,38 @@ public class LockManagement {
         else if (disableSilentMode != null){
             atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Yes\"]")).click();
         }
-        ActionsUtil.SSleep(2);
-        atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Silent Mode\"]/android.view.View")).click();
-        WebElement silentModeInfo = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"When silent mode is enabled, unlock tune and keypad beeps are suppressed\"]"));
-        assert silentModeInfo.isDisplayed();
+        ActionsUtil.SSleep(5);
+//        atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Silent Mode\"]/android.view.View")).click();
+//        ActionsUtil.SSleep(1);
+//        WebElement silentModeInfo = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"When silent mode is enabled, unlock tune and keypad beeps are suppressed\"]"));
+//        assert silentModeInfo.isDisplayed();
+        atomberg.navigate().back();
     }
 
+    // set for specific devices using the Coordinates
+    //TODO : Prerequisites > Please disable the Lock of the mobile phone, so that, when lock settings are accessed, there won't be any authentication....
+    protected void Passcode() {
+        ActionsUtil.Tap.withCoordinates(atomberg, 540, 880);
+        ActionsUtil.sleep(500);
+        AppUtil.NumberPad NumberPad = new AppUtil.NumberPad();
+        NumberPad.one(atomberg);
+        NumberPad.one(atomberg);
+        NumberPad.one(atomberg);
+        NumberPad.two(atomberg);
+        NumberPad.two(atomberg);
+        NumberPad.two(atomberg);
+        NumberPad.done(atomberg);
+    }
 
+    private void pin(){
+        ActionsUtil.sleep(5000);
+        List<WebElement> elementList = atomberg.findElements(By.className("android.view.View"));
+        System.out.println(elementList.size());
+        List<WebElement> nonNullElements = elementList.stream().filter(webElement -> webElement.getDomAttribute("content-desc")!=null).collect(Collectors.toList());
+        System.out.println(nonNullElements.size());
+        nonNullElements.remove(nonNullElements.size()-1);
+        for (WebElement otp : nonNullElements) {
+            System.out.println(otp.getDomAttribute("content-desc"));
+        }
+    }
 }

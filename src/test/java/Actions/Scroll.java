@@ -47,5 +47,4 @@ public class Scroll {
 		driver.perform(Collections.singletonList(sequence));
 		System.out.println("Scrolled Up");
 	}
-
 }

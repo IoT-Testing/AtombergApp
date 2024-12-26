@@ -5,9 +5,13 @@ import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.Date;
 import java.util.Objects;
 import java.util.Random;
@@ -25,6 +29,32 @@ public class AppUtil {
             System.out.println("Unable to save screenshot at " + destinationFilePath);
             System.out.println(e.getMessage());
         }
+    }
+
+    public static void additionProcess(AppiumDriver atomberg){
+        atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Master Bedroom\"]")).click();
+        AppUtil.captureScreenshot(atomberg);
+        atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Guest Room\"]")).click();
+        AppUtil.captureScreenshot(atomberg);
+        atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Kitchen\"]")).click();
+        AppUtil.captureScreenshot(atomberg);
+        atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Common Bedroom\"]")).click();
+        AppUtil.captureScreenshot(atomberg);
+        atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Lobby\"]")).click();
+        AppUtil.captureScreenshot(atomberg);
+        atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Balcony\"]")).click();
+        AppUtil.captureScreenshot(atomberg);
+        atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Living Room\"]")).click();
+        AppUtil.captureScreenshot(atomberg);
+        atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Continue\"]")).click();
+        AppUtil.captureScreenshot(atomberg);
+
+        SearchWiFi(atomberg, "Better_Together");
+        AppUtil.captureScreenshot(atomberg);
+
+        WebDriverWait Wait = new WebDriverWait(atomberg, Duration.ofSeconds(60));
+        Wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//android.view.View[@content-desc=\"Skip\"]"))).click();
+        AppUtil.captureScreenshot(atomberg);
     }
 
     public static void SearchWiFi(AppiumDriver driver, String SearchString) {

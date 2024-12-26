@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class Analytics {
     private WebElement analytics;
     private WebElement moreTab;
-    private AppiumDriver atomberg;
+    AppiumDriver atomberg;
 
     public Analytics(AppiumDriver driver){
         this.atomberg = driver;
@@ -41,7 +41,6 @@ public class Analytics {
         List<WebElement> FANS = atomberg.findElements(By.className("android.view.View"));
         List<WebElement> Fans = FANS.stream().filter(ele -> ele.getDomAttribute("content-desc") != null).collect(Collectors.toList());
         List<WebElement> fans = Fans.stream().filter(ele -> Objects.requireNonNull(ele.getDomAttribute("content-desc")).endsWith("Fan")).collect(Collectors.toList());
-
         for (WebElement fan : fans) {
             fan.click();
         }
@@ -63,8 +62,9 @@ public class Analytics {
             System.out.println(anaFans.size());
             System.out.println(i);//To check which iteration is running
             System.out.println(anaFans.get(i).getDomAttribute("content-desc"));
+            String deviceType = anaFans.get(i).getDomAttribute("content-desc");
             anaFans.get(i).click();
-            info();
+            info(deviceType);
             System.out.println(i < (anaFans.size()));
             if (i < (anaFans.size() - 1)) { // to go to the analytics screen and
                 moreTab.click();
@@ -95,27 +95,51 @@ public class Analytics {
         }
     }
 
-    private void info() {
+    private void info(String string) {
         int i;
-        for (i = 0; i < 4; i++) {// there are 4 screens in analytics
-            ActionsUtil.sleep(2000);
-            List<WebElement> ICONS = atomberg.findElements(By.xpath("//android.view.View[@clickable=\"true\"]"));
-            List<WebElement> icons = ICONS.stream().filter(element -> element.getDomAttribute("content-desc") == null).collect(Collectors.toList());
-//            icons.remove(icons.size() - 1);
-            for (WebElement icon : icons) {
-                System.out.println(icon.getDomAttribute("content-desc"));
-                icon.click();
+        if(string.endsWith("Fan")){
+            for (i = 0; i < 4; i++) {// there are 4 screens in analytics
                 ActionsUtil.sleep(2000);
-                atomberg.navigate().back();
-                ActionsUtil.sleep(1500);
-                confetti();
-            }
-            if (i < 3) {// only three swipes for the screen
-                ActionsUtil.Swipe.Left(atomberg, 0.75, 0.50);
-                //TODO : try the screen change buttons in the analytics
-                ActionsUtil.sleep(1500);
+                List<WebElement> ICONS = atomberg.findElements(By.xpath("//android.view.View[@clickable=\"true\"]"));
+                List<WebElement> icons = ICONS.stream().filter(element -> element.getDomAttribute("content-desc") == null).collect(Collectors.toList());
+//            icons.remove(icons.size() - 1);
+                for (WebElement icon : icons) {
+                    System.out.println(icon.getDomAttribute("content-desc"));
+                    icon.click();
+                    ActionsUtil.sleep(2000);
+                    atomberg.navigate().back();
+                    ActionsUtil.sleep(1500);
+                    confetti();
+                }
+                if (i < 3) {// only three swipes for the screen
+                    ActionsUtil.Swipe.Left(atomberg, 0.75, 0.50);
+                    //TODO : try the screen change buttons in the analytics
+                    ActionsUtil.sleep(1500);
+                }
             }
         }
+        else if(string.endsWith("Purifier")){
+            for (i = 0; i < 2; i++) {// there are 4 screens in analytics
+                ActionsUtil.sleep(2000);
+                List<WebElement> ICONS = atomberg.findElements(By.xpath("//android.view.View[@clickable=\"true\"]"));
+                List<WebElement> icons = ICONS.stream().filter(element -> element.getDomAttribute("content-desc") == null).collect(Collectors.toList());
+//            icons.remove(icons.size() - 1);
+                for (WebElement icon : icons) {
+                    System.out.println(icon.getDomAttribute("content-desc"));
+                    icon.click();
+                    ActionsUtil.sleep(2000);
+                    atomberg.navigate().back();
+                    ActionsUtil.sleep(1500);
+                    confetti();
+                }
+                if (i < 1) {// only three swipes for the screen
+                    ActionsUtil.Swipe.Left(atomberg, 0.75, 0.50);
+                    //TODO : try the screen change buttons in the analytics
+                    ActionsUtil.sleep(1500);
+                }
+            }
+        }
+
     }
 
     private void confetti(){

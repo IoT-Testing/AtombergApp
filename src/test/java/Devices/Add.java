@@ -43,7 +43,6 @@ public class Add {
                 System.out.println("Fans Available");
                 List<WebElement> Connects = driver.findElements(By.xpath("(//android.view.View[@content-desc=\"Connect\"])"));
                 for (int i = 1; i <= Connects.size(); i++) {
-
                     WebElement Connect = driver.findElement(By.xpath("(//android.view.View[@content-desc=\"Connect\"])[" + i + "]"));
                     System.out.println("Connect button at : " + i);
                     Connect.click();
@@ -69,7 +68,6 @@ public class Add {
                                 + "the device\"]"));
                     } catch (Exception e) {
                     }
-
                     if (LAdd != null || LReset != null || FReset != null || Reach != null) {
                         if (LAdd != null) {
                             driver.navigate().back();
@@ -111,7 +109,6 @@ public class Add {
     }
 
     public static void Lock(AppiumDriver driver) {
-
         WebElement AddButton = null;
         try {
             AddButton = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]/android.widget.ImageView"));
@@ -139,9 +136,7 @@ public class Add {
             {
                 System.out.println("Lock Available");
                 List<WebElement> Connects = driver.findElements(By.xpath("(//android.view.View[@content-desc=\"Connect\"])"));
-
                 for (int i = 1; i <= Connects.size(); i++) {
-
                     WebElement Connect = driver.findElement(By.xpath("(//android.view.View[@content-desc=\"Connect\"])[" + i + "]"));
                     System.out.println("Connect button at : " + i);
                     Connect.click();
@@ -164,9 +159,7 @@ public class Add {
                     try {
                         Reach = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Could not reach\r\n"
                                 + "the device\"]"));
-                    } catch (Exception e) {
-                    }
-
+                    } catch (Exception e) {}
                     if (FAdd != null || LReset != null || FReset != null || Reach != null) {
                         if (FAdd != null) {
                             driver.navigate().back();

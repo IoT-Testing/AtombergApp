@@ -4,6 +4,7 @@ import app.util.ActionsUtil;
 import app.util.AppUtil;
 import app.util.PermissionUtil;
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.options.UiAutomator2Options;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -19,7 +20,7 @@ import static java.lang.Thread.sleep;
 
 public class AppInitializer {
     public AppiumDriver atomberg;
-
+    public AndroidDriver driver;
     public AppiumDriver getDriver() {
         return atomberg;
     }
@@ -78,7 +79,6 @@ public class AppInitializer {
 
     public void tapOnAppLogo(){
         //Prerequisites : Atomberg App should be on Home screen.
-        ActionsUtil.Tap.withCoordinates(atomberg, 550, 2350);
         List<WebElement> elementList = atomberg.findElements(By.className("android.widget.ImageView"));
         List<WebElement> apps = elementList.stream().filter(object->object.getDomAttribute("content-desc")!=null).collect(Collectors.toList());
         for(WebElement app : apps){

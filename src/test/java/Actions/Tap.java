@@ -7,7 +7,6 @@ import org.openqa.selenium.interactions.Pause;
 import org.openqa.selenium.interactions.PointerInput;
 import org.openqa.selenium.interactions.Sequence;
 import io.appium.java_client.AppiumDriver;
-import io.appium.java_client.MobileCommand;
 
 
 public class Tap {

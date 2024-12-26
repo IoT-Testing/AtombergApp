@@ -260,7 +260,5 @@ public class Monkey {
         } else {
             return 10;
         }
-
     }
-
 }

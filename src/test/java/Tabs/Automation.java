@@ -197,6 +197,7 @@ public class Automation {
                 "Activity\n" +
                 "Power Toggle\"]"));
         String AutoName = ToD.getDomAttribute("content-desc");
+        assert AutoName != null;
         boolean check = AutoName.startsWith("Automation");
         if (check) {
             ToD.click();

@@ -7,6 +7,5 @@ public class Main {
     public static void main(String[] args) throws IOException, UnsupportedFlavorException {
         AutomatedTest automationTest = new AutomatedTest();
         automationTest.run();
-
     }
 }

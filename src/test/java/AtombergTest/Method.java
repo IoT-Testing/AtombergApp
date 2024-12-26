@@ -23,11 +23,9 @@ public class Method {
 		String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 		try {
 			File screenshotFile = driver.getScreenshotAs(OutputType.FILE);
-
 			String destinationFilePath = "C:\\Users\\Rohit Bhagat\\Desktop\\Rohit\\Appium Screenshots\\NEWMOBILES\\Trail1\\Screenshot_"
 					+ timestamp + ".png";
 			FileUtils.copyFile(screenshotFile, new File(destinationFilePath));
-
 			System.out.println("Appium screenshot saved as: " + destinationFilePath);
 		} catch (IOException e) {
 			e.printStackTrace();

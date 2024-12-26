@@ -1,7 +1,9 @@
 package app.util;
 
 import io.appium.java_client.AppiumDriver;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Pause;
 import org.openqa.selenium.interactions.PointerInput;
 import org.openqa.selenium.interactions.Sequence;
@@ -38,6 +40,17 @@ public class ActionsUtil {
                     .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
             driver.perform(Collections.singletonList(sequence));
             System.out.println("Tap With %");
+        }
+
+        public static void connectButton(AppiumDriver driver, WebElement element){
+            int elementStartY = element.getLocation().getY();
+            int elementHeight = element.getSize().getHeight();
+            int midY = elementStartY + (int) (elementHeight * 0.5);
+            WebElement connect = driver.findElement(By.xpath("(//android.view.View[@content-desc=\"Connect\"])[1]"));
+            int connectStartX = connect.getLocation().getX();
+            int connectWidth = connect.getSize().getWidth();
+            int midX = connectStartX + (int) (connectWidth * 0.5);
+            withCoordinates(driver, midX, midY);
         }
     }
 
@@ -93,6 +106,30 @@ public class ActionsUtil {
                     .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
             driver.perform(Collections.singletonList(sequence));
             System.out.println("Scrolled Up");
+        }
+
+        public static void element(AppiumDriver driver, WebElement element){
+            int elementStartX = element.getLocation().getX();
+            int elementWidth = element.getSize().getWidth();
+            int elementStartY = element.getLocation().getY();
+            int elementHeight = element.getSize().getHeight();
+
+            // Calculate positions for scroll (30% below mid to 40% above mid)
+            int startX = elementStartX + (int) (elementWidth * 0.5);
+            int midY = elementStartY + (int) (elementHeight * 0.5);
+            int startY = midY + (int) (elementHeight * 0.2);
+            int endY = midY - (int) (elementHeight * 0.2);
+
+            PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+            Sequence sequence = new Sequence(finger, 1)
+                    .addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY))
+                    .addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
+                    .addAction(new Pause(finger, Duration.ofMillis(200)))
+                    .addAction(finger.createPointerMove(Duration.ofMillis(250), PointerInput.Origin.viewport(), startX, endY))
+                    .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+            driver.perform(Collections.singletonList(sequence));
+
+            System.out.println("Scroll action completed!");
         }
     }
 
@@ -165,8 +202,7 @@ public class ActionsUtil {
                     .addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY))
                     .addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
                     .addAction(new Pause(finger, Duration.ofMillis(150)))
-                    .addAction(
-                            finger.createPointerMove(Duration.ofMillis(150), PointerInput.Origin.viewport(), endX, startY))
+                    .addAction(finger.createPointerMove(Duration.ofMillis(150), PointerInput.Origin.viewport(), endX, startY))
                     .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
             driver.perform(Collections.singletonList(sequence));
             System.out.println("Left Swipe");
@@ -189,7 +225,6 @@ public class ActionsUtil {
 
             System.out.println("Notifications");
         }
-
     }
 
     public static void minimize(AppiumDriver driver) {
@@ -245,5 +280,4 @@ public class ActionsUtil {
         driver.perform(Collections.singletonList(sequence));
         System.out.println("Tap with Coordinates");
     }
-
 }

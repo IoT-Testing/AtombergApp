@@ -22,7 +22,7 @@ public class Connect{
 
     public void ipAddress() throws IOException, UnsupportedFlavorException {
         driver1.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-        String URL = "http://192.168.11.9:7100/";
+        String URL = "http://192.168.10.185:7100/";
         driver1.get(URL);
         System.out.println("Website Opened");
         driver1.manage().window().maximize();
@@ -67,7 +67,6 @@ public class Connect{
         List<WebElement> devicesList = elementList.stream().filter(webElement -> webElement.getDomAttribute("id")!=null).collect(Collectors.toList());
         for(WebElement device:devicesList){
             driver1.switchTo().frame(device);
-            
         }
     }
 }

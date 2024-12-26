@@ -9,11 +9,16 @@ import app.MoreTab.Play;
 import app.MoreTab.Profile;
 import app.AppInitializer;
 import app.STF.Connect;
+import app.WaterPurifier.ROManagement;
 import app.util.ActionsUtil;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.Status;
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import org.junit.jupiter.api.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+
 import static ZTests.ExtentReportAT.*;
 
 
@@ -61,6 +66,7 @@ public class AppTest {
             getTest().log(Status.FAIL, "Logout failed: " + e.getMessage());
         } finally {
             System.out.println("Profile Edit test end");
+            if(getTest().getStatus() == Status.FAIL) afterTestFailure();
             endTest();
         }
     }
@@ -77,7 +83,7 @@ public class AppTest {
             getTest().log(Status.FAIL, "Family Management failed: " + e.getMessage());
         } finally {
             System.out.println("Family test end");
-
+            if(getTest().getStatus() == Status.FAIL) afterTestFailure();
             endTest();
         }
     }
@@ -94,6 +100,7 @@ public class AppTest {
             getTest().log(Status.FAIL, "Fan Control failed: " + e.getMessage());
         } finally {
             System.out.println("Fan Control test end");
+            if(getTest().getStatus() == Status.FAIL) afterTestFailure();
             endTest();
         }
     }
@@ -110,11 +117,29 @@ public class AppTest {
             getTest().log(Status.FAIL, "Lock Control failed: " + e.getMessage());
         } finally {
             System.out.println("Lock Control test end");
+            if(getTest().getStatus() == Status.FAIL) afterTestFailure();
             endTest();
         }
     }
 
     @Order(6)
+    @Test
+    void testROControl(){
+        try {
+            startTest("RO Control");
+            System.out.println("RO Control test start");
+            ROManagement ro = new ROManagement(atomberg);
+            ro.checkRO();
+        } catch (Exception e) {
+            getTest().log(Status.FAIL, "RO Control failed: " + e.getMessage());
+        } finally {
+            System.out.println("RO Control test end");
+            if(getTest().getStatus() == Status.FAIL) afterTestFailure();
+            endTest();
+        }
+    }
+
+    @Order(7)
     @Test
     void testAnalytics() {
         try {
@@ -126,11 +151,12 @@ public class AppTest {
             getTest().log(Status.FAIL, "Analytics failed: " + e.getMessage());
         } finally {
             System.out.println("Analytics test end");
+            if(getTest().getStatus() == Status.FAIL) afterTestFailure();
             endTest();
         }
     }
 
-    @Order(7)
+    @Order(8)
     @Test
     void testHelp() {
         try {
@@ -154,13 +180,13 @@ public class AppTest {
         } finally {
             {
                 System.out.println("Help Section test end");
-
+                if(getTest().getStatus() == Status.FAIL) afterTestFailure();
                 endTest();
             }
         }
     }
 
-    @Order(8)
+    @Order(9)
     @Test
     void testLogout() {
         try {
@@ -177,7 +203,7 @@ public class AppTest {
         }
     }
 
-    @Order(9)
+    @Order(10)
     @Test
     void testDriverClose() {
         atomberg.quit();
@@ -189,5 +215,26 @@ public class AppTest {
         if (extent != null) {
             extent.flush();
         }
+    }
+
+    void afterTestFailure() {
+        int i = 0;
+        WebElement homeScreen = null;
+        while (homeScreen == null) {
+            try {
+                homeScreen = atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\nTab 3 of 3\"]"));
+            } catch (Exception ignored) {}
+            if (homeScreen == null) {
+                System.out.println("Back");
+                atomberg.navigate().back(); // 180, 1550 860, 1960
+                i++;
+                if (i == 5){
+                    break;
+                }
+            }
+        }
+    if(atomberg.getSessionId()==null){
+        ((AndroidDriver) atomberg).activateApp("com.atomberg.app");
+    }
     }
 }

@@ -72,7 +72,6 @@ public class FanModels {
                     color5.click();
                     System.out.println("Misty Teal");
                     break;
-
             }
         } catch (Exception exp) {
             System.out.println(exp.getMessage());

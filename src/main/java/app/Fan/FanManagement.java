@@ -124,7 +124,6 @@ public class FanManagement {
 
     public void additionProcess() {
         Select.Fan(atomberg);
-
         WebElement Next = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Next\"]")); // Add 2nd
         // Device
         System.out.println("Next");
@@ -132,29 +131,7 @@ public class FanManagement {
         AppUtil.captureScreenshot(atomberg);
 
         // Select Room
-        atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Master Bedroom\"]")).click();
-        AppUtil.captureScreenshot(atomberg);
-        atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Guest Room\"]")).click();
-        AppUtil.captureScreenshot(atomberg);
-        atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Kitchen\"]")).click();
-        AppUtil.captureScreenshot(atomberg);
-        atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Common Bedroom\"]")).click();
-        AppUtil.captureScreenshot(atomberg);
-        atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Lobby\"]")).click();
-        AppUtil.captureScreenshot(atomberg);
-        atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Balcony\"]")).click();
-        AppUtil.captureScreenshot(atomberg);
-        atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Living Room\"]")).click();
-        AppUtil.captureScreenshot(atomberg);
-        atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Continue\"]")).click();
-        AppUtil.captureScreenshot(atomberg);
-
-        SearchWiFi(atomberg, "Better_Together");
-        AppUtil.captureScreenshot(atomberg);
-
-        WebDriverWait Wait = new WebDriverWait(atomberg, Duration.ofSeconds(60));
-        Wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//android.view.View[@content-desc=\"Skip\"]"))).click();
-        AppUtil.captureScreenshot(atomberg);
+        AppUtil.additionProcess(atomberg);
     }
 
     public void fanControl() {
@@ -202,7 +179,6 @@ public class FanManagement {
             List<WebElement> FANS = atomberg.findElements(By.className("android.widget.Button"));
             System.out.println(FANS.size());
             List<WebElement> fans = FANS.stream().filter(dev -> dev.getDomAttribute("content-desc") != null).collect(Collectors.toList());
-
             if (fans.size() > 1) {
                 System.out.println("Fan Available " + fans.size());
             }
@@ -254,37 +230,31 @@ public class FanManagement {
     }
 
     public static class Select {
-
         public static void Fan(AppiumDriver atomberg) {
             WebElement ModelSelect = null;
             try {
                 ModelSelect = atomberg
                         .findElement(By.xpath("//android.view.View[@content-desc=\"Pick the fan model you're having\"]"));
                 System.out.println("Six LED fan");
-            } catch (Exception ignored) {
-            }
+            } catch (Exception ignored) {}
             if (ModelSelect != null) {
                 SixLED(atomberg);
-
             } else {
                 FanModels fanModels = new FanModels(atomberg);
                 WebElement Others = null;
                 try {
                     Others = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Select your device color\"]"));
                     System.out.println("Select your fan color");
-                } catch (Exception ignored) {
-                }
+                } catch (Exception ignored) {}
                 if (Others != null) {
                     WebElement Aris = null;
                     WebElement Jaguar = null;
                     try {
                         Aris = atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Dark Teakwood\"]"));
-                    } catch (Exception ignored) {
-                    }
+                    } catch (Exception ignored) {}
                     try {
                         Jaguar = atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Regent Gray\"]"));
-                    } catch (Exception ignored) {
-                    }
+                    } catch (Exception ignored) {}
                     if (Aris != null) {
                         fanModels.Aris();
                     } else if (Jaguar != null) {
@@ -303,7 +273,6 @@ public class FanManagement {
 
         public static void SixLED(AppiumDriver atomberg) {
             int randomNumber = (int) (Math.random() * 3); // generate a random number between 0 and 5
-
             try {
                 switch (randomNumber) {
                     case 0:
