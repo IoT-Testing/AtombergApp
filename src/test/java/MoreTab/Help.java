@@ -1,13 +1,10 @@
 package MoreTab;
 
 import org.awaitility.Awaitility;
-import org.mozilla.javascript.ast.WhileLoop;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-
 import Actions.Scroll;
 import Actions.Swipe;
-import Actions.Tap;
 import AtombergTest.Method;
 import io.appium.java_client.AppiumDriver;
 
@@ -32,9 +29,7 @@ public class Help {
         Method.captureScreenshot(driver);
         System.out.println("Tap on Track Complaint");
         sleep(2000);
-
         WebElement NoComplaints = null;
-
         try {
             NoComplaints = driver.findElement(By.xpath(
                     "//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View[1]"));
@@ -44,14 +39,11 @@ public class Help {
             System.out.println("No Complaints Raised.");
 
         }
-
         Method.captureScreenshot(driver);
-
         driver.navigate().back();
-
     }
 
-    private static void VideoTryCatch(AppiumDriver driver) {
+    private static void videoTryCatch(AppiumDriver driver) {
         WebElement VideoTutorials = null;
         try {
             VideoTutorials = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Video tutorials\"]"));
@@ -71,10 +63,10 @@ public class Help {
         Method.captureScreenshot(driver);
         System.out.println("App Video Opened");
 
-        VideoTryCatch(driver);
-        VideoTryCatch(driver);
-        VideoTryCatch(driver);
-        VideoTryCatch(driver);
+        videoTryCatch(driver);
+        videoTryCatch(driver);
+        videoTryCatch(driver);
+        videoTryCatch(driver);
         sleep(5000);
 
         WebElement ConnectAlexa = driver
@@ -84,9 +76,9 @@ public class Help {
         Method.captureScreenshot(driver);
         System.out.println("Alexa Video Opened");
 
-        VideoTryCatch(driver);
-        VideoTryCatch(driver);
-        VideoTryCatch(driver);
+        videoTryCatch(driver);
+        videoTryCatch(driver);
+        videoTryCatch(driver);
         sleep(5000);
 
         WebElement ConnectGoogle = driver
@@ -96,9 +88,9 @@ public class Help {
         Method.captureScreenshot(driver);
         System.out.println("Google Home Video Opened");
 
-        VideoTryCatch(driver);
-        VideoTryCatch(driver);
-        VideoTryCatch(driver);
+        videoTryCatch(driver);
+        videoTryCatch(driver);
+        videoTryCatch(driver);
 
         sleep(5000);
 
@@ -124,8 +116,8 @@ public class Help {
         Method.captureScreenshot(driver);
         System.out.println("SL installation Video Opened");
 
-        VideoTryCatch(driver);
-        VideoTryCatch(driver);
+        videoTryCatch(driver);
+        videoTryCatch(driver);
         sleep(5000);
 
         SLAppSetup = null;
@@ -145,8 +137,8 @@ public class Help {
         Method.captureScreenshot(driver);
         System.out.println("SL Feature Video Opened");
 
-        VideoTryCatch(driver);
-        VideoTryCatch(driver);
+        videoTryCatch(driver);
+        videoTryCatch(driver);
         sleep(5000);
 
         SLAppSetup = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Smart Locks App Setup\"]"));
@@ -154,8 +146,8 @@ public class Help {
         sleep(2000);
         Method.captureScreenshot(driver);
         System.out.println("App Setup for Lock Video Opened");
-        VideoTryCatch(driver);
-        VideoTryCatch(driver);
+        videoTryCatch(driver);
+        videoTryCatch(driver);
 
     }
 
@@ -170,131 +162,109 @@ public class Help {
     }
 
     public static void Troubleshoot(AppiumDriver driver) {
-
         driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Troubleshoot\"]")).click();
         // Troubleshoot for Fans
-
         WebElement fan = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Atomberg Fan\"]"));
         fan.click();
         Method.captureScreenshot(driver);
         System.out.println("Fan Troubleshoot");
-
         WebElement renesa = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Renesa\"]"));
         renesa.click();
         Method.captureScreenshot(driver);
         System.out.println("Renesa");
         OK(driver);
-
         WebElement renesaSmart = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Renesa Smart\"]"));
         renesaSmart.click();
         Method.captureScreenshot(driver);
         System.out.println("Renesa Smart");
         ReturnToHome(driver);
-
         WebElement renesaPlus = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Renesa+\"]"));
         renesaPlus.click();
         Method.captureScreenshot(driver);
         System.out.println("Renesa Plus");
         OK(driver);
-
         WebElement renesaSmartPlus = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Renesa Smart+\"]"));
         renesaSmartPlus.click();
         Method.captureScreenshot(driver);
         System.out.println("Renesa Smart +");
         EnterSerialNumber(driver);
-
         WebElement studioPlus = driver
                 .findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Studio+\"]"));
         studioPlus.click();
         Method.captureScreenshot(driver);
         OK(driver);
-
         WebElement studioSmartPlus = driver
                 .findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Studio Smart+\"]"));
 		studioSmartPlus.click();
         Method.captureScreenshot(driver);
         System.out.println("Studio Plus");
 		ReturnToHome(driver);
-
 		WebElement erica =driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Erica\"]"));
 		erica.click();
 		Method.captureScreenshot(driver);
 		System.out.println("Erica");
 		OK(driver);
-
 		WebElement ericaSmart =driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Erica Smart\"]"));
 		ericaSmart.click();
 		Method.captureScreenshot(driver);
 		System.out.println("Erica Smart");
 		ReturnToHome(driver);
 		Scroll.Up(driver);
-
         WebElement starlight = driver
                 .findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Aris Starlight\"]"));
         starlight.click();
         Method.captureScreenshot(driver);
         System.out.println("Starlight");
         ReturnToHome(driver);
-
         WebElement aris = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Aris\"]"));
         aris.click();
         Method.captureScreenshot(driver);
         System.out.println("Aris");
 		ReturnToHome(driver);
-
 		WebElement arisContour = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Aris Contour\"]"));
 		arisContour.click();
 		Method.captureScreenshot(driver);
 		System.out.println("Aris");
 		ReturnToHome(driver);
-
 		WebElement renesaAlpha = driver
 				.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Renesa Alpha\"]"));
 		renesaAlpha.click();
 		Method.captureScreenshot(driver);
 		System.out.println("RenesaAlpha");
 		OK(driver);
-
-
 		WebElement efficio = driver
                 .findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Efficio\"]"));
         efficio.click();
         Method.captureScreenshot(driver);
         System.out.println("Efficio");
         OK(driver);
-
         WebElement ikano = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Ikano\"]"));
         ikano.click();
         Method.captureScreenshot(driver);
         System.out.println("Ikano");
         OK(driver);
 		Scroll.Up(driver);
-
         WebElement ozeo = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Ozeo\"]"));
         ozeo.click();
         Method.captureScreenshot(driver);
         System.out.println("Ozeo");
         OK(driver);
-
         WebElement ameza = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Ameza\"]"));
         ameza.click();
         Method.captureScreenshot(driver);
         System.out.println("Ameza");
         OK(driver);
-
         WebElement other = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Other\"]"));
         other.click();
         Method.captureScreenshot(driver);
         System.out.println("Other");
 		OK(driver);
         driver.navigate().back();
-
         // Troubleshoot for Locks
         WebElement lock = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Atomberg Lock\"]"));
         lock.click();
         Method.captureScreenshot(driver);
         System.out.println("Lock Troubleshoot");
-
         driver.navigate().back();
         driver.navigate().back();
 

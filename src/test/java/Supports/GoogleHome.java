@@ -1,7 +1,7 @@
 package Supports;
 
 import Actions.Tap;
-import com.sun.jarsigner.ContentSignerParameters;
+
 import io.appium.java_client.AppiumDriver;
 import org.awaitility.Awaitility;
 import org.openqa.selenium.By;
@@ -29,7 +29,6 @@ public class GoogleHome {
 		ALG(driver);
 		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
 	}
-
 	private static void googleHome(AppiumDriver driver) {
 		WebElement googleConnect = null;
 		try{
@@ -43,12 +42,11 @@ public class GoogleHome {
 			System.out.println("Google Home is already connected");
 		}
 	}
-
 	public static void ALG(AppiumDriver driver) {//Account Linking Guide
 			List<WebElement> Elements = driver.findElements(By.className("android.view.View"));
-			List<WebElement> elements = Elements.stream().filter(element -> element.getAttribute("content-desc")!=null).collect(Collectors.toList());
+			List<WebElement> elements = Elements.stream().filter(element -> element.getDomAttribute("content-desc")!=null).collect(Collectors.toList());
 			System.out.println(elements.size());
-			List<WebElement> algL = elements.stream().filter(element -> element.getAttribute("content-desc").equals("Account linking guide")).collect(Collectors.toList());
+			List<WebElement> algL = elements.stream().filter(element -> element.getDomAttribute("content-desc").equals("Account linking guide")).collect(Collectors.toList());
 
 			if (!algL.isEmpty())
 			{
@@ -99,7 +97,6 @@ public class GoogleHome {
 			{}
 		}
 	}
-
 	private static void checkContinue(AppiumDriver driver){
 		WebElement continueBt = null;
 		try {

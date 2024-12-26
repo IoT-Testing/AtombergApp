@@ -53,19 +53,19 @@ public class AccManage {
         List<WebElement> MT = driver.findElements(By.className("android.widget.ImageView"));
         System.out.println(MT.size());
         System.out.println("More");
-        List<WebElement> mt = MT.stream().filter(webElement -> webElement.getAttribute("content-desc") != null).collect(Collectors.toList());
+        List<WebElement> mt = MT.stream().filter(webElement -> webElement.getDomAttribute("content-desc") != null).collect(Collectors.toList());
         System.out.println(mt.size());
         System.out.println("More1");
-        List<WebElement> moreTab = mt.stream().filter(webElement -> webElement.getAttribute("selected").equals("true")).collect(Collectors.toList());
+        List<WebElement> moreTab = mt.stream().filter(webElement -> webElement.getDomAttribute("selected").equals("true")).collect(Collectors.toList());
         System.out.println(moreTab.size());
         for (WebElement e : moreTab) {
-            System.out.println(e.getAttribute("content-desc"));
+            System.out.println(e.getDomAttribute("content-desc"));
         }
         if (moreTab.isEmpty()) {
             driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\n" +
                     "Tab 3 of 3\"]")).click();
 
-        } else if (!moreTab.get(0).getAttribute("content-desc").endsWith("Tab 3 of 3")) {
+        } else if (!moreTab.get(0).getDomAttribute("content-desc").endsWith("Tab 3 of 3")) {
             System.out.println("tap on moreTab");
             driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\n" +
                     "Tab 3 of 3\"]")).click();
@@ -80,10 +80,10 @@ public class AccManage {
             List<WebElement> MT = driver.findElements(By.className("android.view.View"));
             System.out.println(MT.size());
             System.out.println("here");
-            List<WebElement> mt = MT.stream().filter(webElement -> webElement.getAttribute("content-desc") != null).collect(Collectors.toList());
+            List<WebElement> mt = MT.stream().filter(webElement -> webElement.getDomAttribute("content-desc") != null).collect(Collectors.toList());
             System.out.println(mt.size());
             System.out.println("here1");
-            moreTab = mt.stream().filter(webElement -> webElement.getAttribute("content-desc").equals("Logout")).collect(Collectors.toList());
+            moreTab = mt.stream().filter(webElement -> webElement.getDomAttribute("content-desc").equals("Logout")).collect(Collectors.toList());
             System.out.println(moreTab.size());
 
             if (moreTab.isEmpty()) {

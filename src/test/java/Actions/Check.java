@@ -3,7 +3,6 @@ package Actions;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
-
 import org.awaitility.Awaitility;
 import org.testng.Assert;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -45,7 +44,7 @@ public class Check {
 		openAtomberg();
 		Email.Login(driver);
 		sleep(5000);
-		Monkey.Run(driver);
+		Monkey.run(driver);
 	}
 
 	private static void sleep(long millis) {

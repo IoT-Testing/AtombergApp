@@ -8,6 +8,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import org.awaitility.Awaitility;
@@ -98,8 +99,8 @@ public class FrameHandlingExample {
 
 		for (WebElement element : childElements) {
 			// Check if the element's content description matches the desired device name
-			System.out.println(element.getAttribute("content-desc"));
-			if (element.getAttribute("content-desc").equals(deviceName)) {
+			System.out.println(element.getDomAttribute("content-desc"));
+			if (Objects.equals(element.getDomAttribute("content-desc"), deviceName)) {
 				// Found the desired device, now click on the connect button corresponding to it.
 
 				WebElement connectButton = element.findElement(By.xpath("(//android.view.View[@content-desc="+connectButtonDesc+"])"));
@@ -131,9 +132,9 @@ public class FrameHandlingExample {
 
 		// Print details of elements within the frame
 		for (WebElement element : elementsInFrame) {
-			String desc = element.getAttribute("content-desc");
+			String desc = element.getDomAttribute("content-desc");
 			String text = element.getText();
-			String bounds = element.getAttribute("bounds");
+			String bounds = element.getDomAttribute("bounds");
 			System.out.println("Element: " + element.getTagName() +
 					", Content-desc: " + desc +
 					", Text: " + text +

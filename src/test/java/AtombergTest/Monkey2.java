@@ -1,6 +1,7 @@
 package AtombergTest; //To check 
 
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.ios.IOSDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testng.Assert;
 import Login.Email;
@@ -15,13 +16,14 @@ public class Monkey2 {
 
 	// Running the adb monkey script
 	public static AppiumDriver driver;
+	public static IOSDriver check;
 
-	public static void main(String[] args) {
+	public static void run() {
 		try {
 			String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 			System.out.println(" " + timestamp + " ");
 			openAtomberg();
-			Email.Login(driver);
+			Email.Login(check);
 			timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 			System.out.println(" " + timestamp + " "); // Adjusting the timeout duration for the 'adb' command
 	        System.out.println("recording started");
@@ -31,7 +33,6 @@ public class Monkey2 {
 			System.out.println("Monkey finished....");
 			driver.quit();
 		} catch (Exception exp) {
-			System.out.println(exp.getCause());
 			System.out.println(exp.getMessage());
 			exp.fillInStackTrace();
 		}
@@ -57,7 +58,6 @@ public class Monkey2 {
 		}
 		System.out.println("Atomberg App Opened...");
 		sleep(6000);
-
 	}
 
 	private static void sleep(long millis) {

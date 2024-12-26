@@ -27,10 +27,10 @@ public class Manage {
         System.out.println("Tap on Manage Family");
 
         List<WebElement> elements = driver.findElements(By.className("android.widget.ImageView"));
-        List<WebElement> families = elements.stream().filter(element -> element.getAttribute("content-desc") != null).collect(Collectors.toList());
+        List<WebElement> families = elements.stream().filter(element -> element.getDomAttribute("content-desc") != null).collect(Collectors.toList());
         for(WebElement family : families)
         {
-            System.out.println(family.getAttribute("content-desc"));
+            System.out.println(family.getDomAttribute("content-desc"));
             family.click();
             // insert manage home code
             countMember(driver);
@@ -133,7 +133,7 @@ public class Manage {
 
     private static void countMember(AppiumDriver driver){
         List<WebElement> Elements = driver.findElements(By.className("android.view.View"));
-        List<WebElement> elements = Elements.stream().filter(element -> element.getAttribute("clickable").equals("true")).collect(Collectors.toList());
+        List<WebElement> elements = Elements.stream().filter(element -> element.getDomAttribute("clickable").equals("true")).collect(Collectors.toList());
         System.out.println(elements.size());
         for (WebElement e: elements){
             System.out.println(e.getTagName());

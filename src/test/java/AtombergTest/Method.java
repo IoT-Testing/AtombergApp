@@ -23,11 +23,9 @@ public class Method {
 		String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 		try {
 			File screenshotFile = driver.getScreenshotAs(OutputType.FILE);
-
 			String destinationFilePath = "C:\\Users\\Rohit Bhagat\\Desktop\\Rohit\\Appium Screenshots\\NEWMOBILES\\Trail1\\Screenshot_"
 					+ timestamp + ".png";
 			FileUtils.copyFile(screenshotFile, new File(destinationFilePath));
-
 			System.out.println("Appium screenshot saved as: " + destinationFilePath);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -170,7 +168,6 @@ public class Method {
 	public static void AddLock(AppiumDriver driver) {
 		for (int i = 3 ; i <9 ; i++)
 		{
-
 			WebElement Pin = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.EditText["+i+"]"));
 			String randomNumber = String.valueOf(Array());
 			Pin.sendKeys(randomNumber);
@@ -190,7 +187,5 @@ public class Method {
 			sleep(1500);
 		}
 		sleep(3000);
-
 	}
-
 }

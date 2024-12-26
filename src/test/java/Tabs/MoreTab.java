@@ -11,80 +11,80 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class MoreTab {
-    public static void Options(AppiumDriver driver) {
-        WebElement moreTab = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\n" +
+    public static void Options(AppiumDriver atomberg) {
+        WebElement moreTab = atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\n" +
                 "Tab 3 of 3\"]"));
         moreTab.click();
         System.out.println("MoreTab");
         sleep(1000);
-        Edit.Profile(driver);
+        Edit.Profile(atomberg);
 
 		sleep(2000);
-		Alexa.Connect(driver);
+		Alexa.Connect(atomberg);
 		Sleep(5000);
-		GoogleHome.Connect(driver);
+		GoogleHome.Connect(atomberg);
         Sleep(3000);
 
-        WebElement Theme = driver.findElement(By.xpath("//android.widget.ScrollView/android.widget.ImageView[5]"));
+        WebElement Theme = atomberg.findElement(By.xpath("//android.widget.ScrollView/android.widget.ImageView[5]"));
         Theme.click();
         System.out.println("Theme");
-        Scroll.Up(driver);
+        Scroll.Up(atomberg);
 
         // Change Electricity Unit Price
-        EUP.UnitPrice(driver);
-        EUP.Currency(driver);
+        electricity.UnitPrice(atomberg);
+        electricity.Currency(atomberg);
         sleep(1000);
-        Tap.withPercentage(driver, 0.10, 0.10);
+        Tap.withPercentage(atomberg, 0.10, 0.10);
 
         //Add Live Widget
 
         // Manage Family
-//        Manage.Family(driver);
+//        Manage.Family(atomberg);
 
         // Help
-        WebElement HelpBt = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Help\"]"));
+        WebElement HelpBt = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Help\"]"));
         HelpBt.click();
-        Method.captureScreenshot(driver);
+        Method.captureScreenshot(atomberg);
         System.out.println("Tap on Help");
 
-        Help.RaC(driver);
-        Help.TC(driver);
-        Help.Videos(driver);
-        Help.Manual(driver);
-        Help.Troubleshoot(driver);
-        Scroll.Up(driver);
-        Help.email(driver);
-        Help.call(driver);
+        Help.RaC(atomberg);
+        Help.TC(atomberg);
+        Help.Videos(atomberg);
+        Help.Manual(atomberg);
+        Help.Troubleshoot(atomberg);
+        Scroll.Up(atomberg);
+        Help.email(atomberg);
+        Help.call(atomberg);
 
-        driver.navigate().back();
+        atomberg.navigate().back();
         // Rate Us
         sleep(1000);
-        WebElement RateUs = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Rate us\"]"));
+        WebElement RateUs = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Rate us\"]"));
         RateUs.click();
-        Method.captureScreenshot(driver);
+        Method.captureScreenshot(atomberg);
         System.out.println("Tap on Rate Us");
-        driver.navigate().back();
-        Scroll.Up(driver);
+        atomberg.navigate().back();
+        Scroll.Up(atomberg);
 
         // Privacy Policy
-        WebElement PrivacyPolicy = driver
+        WebElement PrivacyPolicy = atomberg
                 .findElement(By.xpath("//android.view.View[@content-desc=\"Privacy policy\"]"));
         PrivacyPolicy.click();
-        Method.captureScreenshot(driver);
+        Method.captureScreenshot(atomberg);
         System.out.println("Tap on Privacy Policy");
-        driver.navigate().back();
+        atomberg.navigate().back();
         sleep(1000);
-        Scroll.Up(driver);
+        Scroll.Up(atomberg);
 
-        AccManage.ChangePassword(driver);
-        AccManage.DeleteAccount(driver);
-        AccManage.DeveloperOptions(driver);
-//        AccManage.Logout(driver);
+        AccManage.ChangePassword(atomberg);
+        AccManage.DeleteAccount(atomberg);
+        AccManage.DeveloperOptions(atomberg);
+//        AccManage.Logout(atomberg);
 
     }
-//    private static void LiveWidget(AppiumDriver driver)
+//    private static void LiveWidget(AppiumDriver atomberg)
 //    {
-//        List<WebElement> Element = driver.findElements(By.className(""));
+//        List<WebElement> Element = atomberg.findElements(By.className(""));
 //
 //    }
 

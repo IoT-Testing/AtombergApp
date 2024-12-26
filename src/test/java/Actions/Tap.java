@@ -2,13 +2,12 @@ package Actions;
 
 import java.time.Duration;
 import java.util.Collections;
-
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.interactions.Pause;
 import org.openqa.selenium.interactions.PointerInput;
 import org.openqa.selenium.interactions.Sequence;
-
 import io.appium.java_client.AppiumDriver;
+
 
 public class Tap {
 	//2 types as there are some elements which are set w.r.t the screen dimensions of the mobile

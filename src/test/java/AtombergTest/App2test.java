@@ -1,7 +1,12 @@
 package AtombergTest; //To check
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.Duration;
+
+import io.appium.java_client.service.local.AppiumDriverLocalService;
+import io.appium.java_client.service.local.AppiumServiceBuilder;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -10,17 +15,15 @@ import io.appium.java_client.AppiumDriver;
 
 class App2test {
 	public static AppiumDriver driver;
+	public static AppiumDriverLocalService service;
 
 	@BeforeMethod
 	public static void openAtomberg() {
+		service = new AppiumServiceBuilder().withAppiumJS(new File("C:\\Users\\Rohit Bhagat\\AppData\\Roaming\\npm\\node_modules\\appium\\build\\lib\\main.js"))
+				.withIPAddress("127.0.0.1").usingPort(4723).withTimeout(Duration.ofSeconds(300)).build();
+		service.start();
 		DesiredCapabilities cap = new DesiredCapabilities();
-
 		cap.setCapability("platformName", "Android");
-		cap.setCapability("platformVersion", "14");
-		cap.setCapability("appPackage", "com.atomberg.app");
-		cap.setCapability("appActivity", "com.atomberg.app.MainActivity");
-		cap.setCapability("apksigner",
-				"C:\\Users\\Rohit Bhagat\\Desktop\\android-sdk\\build-tools\\34.0.0\\lib\\apksigner.jar");
 		try {
 			System.out.println("Initializing Appium driver..."); // Check if the Appium driver is initialized
 			URL url = new URL("http://127.0.0.1:4723/wd/hub"); // URL of the Appium session
@@ -37,7 +40,7 @@ class App2test {
 		Method.captureScreenshot(driver);
 	}
 
-	
+
 	void App(String[] args) {
 		/**
 		 * @author Rohit
@@ -47,7 +50,6 @@ class App2test {
 			Email.Login(driver);
 			sleep(5000);
 		} catch (Exception exp) {
-			System.out.println(exp.getCause());
 			System.out.println(exp.getMessage());
 			exp.printStackTrace();
 		}
@@ -61,5 +63,4 @@ class App2test {
 		}
 		System.out.println("......");
 	}
-
 }

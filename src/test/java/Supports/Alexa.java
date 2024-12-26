@@ -50,8 +50,8 @@ public class Alexa {
 		driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Link\"]")).click();
 
 		List<WebElement> Elements = driver.findElements(By.className("android.view.View"));
-		List<WebElement> elements = Elements.stream().filter(element -> element.getAttribute("content-desc")!=null).collect(Collectors.toList());
-		List<WebElement> algL = elements.stream().filter(element -> element.getAttribute("content-desc").equals("Account linking guide")).collect(Collectors.toList());
+		List<WebElement> elements = Elements.stream().filter(element -> element.getDomAttribute("content-desc")!=null).collect(Collectors.toList());
+		List<WebElement> algL = elements.stream().filter(element -> element.getDomAttribute("content-desc").equals("Account linking guide")).collect(Collectors.toList());
 		System.out.println(algL.size());
 		if (!algL.isEmpty())
 		{
@@ -97,9 +97,9 @@ public class Alexa {
 
 	private static void linkCheck(AppiumDriver driver){
 		List<WebElement> Success = driver.findElements(By.className("android.view.View"));
-		List<WebElement> successM = Success.stream().filter(element -> element.getAttribute("content-desc")!=null).collect(Collectors.toList());
+		List<WebElement> successM = Success.stream().filter(element -> element.getDomAttribute("content-desc")!=null).collect(Collectors.toList());
 		for(WebElement e:successM)
-			if(e.getAttribute("content-desc").equals("Alexa Linked Successfully")){
+			if(e.getDomAttribute("content-desc").equals("Alexa Linked Successfully")){
 				System.out.println("Alexa Linked Successfully");
 				Tap.withPercentage(driver, 0.20,0.20);
 			}
