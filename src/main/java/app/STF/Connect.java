@@ -29,7 +29,8 @@ public class Connect{
         stfLogin();
         List<WebElement> elementList = driver1.findElements(By.tagName("li"));
         List<WebElement> devicesList = elementList.stream().filter(webElement -> webElement.getDomAttribute("id")!=null).collect(Collectors.toList());
-        devicesList.get(0).click();
+        int i = (int) (Math.random() * devicesList.size());
+        devicesList.get(i).click();
         List<WebElement> listOfTextBox = driver1.findElements(By.tagName("textarea"));
         WebElement ip = listOfTextBox.get(1);
         Point ipLocation = ip.getLocation();
