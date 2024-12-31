@@ -1,6 +1,6 @@
 package AtombergTest; //To check 
 
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testng.Assert;
@@ -15,7 +15,7 @@ import java.util.Map;
 public class Monkey2 {
 
 	// Running the adb monkey script
-	public static AppiumDriver driver;
+	public static AndroidDriver driver;
 	public static IOSDriver check;
 
 	public static void run() {
@@ -23,7 +23,7 @@ public class Monkey2 {
 			String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 			System.out.println(" " + timestamp + " ");
 			openAtomberg();
-			Email.Login(check);
+			Email.Login(driver);
 			timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 			System.out.println(" " + timestamp + " "); // Adjusting the timeout duration for the 'adb' command
 	        System.out.println("recording started");
@@ -48,7 +48,7 @@ public class Monkey2 {
 		try {
 			System.out.println("Initializing Driver..."); // Check if the Appium driver is initialized
 			URL url = new URL("http://127.0.0.1:4723/wd/hub"); // URL of the Appium session
-            driver = new AppiumDriver(url, cap);
+            driver = new AndroidDriver(url, cap);
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
 			System.out.println("Appium driver initialized.");
 		} catch (MalformedURLException e) {

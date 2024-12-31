@@ -9,10 +9,10 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import AtombergTest.Method;
 import Login.Email;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 
 public class Check {
-	public static AppiumDriver driver;
+	public static AndroidDriver driver;
 
 	public static void main(String[] args) {
 		openAtomberg();
@@ -20,12 +20,12 @@ public class Check {
 		Lock(driver);
 	}
 
-	public static void blob(AppiumDriver driver)
+	public static void blob(AndroidDriver driver)
 	{
 		System.out.println("checking the git");
 	}
 
-	public static void Lock(AppiumDriver driver) {
+	public static void Lock(AndroidDriver driver) {
 		/**
 		 * @author Rohit
 		 */
@@ -70,7 +70,7 @@ public class Check {
 		try {
 			System.out.println("Initializing Appium driver..."); // Check if the Appium driver is initialized
 			URL url = new URL("http://127.0.0.1:4723/wd/hub"); // URL of the Appium session
-			driver = new AppiumDriver(url, cap);
+			driver = new AndroidDriver(url, cap);
 			driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
 			System.out.println("Appium driver initialized.");
 		} catch (MalformedURLException e) {
@@ -84,7 +84,7 @@ public class Check {
 		Method.captureScreenshot(driver);
 	}
 
-	public static void CLA(AppiumDriver driver) {
+	public static void CLA(AndroidDriver driver) {
 
 		driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Locks\"]")).click();
 		WebElement LO = null;
@@ -111,7 +111,7 @@ public class Check {
 		}
 	}
 
-	public static void LockControl(AppiumDriver driver) {// driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+	public static void LockControl(AndroidDriver driver) {// driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
 		sleep(12000);
 		driver.findElement(By.xpath("//android.view.View[@content-desc=\"Pull down to unlock\"]")).click();
 		boolean Unlock = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Unlocked\"]")).isDisplayed();
@@ -123,7 +123,7 @@ public class Check {
 		History(driver);
 	}
 
-	public static void History(AppiumDriver driver) {
+	public static void History(AndroidDriver driver) {
 		WebElement history = null;
 		try {
 			history = driver.findElement(By.xpath("//android.view.View[@content-desc=\"History\"]"));

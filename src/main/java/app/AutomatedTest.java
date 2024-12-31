@@ -1,26 +1,26 @@
 package app;
 
 import app.Lock.LockManagement;
-import io.appium.java_client.AppiumDriver;
+import app.WaterPurifier.ROManagement;
+import app.util.ActionsUtil;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.appmanagement.ApplicationState;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 
+import static io.appium.java_client.android.NetworkSpeed.LTE;
+
 public class AutomatedTest {
 
-    public AppiumDriver atomberg;
+    public AndroidDriver atomberg;
 
     public void run() throws IOException, UnsupportedFlavorException {
         AppInitializer appInitializer = new AppInitializer();
         appInitializer.openApp();
-        appInitializer.checkMainScreen();
         atomberg = appInitializer.getDriver();
-
+        appInitializer.checkMainScreen();
         LockManagement lock = new LockManagement(atomberg);
         lock.checkLock();
-        AndroidDriver driver = (AndroidDriver) atomberg;
-        ApplicationState appState = driver.queryAppState("com.atomberg.app");
-        System.out.println(appState);
+        ActionsUtil.SSleep(5);
     }
 }

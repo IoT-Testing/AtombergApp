@@ -4,10 +4,10 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import AtombergTest.Method;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 
 public class electricity {
-	public static void UnitPrice(AppiumDriver driver) {
+	public static void UnitPrice(AndroidDriver driver) {
 		WebElement UnitPrice = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Electricity unit price\"]"));
 		UnitPrice.click();
 		Method.captureScreenshot(driver);
@@ -17,7 +17,7 @@ public class electricity {
 		ChangeAmount.click();
 		Method.captureScreenshot(driver);
 	}
-	public static void Currency(AppiumDriver driver) {
+	public static void Currency(AndroidDriver driver) {
 		WebElement ChangeCurrency = driver.findElement(By.xpath("//android.view.View[@content-desc=\"INR\"]"));
 		ChangeCurrency.click();
 		Method.captureScreenshot(driver);

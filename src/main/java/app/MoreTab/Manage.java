@@ -3,18 +3,17 @@ package app.MoreTab;
 import app.ScreenCheck.ScreenCheck;
 import app.util.ActionsUtil;
 import app.util.AppUtil;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class Manage {
-    public AppiumDriver atomberg;
+    public AndroidDriver atomberg;
 
-    public Manage(AppiumDriver driver) {
+    public Manage(AndroidDriver driver) {
         this.atomberg = driver;
     }
 
@@ -97,9 +96,9 @@ public class Manage {
         /*
             CLICK ON DEVELOPER OPTIONS
         */
-        WebElement developerOptionss = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Developer options\"]"));
-        assert developerOptionss.isDisplayed();
-        developerOptionss.click();
+        WebElement developerOptions = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Developer options\"]"));
+        assert developerOptions.isDisplayed();
+        developerOptions.click();
         AppUtil.captureScreenshot(atomberg);
         System.out.println("Tap on Developer Options");
         ActionsUtil.sleep(1000);
@@ -172,16 +171,13 @@ public class Manage {
             ActionsUtil.sleep(500);
             System.out.println(familyElement.get(i).getDomAttribute("content-desc"));
             familyElement.get(i).click();
-            System.out.println(Objects.equals(familyName, "Add") && Objects.equals(familyName, "1\n" +
-                    "Script"));
+            System.out.println(Objects.equals(familyName, "Add") && familyName.endsWith("Script"));
             System.out.println(Objects.equals(familyName, "1\n" +
                     "Script"));
-            if (!Objects.equals(familyName, "Add") && !Objects.equals(familyName, "1\n" +
-                    "Script")) {
+            if (!Objects.equals(familyName, "Add") && !Objects.requireNonNull(familyName).endsWith("Script")) {
                 home();
                 back();
-            } else if (Objects.equals(familyName, "1\n" +
-                    "Script")) {
+            } else if (familyName.endsWith("Script")) {
                 WebElement FamilyEdit = atomberg.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View[2]"));
                 FamilyEdit.click();
                 System.out.println("Family Edit");

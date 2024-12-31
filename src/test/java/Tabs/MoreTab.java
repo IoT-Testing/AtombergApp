@@ -6,12 +6,12 @@ import AtombergTest.Method;
 import Actions.*;
 import MoreTab.*;
 import Supports.*;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class MoreTab {
-    public static void Options(AppiumDriver atomberg) {
+    public static void Options(AndroidDriver atomberg) {
         WebElement moreTab = atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\n" +
                 "Tab 3 of 3\"]"));
         moreTab.click();
@@ -82,7 +82,7 @@ public class MoreTab {
 //        AccManage.Logout(atomberg);
 
     }
-//    private static void LiveWidget(AppiumDriver atomberg)
+//    private static void LiveWidget(AndroidDriver atomberg)
 //    {
 //        List<WebElement> Element = atomberg.findElements(By.className(""));
 //

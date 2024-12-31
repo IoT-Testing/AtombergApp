@@ -1,5 +1,5 @@
 //package AtombergTest;
-//import io.appium.java_client.AppiumDriver;
+//import io.appium.java_client.android.AndroidDriver;
 //import org.json.JSONObject;
 //import io.appium.java_client.android.AndroidDriver;
 //
@@ -9,7 +9,7 @@
 //public class STFAppiumExample {
 //    private static final String STF_SERVICE_URL = "https://your-stf-instance.com";
 //    private static final String ACCESS_TOKEN = "your-access-token";
-//    public static AppiumDriver driver;
+//    public static AndroidDriver driver;
 //    public static void main(String[] args) throws MalformedURLException {
 //        // Create a new AndroidDriver instance
 //
@@ -20,7 +20,7 @@
 //        String deviceId = reserveDevice(STF_SERVICE_URL, ACCESS_TOKEN, deviceResponse);
 //
 //        // Use the reserved device to run your Appium test
-//        driver = new AppiumDriver(new URL(STF_SERVICE_URL + "/wd/hub/session/" + deviceId), capabilities);
+//        driver = new AndroidDriver(new URL(STF_SERVICE_URL + "/wd/hub/session/" + deviceId), capabilities);
 //        // Run your test logic here
 //        driver.quit();
 //    }

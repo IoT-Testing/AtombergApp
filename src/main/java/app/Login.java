@@ -3,15 +3,15 @@ package app;
 import app.util.ActionsUtil;
 import app.util.AppUtil;
 import app.util.PermissionUtil;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import static java.lang.Thread.sleep;
 
 public class Login {
-    public AppiumDriver atomberg;
+    public AndroidDriver atomberg;
 
-    public Login(AppiumDriver driver){
+    public Login(AndroidDriver driver){
         this.atomberg = driver;
     }
 

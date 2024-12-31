@@ -4,7 +4,7 @@ import AtombergTest.Method;
 import Login.Email;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -18,7 +18,7 @@ import java.util.Map;
 
 
 public class Monkey {
-	public static AppiumDriver driver;
+	public static AndroidDriver driver;
 	static ExtentReports extent = new ExtentReports();
 
 	@BeforeAll
@@ -48,7 +48,7 @@ public class Monkey {
 		try {
 			System.out.println("Initializing Appium driver..."); // Check if the Appium driver is initialized
 			URL url = new URL("http://127.0.0.1:4723/wd/hub"); // URL of the Appium session
-			driver = new AppiumDriver(url, cap);
+			driver = new AndroidDriver(url, cap);
 			driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
 			System.out.println("Appium driver initialized.");
 		} catch (MalformedURLException e) {

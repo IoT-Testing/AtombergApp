@@ -2,7 +2,7 @@ package Supports;
 
 import Actions.Tap;
 
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import org.awaitility.Awaitility;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class GoogleHome {
-	public static void Connect(AppiumDriver driver) {
+	public static void Connect(AndroidDriver driver) {
 		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
 		WebElement SLD = null;
 		try {
@@ -29,7 +29,7 @@ public class GoogleHome {
 		ALG(driver);
 		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
 	}
-	private static void googleHome(AppiumDriver driver) {
+	private static void googleHome(AndroidDriver driver) {
 		WebElement googleConnect = null;
 		try{
 			googleConnect = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Google\nConnect\"]"));
@@ -42,7 +42,7 @@ public class GoogleHome {
 			System.out.println("Google Home is already connected");
 		}
 	}
-	public static void ALG(AppiumDriver driver) {//Account Linking Guide
+	public static void ALG(AndroidDriver driver) {//Account Linking Guide
 			List<WebElement> Elements = driver.findElements(By.className("android.view.View"));
 			List<WebElement> elements = Elements.stream().filter(element -> element.getDomAttribute("content-desc")!=null).collect(Collectors.toList());
 			System.out.println(elements.size());
@@ -61,7 +61,7 @@ public class GoogleHome {
 
 			}
 		}
-	private static void gCheck(AppiumDriver driver){
+	private static void gCheck(AndroidDriver driver){
 		List<WebElement> CHECK =driver.findElements(By.className("android.widget.Button"));
 		System.out.println("Check");
 		System.out.println(CHECK.size());
@@ -86,7 +86,7 @@ public class GoogleHome {
 		done.click();
 		back(driver);
 }
-	private static void back(AppiumDriver driver){
+	private static void back(AndroidDriver driver){
 		WebElement SLD =null;
 		while(SLD == null)
 		{
@@ -97,7 +97,7 @@ public class GoogleHome {
 			{}
 		}
 	}
-	private static void checkContinue(AppiumDriver driver){
+	private static void checkContinue(AndroidDriver driver){
 		WebElement continueBt = null;
 		try {
 			continueBt = driver.findElement(By.xpath("//android.widget.Button[@text=\"Continue\"]"));

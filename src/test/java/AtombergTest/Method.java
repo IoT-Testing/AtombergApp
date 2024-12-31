@@ -11,7 +11,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import Actions.*;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -19,7 +19,7 @@ import java.util.*;
 
 
 public class Method {
-	public static String captureScreenshot(AppiumDriver driver) {
+	public static String captureScreenshot(AndroidDriver driver) {
 		String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 		try {
 			File screenshotFile = driver.getScreenshotAs(OutputType.FILE);
@@ -33,7 +33,7 @@ public class Method {
 		return System.getProperty("user.dir")+ "//reports//" + timestamp+".png";
 	}
 
-	public static void FanControl(AppiumDriver driver) {
+	public static void FanControl(AndroidDriver driver) {
 
 		WebElement Speed1 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"1\"]"));
 		Speed1.click();
@@ -77,7 +77,7 @@ public class Method {
 		}
 	}
 
-	public static void SearchWiFi(AppiumDriver driver, String SearchString) {
+	public static void SearchWiFi(AndroidDriver driver, String SearchString) {
 		//// android.widget.EditText[@text="Better_Together"]
 		for (int i = 1; i <= 10; i++) {
 			WebElement element = null;
@@ -123,7 +123,7 @@ public class Method {
 		return numbers[randomIndex];
 	}
 
-	public static void AdditionProcess(AppiumDriver driver) {
+	public static void AdditionProcess(AndroidDriver driver) {
 		WebElement Next = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Next\"]")); // Add 2nd
 																											// Device
 		System.out.println("Next");
@@ -165,7 +165,7 @@ public class Method {
 		Method.captureScreenshot(driver);
 	}
 
-	public static void AddLock(AppiumDriver driver) {
+	public static void AddLock(AndroidDriver driver) {
 		for (int i = 3 ; i <9 ; i++)
 		{
 			WebElement Pin = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.EditText["+i+"]"));

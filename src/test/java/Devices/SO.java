@@ -14,11 +14,11 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import Actions.Scroll;
 
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 
 public class SO {//Search Online Fan
 
-    public static void Fan(AppiumDriver driver) {
+    public static void Fan(AndroidDriver driver) {
 
         try {
             sleep(2500);
@@ -47,7 +47,7 @@ public class SO {//Search Online Fan
         Awaitility.await().atMost(millis, TimeUnit.MILLISECONDS);
     }
 
-    public static void CFO(AppiumDriver driver) {//Check Fan Online
+    public static void CFO(AndroidDriver driver) {//Check Fan Online
         WebElement Fans = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Fans\"]"));
         Fans.click();   // click on the fan tab
         sleep(3000);
@@ -105,7 +105,7 @@ public class SO {//Search Online Fan
         }
     }
 
-    public static void Lock(AppiumDriver driver) {
+    public static void Lock(AndroidDriver driver) {
         driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Locks\"]")).click();
         WebElement LO = null;  // checks Lock availability
         try {
@@ -133,7 +133,7 @@ public class SO {//Search Online Fan
         }
     }
     // inside the lock control
-    public static void LockControl(AppiumDriver driver) {
+    public static void LockControl(AndroidDriver driver) {
         sleep(7500);
         // click on the handle(tap to unlock)
         driver.findElement(By.xpath("//android.view.View[@content-desc=\"Pull down to unlock\"]")).click();
@@ -169,7 +169,7 @@ public class SO {//Search Online Fan
 
     }
 
-    public static void history(AppiumDriver driver) {
+    public static void history(AndroidDriver driver) {
         WebElement history = null;
         try {// check in the history button is available
             history = driver.findElement(By.xpath("//android.view.View[@content-desc=\"History\"]"));
@@ -181,7 +181,7 @@ public class SO {//Search Online Fan
         }
     }
 
-    public static void lockSettings(AppiumDriver driver) {
+    public static void lockSettings(AndroidDriver driver) {
         WebElement settings = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Settings\"]"));
         settings.click();  // tap on the Setting button
         Passcode(driver);  // entering the passcode. specific to one plus, poco and redmi
@@ -195,7 +195,7 @@ public class SO {//Search Online Fan
 
     }
 
-    public static void AccessKeys(AppiumDriver driver) {
+    public static void AccessKeys(AndroidDriver driver) {
 
         WebElement AccessKeys = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Access\nkeys\"]"));
         AccessKeys.click();
@@ -206,7 +206,7 @@ public class SO {//Search Online Fan
     }
 
     // set for specific devices using the Coordinates
-    public static void Passcode(AppiumDriver driver) {
+    public static void Passcode(AndroidDriver driver) {
         Tap.withCoordinates(driver, 540, 880);
         sleep(500);
         NumberPad.one(driver);
@@ -218,7 +218,7 @@ public class SO {//Search Online Fan
         NumberPad.done(driver);
     }
 
-    public static void KeyType(AppiumDriver driver) {
+    public static void KeyType(AndroidDriver driver) {
         List<WebElement> KEYS = driver.findElements(By.className("android.widget.Button"));
         int i;
         int total = KEYS.size();
@@ -247,7 +247,7 @@ public class SO {//Search Online Fan
         }
     }
 
-    public static void PBCSettings(AppiumDriver driver) {
+    public static void PBCSettings(AndroidDriver driver) {
         WebElement PBC = null; // Checks the availability on Pin, Biometrics & Cards in Lock Settings
         try {
             PBC = driver.findElement(By.xpath("//android.view.View[@content-desc=\"PINs, biometric and card settings\"]"));
@@ -286,7 +286,7 @@ public class SO {//Search Online Fan
         }
     }
 
-    public static void passageMode(AppiumDriver driver) {
+    public static void passageMode(AndroidDriver driver) {
         WebElement PMDisabled = null;
         try {
             PMDisabled = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Passage Mode disabled successfully\"]"));
@@ -324,7 +324,7 @@ public class SO {//Search Online Fan
 
     }
 
-    public static void fingerprint(AppiumDriver driver) {
+    public static void fingerprint(AndroidDriver driver) {
         WebElement FPDisabled = null;
         try {
             FPDisabled = driver.findElement(By.xpath("//android.view.View[@content-desc=\"All Fingerprints Disabled Successfully!\"]"));
@@ -345,7 +345,7 @@ public class SO {//Search Online Fan
         }
     }
 
-    public static void CardEnable(AppiumDriver driver) {
+    public static void CardEnable(AndroidDriver driver) {
         WebElement CNotAvail = null;
         WebElement CDisable = null;
         WebElement CEnabled = null;

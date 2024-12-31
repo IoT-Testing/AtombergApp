@@ -4,10 +4,10 @@ import Actions.Swipe;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 
 public class Fans {
-	public static void SixLEDcolorSelect(AppiumDriver driver) {
+	public static void SixLEDcolorSelect(AndroidDriver driver) {
 		WebElement RPlus = null;
 		WebElement SPlus = null;
 		try {
@@ -28,7 +28,7 @@ public class Fans {
 		
 	}
 
-	public static void Renesa(AppiumDriver driver) {
+	public static void Renesa(AndroidDriver driver) {
 		try {
 			int randomNumber = (int) (Math.random() * 5); // generate a random number between 0 and 5
 			switch (randomNumber) {
@@ -76,7 +76,7 @@ public class Fans {
 		}
 	}
 
-	public static void RenesaPlus(AppiumDriver driver) {
+	public static void RenesaPlus(AndroidDriver driver) {
 		try {
 			int randomNumber = (int) (Math.random() * 4); // generate a random number between 0 and 4
 			switch (randomNumber) {
@@ -110,7 +110,7 @@ public class Fans {
 		}
 	}
 
-	public static void StudioPlus(AppiumDriver driver) {
+	public static void StudioPlus(AndroidDriver driver) {
 		try {
 			int randomNumber = (int) (Math.random() * 2); // generate a random number between 0 and 5
 			switch (randomNumber) {
@@ -132,7 +132,7 @@ public class Fans {
 		}
 	}
 
-	public static void Aris(AppiumDriver driver) {
+	public static void Aris(AndroidDriver driver) {
 		try {
 			int randomNumber = (int) (Math.random() * 2); // generate a random number between 0 and 2
 			switch (randomNumber) {
@@ -154,7 +154,7 @@ public class Fans {
 		}
 	}
 
-	public static void Jaguar(AppiumDriver driver) {
+	public static void Jaguar(AndroidDriver driver) {
 		try {
 			int randomNumber = (int) (Math.random() * 3); // generate a random number between 0 and 5
 			switch (randomNumber) {
@@ -182,7 +182,7 @@ public class Fans {
 		}
 	}
 
-	public static void Erica(AppiumDriver driver) {
+	public static void Erica(AndroidDriver driver) {
 		try {
 			int randomNumber = (int) (Math.random() * 2); // generate a random number between 0 and 2
 			switch (randomNumber) {

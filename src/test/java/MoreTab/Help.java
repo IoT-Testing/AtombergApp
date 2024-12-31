@@ -6,12 +6,12 @@ import org.openqa.selenium.WebElement;
 import Actions.Scroll;
 import Actions.Swipe;
 import AtombergTest.Method;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 
 import java.util.concurrent.TimeUnit;
 
 public class Help {
-    public static void RaC(AppiumDriver driver) {
+    public static void RaC(AndroidDriver driver) {
         WebElement RaiseComplaint = driver
                 .findElement(By.xpath("//android.view.View[@content-desc=\"Raise a complaint\"]"));
         RaiseComplaint.click();
@@ -22,7 +22,7 @@ public class Help {
 
     }
 
-    public static void TC(AppiumDriver driver) {
+    public static void TC(AndroidDriver driver) {
         WebElement TrackComplaint = driver
                 .findElement(By.xpath("//android.view.View[@content-desc=\"Track complaints\"]"));
         TrackComplaint.click();
@@ -43,7 +43,7 @@ public class Help {
         driver.navigate().back();
     }
 
-    private static void videoTryCatch(AppiumDriver driver) {
+    private static void videoTryCatch(AndroidDriver driver) {
         WebElement VideoTutorials = null;
         try {
             VideoTutorials = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Video tutorials\"]"));
@@ -56,7 +56,7 @@ public class Help {
 
     }
 
-    public static void Videos(AppiumDriver driver) {
+    public static void Videos(AndroidDriver driver) {
         WebElement AppTour = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"App Tour\"]"));
         AppTour.click();
 
@@ -151,7 +151,7 @@ public class Help {
 
     }
 
-    public static void Manual(AppiumDriver driver) {
+    public static void Manual(AndroidDriver driver) {
         WebElement manual = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Manual\"]"));
         manual.click();
         System.out.println("Manual Open");
@@ -161,7 +161,7 @@ public class Help {
         driver.navigate().back();
     }
 
-    public static void Troubleshoot(AppiumDriver driver) {
+    public static void Troubleshoot(AndroidDriver driver) {
         driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Troubleshoot\"]")).click();
         // Troubleshoot for Fans
         WebElement fan = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Atomberg Fan\"]"));
@@ -270,7 +270,7 @@ public class Help {
 
     }
 
-    private static void ReturnToHome(AppiumDriver driver) {
+    private static void ReturnToHome(AndroidDriver driver) {
         WebElement ReturnToHome = driver
                 .findElement(By.xpath("//android.widget.Button[@content-desc=\"Return to home\"]"));
         ReturnToHome.click();
@@ -279,7 +279,7 @@ public class Help {
 
     }
 
-    private static void EnterSerialNumber(AppiumDriver driver) {
+    private static void EnterSerialNumber(AndroidDriver driver) {
         WebElement ManualEnter = driver.findElement(By.xpath("//android.widget.EditText"));
         ManualEnter.click();
         Method.captureScreenshot(driver);
@@ -340,7 +340,7 @@ public class Help {
 
     }
 
-    private static void OK(AppiumDriver driver) {
+    private static void OK(AndroidDriver driver) {
         WebElement OK = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Ok\"]"));
         OK.click();
         Method.captureScreenshot(driver);
@@ -348,14 +348,14 @@ public class Help {
 
     }
 
-	public static void email(AppiumDriver driver)
+	public static void email(AndroidDriver driver)
 	{
 		WebElement emailUs = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Email us\"]"));
 		emailUs.click();
 		driver.navigate().back();
 	}
 
-	public static void call(AppiumDriver driver)
+	public static void call(AndroidDriver driver)
 	{
 		WebElement callUs =driver.findElement(By.xpath("//android.view.View[@content-desc=\"Call us\"]"));
 		callUs.click();

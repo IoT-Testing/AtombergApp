@@ -1,6 +1,6 @@
 package app.util;
 
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebElement;
@@ -11,10 +11,10 @@ import java.time.Duration;
 import java.util.Collections;
 
 public class ActionsUtil {
-    public AppiumDriver driver;
+    public AndroidDriver driver;
     public static class Tap {
         // TO perform a Tap action
-        public static void withCoordinates(AppiumDriver driver, int x, int y) {
+        public static void withCoordinates(AndroidDriver driver, int x, int y) {
             //To perform tap action at the specified coordinates.
             PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
             Sequence sequence = new Sequence(finger, 1)
@@ -26,7 +26,7 @@ public class ActionsUtil {
             System.out.println("Tap with Coordinates");
         }
 
-        public static void withPercentage(AppiumDriver driver, double x, double y) {
+        public static void withPercentage(AndroidDriver driver, double x, double y) {
             //To perform tap action on an element without locator, and is located according to the screen of the device
             Dimension size = driver.manage().window().getSize(); // Assuming getWindowSize() returns the window size
             int startY = (int) (size.getHeight() * y);
@@ -42,7 +42,7 @@ public class ActionsUtil {
             System.out.println("Tap With %");
         }
 
-        public static void connectButton(AppiumDriver driver, WebElement element){
+        public static void connectButton(AndroidDriver driver, WebElement element){
             int elementStartY = element.getLocation().getY();
             int elementHeight = element.getSize().getHeight();
             int midY = elementStartY + (int) (elementHeight * 0.5);
@@ -52,9 +52,20 @@ public class ActionsUtil {
             int midX = connectStartX + (int) (connectWidth * 0.5);
             withCoordinates(driver, midX, midY);
         }
+
+        public static void element(AndroidDriver driver, WebElement element){
+            int elementStartX = element.getLocation().getX();
+            int elementWidth = element.getSize().getWidth();
+            int elementStartY = element.getLocation().getY();
+            int elementHeight = element.getSize().getHeight();
+
+            int midX = elementStartX + (int) (elementWidth * 0.5);
+            int midY = elementStartY + (int) (elementHeight * 0.5);
+            withCoordinates(driver,midX,midY);
+        }
     }
 
-    public static  void refresh(AppiumDriver driver){
+    public static  void refresh(AndroidDriver driver){
         //Performs Refresh screen action.
         Dimension size = driver.manage().window().getSize();
         int startX = size.getWidth() / 2;
@@ -74,11 +85,10 @@ public class ActionsUtil {
 
     public static class Scroll{
         //Performs Scroll actions
-        public static void Down(AppiumDriver driver) {
+        public static void Down(AndroidDriver driver) {
             Dimension size = driver.manage().window().getSize(); // Assuming getWindowSize() returns the window size
-            int startX = size.getHeight() / 2;
+            int startX = size.getWidth() / 2;
             int startY = size.getHeight() / 2;
-            int endX = size.getHeight() / 2;
             int endY = (int) (size.getHeight() * 0.80); // Adjusted to scroll down
 
             PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
@@ -86,13 +96,13 @@ public class ActionsUtil {
                     .addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY))
                     .addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
                     .addAction(new Pause(finger, Duration.ofMillis(200)))
-                    .addAction(finger.createPointerMove(Duration.ofMillis(250), PointerInput.Origin.viewport(), endX, endY))
+                    .addAction(finger.createPointerMove(Duration.ofMillis(250), PointerInput.Origin.viewport(), startX, endY))
                     .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
             driver.perform(Collections.singletonList(sequence));
             System.out.println("Scrolled Down");
         }
 
-        public static void Up(AppiumDriver driver) {
+        public static void Up(AndroidDriver driver) {
             Dimension size = driver.manage().window().getSize();
             int startX = size.getWidth() / 2;
             int startY = size.getHeight() / 2;
@@ -108,7 +118,7 @@ public class ActionsUtil {
             System.out.println("Scrolled Up");
         }
 
-        public static void element(AppiumDriver driver, WebElement element){
+        public static void element(AndroidDriver driver, WebElement element){
             int elementStartX = element.getLocation().getX();
             int elementWidth = element.getSize().getWidth();
             int elementStartY = element.getLocation().getY();
@@ -135,7 +145,7 @@ public class ActionsUtil {
 
     public static class Swipe {
         // Performs Screen swipes
-        public static void Left(AppiumDriver driver, double x, double y) {
+        public static void Left(AndroidDriver driver, double x, double y) {
             Dimension size = driver.manage().window().getSize(); // Assuming getWindowSize() returns the window size
             int startY = (int) (size.getHeight() * y);
             int startX = (int) (size.getWidth() * x); // Adjusted to swipe left
@@ -154,7 +164,7 @@ public class ActionsUtil {
             System.out.println("Left Swipe");
         }
 
-        public static void Right(AppiumDriver driver, double x, double y) {
+        public static void Right(AndroidDriver driver, double x, double y) {
             Dimension size = driver.manage().window().getSize(); // Assuming getWindowSize() returns the window size
             int startY = (int) (size.getHeight() * y);
             int startX = (int) (size.getWidth() * x); // Adjusted to swipe right
@@ -173,7 +183,7 @@ public class ActionsUtil {
             System.out.println("Right Swipe");
         }
 
-        public static void screenRight(AppiumDriver driver) {
+        public static void screenRight(AndroidDriver driver) {
             Dimension size = driver.manage().window().getSize(); // Assuming getWindowSize() returns the window size
 
             int startY = (int) (size.getHeight() * 0.5);
@@ -191,7 +201,7 @@ public class ActionsUtil {
             System.out.println("Right Swipe");
         }
 
-        public static void screenLeft(AppiumDriver driver) {
+        public static void screenLeft(AndroidDriver driver) {
             Dimension size = driver.manage().window().getSize(); // Assuming getWindowSize() returns the window size
 
             int startY = (int) (size.getHeight() * 0.5);
@@ -208,7 +218,7 @@ public class ActionsUtil {
             System.out.println("Left Swipe");
         }
 
-        public static void Notifications(AppiumDriver driver, double x,double y) {
+        public static void Notifications(AndroidDriver driver, double x,double y) {
             Dimension size = driver.manage().window().getSize(); // Assuming getWindowSize() returns the window size
             int startX = (int) (size.getWidth() * x);
             int startY = (int) (size.getHeight() * y);
@@ -227,13 +237,13 @@ public class ActionsUtil {
         }
     }
 
-    public static void minimize(AppiumDriver driver) {
+    public static void minimize(AndroidDriver driver) {
         //Taps on the minimize button (button mode)
             Tap.withPercentage(driver, 0.50, 1.05);// Tap on the minimize button on the navigation bar
             sleep(2000);
     }
 
-    public static void killApp(AppiumDriver driver) {
+    public static void killApp(AndroidDriver driver) {
         // this is to minimize the app and kill the main activity of the app
         Tap.withPercentage(driver, 0.28, 1.05);// Tap on the recent button on the navigation bar
         sleep(2000);
@@ -269,7 +279,7 @@ public class ActionsUtil {
         }
     }
 
-    public static void longPress(AppiumDriver driver, int x, int y){
+    public static void longPress(AndroidDriver driver, int x, int y){
         //Performs Long Press action on the screen.
         PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
         Sequence sequence = new Sequence(finger, 1)

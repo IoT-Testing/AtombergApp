@@ -6,10 +6,10 @@ import AtombergTest.Method;
 import org.openqa.selenium.By;
 import java.util.stream.Collectors;
 import org.openqa.selenium.WebElement;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 
 public class AccManage {
-    public static void ChangePassword(AppiumDriver driver) {
+    public static void ChangePassword(AndroidDriver driver) {
         WebElement ChangePassword = driver
                 .findElement(By.xpath("//android.view.View[@content-desc=\"Change password\"]"));
         ChangePassword.click();
@@ -19,7 +19,7 @@ public class AccManage {
         driver.navigate().back();
     }
 
-    public static void DeleteAccount(AppiumDriver driver) {
+    public static void DeleteAccount(AndroidDriver driver) {
         WebElement DeleteAccount = driver
                 .findElement(By.xpath("//android.view.View[@content-desc=\"Delete account\"]"));
         DeleteAccount.click();
@@ -29,7 +29,7 @@ public class AccManage {
         driver.navigate().back();
     }
 
-    public static void DeveloperOptions(AppiumDriver driver) {
+    public static void DeveloperOptions(AndroidDriver driver) {
         WebElement DevOps = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Developer options\"]"));
         DevOps.click();
         Method.captureScreenshot(driver);
@@ -37,7 +37,7 @@ public class AccManage {
         driver.navigate().back();
     }
 
-    public static void Logout(AppiumDriver driver) {
+    public static void Logout(AndroidDriver driver) {
         checkLogout(driver);
 
         WebElement Logout = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Logout\"]"));
@@ -49,7 +49,7 @@ public class AccManage {
         /*driver.navigate().back();*/
     }
 
-    private static void goToMore(AppiumDriver driver) {
+    private static void goToMore(AndroidDriver driver) {
         List<WebElement> MT = driver.findElements(By.className("android.widget.ImageView"));
         System.out.println(MT.size());
         System.out.println("More");
@@ -73,7 +73,7 @@ public class AccManage {
 
     }
 
-    private static void checkLogout(AppiumDriver driver) {
+    private static void checkLogout(AndroidDriver driver) {
         AccManage.goToMore(driver);
         List<WebElement> moreTab;
         do {

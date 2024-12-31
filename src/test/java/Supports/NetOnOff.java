@@ -8,11 +8,11 @@ import org.awaitility.Awaitility;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testng.Assert;
 import AtombergTest.Method;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 
 public class NetOnOff {
 
-	public static AppiumDriver driver;
+	public static AndroidDriver driver;
 
 	public static void openAtomberg() {
 		DesiredCapabilities cap = new DesiredCapabilities();
@@ -24,7 +24,7 @@ public class NetOnOff {
 		try {
 			System.out.println("Initializing Appium driver..."); // Check if the Appium driver is initialized
 			URL url = new URL("http://127.0.0.1:4723/wd/hub"); // URL of the Appium session
-			driver = new AppiumDriver(url, cap);
+			driver = new AndroidDriver(url, cap);
 			System.out.println("Appium driver initialized.");
 		} catch (MalformedURLException e) {
 			System.out.println("Error initializing Appium driver: " + e.getMessage());

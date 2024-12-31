@@ -3,14 +3,14 @@ package Supports;
 import Actions.Tap;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import Actions.Swipe;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class Alexa {
-	public static void Connect(AppiumDriver driver) {
+	public static void Connect(AndroidDriver driver) {
 
 		WebElement SLD = null;
 		try {
@@ -27,7 +27,7 @@ public class Alexa {
 
 	}
 
-	private static void alexa(AppiumDriver driver) {
+	private static void alexa(AndroidDriver driver) {
 		WebElement alexaConnect = null;
 		try {
 			alexaConnect = driver
@@ -45,7 +45,7 @@ public class Alexa {
 		linkCheck(driver);
 	}
 
-	private static void ALG(AppiumDriver driver) {
+	private static void ALG(AndroidDriver driver) {
 
 		driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Link\"]")).click();
 
@@ -64,7 +64,7 @@ public class Alexa {
 		}
 	}
 
-	private static void alexaCheck(AppiumDriver driver){
+	private static void alexaCheck(AndroidDriver driver){
 		WebElement CHECK = null;
 		try {
 			CHECK = driver.findElement(By.xpath("//android.widget.TextView[@text=\"Sign in with your email and password\"]"));
@@ -83,7 +83,7 @@ public class Alexa {
 
 	}
 
-	private static void back(AppiumDriver driver){
+	private static void back(AndroidDriver driver){
 		WebElement SLD =null;
 		while(SLD == null)
 		{
@@ -95,7 +95,7 @@ public class Alexa {
 		}
 	}
 
-	private static void linkCheck(AppiumDriver driver){
+	private static void linkCheck(AndroidDriver driver){
 		List<WebElement> Success = driver.findElements(By.className("android.view.View"));
 		List<WebElement> successM = Success.stream().filter(element -> element.getDomAttribute("content-desc")!=null).collect(Collectors.toList());
 		for(WebElement e:successM)

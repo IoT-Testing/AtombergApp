@@ -12,13 +12,13 @@ import org.awaitility.Awaitility;
 import org.openqa.selenium.By; //Selenium Dependencies
 import org.openqa.selenium.WebElement;
 import Actions.Swipe;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 
 public class Analytics {
     private static WebElement analytics;
     private static WebElement moreTab;
 
-    public static void Show(AppiumDriver atomberg) {
+    public static void Show(AndroidDriver atomberg) {
         analytics = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Analytics\n" +
                 "Tab 1 of 3\"]"));
         moreTab = atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\n" +
@@ -37,7 +37,7 @@ public class Analytics {
         }
     }
 
-    private static void fanChange(AppiumDriver atomberg) {
+    private static void fanChange(AndroidDriver atomberg) {
         List<WebElement> FANS = atomberg.findElements(By.className("android.view.View"));
         List<WebElement> Fans = FANS.stream().filter(ele -> ele.getDomAttribute("content-desc") != null).collect(Collectors.toList());
         List<WebElement> fans = Fans.stream().filter(ele -> ele.getDomAttribute("content-desc").endsWith("Fan")).collect(Collectors.toList());
@@ -47,7 +47,7 @@ public class Analytics {
         }
     }
 
-    private static void nextFan(AppiumDriver atomberg) {
+    private static void nextFan(AndroidDriver atomberg) {
         fanChange(atomberg);
         List<WebElement> availFans = atomberg.findElements(By.className("android.view.View"));
         List<WebElement> fans = availFans.stream().filter(ele -> ele.getDomAttribute("content-desc") != null).collect(Collectors.toList());
@@ -75,7 +75,7 @@ public class Analytics {
         }
     }
 
-    private static void rateUs(AppiumDriver driver) {
+    private static void rateUs(AndroidDriver driver) {
         List<WebElement> dialogueBox = driver.findElements(By.className("android.widget.Button"));
         List<WebElement> cancel = dialogueBox.stream().filter(webElement -> webElement.getDomAttribute("content-desc").equals("Cancel")).collect(Collectors.toList());
         for (WebElement ele : cancel) {
@@ -90,7 +90,7 @@ public class Analytics {
         }
     }
 
-    private static void info(AppiumDriver driver) {
+    private static void info(AndroidDriver driver) {
         int i;
         for (i = 0; i < 4; i++) {// there are 4 screens in analytics
             List<WebElement> ICONS = driver.findElements(By.xpath("//android.view.View[@clickable=\"true\"]"));
@@ -116,7 +116,7 @@ public class Analytics {
         Awaitility.await().atMost(millis, TimeUnit.MILLISECONDS);
     }
 
-    private static void confetti(AppiumDriver driver){
+    private static void confetti(AndroidDriver driver){
         System.out.println("checking confetti");
         List<WebElement> CONFETTI = driver.findElements(By.className("android.widget.ImageView"));
         List<WebElement> confetti1 = CONFETTI.stream().filter(element -> element.getDomAttribute("content-desc")==null).collect(Collectors.toList());

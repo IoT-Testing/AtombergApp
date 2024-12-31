@@ -11,7 +11,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.net.MalformedURLException;
 import java.util.stream.Collectors;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -19,7 +19,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
           @author Rohit B. Bhagat
          */
 public class App {
-    public static AppiumDriver driver;
+    public static AndroidDriver driver;
     int i;
     String fam1;
     List<WebElement> elements;
@@ -43,7 +43,7 @@ public class App {
         try {
             System.out.println("Initializing Appium driver...");
             URL url = new URL("http://127.0.0.1:4723/wd/hub"); // URL of the Appium session
-            App.driver = new AppiumDriver(url, cap);
+            App.driver = new AndroidDriver(url, cap);
             App.driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
             System.out.println("Appium driver initialized.");
         } catch (MalformedURLException e) {

@@ -6,7 +6,7 @@ import org.openqa.selenium.WebElement;
 
 import AtombergTest.Method;
 import Permissions.Permission;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 
 import java.util.concurrent.TimeUnit;
 
@@ -14,7 +14,7 @@ import static org.awaitility.Awaitility.await;
 
 public class Apple {
 
-	public static void Login(AppiumDriver atomberg) // Main
+	public static void Login(AndroidDriver atomberg) // Main
 	{
 		WebElement AppleLogin = atomberg.findElement(By.xpath(
 				"//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[1]")); 

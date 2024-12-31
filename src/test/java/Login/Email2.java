@@ -5,7 +5,7 @@ package Login;
 import Actions.Tap;
 import AtombergTest.Method;
 import Permissions.Permission;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -14,8 +14,8 @@ import java.util.concurrent.TimeUnit;
 import static org.awaitility.Awaitility.await;
 
 public class Email2 {
-	public static AppiumDriver driver;
-	public static void Login(AppiumDriver driver,String login, String pass) // Main
+	public static AndroidDriver driver;
+	public static void Login(AndroidDriver driver,String login, String pass) // Main
 	{
 
 		WebElement emailLoginButton = driver.findElement(By.xpath(

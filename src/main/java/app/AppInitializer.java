@@ -3,9 +3,9 @@ package app;
 import app.util.ActionsUtil;
 import app.util.AppUtil;
 import app.util.PermissionUtil;
-import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.options.UiAutomator2Options;
+import io.appium.java_client.appmanagement.ApplicationState;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -16,16 +16,16 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static io.appium.java_client.appmanagement.ApplicationState.RUNNING_IN_FOREGROUND;
 import static java.lang.Thread.sleep;
 
 public class AppInitializer {
-    public AppiumDriver atomberg;
-    public AndroidDriver driver;
-    public AppiumDriver getDriver() {
+    public AndroidDriver atomberg;
+    public AndroidDriver getDriver() {
         return atomberg;
     }
 
-    public void setDriver(AppiumDriver driver) {
+    public void setDriver(AndroidDriver driver) {
         this.atomberg = driver;
     }
 
@@ -40,31 +40,53 @@ public class AppInitializer {
             System.out.println("Malformed URL exception " + e.getMessage());
         }
         assert url != null;
-        atomberg = new AppiumDriver(url, options);
+        atomberg = new AndroidDriver(url, options);
         atomberg.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
     }
 
     public void checkMainScreen() {
-        WebElement  isMainScreenDisplayed = null;
-        try{
-            isMainScreenDisplayed = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Experience smart living \n" + " with Atomberg\"]"));
-        }catch(Exception ignored){}
-        if (isMainScreenDisplayed != null) {
-            System.out.println("Login Screen Displayed");
-            Login login = new Login(atomberg);
-            login.email();
+        ApplicationState appState = atomberg.queryAppState("com.atomberg.app");
+        if (appState == ApplicationState.RUNNING_IN_FOREGROUND)
+        {
+            WebElement isMainScreenDisplayed = null;
+            try {
+                isMainScreenDisplayed = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Experience smart living \n" + " with Atomberg\"]"));
+            } catch (Exception ignored) {
+            }
+            if (isMainScreenDisplayed != null) {
+                System.out.println("Login Screen Displayed");
+                Login login = new Login(atomberg);
+                login.email();
+            } else {
+                System.out.println("Already logged in");
+            }
         }
-        else {
-            System.out.println("Already logged in");
+        else if(appState != ApplicationState.RUNNING_IN_FOREGROUND)
+        {
+            atomberg.activateApp("com.atomberg.app");
+            ActionsUtil.SSleep(5);
+            WebElement isMainScreenDisplayed = null;
+            try {
+                isMainScreenDisplayed = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Experience smart living \n" + " with Atomberg\"]"));
+            } catch (Exception ignored) {
+            }
+            if (isMainScreenDisplayed != null) {
+                System.out.println("Login Screen Displayed");
+                Login login = new Login(atomberg);
+                login.email();
+            } else {
+                System.out.println("Already logged in");
+            }
         }
     }
 
     public void initializeDriver(){
         //These caps only get the device, need to select Atomberg Home ap separately
         UiAutomator2Options options = new UiAutomator2Options();
-        DesiredCapabilities cap = new DesiredCapabilities();
-        cap.setCapability("platformName", "Android");
-        cap.setCapability("appPackage", "com.atomberg.app");
+
+        options.setCapability("platformName", "Android");
+        options.setCapability("platformVersion", "14");
+//        options.setCapability("appPackage", "com.atomberg.app");
 
         URL url = null;
         try {
@@ -73,7 +95,7 @@ public class AppInitializer {
             System.out.println("Malformed URL exception " + e.getMessage());
         }
         assert url != null;
-        atomberg = new AppiumDriver(url, cap);
+        atomberg = new AndroidDriver(url, options);
         atomberg.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
     }
 

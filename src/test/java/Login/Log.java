@@ -3,12 +3,12 @@ package Login;
 import Actions.Scroll;
 import Actions.Tap;
 import AtombergTest.Method;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 public class Log {
-	public static void Out(AppiumDriver driver) {
+	public static void Out(AndroidDriver driver) {
 		try {
 			WebElement MoreTab = null;
 			try {

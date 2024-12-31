@@ -5,13 +5,13 @@ import org.awaitility.Awaitility;
 import org.openqa.selenium.By; //Selenium Dependencies
 import org.openqa.selenium.WebElement;
 import Actions.Tap;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 
 import java.util.concurrent.TimeUnit;
 
 public class Permission {
 
-	public static void Allow(AppiumDriver driver){
+	public static void Allow(AndroidDriver driver){
 		WebElement AllowButton = null;  // Check Direct allow button, when device is already present in the family
 		WebElement AddButton = null; // Check direct Add button"+" , When empty Family
 		try {

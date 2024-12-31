@@ -2,7 +2,7 @@ package app.Lock;
 
 import app.util.ActionsUtil;
 import app.util.AppUtil;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
@@ -13,8 +13,8 @@ import static app.util.ActionsUtil.sleep;
 import static app.util.AppUtil.Array;
 
 public class LockManagement {
-    public AppiumDriver atomberg;
-    public LockManagement(AppiumDriver driver) {
+    public AndroidDriver atomberg;
+    public LockManagement(AndroidDriver driver) {
         this.atomberg = driver;
     }
 
@@ -70,7 +70,7 @@ public class LockManagement {
         atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Locks\"]")).click();
         WebElement LO = null;  // checks Lock availability
         try {
-            LO = atomberg.findElement(By.xpath("(//android.widget.Button/android.widget.Button)"));
+            LO = atomberg.findElement(By.xpath("//android.widget.Button/android.widget.ImageView[1]"));
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -82,7 +82,7 @@ public class LockManagement {
             // number of available locks
             for (WebElement element : Device) {
                 element.click(); // click and open lock control
-//                LockControl();
+                LockControl();
                 atomberg.navigate().back();
             }
         } else System.out.println("No Lock Available");
@@ -112,12 +112,9 @@ public class LockManagement {
             AccessKeys();  //Access keys of lock
             lockSettings();   // lock settings
             atomberg.navigate().back();
-            atomberg.navigate().back();
         } else if (NoLock != null) {
             System.out.println("Lock not available or Bluetooth off");
-            atomberg.navigate().back();
         }
-
     }
 
     private void history() {
@@ -342,9 +339,13 @@ public class LockManagement {
                 ActionsUtil.Scroll.element(atomberg, elements.get(i));
             }
         }
-        atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Done\"]")).click();
+        ActionsUtil.SSleep(2);
+        WebElement done = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Done\"]"));
+        ActionsUtil.Tap.element(atomberg,done);
         ActionsUtil.SSleep(1);
-        atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Update\"]")).click();
+        WebElement update = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Update\"]"));
+        assert update.isDisplayed();
+        update.click();
         pin();
     }
 
@@ -368,7 +369,7 @@ public class LockManagement {
 //        ActionsUtil.SSleep(1);
 //        WebElement silentModeInfo = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"When silent mode is enabled, unlock tune and keypad beeps are suppressed\"]"));
 //        assert silentModeInfo.isDisplayed();
-        atomberg.navigate().back();
+//        atomberg.navigate().back();
     }
 
     // set for specific devices using the Coordinates

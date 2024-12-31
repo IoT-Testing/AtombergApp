@@ -9,7 +9,7 @@ import java.time.Duration;
 import app.util.ActionsUtil;
 import app.util.AppUtil;
 import app.util.PermissionUtil;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.options.UiAutomator2Options;
 import org.openqa.selenium.By;
@@ -19,7 +19,7 @@ import static java.lang.Thread.sleep;
 
 
 public class AtombergHome {
-    public static AppiumDriver driver;
+    public static AndroidDriver driver;
     public static void main(String[] args) throws IOException, UnsupportedFlavorException, InterruptedException {
         UiAutomator2Options options = new UiAutomator2Options();
         options.setAppPackage("com.atomberg.app");
@@ -32,7 +32,7 @@ public class AtombergHome {
             System.out.println("Malformed URL exception " + e.getMessage());
         }
         assert url != null;
-        driver = new AppiumDriver(url, options);
+        driver = new AndroidDriver(url, options);
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
         WebElement emailLoginButton = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[4]"));
         emailLoginButton.click();

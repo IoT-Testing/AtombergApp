@@ -5,14 +5,14 @@ import app.util.AppUtil;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import org.awaitility.Awaitility;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 public class Help {
-    public AppiumDriver atomberg;
-    public Help(AppiumDriver driver){
+    public AndroidDriver atomberg;
+    public Help(AndroidDriver driver){
         this.atomberg = driver;
     }
 

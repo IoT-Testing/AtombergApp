@@ -4,10 +4,10 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import Actions.Swipe;
 import AtombergTest.Method;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 
 public class Play {
-	public static void Videos(AppiumDriver atomberg) {
+	public static void Videos(AndroidDriver atomberg) {
 		WebElement AppTour = atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"App Tour\"]"));
 		AppTour.click();
 		
@@ -98,7 +98,7 @@ public class Play {
 		videoTryCatch(atomberg);
 
 	}
-	public static void videoTryCatch(AppiumDriver atomberg) {
+	public static void videoTryCatch(AndroidDriver atomberg) {
 		WebElement VideoTutorials = null;
 
 		try {

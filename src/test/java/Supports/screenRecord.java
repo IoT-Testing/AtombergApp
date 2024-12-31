@@ -1,6 +1,6 @@
 package Supports;
 
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 
 import org.openqa.selenium.remote.DesiredCapabilities;
 import io.appium.java_client.screenrecording.*;
@@ -23,7 +23,7 @@ public class screenRecord {
 
 	// ATUTestRecorder recorder;
 
-	public static AppiumDriver driver;
+	public static AndroidDriver driver;
 
 	@BeforeTest
 	public void setup() {
@@ -40,7 +40,7 @@ public class screenRecord {
 
 			System.out.println("Initializing Appium driver..."); // Check if the Appium driver is initialized
 			URL url = new URL("http://127.0.0.1:4723/wd/hub"); // URL of the Appium session
-			driver = new AppiumDriver(url, cap);
+			driver = new AndroidDriver(url, cap);
 			System.out.println("Appium driver initialized.");
 			((CanRecordScreen) driver).startRecordingScreen();
 

@@ -1,6 +1,6 @@
 package app.util;
 
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
@@ -17,7 +17,7 @@ import java.util.Objects;
 import java.util.Random;
 
 public class AppUtil {
-    public static void captureScreenshot(AppiumDriver driver) {
+    public static void captureScreenshot(AndroidDriver driver) {
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String screenshotDirectory = System.getProperty("user.dir")+"\\screenshots\\";
         File screenshotFile = driver.getScreenshotAs(OutputType.FILE);
@@ -31,7 +31,7 @@ public class AppUtil {
         }
     }
 
-    public static void additionProcess(AppiumDriver atomberg){
+    public static void additionProcess(AndroidDriver atomberg){
         atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Master Bedroom\"]")).click();
         AppUtil.captureScreenshot(atomberg);
         atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Guest Room\"]")).click();
@@ -57,7 +57,7 @@ public class AppUtil {
         AppUtil.captureScreenshot(atomberg);
     }
 
-    public static void SearchWiFi(AppiumDriver driver, String SearchString) {
+    public static void SearchWiFi(AndroidDriver driver, String SearchString) {
         ActionsUtil.Tap.withPercentage(driver, 0.20, 0.20);
         //// android.widget.EditText[@text="Better_Together"]
         for (int i = 1; i <= 10; i++) {
@@ -104,40 +104,40 @@ public class AppUtil {
     }
 
     public static class NumberPad {
-        public void one(AppiumDriver driver){
+        public void one(AndroidDriver driver){
             ActionsUtil.Tap.withCoordinates(driver,240,1725);
         }
-        public void two(AppiumDriver driver){
+        public void two(AndroidDriver driver){
             ActionsUtil.Tap.withCoordinates(driver,530,1725);
         }
-        public void three(AppiumDriver driver){
+        public void three(AndroidDriver driver){
             ActionsUtil.Tap.withCoordinates(driver,810,1725);
         }
-        public void four(AppiumDriver driver){
+        public void four(AndroidDriver driver){
             ActionsUtil.Tap.withCoordinates(driver,240,1945);
         }
-        public void five(AppiumDriver driver){
+        public void five(AndroidDriver driver){
             ActionsUtil.Tap.withCoordinates(driver,530,1945);
         }
-        public void six(AppiumDriver driver){
+        public void six(AndroidDriver driver){
             ActionsUtil.Tap.withCoordinates(driver,810,1945);
         }
-        public void seven(AppiumDriver driver){
+        public void seven(AndroidDriver driver){
             ActionsUtil.Tap.withCoordinates(driver,240,2100);
         }
-        public void eight(AppiumDriver driver){
+        public void eight(AndroidDriver driver){
             ActionsUtil.Tap.withCoordinates(driver,530,2100);
         }
-        public void nine(AppiumDriver driver){
+        public void nine(AndroidDriver driver){
             ActionsUtil.Tap.withCoordinates(driver,810,2100);
         }
-        public void zero(AppiumDriver driver){
+        public void zero(AndroidDriver driver){
             ActionsUtil.Tap.withCoordinates(driver,530,2250);
         }
-        public void clear(AppiumDriver driver){
+        public void clear(AndroidDriver driver){
             ActionsUtil.Tap.withCoordinates(driver,240,2250);
         }
-        public void done(AppiumDriver driver){
+        public void done(AndroidDriver driver){
             ActionsUtil.Tap.withCoordinates(driver,810,2250);
         }
     }

@@ -6,14 +6,14 @@ import org.openqa.selenium.WebElement;
 
 import AtombergTest.Method;
 import Permissions.Permission;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
 
 public class FB {
-	public static void Login(AppiumDriver driver) // Main
+	public static void Login(AndroidDriver driver) // Main
 	{
 		WebElement FBLoginButton = driver.findElement(By.xpath(
 				"//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[3]")); // Click

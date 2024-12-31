@@ -5,7 +5,7 @@ package Login;
 import AtombergTest.Method;
 import Permissions.Permission;
 import Supports.TempMail;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import org.awaitility.Awaitility;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -13,9 +13,9 @@ import org.openqa.selenium.WebElement;
 import java.util.concurrent.TimeUnit;
 
 public class Email3 {
-    public static AppiumDriver driver;
+    public static AndroidDriver driver;
 
-    public static void Login(AppiumDriver driver) {//Main
+    public static void Login(AndroidDriver driver) {//Main
 
         WebElement emailLoginButton = driver.findElement(By.xpath(
                 "//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[4]"));

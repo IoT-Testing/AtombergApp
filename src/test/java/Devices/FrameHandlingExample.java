@@ -16,10 +16,10 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 
 public class FrameHandlingExample {
-	private static AppiumDriver driver;
+	private static AndroidDriver driver;
 
 	public static void openAtomberg() {
 		DesiredCapabilities cap = new DesiredCapabilities();
@@ -31,7 +31,7 @@ public class FrameHandlingExample {
 		try {
 			System.out.println("Initializing Appium driver..."); // Check if the Appium driver is initialized
 			URL url = new URL("http://127.0.0.1:4723/wd/hub"); // URL of the Appium session
-			driver = new AppiumDriver(url, cap);
+			driver = new AndroidDriver(url, cap);
 			driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
 			System.out.println("Appium driver initialized.");
 		} catch (MalformedURLException e) {
@@ -122,7 +122,7 @@ public class FrameHandlingExample {
 	public static void sleep(long millis) {
 		Awaitility.await().atLeast(millis, TimeUnit.MILLISECONDS);
 	}
-	public static void AtombergSmartLockFrame(AppiumDriver driver) {
+	public static void AtombergSmartLockFrame(AndroidDriver driver) {
 		// Locate the frame containing "Atomberg Smart Lock"
 		WebElement smartLockElement = driver.findElement(By.xpath("//android.view.View[@content-desc='Atomberg Smart Lock']"));
 		WebElement parentFrame = smartLockElement.findElement(By.xpath("//android.view.View"));

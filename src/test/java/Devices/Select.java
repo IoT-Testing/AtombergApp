@@ -3,10 +3,10 @@ package Devices;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import AtombergTest.Method;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 
 public class Select {
-	public static void Fan(AppiumDriver driver) {
+	public static void Fan(AndroidDriver driver) {
 		WebElement ModelSelect = null;
 		try {
 			ModelSelect = driver
@@ -53,7 +53,7 @@ public class Select {
 
 	}
 
-	public static void SixLED(AppiumDriver driver) {
+	public static void SixLED(AndroidDriver driver) {
 		int randomNumber = (int) (Math.random() * 3); // generate a random number between 0 and 5
 
 		try {

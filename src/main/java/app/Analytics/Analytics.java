@@ -1,7 +1,7 @@
 package app.Analytics;
 
 import app.util.ActionsUtil;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -12,9 +12,9 @@ import java.util.stream.Collectors;
 public class Analytics {
     private WebElement analytics;
     private WebElement moreTab;
-    AppiumDriver atomberg;
+    AndroidDriver atomberg;
 
-    public Analytics(AppiumDriver driver){
+    public Analytics(AndroidDriver driver){
         this.atomberg = driver;
     }
     public void Show() {

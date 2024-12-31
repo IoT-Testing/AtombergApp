@@ -8,11 +8,11 @@ import org.openqa.selenium.interactions.Pause;
 import org.openqa.selenium.interactions.PointerInput;
 import org.openqa.selenium.interactions.Sequence;
 
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 
 public class Scroll {
 	//Scrolling on the mobile screen either up or down. Tried to keep it as common as possible
-	public static void Down(AppiumDriver driver) {
+	public static void Down(AndroidDriver driver) {
 		Dimension size = driver.manage().window().getSize(); // Assuming getWindowSize() returns the window size
 		int startX = size.getHeight() / 2;
 		int startY = size.getHeight() / 2;
@@ -31,7 +31,7 @@ public class Scroll {
 		System.out.println("Scrolled Down");
 	}
 
-	public static void Up(AppiumDriver driver) {
+	public static void Up(AndroidDriver driver) {
 		Dimension size = driver.manage().window().getSize();
 		int startX = size.getWidth() / 2;
 		int startY = size.getHeight() / 2;

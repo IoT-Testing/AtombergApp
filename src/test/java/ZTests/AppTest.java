@@ -13,8 +13,9 @@ import app.WaterPurifier.ROManagement;
 import app.util.ActionsUtil;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.Status;
-import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.appmanagement.ApplicationState;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -24,7 +25,7 @@ import static ZTests.ExtentReportAT.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AppTest {
-    public static AppiumDriver atomberg;
+    public static AndroidDriver atomberg;
     public static final ExtentReports extent = getReportObjects();
 
     @Order(1)
@@ -160,7 +161,7 @@ public class AppTest {
     @Test
     void testHelp() {
         try {
-            startTest("More Tab");
+            startTest("Help Section");
             System.out.println("Help Section test start");
             Manage manage = new Manage(atomberg);
             Help help = new Help(atomberg);
@@ -176,7 +177,7 @@ public class AppTest {
             help.call();
             atomberg.navigate().back();
         } catch (Exception e) {
-            getTest().log(Status.FAIL, "More Tab failed: " + e.getMessage());
+            getTest().log(Status.FAIL, "Help Section failed: " + e.getMessage());
         } finally {
             {
                 System.out.println("Help Section test end");
@@ -218,23 +219,22 @@ public class AppTest {
     }
 
     void afterTestFailure() {
-        int i = 0;
-        WebElement homeScreen = null;
-        while (homeScreen == null) {
-            try {
-                homeScreen = atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\nTab 3 of 3\"]"));
-            } catch (Exception ignored) {}
-            if (homeScreen == null) {
-                System.out.println("Back");
-                atomberg.navigate().back(); // 180, 1550 860, 1960
-                i++;
-                if (i == 5){
-                    break;
+        ApplicationState state = atomberg.queryAppState("com.atomberg.app");
+        if (state.equals(ApplicationState.RUNNING_IN_FOREGROUND)){
+            WebElement homeScreen = null;
+            while (homeScreen == null) {
+                try {
+                    homeScreen = atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\nTab 3 of 3\"]"));
+                } catch (Exception ignored) {
+                }
+                if (homeScreen == null) {
+                    System.out.println("Back");
+                    atomberg.navigate().back(); // 180, 1550 860, 1960
                 }
             }
         }
-    if(atomberg.getSessionId()==null){
-        ((AndroidDriver) atomberg).activateApp("com.atomberg.app");
-    }
+        else{
+            atomberg.activateApp("com.atomberg.app");
+        }
     }
 }

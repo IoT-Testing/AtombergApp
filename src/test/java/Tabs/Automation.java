@@ -1,7 +1,7 @@
 package Tabs;
 
 import Actions.Scroll;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import org.awaitility.Awaitility;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class Automation {
-    public static void TimeOfDay(AppiumDriver driver) {
+    public static void TimeOfDay(AndroidDriver driver) {
 
         if (driver.findElement(By.xpath("//android.view.View[@content-desc=\"Automations\"]")).isDisplayed()) {
             driver.findElement(By.xpath("//android.view.View[@content-desc=\"Automations\"]")).click();
@@ -35,7 +35,7 @@ public class Automation {
         }
     }
 
-    public static void QuickAccess(AppiumDriver driver) {
+    public static void QuickAccess(AndroidDriver driver) {
         if (driver.findElement(By.xpath("//android.view.View[@content-desc=\"Automations\"]")).isDisplayed()) {
             driver.findElement(By.xpath("//android.view.View[@content-desc=\"Automations\"]")).click();
             System.out.println("Click on Automations");
@@ -56,7 +56,7 @@ public class Automation {
         }
     }
 
-    private static void newAutomation(AppiumDriver driver) {
+    private static void newAutomation(AndroidDriver driver) {
         String timestamp = new SimpleDateFormat("HHmmss").format(new Date());
 
         WebElement AutoName = driver.findElement(By.xpath("//android.widget.EditText"));
@@ -76,7 +76,7 @@ public class Automation {
 
     }
 
-    private static void selectRandomFan(AppiumDriver driver) {
+    private static void selectRandomFan(AndroidDriver driver) {
 
         WebElement selectFan = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Select fans\"]"));
         selectFan.click();
@@ -94,7 +94,7 @@ public class Automation {
         Ok.click();
     }
 
-    private static void seekBar(AppiumDriver driver) {
+    private static void seekBar(AndroidDriver driver) {
         Dimension size = driver.manage().window().getSize(); // Assuming getWindowSize() returns the window size
 
         int startY = (int) (size.getHeight() * 0.635);
@@ -113,7 +113,7 @@ public class Automation {
         System.out.println("SeekBar slide");
     }
 
-    private static void selectAction(AppiumDriver driver) {
+    private static void selectAction(AndroidDriver driver) {
         driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Power ON\"]")).click();
 
         List<WebElement> ACTIONS = driver.findElements(By.className("android.view.View"));
@@ -123,7 +123,7 @@ public class Automation {
 
     }
 
-    private static void allScreenQA(AppiumDriver driver) {
+    private static void allScreenQA(AndroidDriver driver) {
         WebElement QA = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView"));
         QA.click();
         List<WebElement> ACTIONS = driver.findElements(By.className("android.widget.Button"));
@@ -147,7 +147,7 @@ public class Automation {
         }
     }
 
-    public static void switchFamily(AppiumDriver driver) {
+    public static void switchFamily(AndroidDriver driver) {
         List<WebElement> elements = driver.findElements(By.className("android.view.View"));
         WebElement e = elements.get(0);
         String fam1 = e.getDomAttribute("content-desc");
@@ -189,7 +189,7 @@ public class Automation {
 
     }
 
-    public static void deleteAutomation(AppiumDriver driver) {
+    public static void deleteAutomation(AndroidDriver driver) {
         WebElement ToD = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Automation155806\n" +
                 "1 fan, 10:30 AM\n" +
                 "Frequency\n" +

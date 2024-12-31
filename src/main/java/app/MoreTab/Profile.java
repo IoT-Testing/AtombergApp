@@ -3,7 +3,7 @@ package app.MoreTab;
 import app.ScreenCheck.ScreenCheck;
 import app.util.ActionsUtil;
 import app.util.AppUtil;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import java.util.List;
@@ -11,9 +11,9 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class Profile {
-    public AppiumDriver atomberg;
+    public AndroidDriver atomberg;
 
-    public Profile(AppiumDriver driver) {
+    public Profile(AndroidDriver driver) {
         this.atomberg = driver;
     }
 
@@ -59,7 +59,7 @@ public class Profile {
         back(atomberg);
     }
 
-    private void back(AppiumDriver driver){
+    private void back(AndroidDriver driver){
         WebElement SLD =null;
         while(SLD == null)
         {

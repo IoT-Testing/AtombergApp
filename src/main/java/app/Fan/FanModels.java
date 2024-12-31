@@ -1,14 +1,14 @@
 package app.Fan;
 
 import app.util.ActionsUtil;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import static app.util.ActionsUtil.sleep;
 
 public class FanModels {
-    public AppiumDriver driver;
-    public FanModels(AppiumDriver driver){
+    public AndroidDriver driver;
+    public FanModels(AndroidDriver driver){
         this.driver = driver;
     }
 

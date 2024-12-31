@@ -1,14 +1,14 @@
 package Widget;
 
 import Actions.Swipe;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import org.awaitility.Awaitility;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import java.util.concurrent.TimeUnit;
 
 public class Widgets {
-    public static void Home(AppiumDriver atomberg) {
+    public static void Home(AndroidDriver atomberg) {
         WebElement widget = null;
         try {
             widget = atomberg.findElement(By.className("android.widget.RelativeLayout"));

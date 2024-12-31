@@ -8,11 +8,11 @@ import org.openqa.selenium.interactions.Pause;
 import org.openqa.selenium.interactions.PointerInput;
 import org.openqa.selenium.interactions.Sequence;
 
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 
 public class Swipe {
 	// Screen swipes
-	public static void Left(AppiumDriver driver, double x, double y) {
+	public static void Left(AndroidDriver driver, double x, double y) {
 		Dimension size = driver.manage().window().getSize(); // Assuming getWindowSize() returns the window size
 		int startY = (int) (size.getHeight() * y);
 		int startX = (int) (size.getWidth() * x); // Adjusted to swipe left
@@ -31,7 +31,7 @@ public class Swipe {
 		System.out.println("Left Swipe");
 	}
 
-	public static void Right(AppiumDriver driver, double x, double y) {
+	public static void Right(AndroidDriver driver, double x, double y) {
 		Dimension size = driver.manage().window().getSize(); // Assuming getWindowSize() returns the window size
 		int startY = (int) (size.getHeight() * y);
 		int startX = (int) (size.getWidth() * x); // Adjusted to swipe right
@@ -50,7 +50,7 @@ public class Swipe {
 		System.out.println("Right Swipe");
 	}
 
-	public static void screenRight(AppiumDriver driver) {
+	public static void screenRight(AndroidDriver driver) {
 		Dimension size = driver.manage().window().getSize(); // Assuming getWindowSize() returns the window size
 
 		int startY = (int) (size.getHeight() * 0.5);
@@ -68,7 +68,7 @@ public class Swipe {
 		System.out.println("Right Swipe");
 	}
 
-	public static void screenLeft(AppiumDriver driver) {
+	public static void screenLeft(AndroidDriver driver) {
 		Dimension size = driver.manage().window().getSize(); // Assuming getWindowSize() returns the window size
 
 		int startY = (int) (size.getHeight() * 0.5);

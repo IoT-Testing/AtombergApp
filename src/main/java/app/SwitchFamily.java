@@ -1,7 +1,7 @@
 package app;
 
 import app.util.ActionsUtil;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import java.time.Duration;
@@ -10,13 +10,13 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class SwitchFamily {
-    private AppiumDriver atomberg;
+    private AndroidDriver atomberg;
     private int i;
     private int total;
     String fam1;
     SwitchFamilyIntermediateCallback callback;
 
-    public SwitchFamily(AppiumDriver driver, SwitchFamilyIntermediateCallback callback) {
+    public SwitchFamily(AndroidDriver driver, SwitchFamilyIntermediateCallback callback) {
         this.atomberg = driver;
         atomberg.manage().timeouts().implicitlyWait(Duration.ofSeconds(6));
         this.callback = callback;

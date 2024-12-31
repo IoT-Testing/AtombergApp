@@ -5,14 +5,14 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import AtombergTest.Method;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class Edit {
-	public static void Profile(AppiumDriver driver)
+	public static void Profile(AndroidDriver driver)
 	{
 
 		List<WebElement> ELEMENTS = driver.findElements(By.className("android.widget.ImageView"));
@@ -57,7 +57,7 @@ public class Edit {
 			Awaitility.await().atMost(millis, TimeUnit.MILLISECONDS);
 	}
 
-	private static void back(AppiumDriver driver){
+	private static void back(AndroidDriver driver){
 		WebElement SLD =null;
 		while(SLD == null)
 		{

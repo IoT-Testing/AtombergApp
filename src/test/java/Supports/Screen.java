@@ -1,6 +1,6 @@
 package Supports; //To check 
 
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;

@@ -9,12 +9,12 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
 
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 
 public class Add {
-    public static AppiumDriver driver;
+    public static AndroidDriver driver;
 
-    public static void Fan(AppiumDriver driver) {
+    public static void Fan(AndroidDriver driver) {
         WebElement AddButton = null;
         try {
             AddButton = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]/android.widget.ImageView"));
@@ -108,7 +108,7 @@ public class Add {
         }
     }
 
-    public static void Lock(AppiumDriver driver) {
+    public static void Lock(AndroidDriver driver) {
         WebElement AddButton = null;
         try {
             AddButton = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]/android.widget.ImageView"));

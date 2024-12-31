@@ -4,7 +4,7 @@ import app.Resources.CommonElements;
 import app.Resources.HomeELements;
 import app.ScreenCheckCallbackAction;
 import app.util.ActionsUtil;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -20,11 +20,11 @@ import java.util.stream.Collectors;
 */
 
 public class ScreenCheck {
-    public AppiumDriver atomberg;
+    public AndroidDriver atomberg;
     CommonElements ce = new CommonElements();
     HomeELements he = new HomeELements();
 
-    public ScreenCheck(AppiumDriver atomberg){
+    public ScreenCheck(AndroidDriver atomberg){
         this.atomberg = atomberg;
     }
 

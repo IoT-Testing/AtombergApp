@@ -1,11 +1,11 @@
 package app.util;
 
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 
 public class ChromeCacheClear {
-    public AppiumDriver driver;
-    public ChromeCacheClear(AppiumDriver driver){
+    public AndroidDriver driver;
+    public ChromeCacheClear(AndroidDriver driver){
         this.driver = driver;
     }
     public void cacheClear(){

@@ -1,28 +1,17 @@
 package AtombergTest; //To check 
 
 
-//import Supports.GoogleHome;
-import app.Analytics.Analytics;
 import app.AppInitializer;
 import app.util.ActionsUtil;
-import io.appium.java_client.AppiumDriver;
-import io.appium.java_client.ios.IOSDriver;
+import io.appium.java_client.android.AndroidDriver;
 import org.awaitility.Awaitility;
 import org.openqa.selenium.By;
-import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.remote.DesiredCapabilities;
-import java.net.*;
-import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import Login.*;
-
-import static app.util.ActionsUtil.sleep;
-
 public class Atomberg {
-	public static AppiumDriver driver;
+	public static AndroidDriver driver;
 
 	public static void main(String[] args) {
 		AppInitializer appInitializer = new AppInitializer();
@@ -48,7 +37,7 @@ public class Atomberg {
 		Awaitility.await().atMost(millis, TimeUnit.MILLISECONDS);
 	}
 	// connecting with the appium server and opening the app
-	private static void connectButton(AppiumDriver driver){
+	private static void connectButton(AndroidDriver driver){
 		try {
 			// Locate all elements with "Atomberg Smart Water Purifier"
 			List<WebElement> deviceElements = driver.findElements(By.xpath("//android.view.View[@content-desc=\"Atomberg Smart Water Purifier\"]"));

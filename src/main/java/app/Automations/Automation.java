@@ -10,17 +10,17 @@ import java.text.SimpleDateFormat;
 import java.util.stream.Collectors;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebElement;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.interactions.Pause;
 import org.openqa.selenium.interactions.Sequence;
 import org.openqa.selenium.interactions.PointerInput;
 
 public class Automation {
-    public AppiumDriver driver;
+    public AndroidDriver driver;
     public WebElement automations;
     private WebElement quickAccess;
     HomeELements he = new HomeELements();
-    public Automation(AppiumDriver driver){
+    public Automation(AndroidDriver driver){
         this.driver = driver;
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(6));
         automations = this.driver.findElement(By.xpath(he.automationId));

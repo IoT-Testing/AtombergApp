@@ -3,7 +3,7 @@ package app.Connectivity;
 import app.ScreenCheck.ScreenCheck;
 import app.ScreenCheckCallbackAction;
 import app.util.ActionsUtil;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -21,8 +21,8 @@ import java.util.stream.Collectors;
 */
 
 public class GoogleHome {
-    public AppiumDriver driver;
-    public GoogleHome(AppiumDriver driver){
+    public AndroidDriver driver;
+    public GoogleHome(AndroidDriver driver){
         this.driver = driver;
     }
 

@@ -3,7 +3,7 @@ package app.Fan;
 import app.ScreenCheck.ScreenCheck;
 import app.util.ActionsUtil;
 import app.util.AppUtil;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
@@ -19,9 +19,9 @@ import static app.util.ActionsUtil.sleep;
 import static app.util.AppUtil.SearchWiFi;
 
 public class FanManagement {
-    public AppiumDriver atomberg;
+    public AndroidDriver atomberg;
 
-    public FanManagement(AppiumDriver driver){
+    public FanManagement(AndroidDriver driver){
         this.atomberg = driver;
     }
 
@@ -185,7 +185,6 @@ public class FanManagement {
             for (WebElement element : fans) {
                 System.out.println(element.getDomAttribute("content-desc"));
                 element.click();// Clicks on the for and opens device control
-//                WebElement remote = atomberg.findElement(By.xpath(""));
                 repeatCommands(10);
                 atomberg.navigate().back();            // back
             }
@@ -230,7 +229,7 @@ public class FanManagement {
     }
 
     public static class Select {
-        public static void Fan(AppiumDriver atomberg) {
+        public static void Fan(AndroidDriver atomberg) {
             WebElement ModelSelect = null;
             try {
                 ModelSelect = atomberg
@@ -271,7 +270,7 @@ public class FanManagement {
             }
         }
 
-        public static void SixLED(AppiumDriver atomberg) {
+        public static void SixLED(AndroidDriver atomberg) {
             int randomNumber = (int) (Math.random() * 3); // generate a random number between 0 and 5
             try {
                 switch (randomNumber) {

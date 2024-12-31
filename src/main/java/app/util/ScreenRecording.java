@@ -1,11 +1,11 @@
 package app.util;
 
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 public class ScreenRecording {
-    public static void start(AppiumDriver driver){
+    public static void start(AndroidDriver driver){
         ActionsUtil.Swipe.Notifications(driver, 0.60, 0.05);
         ActionsUtil.sleep(500);
         WebElement recordbutton = null;
@@ -24,7 +24,7 @@ public class ScreenRecording {
         }System.out.println("Recording Started");
     }
 
-    public static void stop(AppiumDriver driver){
+    public static void stop(AndroidDriver driver){
         ActionsUtil.Tap.withCoordinates(driver,300, 50);
         ActionsUtil.sleep(500);
         WebElement done = driver.findElement(By.xpath("//android.widget.TextView[@content-desc=\"Finish recording\"]"));

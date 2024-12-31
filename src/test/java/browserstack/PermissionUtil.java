@@ -1,11 +1,11 @@
 package browserstack;
 
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 public class PermissionUtil {
-    public static void allow(AppiumDriver driver){
+    public static void allow(AndroidDriver driver){
 //        WebElement AllowButton = null;  // Check Direct allow button, when device is already present in the family
 //        WebElement AddButton = null; // Check direct Add button"+" , When empty Family
 //        try {

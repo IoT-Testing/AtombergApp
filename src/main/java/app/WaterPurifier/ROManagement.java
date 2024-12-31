@@ -3,7 +3,7 @@ package app.WaterPurifier;
 import app.ScreenCheck.ScreenCheck;
 import app.util.ActionsUtil;
 import app.util.AppUtil;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
@@ -14,9 +14,9 @@ import java.util.stream.Collectors;
 import static app.util.ActionsUtil.sleep;
 
 public class ROManagement {
-    public AppiumDriver atomberg;
+    public AndroidDriver atomberg;
 
-    public ROManagement(AppiumDriver driver){
+    public ROManagement(AndroidDriver driver){
         this.atomberg = driver;
     }
 

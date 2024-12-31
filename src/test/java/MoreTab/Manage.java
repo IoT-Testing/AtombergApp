@@ -6,14 +6,14 @@ import org.openqa.selenium.WebElement;
 import Actions.Scroll;
 import Actions.Tap;
 import AtombergTest.Method;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class Manage {
     private int memberSize;
-    public static void Family(AppiumDriver driver) {
+    public static void Family(AndroidDriver driver) {
         WebElement ManageFamily = null;
         while (ManageFamily == null) {
             Scroll.Up(driver);
@@ -38,7 +38,7 @@ public class Manage {
         }
     }
 
-    public static void Member(AppiumDriver driver) {
+    public static void Member(AndroidDriver driver) {
 
         WebElement RemoveMember = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Remove Member\"]"));
         RemoveMember.click();
@@ -72,7 +72,7 @@ public class Manage {
         driver.navigate().back();
     }
 
-    public static void AddHome(AppiumDriver driver) {
+    public static void AddHome(AndroidDriver driver) {
 
         WebElement AddHome = null;
 
@@ -106,7 +106,7 @@ public class Manage {
 
     }
 
-    public static void Home(AppiumDriver driver) {
+    public static void Home(AndroidDriver driver) {
 
         WebElement FamilyEdit = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View[2]"));
         FamilyEdit.click();
@@ -131,7 +131,7 @@ public class Manage {
         driver.navigate().back();
     }
 
-    private static void countMember(AppiumDriver driver){
+    private static void countMember(AndroidDriver driver){
         List<WebElement> Elements = driver.findElements(By.className("android.view.View"));
         List<WebElement> elements = Elements.stream().filter(element -> element.getDomAttribute("clickable").equals("true")).collect(Collectors.toList());
         System.out.println(elements.size());

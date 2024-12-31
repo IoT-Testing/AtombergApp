@@ -9,14 +9,14 @@ import org.openqa.selenium.By; //Selenium Dependencies
 import org.openqa.selenium.WebElement;
 import AtombergTest.Method;
 import Permissions.Permission;
-import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 
 import static org.awaitility.Awaitility.await;
 
 public class Google {
-	public static AppiumDriver driver;
+	public static AndroidDriver driver;
 
-	public static void Login(AppiumDriver driver) // Main
+	public static void Login(AndroidDriver driver) // Main
 	{
 		WebElement GoogleLoginButton = driver.findElement(By.xpath(
 				"//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[2]"));
@@ -53,7 +53,7 @@ public class Google {
 		}
 	}
 
-	private static void waitForElementAndClick(AppiumDriver driver, By by) {
+	private static void waitForElementAndClick(AndroidDriver driver, By by) {
 		Awaitility.await().atMost(Duration.ofSeconds(60)).pollInterval(Duration.ofMillis(500)).until(() -> {
 			WebElement element = driver.findElement(by);
 			element.click();
