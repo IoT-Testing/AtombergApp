@@ -18,13 +18,13 @@ import io.appium.java_client.appmanagement.ApplicationState;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-
 import static ZTests.ExtentReportAT.*;
 
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AppTest {
     public static AndroidDriver atomberg;
+    public static AndroidDriver driver;
     public static final ExtentReports extent = getReportObjects();
 
     @Order(1)
@@ -38,7 +38,7 @@ public class AppTest {
             String command = connect.copiedText;
             Runtime.getRuntime().exec(command);
             ActionsUtil.sleep(1000);
-
+            startScreenRecorder();
             AppInitializer appInitializer = new AppInitializer();
             //TODO: do not use "openApp()" if "initializeDriver()" is used.
             appInitializer.openApp();
@@ -106,7 +106,7 @@ public class AppTest {
     }
 
     @Order(5)
-    @Test
+    @RepeatedTest(5)
     void testLockControl(){
         try {
             startTest("Lock Control");
@@ -207,7 +207,7 @@ public class AppTest {
     @Test
     void testDriverClose() {
         atomberg.quit();
-
+        stopScreenRecorder();
     }
 
     @AfterAll
@@ -222,7 +222,6 @@ public class AppTest {
         if (state.equals(ApplicationState.RUNNING_IN_FOREGROUND)){
             WebElement homeScreen = null;
             while (homeScreen == null) {
-                int count = 0;
                 try {
                     homeScreen = atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\nTab 3 of 3\"]"));
                 } catch (Exception ignored) {
@@ -230,13 +229,31 @@ public class AppTest {
                 if (homeScreen == null) {
                     System.out.println("Back");
                     atomberg.navigate().back(); // 180, 1550 860, 1960
-                    count ++;
-                    if(count == 5) break;
                 }
             }
         }
         else{
             atomberg.activateApp("com.atomberg.app");
         }
+    }
+    private void startScreenRecorder(){
+        AppInitializer appInitializer = new AppInitializer();
+        appInitializer.initializeDriver();
+        driver = appInitializer.getDriver();
+        driver.activateApp("com.example.screenrecorder");
+        ActionsUtil.SSleep(5);
+        ActionsUtil.Tap.withCoordinates(driver, 530, 1570);
+        driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Start Recording\"]")).click();
+        driver.findElement(By.xpath("//android.widget.TextView[@text=\"A single app\"]")).click();
+        driver.findElement(By.xpath("//android.widget.TextView[@text=\"Entire screen\"]")).click();
+        driver.findElement(By.xpath("//android.widget.Button[@text=\"Start\"]")).click();
+        System.out.println("Recording Screen");
+    }
+    private void stopScreenRecorder(){
+        AppInitializer appInitializer = new AppInitializer();
+        appInitializer.initializeDriver();
+        driver = appInitializer.getDriver();
+        driver.activateApp("com.example.screenrecorder");
+        ActionsUtil.Tap.withCoordinates(driver, 530, 1570);
     }
 }

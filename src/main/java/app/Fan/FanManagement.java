@@ -185,7 +185,7 @@ public class FanManagement {
             for (WebElement element : fans) {
                 System.out.println(element.getDomAttribute("content-desc"));
                 element.click();// Clicks on the for and opens device control
-                repeatCommands(10);
+                fanControl();
                 atomberg.navigate().back();            // back
             }
             if (fans.size() >= 4) // only 4 devices are visible on the screen
