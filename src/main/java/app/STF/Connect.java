@@ -29,31 +29,25 @@ public class Connect{
         stfLogin();
         List<WebElement> elementList = driver1.findElements(By.tagName("li"));
         List<WebElement> devicesList = elementList.stream().filter(webElement -> webElement.getDomAttribute("id")!=null).collect(Collectors.toList());
-        for(WebElement e: devicesList){
-            List<WebElement> checklist = e.findElements(By.tagName("li"));
-            for (WebElement element : checklist){
-                element.getDomAttribute("className");
-            }
-        }
-//        int i = (int) (Math.random() * devicesList.size());
-//        System.out.println("Device number "+ i +" Selected");
-//        devicesList.get(i).click();
-//        List<WebElement> listOfTextBox = driver1.findElements(By.tagName("textarea"));
-//        WebElement ip = listOfTextBox.get(1);
-//        Point ipLocation = ip.getLocation();
-//        Dimension ipSize = ip.getSize();
-//        System.out.println(ipLocation);
-//        System.out.println(ipSize);
-//        Actions actions = new Actions(driver1);
-//        actions.moveToElement(ip);
-//        actions.click(ip);
-//        actions.perform();
-//        actions.setActivePointer(PointerInput.Kind.MOUSE, "mouse");
-//        actions.keyDown(Keys.CONTROL).sendKeys("c").keyUp(Keys.CONTROL).perform();
-//        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-//        // Retrieve the copied text
-//        copiedText = (String) clipboard.getData(DataFlavor.stringFlavor);
-//        System.out.println(copiedText);
+        int i = (int) (Math.random() * devicesList.size());
+        System.out.println("Device number "+ i +" Selected");
+        devicesList.get(i).click();
+        List<WebElement> listOfTextBox = driver1.findElements(By.tagName("textarea"));
+        WebElement ip = listOfTextBox.get(1);
+        Point ipLocation = ip.getLocation();
+        Dimension ipSize = ip.getSize();
+        System.out.println(ipLocation);
+        System.out.println(ipSize);
+        Actions actions = new Actions(driver1);
+        actions.moveToElement(ip);
+        actions.click(ip);
+        actions.perform();
+        actions.setActivePointer(PointerInput.Kind.MOUSE, "mouse");
+        actions.keyDown(Keys.CONTROL).sendKeys("c").keyUp(Keys.CONTROL).perform();
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        // Retrieve the copied text
+        copiedText = (String) clipboard.getData(DataFlavor.stringFlavor);
+        System.out.println(copiedText);
     }
     void stfLogin(){
         ActionsUtil.sleep(1000);
