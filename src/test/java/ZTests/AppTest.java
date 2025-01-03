@@ -14,7 +14,6 @@ import app.util.ActionsUtil;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.Status;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.appmanagement.ApplicationState;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;

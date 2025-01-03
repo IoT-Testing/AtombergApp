@@ -21,6 +21,7 @@ There are few stress tests in the project.
 4. Dependencies for the project to be mentioned in pom.xml file.
 5. NPM installed in the HOST PC. https://nodejs.org/en
 6. cmd : `npm install appium` 
+7. Linux : `./appium.AppImage --no-sandbox`
 
 
 **Communication**

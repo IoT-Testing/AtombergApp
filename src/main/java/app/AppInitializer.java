@@ -8,15 +8,12 @@ import io.appium.java_client.android.options.UiAutomator2Options;
 import io.appium.java_client.appmanagement.ApplicationState;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import static io.appium.java_client.appmanagement.ApplicationState.RUNNING_IN_FOREGROUND;
 import static java.lang.Thread.sleep;
 
 public class AppInitializer {
@@ -83,7 +80,6 @@ public class AppInitializer {
     public void initializeDriver(){
         //These caps only get the device, need to select Atomberg Home ap separately
         UiAutomator2Options options = new UiAutomator2Options();
-
         options.setCapability("platformName", "Android");
         options.setCapability("platformVersion", "14");
 //        options.setCapability("appPackage", "com.atomberg.app");

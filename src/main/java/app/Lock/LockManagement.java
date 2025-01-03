@@ -365,27 +365,10 @@ public class LockManagement {
             atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Yes\"]")).click();
         }
         ActionsUtil.SSleep(5);
-//        atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Silent Mode\"]/android.view.View")).click();
-//        ActionsUtil.SSleep(1);
-//        WebElement silentModeInfo = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"When silent mode is enabled, unlock tune and keypad beeps are suppressed\"]"));
-//        assert silentModeInfo.isDisplayed();
-//        atomberg.navigate().back();
     }
 
     // set for specific devices using the Coordinates
     //TODO : Prerequisites > Please disable the Lock of the mobile phone, so that, when lock settings are accessed, there won't be any authentication....
-    protected void Passcode() {
-        ActionsUtil.Tap.withCoordinates(atomberg, 540, 880);
-        ActionsUtil.sleep(500);
-        AppUtil.NumberPad NumberPad = new AppUtil.NumberPad();
-        NumberPad.one(atomberg);
-        NumberPad.one(atomberg);
-        NumberPad.one(atomberg);
-        NumberPad.two(atomberg);
-        NumberPad.two(atomberg);
-        NumberPad.two(atomberg);
-        NumberPad.done(atomberg);
-    }
 
     private void pin(){
         ActionsUtil.sleep(5000);

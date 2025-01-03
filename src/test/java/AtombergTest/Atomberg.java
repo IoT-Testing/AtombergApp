@@ -14,23 +14,7 @@ public class Atomberg {
 	public static AndroidDriver driver;
 
 	public static void main(String[] args) {
-		AppInitializer appInitializer = new AppInitializer();
-		appInitializer.openApp();
-		driver= appInitializer.getDriver();
-		appInitializer.checkMainScreen();
-		WebElement AddButton = null;
-		try {
-			AddButton = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]/android.widget.ImageView"));
-		} catch (Exception ignored) {}
-		if (AddButton != null) {
-			AddButton.click();
-			sleep(1000);
-		} else {
-			ActionsUtil.Tap.withCoordinates(driver, 540, 1850);
-			sleep(1000);
-		}
-		System.out.println("Searching for Available devices");
-		connectButton(driver);
+
 	}
 
 	private static void sleep(long millis) {
