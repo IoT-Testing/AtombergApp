@@ -89,7 +89,7 @@ public class AppTest {
     }
 
     @Order(4)
-    @Test
+    @RepeatedTest(5)
     void testFanControl() {
         try {
             startTest("Fan Control");
@@ -106,7 +106,7 @@ public class AppTest {
     }
 
     @Order(5)
-    @RepeatedTest(5)
+    @Test
     void testLockControl(){
         try {
             startTest("Lock Control");
