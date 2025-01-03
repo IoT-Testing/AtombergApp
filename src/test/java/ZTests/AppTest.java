@@ -207,11 +207,11 @@ public class AppTest {
     @Test
     void testDriverClose() {
         atomberg.quit();
+
     }
 
     @AfterAll
     static void tearDown() {
-
         if (extent != null) {
             extent.flush();
         }
@@ -222,6 +222,7 @@ public class AppTest {
         if (state.equals(ApplicationState.RUNNING_IN_FOREGROUND)){
             WebElement homeScreen = null;
             while (homeScreen == null) {
+                int count = 0;
                 try {
                     homeScreen = atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\nTab 3 of 3\"]"));
                 } catch (Exception ignored) {
@@ -229,6 +230,8 @@ public class AppTest {
                 if (homeScreen == null) {
                     System.out.println("Back");
                     atomberg.navigate().back(); // 180, 1550 860, 1960
+                    count ++;
+                    if(count == 5) break;
                 }
             }
         }
