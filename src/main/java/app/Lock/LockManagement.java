@@ -93,7 +93,7 @@ public class LockManagement {
         // click on the handle(tap to unlock)
         atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Pull down to unlock\"]")).click();
         System.out.println("Unlocking");
-        ActionsUtil.sleep(1000);
+        ActionsUtil.sleep(3000);
         WebElement Unlocked = null;
         WebElement NoLock = null;
         try {// checks if it is unlocked
