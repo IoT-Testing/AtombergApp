@@ -1,5 +1,6 @@
 package app.util;
 
+import app.AppInitializer;
 import io.appium.java_client.android.AndroidDriver;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
@@ -8,8 +9,10 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.Date;
@@ -140,5 +143,13 @@ public class AppUtil {
         public void done(AndroidDriver driver){
             ActionsUtil.Tap.withCoordinates(driver,810,2250);
         }
+    }
+        
+    public static void device() throws IOException, InterruptedException {
+            Process process = Runtime.getRuntime().exec("adb shell getprop ro.product.marketname");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String marketName = reader.readLine();
+            System.out.println((marketName != null && !marketName.isEmpty() ? marketName : "Not available"));
+
     }
 }

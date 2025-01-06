@@ -29,9 +29,9 @@ public class App {
     public static void main(String[] args) {
         try {
             initializeDriver();
-            ScreenRecording.start(driver);
+            ScreenRecording.start();
             ActionsUtil.SSleep(5);
-            ScreenRecording.stop(driver);
+            ScreenRecording.stop();
        } catch (Exception e) {
             e.printStackTrace();
         }

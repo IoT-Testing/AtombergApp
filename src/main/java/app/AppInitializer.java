@@ -81,7 +81,7 @@ public class AppInitializer {
         //These caps only get the device, need to select Atomberg Home ap separately
         UiAutomator2Options options = new UiAutomator2Options();
         options.setCapability("platformName", "Android");
-        options.setCapability("platformVersion", "15");
+        options.setCapability("platformVersion", "14");
 //        options.setCapability("appPackage", "com.atomberg.app");
 
         URL url = null;

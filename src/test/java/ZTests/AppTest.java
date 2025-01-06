@@ -11,6 +11,8 @@ import app.AppInitializer;
 import app.STF.Connect;
 import app.WaterPurifier.ROManagement;
 import app.util.ActionsUtil;
+import app.util.AppUtil;
+import app.util.ScreenRecording;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.Status;
 import io.appium.java_client.android.AndroidDriver;
@@ -38,7 +40,7 @@ public class AppTest {
             String command = connect.copiedText;
             Runtime.getRuntime().exec(command);
             ActionsUtil.sleep(1000);
-            startScreenRecorder();
+            ScreenRecording.start();
             AppInitializer appInitializer = new AppInitializer();
             //TODO: do not use "openApp()" if "initializeDriver()" is used.
             appInitializer.openApp();
@@ -207,7 +209,7 @@ public class AppTest {
     @Test
     void testDriverClose() {
         atomberg.quit();
-        stopScreenRecorder();
+        ScreenRecording.stop();
     }
 
     @AfterAll
@@ -236,24 +238,5 @@ public class AppTest {
             atomberg.activateApp("com.atomberg.app");
         }
     }
-    private void startScreenRecorder(){
-        AppInitializer appInitializer = new AppInitializer();
-        appInitializer.initializeDriver();
-        driver = appInitializer.getDriver();
-        driver.activateApp("com.example.screenrecorder");
-        ActionsUtil.SSleep(5);
-        ActionsUtil.Tap.withCoordinates(driver, 530, 1570);
-        driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Start Recording\"]")).click();
-        driver.findElement(By.xpath("//android.widget.TextView[@text=\"A single app\"]")).click();
-        driver.findElement(By.xpath("//android.widget.TextView[@text=\"Entire screen\"]")).click();
-        driver.findElement(By.xpath("//android.widget.Button[@text=\"Start\"]")).click();
-        System.out.println("Recording Screen");
-    }
-    private void stopScreenRecorder(){
-        AppInitializer appInitializer = new AppInitializer();
-        appInitializer.initializeDriver();
-        driver = appInitializer.getDriver();
-        driver.activateApp("com.example.screenrecorder");
-        ActionsUtil.Tap.withCoordinates(driver, 530, 1570);
-    }
+
 }
