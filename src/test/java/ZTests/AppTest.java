@@ -11,7 +11,6 @@ import app.AppInitializer;
 import app.STF.Connect;
 import app.WaterPurifier.ROManagement;
 import app.util.ActionsUtil;
-import app.util.AppUtil;
 import app.util.ScreenRecording;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.Status;

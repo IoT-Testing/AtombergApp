@@ -3,6 +3,7 @@ package app;
 import app.Lock.LockManagement;
 import app.WaterPurifier.ROManagement;
 import app.util.ActionsUtil;
+import app.util.ScreenRecording;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.appmanagement.ApplicationState;
 import org.openqa.selenium.By;
@@ -20,14 +21,14 @@ public class AutomatedTest {
     public AndroidDriver driver;
 
     public void run(){
-        try {
-            Process process = Runtime.getRuntime().exec("adb shell getprop ro.product.marketname");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String marketName = reader.readLine();
-            process.waitFor();
-            System.out.println((marketName != null && !marketName.isEmpty() ? marketName : "Not available"));
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+        ScreenRecording.start();
+        AppInitializer appInitializer = new AppInitializer();
+        //TODO: do not use "openApp()" if "initializeDriver()" is used.
+        appInitializer.openApp();
+        atomberg = appInitializer.getDriver();
+        ActionsUtil.SSleep(2);
+        //TODO: Use tapOpAppLogo() if you are using initializeDriver()
+        appInitializer.checkMainScreen();
+        ScreenRecording.stop();
     }
 }
