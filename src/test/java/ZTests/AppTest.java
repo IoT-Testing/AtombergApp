@@ -34,11 +34,11 @@ public class AppTest {
         try {
             startTest("Open App");
             System.out.println("OpenApp test start");
-            Connect connect = new Connect();
-            connect.ipAddress();
-            String command = connect.copiedText;
-            Runtime.getRuntime().exec(command);
-            ActionsUtil.sleep(1000);
+//            Connect connect = new Connect();
+//            connect.ipAddress();
+//            String command = connect.copiedText;
+//            Runtime.getRuntime().exec(command);
+//            ActionsUtil.sleep(1000);
             ScreenRecording.start();
             AppInitializer appInitializer = new AppInitializer();
             //TODO: do not use "openApp()" if "initializeDriver()" is used.

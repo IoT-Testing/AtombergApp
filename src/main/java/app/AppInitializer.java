@@ -180,4 +180,13 @@ public class AppInitializer {
         PermissionUtil.allow(atomberg);
     }
 
+    public void openAppWithURL(URL url){
+        UiAutomator2Options options = new UiAutomator2Options();
+        options.setAppPackage("com.atomberg.app");
+        options.setAppActivity("com.atomberg.app.MainActivity");
+
+        atomberg = new AndroidDriver(url, options);
+        atomberg.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+    }
+
 }
