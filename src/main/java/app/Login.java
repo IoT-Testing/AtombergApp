@@ -22,7 +22,7 @@ public class Login {
         WebElement emailField = atomberg.findElement(By.xpath("//android.widget.EditText"));
         emailField.click();
         ActionsUtil.sleep(1500);
-        emailField.sendKeys("hanoni8273@wikfee.com"); // Enter Email id
+        emailField.sendKeys("hiwitaw422@wuzak.com"); // Enter Email id
         AppUtil.captureScreenshot(atomberg);
         System.out.println(" " + emailField.getText() + " ");
         System.out.println("Email Entered...");
@@ -37,7 +37,7 @@ public class Login {
         }
         WebElement passwordField = atomberg.findElement(By.xpath("//android.widget.EditText"));
         passwordField.click();
-        passwordField.sendKeys("Atomberg@098");
+        passwordField.sendKeys("Atomberg@1234");
         AppUtil.captureScreenshot(atomberg);
         System.out.println("Password entered..."); // Enter Password
         WebElement continueButton1 = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Continue\"]"));

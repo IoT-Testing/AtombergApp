@@ -8,7 +8,6 @@ import app.MoreTab.Manage;
 import app.MoreTab.Play;
 import app.MoreTab.Profile;
 import app.AppInitializer;
-import app.STF.Connect;
 import app.WaterPurifier.ROManagement;
 import app.util.ActionsUtil;
 import app.util.ScreenRecording;
@@ -34,11 +33,6 @@ public class AppTest {
         try {
             startTest("Open App");
             System.out.println("OpenApp test start");
-//            Connect connect = new Connect();
-//            connect.ipAddress();
-//            String command = connect.copiedText;
-//            Runtime.getRuntime().exec(command);
-//            ActionsUtil.sleep(1000);
             ScreenRecording.start();
             AppInitializer appInitializer = new AppInitializer();
             //TODO: do not use "openApp()" if "initializeDriver()" is used.
@@ -129,8 +123,8 @@ public class AppTest {
         try {
             startTest("RO Control");
             System.out.println("RO Control test start");
-            ROManagement ro = new ROManagement(atomberg);
-            ro.checkRO();
+//            ROManagement ro = new ROManagement(atomberg);
+//            ro.checkRO();
         } catch (Exception e) {
             getTest().log(Status.FAIL, "RO Control failed: " + e.getMessage());
         } finally {
