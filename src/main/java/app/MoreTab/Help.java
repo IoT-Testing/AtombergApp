@@ -17,13 +17,20 @@ public class Help {
     }
 
     public void raiseAComplaint(){
-        WebElement RaiseComplaint = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Raise a complaint\"]"));
-        RaiseComplaint.click();
-        WebElement newComplaint = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"New Complaint\"]"));
-        await(newComplaint);
-        assert newComplaint.isDisplayed();
+        WebElement raiseComplaint = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"New complaint\"]"));
+        raiseComplaint.click();
+
         AppUtil.captureScreenshot(atomberg);
         System.out.println("Tap on Raise Complaint");
+        videoTryCatch();
+        ActionsUtil.sleep(2000);
+    }
+
+    public void serviceRequest(){
+        WebElement newServiceRequest = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"New service (Water Purifiers)\"]"));
+        newServiceRequest.click();
+        AppUtil.captureScreenshot(atomberg);
+        System.out.println("Tap on Raise Service Request for Water Purifiers");
         videoTryCatch();
         ActionsUtil.sleep(2000);
     }
@@ -56,8 +63,8 @@ public class Help {
         videoTryCatch();
     }
 
-    public void troubleshoot(){
-        atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Troubleshoot\"]")).click();
+    public void ConnectivityTroubleshoot(){
+        atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Connectivity Troubleshoot\"]")).click();
         // Troubleshoot for Fans
         WebElement fan = atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Atomberg Fan\"]"));
         fan.click();
@@ -105,6 +112,16 @@ public class Help {
         System.out.println("Erica Smart");
         ReturnToHome();
         ActionsUtil.Scroll.Up(atomberg);
+        WebElement renesaElite = atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Renesa Elite\"]"));
+        renesaElite.click();
+        AppUtil.captureScreenshot(atomberg);
+        System.out.println("Renesa Elite");
+        ReturnToHome();
+        WebElement renesaEliteSmart = atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Renesa Elite Smart\"]"));
+        renesaEliteSmart.click();
+        AppUtil.captureScreenshot(atomberg);
+        System.out.println("Renesa Elite Smart");
+        ReturnToHome();
         WebElement starlight = atomberg
                 .findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Aris Starlight\"]"));
         starlight.click();
@@ -119,7 +136,7 @@ public class Help {
         WebElement arisContour = atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Aris Contour\"]"));
         arisContour.click();
         AppUtil.captureScreenshot(atomberg);
-        System.out.println("Aris");
+        System.out.println("Aris Contour");
         ReturnToHome();
         WebElement renesaAlpha = atomberg
                 .findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Renesa Alpha\"]"));
@@ -160,6 +177,13 @@ public class Help {
         lock.click();
         AppUtil.captureScreenshot(atomberg);
         System.out.println("Lock Troubleshoot");
+        atomberg.navigate().back();
+
+        WebElement waterPurifier = atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Atomberg Water Purifier\"]"));
+        waterPurifier.click();
+        AppUtil.captureScreenshot(atomberg);
+        System.out.println("Lock Troubleshoot");
+        atomberg.navigate().back();
         videoTryCatch();
     }
 

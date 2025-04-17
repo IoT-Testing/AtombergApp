@@ -11,8 +11,6 @@ import java.util.stream.Collectors;
 
 public class SwitchFamily {
     private AndroidDriver atomberg;
-    private int i;
-    private int total;
     String fam1;
     SwitchFamilyIntermediateCallback callback;
 
@@ -36,8 +34,9 @@ public class SwitchFamily {
         System.out.println(FAMILIES.size());
         FAMILIES.remove(FAMILIES.size() - 1);
         FAMILIES.remove(FAMILIES.size() - 1);
-        total = FAMILIES.size();
+        int total = FAMILIES.size();
         System.out.println("number of FAMILIES present =" + total);
+        int i;
         for (i = 0; i < total; i++) {
             ActionsUtil.sleep(2000);
             List<WebElement> rawFamily = atomberg.findElements(By.className("android.view.View"));

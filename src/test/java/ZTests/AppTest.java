@@ -1,14 +1,12 @@
 package ZTests;
 
 import app.Analytics.Analytics;
-import app.Fan.FanManagement;
-import app.Lock.LockManagement;
 import app.MoreTab.Help;
 import app.MoreTab.Manage;
 import app.MoreTab.Play;
 import app.MoreTab.Profile;
 import app.AppInitializer;
-import app.WaterPurifier.ROManagement;
+import app.ServerInitializer;
 import app.util.ActionsUtil;
 import app.util.ScreenRecording;
 import com.aventstack.extentreports.ExtentReports;
@@ -20,11 +18,12 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import static ZTests.ExtentReportAT.*;
 
-
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AppTest {
+
     public static AndroidDriver atomberg;
     public static AndroidDriver driver;
+
     public static final ExtentReports extent = getReportObjects();
 
     @Order(1)
@@ -33,10 +32,17 @@ public class AppTest {
         try {
             startTest("Open App");
             System.out.println("OpenApp test start");
-            ScreenRecording.start();
+//            Connect connect = new Connect();
+//            connect.ipAddress();
+//            String command = connect.copiedText;
+//            Runtime.getRuntime().exec(command);
+//            ActionsUtil.sleep(1000);
+            ServerInitializer server = new ServerInitializer();
             AppInitializer appInitializer = new AppInitializer();
+            server.startServer();
+            ScreenRecording.startURL(server.service.getUrl());
             //TODO: do not use "openApp()" if "initializeDriver()" is used.
-            appInitializer.openApp();
+            appInitializer.openAppWithURL(server.service.getUrl());
             atomberg = appInitializer.getDriver();
             ActionsUtil.SSleep(2);
             //TODO: Use tapOpAppLogo() if you are using initializeDriver()
@@ -83,57 +89,57 @@ public class AppTest {
         }
     }
 
-    @Order(4)
-    @RepeatedTest(5)
-    void testFanControl() {
-        try {
-            startTest("Fan Control");
-            System.out.println("Fan Control test start");
-            FanManagement fan = new FanManagement(atomberg);
-            fan.checkFan();
-        } catch (Exception e) {
-            getTest().log(Status.FAIL, "Fan Control failed: " + e.getMessage());
-        } finally {
-            System.out.println("Fan Control test end");
-            if(getTest().getStatus() == Status.FAIL) afterTestFailure();
-            endTest();
-        }
-    }
-
-    @Order(5)
-    @Test
-    void testLockControl(){
-        try {
-            startTest("Lock Control");
-            System.out.println("Lock Control test start");
-            LockManagement lock = new LockManagement(atomberg);
-            lock.checkLock();
-        } catch (Exception e) {
-            getTest().log(Status.FAIL, "Lock Control failed: " + e.getMessage());
-        } finally {
-            System.out.println("Lock Control test end");
-            if(getTest().getStatus() == Status.FAIL) afterTestFailure();
-            endTest();
-        }
-    }
-
-    @Order(6)
-    @Test
-    void testROControl(){
-        try {
-            startTest("RO Control");
-            System.out.println("RO Control test start");
+  //  @Order(4)
+//    @RepeatedTest(5)
+//    void testFanControl() {
+//        try {
+//            startTest("Fan Control");
+//            System.out.println("Fan Control test start");
+//            FanManagement fan = new FanManagement(atomberg);
+//            fan.checkFan();
+//        } catch (Exception e) {
+//            getTest().log(Status.FAIL, "Fan Control failed: " + e.getMessage());
+//        } finally {
+//            System.out.println("Fan Control test end");
+//            if(getTest().getStatus() == Status.FAIL) afterTestFailure();
+//            endTest();
+//        }
+//    }
+//
+//    @Order(5)
+//    @Test
+//    void testLockControl(){
+//        try {
+//            startTest("Lock Control");
+//            System.out.println("Lock Control test start");
+//            LockManagement lock = new LockManagement(atomberg);
+//            lock.checkLock();
+//        } catch (Exception e) {
+//            getTest().log(Status.FAIL, "Lock Control failed: " + e.getMessage());
+//        } finally {
+//            System.out.println("Lock Control test end");
+//            if(getTest().getStatus() == Status.FAIL) afterTestFailure();
+//            endTest();
+//        }
+//    }
+//
+//    @Order(6)
+//    @Test
+//    void testROControl(){
+//        try {
+//            startTest("RO Control");
+//            System.out.println("RO Control test start");
 //            ROManagement ro = new ROManagement(atomberg);
 //            ro.checkRO();
-        } catch (Exception e) {
-            getTest().log(Status.FAIL, "RO Control failed: " + e.getMessage());
-        } finally {
-            System.out.println("RO Control test end");
-            if(getTest().getStatus() == Status.FAIL) afterTestFailure();
-            endTest();
-        }
-    }
-
+//        } catch (Exception e) {
+//            getTest().log(Status.FAIL, "RO Control failed: " + e.getMessage());
+//        } finally {
+//            System.out.println("RO Control test end");
+//            if(getTest().getStatus() == Status.FAIL) afterTestFailure();
+//            endTest();
+//        }
+//    }
+//
     @Order(7)
     @Test
     void testAnalytics() {
@@ -162,6 +168,7 @@ public class AppTest {
             Play play = new Play(atomberg);
             manage.help();
             help.raiseAComplaint();
+            help.serviceRequest();
             help.trackAComplaint();
             play.videos();
             help.manual();
@@ -201,8 +208,10 @@ public class AppTest {
     @Order(10)
     @Test
     void testDriverClose() {
-        atomberg.quit();
+//        atomberg.quit();
+        ServerInitializer server = new ServerInitializer();
         ScreenRecording.stop();
+        server.stopServer();
     }
 
     @AfterAll

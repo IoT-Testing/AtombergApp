@@ -95,18 +95,15 @@ public class AppInitializer {
         atomberg.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
     }
 
-    public void tapOnAppLogo(){
-        //Prerequisites : Atomberg App should be on Home screen.
-        List<WebElement> elementList = atomberg.findElements(By.className("android.widget.ImageView"));
-        List<WebElement> apps = elementList.stream().filter(object->object.getDomAttribute("content-desc")!=null).collect(Collectors.toList());
-        for(WebElement app : apps){
-            if(Objects.equals(app.getDomAttribute("content-desc"), "Atomberg Home")){
-                app.click();
-                break;
-            }
-        }
-        ActionsUtil.sleep(5000);
-        AppUtil.captureScreenshot(atomberg);
+    public void initializeDriverWithURL(URL url){
+        //These caps only get the device, need to select Atomberg Home ap separately
+        UiAutomator2Options options = new UiAutomator2Options();
+        options.setCapability("platformName", "Android");
+        options.setCapability("platformVersion", "15");
+//        options.setCapability("appPackage", "com.atomberg.app");
+
+        atomberg = new AndroidDriver(url, options);
+        atomberg.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
     }
 
     public void login(String login, String pass) {
