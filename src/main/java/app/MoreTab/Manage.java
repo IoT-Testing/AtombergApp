@@ -133,15 +133,14 @@ public class Manage {
             CANCEL
             CLICK ON DELETE
             CANCEL
-            IF SCRIPT
+            IF FAMILY NAME "SCRIPT"
             DELETE FAMILY
-            IF ADD
-            DO ADD HOME PROCESS WITH HOME NAME -> SCRIPT
+            IF ADD BUTTON ON SCREEN
+            ADD HOME PROCESS WITH HOME NAME -> SCRIPT
         */
         ScreenCheck screen = new ScreenCheck(atomberg);
         screen.moreTab();
         WebElement ManageFamily = null;
-
         while (ManageFamily == null) {
             try {
                 ManageFamily = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Manage family\"]"));
@@ -186,12 +185,10 @@ public class Manage {
                 LeaveHome.click();
                 System.out.println("Leave home");
                 AppUtil.captureScreenshot(atomberg);
-
                 WebElement Cancel = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]"));
                 Cancel.click();
                 System.out.println("Cancel");
                 AppUtil.captureScreenshot(atomberg);
-
                 WebElement delete = null;
                 try {
                     delete = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Delete home\"]"));
@@ -207,7 +204,6 @@ public class Manage {
                 System.out.println(numberOfFamilies);
                 numberOfFamilies -= 1;
                 System.out.println(numberOfFamilies);
-
             } else {
                 addHome();
             }

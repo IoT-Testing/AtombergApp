@@ -82,7 +82,6 @@ public class AppInitializer {
         UiAutomator2Options options = new UiAutomator2Options();
         options.setCapability("platformName", "Android");
         options.setCapability("platformVersion", "15");
-//        options.setCapability("appPackage", "com.atomberg.app");
 
         URL url = null;
         try {
@@ -96,12 +95,10 @@ public class AppInitializer {
     }
 
     public void initializeDriverWithURL(URL url){
-        //These caps only get the device, need to select Atomberg Home ap separately
+        //These options only connect to the device, need to select Atomberg Home app separately
         UiAutomator2Options options = new UiAutomator2Options();
         options.setCapability("platformName", "Android");
         options.setCapability("platformVersion", "15");
-//        options.setCapability("appPackage", "com.atomberg.app");
-
         atomberg = new AndroidDriver(url, options);
         atomberg.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
     }
@@ -181,7 +178,6 @@ public class AppInitializer {
         UiAutomator2Options options = new UiAutomator2Options();
         options.setAppPackage("com.atomberg.app");
         options.setAppActivity("com.atomberg.app.MainActivity");
-
         atomberg = new AndroidDriver(url, options);
         atomberg.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
     }

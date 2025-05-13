@@ -1,11 +1,11 @@
 package ZTests;
 
 import app.Analytics.Analytics;
+import app.AppInitializer;
 import app.MoreTab.Help;
 import app.MoreTab.Manage;
 import app.MoreTab.Play;
 import app.MoreTab.Profile;
-import app.AppInitializer;
 import app.ServerInitializer;
 import app.util.ActionsUtil;
 import app.util.ScreenRecording;
@@ -16,14 +16,14 @@ import io.appium.java_client.appmanagement.ApplicationState;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+
 import static ZTests.ExtentReportAT.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class AppTest {
+public class AppTestTwo {
 
-    public static AndroidDriver atomberg;
     public static AndroidDriver driver;
-    public ServerInitializer server;
+    public ServerInitializer server = new ServerInitializer();
     public static final ExtentReports extent = getReportObjects();
 
     @Order(1)
@@ -37,16 +37,16 @@ public class AppTest {
 //            String command = connect.copiedText;
 //            Runtime.getRuntime().exec(command);
 //            ActionsUtil.sleep(1000);
-            server = new ServerInitializer();
             server.startServer();
-            ScreenRecording recording = new ScreenRecording(server.service.getUrl());
-            recording.start();
             //TODO: do not use "openApp()" if "initializeDriver()" is used.
             AppInitializer appInitializer = new AppInitializer();
-            appInitializer.openAppWithURL(server.service.getUrl());
-            atomberg = appInitializer.getDriver();
+            appInitializer.initializeDriverWithURL(server.service.getUrl());
+            driver = appInitializer.getDriver();
+            ScreenRecording recording = new ScreenRecording(driver);
+            recording.start();
             ActionsUtil.SSleep(2);
             //TODO: Use tapOpAppLogo() if you are using initializeDriver()
+            driver.activateApp("com.atomberg.app");
             appInitializer.checkMainScreen();
         } catch (Exception e) {
             getTest().log(Status.FAIL, "App Open failed: " + e.getMessage());
@@ -62,7 +62,7 @@ public class AppTest {
         try {
             startTest("Profile Edit");
             System.out.println("Profile Edit test start");
-            Profile profile = new Profile(atomberg);
+            Profile profile = new Profile(driver);
             profile.edit();
         } catch (Exception e) {
             getTest().log(Status.FAIL, "Logout failed: " + e.getMessage());
@@ -79,7 +79,7 @@ public class AppTest {
         try {
             startTest("Family");
             System.out.println("Family test start");
-            Manage manage = new Manage(atomberg);
+            Manage manage = new Manage(driver);
             manage.family();
         } catch (Exception e) {
             getTest().log(Status.FAIL, "Family Management failed: " + e.getMessage());
@@ -96,7 +96,7 @@ public class AppTest {
 //        try {
 //            startTest("Fan Control");
 //            System.out.println("Fan Control test start");
-//            FanManagement fan = new FanManagement(atomberg);
+//            FanManagement fan = new FanManagement(driver);
 //            fan.checkFan();
 //        } catch (Exception e) {
 //            getTest().log(Status.FAIL, "Fan Control failed: " + e.getMessage());
@@ -113,7 +113,7 @@ public class AppTest {
 //        try {
 //            startTest("Lock Control");
 //            System.out.println("Lock Control test start");
-//            LockManagement lock = new LockManagement(atomberg);
+//            LockManagement lock = new LockManagement(driver);
 //            lock.checkLock();
 //        } catch (Exception e) {
 //            getTest().log(Status.FAIL, "Lock Control failed: " + e.getMessage());
@@ -130,7 +130,7 @@ public class AppTest {
 //        try {
 //            startTest("RO Control");
 //            System.out.println("RO Control test start");
-//            ROManagement ro = new ROManagement(atomberg);
+//            ROManagement ro = new ROManagement(driver);
 //            ro.checkRO();
 //        } catch (Exception e) {
 //            getTest().log(Status.FAIL, "RO Control failed: " + e.getMessage());
@@ -147,7 +147,7 @@ public class AppTest {
         try {
             startTest("Analytics");
             System.out.println("Analytics test start");
-            Analytics analytics = new Analytics(atomberg);
+            Analytics analytics = new Analytics(driver);
             analytics.Show();
         } catch (Exception e) {
             getTest().log(Status.FAIL, "Analytics failed: " + e.getMessage());
@@ -164,9 +164,9 @@ public class AppTest {
         try {
             startTest("Help Section");
             System.out.println("Help Section test start");
-            Manage manage = new Manage(atomberg);
-            Help help = new Help(atomberg);
-            Play play = new Play(atomberg);
+            Manage manage = new Manage(driver);
+            Help help = new Help(driver);
+            Play play = new Play(driver);
             manage.help();
             help.raiseAComplaint();
             help.serviceRequest();
@@ -174,10 +174,10 @@ public class AppTest {
             play.videos();
             help.manual();
 //            help.troubleshoot();
-            ActionsUtil.Scroll.Up(atomberg);
+            ActionsUtil.Scroll.Up(driver);
             help.email();
             help.call();
-            atomberg.navigate().back();
+            driver.navigate().back();
         } catch (Exception e) {
             getTest().log(Status.FAIL, "Help Section failed: " + e.getMessage());
         } finally {
@@ -195,7 +195,7 @@ public class AppTest {
         try {
             startTest("Logout");
             System.out.println("Logout test start");
-            Manage manage = new Manage(atomberg);
+            Manage manage = new Manage(driver);
             manage.logout();
             ActionsUtil.SSleep(5);
         } catch (Exception e) {
@@ -209,9 +209,7 @@ public class AppTest {
     @Order(10)
     @Test
     void testDriverClose() {
-//        ServerInitializer server = new ServerInitializer();
-//        server.startServer();
-        ScreenRecording recording = new ScreenRecording(server.service.getUrl());
+        ScreenRecording recording = new ScreenRecording(driver);
         recording.stop();
         server.stopServer();
     }
@@ -224,23 +222,22 @@ public class AppTest {
     }
 
     void afterTestFailure() {
-        ApplicationState state = atomberg.queryAppState("com.atomberg.app");
+        ApplicationState state = driver.queryAppState("com.atomberg.app");
         if (state.equals(ApplicationState.RUNNING_IN_FOREGROUND)){
             WebElement homeScreen = null;
             while (homeScreen == null) {
                 try {
-                    homeScreen = atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\nTab 3 of 3\"]"));
+                    homeScreen = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\nTab 3 of 3\"]"));
                 } catch (Exception ignored) {
                 }
                 if (homeScreen == null) {
                     System.out.println("Back");
-                    atomberg.navigate().back(); // 180, 1550 860, 1960
+                    driver.navigate().back(); // 180, 1550 860, 1960
                 }
             }
         }
         else{
-            atomberg.activateApp("com.atomberg.app");
+            driver.activateApp("com.atomberg.app");
         }
     }
-
 }
