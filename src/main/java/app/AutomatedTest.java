@@ -10,7 +10,9 @@ public class AutomatedTest {
     public AndroidDriver driver;
 
     public void run(){
-        ScreenRecording.start();
+        ServerInitializer server = new ServerInitializer();
+        ScreenRecording recording = new ScreenRecording(server.service.getUrl());
+        recording.start();
         AppInitializer appInitializer = new AppInitializer();
         //TODO: do not use "openApp()" if "initializeDriver()" is used.
         appInitializer.openApp();
@@ -18,6 +20,6 @@ public class AutomatedTest {
         ActionsUtil.SSleep(2);
         //TODO: Use tapOpAppLogo() if you are using initializeDriver()
         appInitializer.checkMainScreen();
-        ScreenRecording.stop();
+        recording.stop();
     }
 }

@@ -38,10 +38,11 @@ public class AppTest {
 //            Runtime.getRuntime().exec(command);
 //            ActionsUtil.sleep(1000);
             ServerInitializer server = new ServerInitializer();
-            AppInitializer appInitializer = new AppInitializer();
             server.startServer();
-            ScreenRecording.startURL(server.service.getUrl());
+            ScreenRecording recording = new ScreenRecording(server.service.getUrl());
+            recording.startURL(server.service.getUrl());
             //TODO: do not use "openApp()" if "initializeDriver()" is used.
+            AppInitializer appInitializer = new AppInitializer();
             appInitializer.openAppWithURL(server.service.getUrl());
             atomberg = appInitializer.getDriver();
             ActionsUtil.SSleep(2);
@@ -210,7 +211,9 @@ public class AppTest {
     void testDriverClose() {
 //        atomberg.quit();
         ServerInitializer server = new ServerInitializer();
-        ScreenRecording.stop();
+        server.startServer();
+        ScreenRecording recording = new ScreenRecording(server.service.getUrl());
+        recording.stopURL(server.service.getUrl());
         server.stopServer();
     }
 

@@ -2,6 +2,8 @@ package AtombergTest; //To check
 
 import java.net.URL;
 import java.time.Duration;
+
+import app.ServerInitializer;
 import app.util.ActionsUtil;
 import app.util.AppUtil;
 import app.util.ScreenRecording;
@@ -15,9 +17,12 @@ import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
-        /*
-          @author Rohit B. Bhagat
-         */
+
+import static app.AndroidDriverCheck.AtombergHome.atomberg;
+
+/*
+  @author Rohit B. Bhagat
+ */
 public class App {
     public static AndroidDriver driver;
     int i;
@@ -28,10 +33,11 @@ public class App {
 
     public static void main(String[] args) {
         try {
-            initializeDriver();
-            ScreenRecording.start();
+            ServerInitializer server = new ServerInitializer();
+            ScreenRecording recording = new ScreenRecording(server.service.getUrl());
+            recording.start();
             ActionsUtil.SSleep(5);
-            ScreenRecording.stop();
+            recording.stop();
        } catch (Exception e) {
             e.printStackTrace();
         }
