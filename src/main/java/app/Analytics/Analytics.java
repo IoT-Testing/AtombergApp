@@ -64,6 +64,7 @@ public class Analytics {
             System.out.println(anaFans.get(i).getDomAttribute("content-desc"));
             String deviceType = anaFans.get(i).getDomAttribute("content-desc");
             anaFans.get(i).click();
+            assert deviceType != null;
             info(deviceType);
             System.out.println(i < (anaFans.size()));
             if (i < (anaFans.size() - 1)) { // to go to the analytics screen and

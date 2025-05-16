@@ -64,6 +64,7 @@ public class LockManagement {
             sleep(1500);
         }
         sleep(3000);
+
     }
 
     public void checkLock() {

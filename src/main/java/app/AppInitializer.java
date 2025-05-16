@@ -58,7 +58,7 @@ public class AppInitializer {
                 System.out.println("Already logged in");
             }
         }
-        else if(appState != ApplicationState.RUNNING_IN_FOREGROUND)
+        else if(appState != ApplicationState.RUNNING_IN_BACKGROUND)
         {
             atomberg.activateApp("com.atomberg.app");
             ActionsUtil.SSleep(5);

@@ -16,10 +16,18 @@ public class Help {
         this.atomberg = driver;
     }
 
-    public void raiseAComplaint(){
+    public void newComplaint(){
         WebElement raiseComplaint = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"New complaint\"]"));
         raiseComplaint.click();
+        AppUtil.captureScreenshot(atomberg);
+        System.out.println("Tap on Raise Complaint");
+        videoTryCatch();
+        ActionsUtil.sleep(2000);
+    }
 
+    public void installationRequest(){
+        WebElement raiseComplaint = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Installation Request\"]"));
+        raiseComplaint.click();
         AppUtil.captureScreenshot(atomberg);
         System.out.println("Tap on Raise Complaint");
         videoTryCatch();
@@ -34,11 +42,10 @@ public class Help {
         videoTryCatch();
         ActionsUtil.sleep(2000);
     }
-
     public void trackAComplaint(){
-        WebElement TrackComplaint = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Track complaints\"]"));
+        WebElement TrackComplaint = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Track complaints/ requests\"]"));
         TrackComplaint.click();
-        WebElement complaintStatus = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Complaint status\"]"));
+        WebElement complaintStatus = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Complaint/ Request status\"]"));
         await(complaintStatus);
         AppUtil.captureScreenshot(atomberg);
         System.out.println("Tap on Track Complaint");

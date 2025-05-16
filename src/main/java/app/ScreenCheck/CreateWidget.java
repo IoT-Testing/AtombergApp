@@ -6,6 +6,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class CreateWidget {
@@ -45,9 +46,9 @@ public class CreateWidget {
             System.out.println(widgetsList.size());
             for (WebElement widget : widgetsList) {
 //                System.out.println(element.getDomAttribute("text"));
-                if (!widget.getDomAttribute("content-desc").equals("Atomberg Home widget")) {
+                if (!Objects.equals(widget.getDomAttribute("content-desc"), "Atomberg Home widget")) {
                     ActionsUtil.Scroll.Up(driver);
-                } else if (widget.getDomAttribute("content-desc").equals("Atomberg Home widget")) {
+                } else if (Objects.equals(widget.getDomAttribute("content-desc"), "Atomberg Home widget")) {
                     widget.click();
                 }
                 break;

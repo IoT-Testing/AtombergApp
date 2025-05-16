@@ -55,13 +55,15 @@ public class GoogleHome {
         try {
             googleIsDisconnected = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Google\nConnect\"]"));
         }catch (Exception ignored){}
-        if(googleIsDisconnected!= null)System.out.println("Google Home Unlinked Successfully");
+        if(googleIsDisconnected!= null) System.out.println("Google Home Unlinked Successfully");
         else {
             screen.homeScreen();
             ActionsUtil.sleep(2500);
             ActionsUtil.refresh(driver);
             screen.moreTab();
-            googleIsDisconnected = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Google\nConnect\"]"));
+            try {
+                googleIsDisconnected = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Google\nConnect\"]"));
+            }catch (Exception ignored){}
             if(googleIsDisconnected == null){
                 System.out.println("Google unlink Error");
             }
