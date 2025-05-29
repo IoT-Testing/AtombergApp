@@ -5,10 +5,10 @@ import Login.Email;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import io.appium.java_client.android.AndroidDriver;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testng.Assert;
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Test;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -21,7 +21,7 @@ public class Monkey {
 	public static AndroidDriver driver;
 	static ExtentReports extent = new ExtentReports();
 
-	@BeforeAll
+	@BeforeSuite
 	public static void config(){
 		String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 		String path = System.getProperty("user.dir")+"\\reports\\Atomberg"+timestamp+".html";
@@ -32,8 +32,6 @@ public class Monkey {
 		extent = new ExtentReports();
 		extent.attachReporter(reporter);
 		extent.setSystemInfo("Tester","Rohit Bhagat");
-
-
 	}
 
 	public static void openAtomberg() {
@@ -67,7 +65,7 @@ public class Monkey {
   {
 
 	  extent.createTest("Monkey Test");
-	  String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+	  String timestamp;
 	  openAtomberg();
 
 	  Email.Login(driver);

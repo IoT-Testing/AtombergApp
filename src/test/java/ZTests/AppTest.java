@@ -6,7 +6,7 @@ import app.MoreTab.Help;
 import app.MoreTab.Manage;
 import app.MoreTab.Play;
 import app.MoreTab.Profile;
-import app.STF.Connect;
+import app.STF.Connect2;
 import app.ServerInitializer;
 import app.util.ActionsUtil;
 import app.util.ScreenRecording;
@@ -14,25 +14,26 @@ import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.Status;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.appmanagement.ApplicationState;
-import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.testng.annotations.AfterSuite;
+import org.testng.annotations.Test;
+
+
 import static ZTests.ExtentReportAT.*;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AppTest {
     public String command;
     public static AndroidDriver driver;
     public ServerInitializer server = new ServerInitializer();
     public static final ExtentReports extent = getReportObjects();
 
-    @Order(1)
-    @Test// This test is for Opening the Atomberg Home App
+    @Test(priority = 1)// This test is for Opening the Atomberg Home App
     void testOpenApp() {
         try {
             startTest("Open App");
             System.out.println("OpenApp test start");
-            Connect connect = new Connect();
+            Connect2 connect = new Connect2();
             connect.ipAddress();
             command = connect.copiedText;
             Runtime.getRuntime().exec(command);
@@ -55,8 +56,7 @@ public class AppTest {
         }
     }
 
-    @Order(2)
-    @Test
+    @Test(priority = 2)
     void testManageProfile(){
         try {
             startTest("Profile Edit");
@@ -72,8 +72,7 @@ public class AppTest {
         }
     }
 
-    @Order(3)
-    @Test
+    @Test(priority = 3)
     void testManageFamily(){
         try {
             startTest("Family");
@@ -89,8 +88,7 @@ public class AppTest {
         }
     }
 
-    //  @Order(4)
-//    @RepeatedTest(5)
+    //  @Test(priority = 4)
 //    void testFanControl() {
 //        try {
 //            startTest("Fan Control");
@@ -106,8 +104,7 @@ public class AppTest {
 //        }
 //    }
 //
-//    @Order(5)
-//    @Test
+//    @Test(priority = 5)
 //    void testLockControl(){
 //        try {
 //            startTest("Lock Control");
@@ -123,8 +120,7 @@ public class AppTest {
 //        }
 //    }
 //
-//    @Order(6)
-//    @Test
+//    @Test(priority = 6)
 //    void testROControl(){
 //        try {
 //            startTest("RO Control");
@@ -140,8 +136,7 @@ public class AppTest {
 //        }
 //    }
 //
-    @Order(7)
-    @Test
+    @Test(priority = 7)
     void testAnalytics() {
         try {
             startTest("Analytics");
@@ -157,8 +152,7 @@ public class AppTest {
         }
     }
 
-    @Order(8)
-    @Test
+    @Test(priority = 8)
     void testHelp() {
         try {
             startTest("Help Section");
@@ -189,8 +183,7 @@ public class AppTest {
         }
     }
 
-    @Order(9)
-    @Test
+    @Test(priority = 9)
     void testLogout() {
         try {
             startTest("Logout");
@@ -206,15 +199,14 @@ public class AppTest {
         }
     }
 
-    @Order(10)
-    @Test
+    @Test(priority = 10)
     void testDriverClose() {
         ScreenRecording recording = new ScreenRecording(driver);
         recording.stop();
         server.stopServer();
     }
 
-    @AfterAll
+    @AfterSuite
     static void tearDown() {
         if (extent != null) {
             extent.flush();

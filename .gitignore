@@ -5,9 +5,5 @@ logs/
 /target/
 /target/surefire-reports/
 /target
-new_flutter_version.apk
 accounts.csv
-browserstack.yml
-production.apk
-qodana.yaml
-AtombergHome.apk
+

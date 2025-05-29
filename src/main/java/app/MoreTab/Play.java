@@ -31,7 +31,6 @@ public class Play {
 
         AppUtil.captureScreenshot(driver);
         System.out.println("Alexa Video Opened");
-
         videoTryCatch();
         videoTryCatch();
         videoTryCatch();
@@ -103,14 +102,16 @@ public class Play {
 
     private void videoTryCatch() {
         WebElement VideoTutorials =null;
-        while(VideoTutorials == null)
-        {
-            try {
-                VideoTutorials = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Video tutorials\"]"));
-            }catch (Exception ignored) {}
-            if (VideoTutorials == null) {
-                System.out.println("Back");
-                driver.navigate().back(); // 180, 1550 860, 1960
+        for(int i =0 ; i < 5 ; i++){
+             while(VideoTutorials == null)
+             {
+                try {
+                    VideoTutorials = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Video tutorials\"]"));
+                }catch (Exception ignored) {}
+                if (VideoTutorials == null) {
+                    System.out.println("Back");
+                    driver.navigate().back(); // 180, 1550 860, 1960
+                }
             }
         }
     }
