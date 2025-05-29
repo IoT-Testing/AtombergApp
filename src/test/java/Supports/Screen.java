@@ -9,7 +9,7 @@ import java.util.Map;
 import Login.Login;
 
 public class Screen {
-	private static Process process = null;
+	public static Process process = null;
 
     private Screen(Process process) {
         Screen.process = process;

@@ -17,12 +17,11 @@ import io.appium.java_client.appmanagement.ApplicationState;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-
 import static ZTests.ExtentReportAT.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AppTest {
-
+    public String command;
     public static AndroidDriver driver;
     public ServerInitializer server = new ServerInitializer();
     public static final ExtentReports extent = getReportObjects();
@@ -33,15 +32,14 @@ public class AppTest {
         try {
             startTest("Open App");
             System.out.println("OpenApp test start");
-//            Connect connect = new Connect();
-//            connect.ipAddress();
-//            String command = connect.copiedText;
-//            Runtime.getRuntime().exec(command);
-//            ActionsUtil.sleep(1000);
+            Connect connect = new Connect();
+            connect.ipAddress();
+            command = connect.copiedText;
+            Runtime.getRuntime().exec(command);
             server.startServer();
             //TODO: do not use "openApp()" if "initializeDriver()" is used.
             AppInitializer appInitializer = new AppInitializer();
-            appInitializer.initializeDriverWithURL(server.service.getUrl());
+            appInitializer.initializeDriverWithURL(server.service.getUrl(), command);
             driver = appInitializer.getDriver();
             ScreenRecording recording = new ScreenRecording(driver);
             recording.start();

@@ -4,12 +4,14 @@ import app.util.ActionsUtil;
 import app.util.ScreenRecording;
 import io.appium.java_client.android.AndroidDriver;
 
+import java.io.IOException;
+
 public class AutomatedTest {
 
     public AndroidDriver atomberg;
     public AndroidDriver driver;
 
-    public void run(){
+    public void run() throws IOException, InterruptedException {
         ServerInitializer server = new ServerInitializer();
         ScreenRecording recording = new ScreenRecording(server.service.getUrl());
         recording.start();

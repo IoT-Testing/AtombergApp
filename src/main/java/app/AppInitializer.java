@@ -1,5 +1,6 @@
 package app;
 
+import app.STF.Connect;
 import app.util.ActionsUtil;
 import app.util.AppUtil;
 import app.util.PermissionUtil;
@@ -8,6 +9,10 @@ import io.appium.java_client.android.options.UiAutomator2Options;
 import io.appium.java_client.appmanagement.ApplicationState;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
@@ -18,6 +23,7 @@ import static java.lang.Thread.sleep;
 
 public class AppInitializer {
     public AndroidDriver atomberg;
+    public String osVersion;
     public AndroidDriver getDriver() {
         return atomberg;
     }
@@ -45,6 +51,7 @@ public class AppInitializer {
         ApplicationState appState = atomberg.queryAppState("com.atomberg.app");
         if (appState == ApplicationState.RUNNING_IN_FOREGROUND)
         {
+            ActionsUtil.SSleep(5);
             WebElement isMainScreenDisplayed = null;
             try {
                 isMainScreenDisplayed = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Experience smart living \n" + " with Atomberg\"]"));
@@ -94,14 +101,37 @@ public class AppInitializer {
         atomberg.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
     }
 
-    public void initializeDriverWithURL(URL url){
+    public void initializeDriverWithURL(URL url, String text) throws IOException, InterruptedException {
         //These options only connect to the device, need to select Atomberg Home app separately
+//        Runtime.getRuntime().exec("appium driver install uiautomator2");
         UiAutomator2Options options = new UiAutomator2Options();
         options.setCapability("platformName", "Android");
-        options.setCapability("platformVersion", "15");
+        String[] arr = text.split(" ");
+        String ip = arr[arr.length-1];
+        System.out.println(ip);
+        Process process = Runtime.getRuntime().exec("adb -s "+ip+" shell getprop ro.system.build.version.release");
+        process.waitFor();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        String line;
+        StringBuilder output = new StringBuilder();
+        while ((line = reader.readLine()) != null) {
+            output.append(line);
+        }
+        osVersion = output.toString();
+        System.out.println("ADB Output:\n" + osVersion);
+        options.setCapability("platformVersion", osVersion);
         atomberg = new AndroidDriver(url, options);
         atomberg.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
     }
+
+    public void initializeDriverWithURL(URL url) throws IOException, InterruptedException {
+        //These options only connect to the device, need to select Atomberg Home app separately
+        UiAutomator2Options options = new UiAutomator2Options();
+        options.setCapability("platformName", "Android");
+        atomberg = new AndroidDriver(url, options);
+        atomberg.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+    }
+
 
     public void login(String login, String pass) {
         WebElement emailLoginButton = atomberg.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[4]"));

@@ -18,7 +18,7 @@ public class Analytics {
         this.atomberg = driver;
     }
     public void Show() {
-        analytics = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Analytics\n" +
+        analytics = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Analytics\n" +
                 "Tab 1 of 3\"]"));
         moreTab = atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\n" +
                 "Tab 3 of 3\"]"));

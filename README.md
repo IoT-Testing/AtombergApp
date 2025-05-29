@@ -1,4 +1,4 @@
-# AtombergApp
+    # AtombergApp
  Testing Atomberg Home app
 
 This project is made to test the atomberg home app, with automated steps.

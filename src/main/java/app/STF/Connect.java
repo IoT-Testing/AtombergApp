@@ -2,8 +2,6 @@ package app.STF;
 
 import app.util.ActionsUtil;
 import org.openqa.selenium.*;
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.Point;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.*;
 import java.awt.*;
@@ -17,38 +15,17 @@ import java.util.stream.Collectors;
 
 public class Connect {
     WebDriver driver = null;
-
     public String copiedText;
-
+    public String ip;
     public void ipAddress() throws IOException, UnsupportedFlavorException {
         driver = new ChromeDriver();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-        String URL = "http://192.168.9.105:7100/";
+        String URL = "http://192.168.82.77:7100/";
         driver.get(URL);
         System.out.println("Website Opened");
         driver.manage().window().maximize();
         stfLogin();
-        List<WebElement> elementList = driver.findElements(By.tagName("li"));
-        List<WebElement> devicesList = elementList.stream().filter(webElement -> webElement.getDomAttribute("id")!=null).collect(Collectors.toList());
-        int i = (int) (Math.random() * devicesList.size());
-        System.out.println("Device number "+ i +" Selected");
-        devicesList.get(0).click();
-        List<WebElement> listOfTextBox = driver.findElements(By.tagName("textarea"));
-        WebElement ip = listOfTextBox.get(1);
-        Point ipLocation = ip.getLocation();
-        Dimension ipSize = ip.getSize();
-        System.out.println(ipLocation);
-        System.out.println(ipSize);
-        Actions actions = new Actions(driver);
-        actions.moveToElement(ip);
-        actions.click(ip);
-        actions.perform();
-        actions.setActivePointer(PointerInput.Kind.MOUSE, "mouse");
-        actions.keyDown(Keys.CONTROL).sendKeys("c").keyUp(Keys.CONTROL).perform();
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        // Retrieve the copied text
-        copiedText = (String) clipboard.getData(DataFlavor.stringFlavor);
-        System.out.println(copiedText);
+        remoteDebug();
     }
 
     void stfLogin(){
@@ -72,4 +49,25 @@ public class Connect {
             driver.switchTo().frame(device);
         }
     }
+
+    void remoteDebug() throws IOException, UnsupportedFlavorException {
+        List<WebElement> elementList = driver.findElements(By.tagName("li"));
+        List<WebElement> devicesList = elementList.stream().filter(webElement -> webElement.getDomAttribute("id")!=null).collect(Collectors.toList());
+        int i = (int) (Math.random() * devicesList.size());
+        System.out.println("Device number "+ i +" Selected");
+        devicesList.get(0).click();
+        List<WebElement> listOfTextBox = driver.findElements(By.tagName("textarea"));
+        WebElement ip = listOfTextBox.get(1);
+        Actions actions = new Actions(driver);
+        actions.moveToElement(ip);
+        actions.click(ip);
+        actions.perform();
+        actions.setActivePointer(PointerInput.Kind.MOUSE, "mouse");
+        actions.keyDown(Keys.CONTROL).sendKeys("c").keyUp(Keys.CONTROL).perform();
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        // Retrieve the copied text
+        copiedText = (String) clipboard.getData(DataFlavor.stringFlavor);
+        System.out.println(copiedText);
+    }
+
 }

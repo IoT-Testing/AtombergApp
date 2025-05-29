@@ -112,6 +112,8 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.5.1</version>
                 <configuration>
+                    <parallel>methods</parallel>
+                    <threadCount>2</threadCount>
                     <groups>acceptance | !features-a</groups>
                     <excludedGroups>integration, regression</excludedGroups>
                     <excludes>
