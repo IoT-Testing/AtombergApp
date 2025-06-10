@@ -16,8 +16,7 @@ import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.appmanagement.ApplicationState;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.testng.annotations.AfterSuite;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 
 
 import static ZTests.ExtentReportAT.*;
@@ -27,6 +26,13 @@ public class AppTest {
     public static AndroidDriver driver;
     public ServerInitializer server = new ServerInitializer();
     public static final ExtentReports extent = getReportObjects();
+
+    @Parameters({"deviceSlot"})
+    @BeforeClass
+    public void setup(@Optional("1") String deviceSlot) {
+        int slot = Integer.parseInt(deviceSlot);
+    }
+
 
     @Test(priority = 1)// This test is for Opening the Atomberg Home App
     void testOpenApp() {
@@ -56,7 +62,7 @@ public class AppTest {
         }
     }
 
-    @Test(priority = 2)
+    @Test(priority = 2, dependsOnMethods = "testOpenApp")
     void testManageProfile(){
         try {
             startTest("Profile Edit");
@@ -72,7 +78,7 @@ public class AppTest {
         }
     }
 
-    @Test(priority = 3)
+    @Test(priority = 3, dependsOnMethods = "testManageProfile")
     void testManageFamily(){
         try {
             startTest("Family");
@@ -88,7 +94,7 @@ public class AppTest {
         }
     }
 
-    //  @Test(priority = 4)
+    //  @Test(priority = 4,dependsOnMethods = "testManageProfile")
 //    void testFanControl() {
 //        try {
 //            startTest("Fan Control");
@@ -104,7 +110,7 @@ public class AppTest {
 //        }
 //    }
 //
-//    @Test(priority = 5)
+//    @Test(priority = 5,dependsOnMethods = "testManageProfile")
 //    void testLockControl(){
 //        try {
 //            startTest("Lock Control");
@@ -120,7 +126,7 @@ public class AppTest {
 //        }
 //    }
 //
-//    @Test(priority = 6)
+//    @Test(priority = 6,dependsOnMethods = "testManageProfile")
 //    void testROControl(){
 //        try {
 //            startTest("RO Control");
@@ -136,7 +142,7 @@ public class AppTest {
 //        }
 //    }
 //
-    @Test(priority = 7)
+    @Test(priority = 7,dependsOnMethods = "testManageFamily")
     void testAnalytics() {
         try {
             startTest("Analytics");
@@ -152,7 +158,7 @@ public class AppTest {
         }
     }
 
-    @Test(priority = 8)
+    @Test(priority = 8,dependsOnMethods = "testAnalytics")
     void testHelp() {
         try {
             startTest("Help Section");
@@ -183,7 +189,7 @@ public class AppTest {
         }
     }
 
-    @Test(priority = 9)
+    @Test(priority = 9,dependsOnMethods = "testHelp")
     void testLogout() {
         try {
             startTest("Logout");
@@ -199,7 +205,7 @@ public class AppTest {
         }
     }
 
-    @Test(priority = 10)
+    @Test(priority = 10, dependsOnMethods = "testLogout")
     void testDriverClose() {
         ScreenRecording recording = new ScreenRecording(driver);
         recording.stop();

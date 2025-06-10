@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 import static app.util.ActionsUtil.sleep;
 import static app.util.AppUtil.SearchWiFi;
-
+// 50:78:7d:19:16:88
 public class FanManagement {
     public AndroidDriver atomberg;
 
@@ -331,38 +331,32 @@ public class FanManagement {
                    Speed1.click();
                    System.out.println("Speed1");
                    break;
-
                case 1:
                    WebElement Speed2 = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"2\"]"));
                    Speed2.click();
                    System.out.println("Speed2");
                    break;
-
                case 2:
                    WebElement Speed3 = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"3\"]"));
                    Speed3.click();
                    System.out.println("Speed3");
                    break;
-
                case 3:
                    WebElement Speed4 = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"4\"]"));
                    Speed4.click();
                    System.out.println("Speed4");
                    break;
-
                case 4:
                    WebElement Speed5 = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"5\"]"));
                    Speed5.click();
                    System.out.println("Speed5");
                    break;
-
                case 5:
                    WebElement Boost = atomberg.findElement(By.xpath(
                            "//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.Button[5]"));
                    Boost.click();
                    System.out.println("Boost");
                    break;
-
                case 6:
                    WebElement power = atomberg.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.Button[4]"));
                    power.click();
@@ -371,7 +365,7 @@ public class FanManagement {
            }
            atomberg.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
        }
-        atomberg.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+       atomberg.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
     }
 
     public void repeatCommands(int iteration) {

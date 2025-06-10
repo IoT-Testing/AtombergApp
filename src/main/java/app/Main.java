@@ -1,7 +1,9 @@
 package app;
 
 import app.Analytics.Analytics;
+import app.MoreTab.Help;
 import app.MoreTab.Manage;
+import app.MoreTab.Play;
 import app.STF.Connect;
 import app.STF.Connect2;
 import app.util.ActionsUtil;
@@ -23,5 +25,6 @@ public class Main {
     public static void main(String[] args) throws IOException, UnsupportedFlavorException, InterruptedException {
         Connect2 connect = new Connect2();
         connect.ipAddress();
+        command = connect.copiedText;
     }
 }
