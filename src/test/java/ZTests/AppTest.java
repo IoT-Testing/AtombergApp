@@ -7,6 +7,7 @@ import app.MoreTab.Manage;
 import app.MoreTab.Play;
 import app.MoreTab.Profile;
 import app.STF.Connect2;
+import app.STF.DeviceManager;
 import app.ServerInitializer;
 import app.util.ActionsUtil;
 import app.util.ScreenRecording;
@@ -15,7 +16,10 @@ import com.aventstack.extentreports.Status;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.appmanagement.ApplicationState;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.SkipException;
 import org.testng.annotations.*;
 
 
@@ -27,11 +31,19 @@ public class AppTest {
     public ServerInitializer server = new ServerInitializer();
     public static final ExtentReports extent = getReportObjects();
 
-    @Parameters({"deviceSlot"})
     @BeforeClass
-    public void setup(@Optional("1") String deviceSlot) {
-        int slot = Integer.parseInt(deviceSlot);
+    @Parameters({"deviceSlot"})
+
+    public void setup(String deviceName) {
+        WebDriver driver = new ChromeDriver(); // Or your STF WebDriver
+        DeviceManager.init(driver);
+
+        if (!DeviceManager.isDeviceAvailable(2)) {
+            throw new SkipException("Insufficient devices for parallel test execution.");
+        }
+        // Proceed with test initialization
     }
+
 
 
     @Test(priority = 1)// This test is for Opening the Atomberg Home App

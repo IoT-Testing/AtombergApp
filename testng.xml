@@ -1,4 +1,4 @@
-<suite name="ParallelAppTestSuite" parallel="tests" thread-count="2">
+<suite name="ParallelAppTestSuite" parallel="classes" thread-count="2">
     <test name="Device1">
         <parameter name="deviceSlot" value="1"/>
         <classes>
@@ -11,5 +11,4 @@
             <class name="ZTests.AppTest"/>
         </classes>
     </test>
-
 </suite>
