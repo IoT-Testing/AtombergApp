@@ -1,4 +1,4 @@
-package Devices;
+package app.Devices;
 
 import Actions.Swipe;
 import io.appium.java_client.AppiumDriver;
