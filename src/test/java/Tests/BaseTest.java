@@ -23,7 +23,6 @@ public class BaseTest {
     @Parameters({"deviceSlot"})
     public void setup(String deviceSlot) throws IOException, UnsupportedFlavorException {
         this.deviceSlot = deviceSlot;
-
         reporter = new ExtentReportAT(deviceSlot);
         reporter.startTest("Device Setup", deviceSlot);
         Connect2 connect = new Connect2();
@@ -39,7 +38,7 @@ public class BaseTest {
         reporter.endTest();  // Optional
     }
 
-    public void afterTestFailure(AndroidDriver driver) {
+    void afterTestFailure(AndroidDriver driver) {
         ApplicationState state = driver.queryAppState("com.atomberg.app");
         if (state.equals(ApplicationState.RUNNING_IN_FOREGROUND)) {
             WebElement homeScreen = null;
