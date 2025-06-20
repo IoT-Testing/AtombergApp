@@ -1,18 +1,20 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-<suite name = "Suite">
-    <listeners>
-        <listener class-name="ZTests.Listeners"/>
-    </listeners>
-
-    <test thread-count="5" name="Submit Order Test">
+<suite name="AtombergApp" parallel="classes" thread-count="2">
+    <test name="Device1">
+        <parameter name="deviceSlot" value="1"/>
         <classes>
-            <class name="ZTests.AppTest"/>
+            <class name="Tests.AppTest"/>
         </classes>
-    </test><!--Test-->
-    <test thread-count="5" name="Monkey">
+    </test>
+    <test name="Device2">
+        <parameter name="deviceSlot" value="2"/>
         <classes>
-            <class name="ZTests.Monkey"/>
+            <class name="Tests.AppTest"/>
         </classes>
-    </test><!--Test-->
-</suite><!--Suite-->
+    </test>
+<!--    <test name="Device3">-->
+<!--        <parameter name="deviceSlot" value="3"/>-->
+<!--        <classes>-->
+<!--            <class name="Tests.AppTest"/>-->
+<!--        </classes>-->
+<!--    </test>-->
+</suite>
