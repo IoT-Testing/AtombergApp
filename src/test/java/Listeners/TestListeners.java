@@ -1,6 +1,5 @@
-package listeners;
+package Listeners;
 
-import Tests.BaseTest;
 import io.appium.java_client.android.AndroidDriver;
 import org.testng.ITestContext;
 import org.testng.ITestListener;

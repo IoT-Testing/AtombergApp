@@ -1,4 +1,4 @@
-package app.WaterPurifier.Login;
+package app.Login;
 
 import io.appium.java_client.android.AndroidDriver;
 

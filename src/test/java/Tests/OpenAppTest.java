@@ -7,23 +7,34 @@ import app.util.ActionsUtil;
 import app.util.ScreenRecording;
 import com.aventstack.extentreports.Status;
 import io.appium.java_client.android.AndroidDriver;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Listeners;
+import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+import Listeners.TestListeners;
 
+
+@Listeners({TestListeners.class})
 public class OpenAppTest {
+
     public AndroidDriver driver;
     public ServerInitializer server = new ServerInitializer();
     public String command;
-    private final String deviceSlot;
-    private final ExtentReportAT reporter;
+    protected String deviceSlot;
+    protected ExtentReportAT reporter;
 
-    public OpenAppTest(String deviceSlot, ExtentReportAT reporter) {
+    @BeforeClass
+    @Parameters({"deviceSlot"})
+    public void setup(String deviceSlot) {
         this.deviceSlot = deviceSlot;
-        this.reporter = reporter;
+        reporter = new ExtentReportAT(deviceSlot);
+        reporter.startTest("Device Setup", deviceSlot);
+        System.out.println("Setup done for deviceSlot: " + deviceSlot);
+        // Add Connect2/command/STF connection here if needed
     }
 
     @Test(priority = 1)
     void testOpenApp() {
-
         try {
             reporter.startTest("Open App", deviceSlot);
             System.out.println("OpenApp test start");

@@ -1,4 +1,4 @@
-package app.WaterPurifier.Login;
+package app.Login;
 //Add First Device
 
 import java.time.Duration;

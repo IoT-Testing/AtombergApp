@@ -1,7 +1,7 @@
 package Tests;
 
 import AtombergTest.Method;
-import app.WaterPurifier.Login.Email;
+import Email;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import io.appium.java_client.android.AndroidDriver;

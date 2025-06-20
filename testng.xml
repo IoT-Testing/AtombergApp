@@ -1,14 +1,14 @@
-<suite name="AtombergApp" parallel="classes" thread-count="2">
+<suite name="AtombergApp" parallel="tests" thread-count="2">
     <test name="Device1">
         <parameter name="deviceSlot" value="1"/>
         <classes>
-            <class name="Tests.AppTest"/>
+            <class name="Tests.OpenAppTest"/>
         </classes>
     </test>
     <test name="Device2">
         <parameter name="deviceSlot" value="2"/>
         <classes>
-            <class name="Tests.AppTest"/>
+            <class name="Tests.OpenAppTest"/>
         </classes>
     </test>
 <!--    <test name="Device3">-->
