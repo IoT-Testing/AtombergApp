@@ -1,4 +1,4 @@
-package ZTests;
+package Tests;
 
 import AtombergTest.Method;
 import Login.Email;

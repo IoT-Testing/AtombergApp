@@ -1,4 +1,4 @@
-package ZTests;
+package Tests;
 
 import app.Analytics.Analytics;
 import app.AppInitializer;
@@ -7,105 +7,97 @@ import app.MoreTab.Manage;
 import app.MoreTab.Play;
 import app.MoreTab.Profile;
 import app.STF.Connect2;
-import app.STF.DeviceManager;
 import app.ServerInitializer;
 import app.util.ActionsUtil;
 import app.util.ScreenRecording;
-import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.Status;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.appmanagement.ApplicationState;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.testng.SkipException;
 import org.testng.annotations.*;
-
-
-import static ZTests.ExtentReportAT.*;
+import ExtentReports.ExtentReportAT;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
 
 public class AppTest {
-    public String command;
-    public static AndroidDriver driver;
+
+    public AndroidDriver driver;
     public ServerInitializer server = new ServerInitializer();
-    public static final ExtentReports extent = getReportObjects();
+    public String command;
+    private String deviceSlot;
+    private ExtentReportAT reporter;
 
     @BeforeClass
     @Parameters({"deviceSlot"})
-
-    public void setup(String deviceName) {
-        WebDriver driver = new ChromeDriver(); // Or your STF WebDriver
-        DeviceManager.init(driver);
-
-        if (!DeviceManager.isDeviceAvailable(2)) {
-            throw new SkipException("Insufficient devices for parallel test execution.");
-        }
-        // Proceed with test initialization
+    void setup(String deviceSlot) throws IOException, UnsupportedFlavorException {
+        this.deviceSlot = deviceSlot;
+        reporter = new ExtentReportAT(deviceSlot);
+        reporter.startTest("Device Setup", deviceSlot);
+        Connect2 connect = new Connect2();
+        connect.ipAddress();
+        command = connect.copiedText;
+        Runtime.getRuntime().exec(command);
+        server.startServer();
     }
 
 
-
-    @Test(priority = 1)// This test is for Opening the Atomberg Home App
+    @Test(priority = 1)
     void testOpenApp() {
         try {
-            startTest("Open App");
+            reporter.startTest("Open App", deviceSlot);
             System.out.println("OpenApp test start");
-            Connect2 connect = new Connect2();
-            connect.ipAddress();
-            command = connect.copiedText;
-            Runtime.getRuntime().exec(command);
-            server.startServer();
-            //TODO: do not use "openApp()" if "initializeDriver()" is used.
+
             AppInitializer appInitializer = new AppInitializer();
             appInitializer.initializeDriverWithURL(server.service.getUrl(), command);
             driver = appInitializer.getDriver();
+
             ScreenRecording recording = new ScreenRecording(driver);
             recording.start();
+
             ActionsUtil.SSleep(2);
-            //TODO: Use tapOpAppLogo() if you are using initializeDriver()
             driver.activateApp("com.atomberg.app");
             appInitializer.checkMainScreen();
+
         } catch (Exception e) {
-            getTest().log(Status.FAIL, "App Open failed: " + e.getMessage());
+            reporter.log(Status.FAIL, "App Open failed: " + e.getMessage());
         } finally {
             System.out.println("OpenApp test end");
-            endTest();
+            reporter.endTest();
         }
     }
 
     @Test(priority = 2, dependsOnMethods = "testOpenApp")
-    void testManageProfile(){
+    void testManageProfile() {
         try {
-            startTest("Profile Edit");
+            reporter.startTest("Profile Edit", deviceSlot);
             System.out.println("Profile Edit test start");
             Profile profile = new Profile(driver);
             profile.edit();
         } catch (Exception e) {
-            getTest().log(Status.FAIL, "Logout failed: " + e.getMessage());
+            reporter.log(Status.FAIL, "Logout failed: " + e.getMessage());
         } finally {
             System.out.println("Profile Edit test end");
-            if(getTest().getStatus() == Status.FAIL) afterTestFailure();
-            endTest();
+            if (reporter.getCurrentStatus() == Status.FAIL) afterTestFailure();
+            reporter.endTest();
         }
     }
 
     @Test(priority = 3, dependsOnMethods = "testManageProfile")
-    void testManageFamily(){
+    void testManageFamily() {
         try {
-            startTest("Family");
+            reporter.startTest("Family", deviceSlot);
             System.out.println("Family test start");
             Manage manage = new Manage(driver);
             manage.family();
         } catch (Exception e) {
-            getTest().log(Status.FAIL, "Family Management failed: " + e.getMessage());
+            reporter.log(Status.FAIL, "Family Management failed: " + e.getMessage());
         } finally {
             System.out.println("Family test end");
-            if(getTest().getStatus() == Status.FAIL) afterTestFailure();
-            endTest();
+            if (reporter.getCurrentStatus() == Status.FAIL) afterTestFailure();
+            reporter.endTest();
         }
     }
-
     //  @Test(priority = 4,dependsOnMethods = "testManageProfile")
 //    void testFanControl() {
 //        try {
@@ -117,7 +109,7 @@ public class AppTest {
 //            getTest().log(Status.FAIL, "Fan Control failed: " + e.getMessage());
 //        } finally {
 //            System.out.println("Fan Control test end");
-//            if(getTest().getStatus() == Status.FAIL) afterTestFailure();
+//            if (reporter.getCurrentStatus() == Status.FAIL) afterTestFailure();
 //            endTest();
 //        }
 //    }
@@ -133,7 +125,7 @@ public class AppTest {
 //            getTest().log(Status.FAIL, "Lock Control failed: " + e.getMessage());
 //        } finally {
 //            System.out.println("Lock Control test end");
-//            if(getTest().getStatus() == Status.FAIL) afterTestFailure();
+//            if (reporter.getCurrentStatus() == Status.FAIL) afterTestFailure();
 //            endTest();
 //        }
 //    }
@@ -149,35 +141,36 @@ public class AppTest {
 //            getTest().log(Status.FAIL, "RO Control failed: " + e.getMessage());
 //        } finally {
 //            System.out.println("RO Control test end");
-//            if(getTest().getStatus() == Status.FAIL) afterTestFailure();
+//            if (reporter.getCurrentStatus() == Status.FAIL) afterTestFailure();
 //            endTest();
 //        }
 //    }
 //
-    @Test(priority = 7,dependsOnMethods = "testManageFamily")
+    @Test(priority = 7, dependsOnMethods = "testManageFamily")
     void testAnalytics() {
         try {
-            startTest("Analytics");
+            reporter.startTest("Analytics", deviceSlot);
             System.out.println("Analytics test start");
             Analytics analytics = new Analytics(driver);
             analytics.Show();
         } catch (Exception e) {
-            getTest().log(Status.FAIL, "Analytics failed: " + e.getMessage());
+            reporter.log(Status.FAIL, "Analytics failed: " + e.getMessage());
         } finally {
             System.out.println("Analytics test end");
-            if(getTest().getStatus() == Status.FAIL) afterTestFailure();
-            endTest();
+            if (reporter.getCurrentStatus() == Status.FAIL) afterTestFailure();
+            reporter.endTest();
         }
     }
 
-    @Test(priority = 8,dependsOnMethods = "testAnalytics")
+    @Test(priority = 8, dependsOnMethods = "testAnalytics")
     void testHelp() {
         try {
-            startTest("Help Section");
+            reporter.startTest("Help Section", deviceSlot);
             System.out.println("Help Section test start");
             Manage manage = new Manage(driver);
             Help help = new Help(driver);
             Play play = new Play(driver);
+//            help.troubleshoot();
             manage.help();
             help.newComplaint();
             help.installationRequest();
@@ -185,35 +178,34 @@ public class AppTest {
             help.trackAComplaint();
             play.videos();
             help.manual();
-//            help.troubleshoot();
             ActionsUtil.Scroll.Up(driver);
             help.email();
             help.call();
             driver.navigate().back();
+
         } catch (Exception e) {
-            getTest().log(Status.FAIL, "Help Section failed: " + e.getMessage());
+            reporter.log(Status.FAIL, "Help Section failed: " + e.getMessage());
         } finally {
-            {
-                System.out.println("Help Section test end");
-                if(getTest().getStatus() == Status.FAIL) afterTestFailure();
-                endTest();
-            }
+            System.out.println("Help Section test end");
+            if (reporter.getCurrentStatus() == Status.FAIL) afterTestFailure();
+            reporter.endTest();
         }
     }
 
-    @Test(priority = 9,dependsOnMethods = "testHelp")
+    @Test(priority = 9, dependsOnMethods = "testHelp")
     void testLogout() {
         try {
-            startTest("Logout");
+            reporter.startTest("Logout", deviceSlot);
             System.out.println("Logout test start");
             Manage manage = new Manage(driver);
             manage.logout();
             ActionsUtil.SSleep(5);
         } catch (Exception e) {
-            getTest().log(Status.FAIL, "Logout failed: " + e.getMessage());
+            reporter.log(Status.FAIL, "Logout failed: " + e.getMessage());
         } finally {
             System.out.println("Logout test end");
-            endTest();
+            if (reporter.getCurrentStatus() == Status.FAIL) afterTestFailure();
+            reporter.endTest();
         }
     }
 
@@ -225,15 +217,15 @@ public class AppTest {
     }
 
     @AfterSuite
-    static void tearDown() {
-        if (extent != null) {
-            extent.flush();
+    public void tearDown() {
+        if (reporter != null) {
+            reporter.endTest();
         }
     }
 
     void afterTestFailure() {
         ApplicationState state = driver.queryAppState("com.atomberg.app");
-        if (state.equals(ApplicationState.RUNNING_IN_FOREGROUND)){
+        if (state.equals(ApplicationState.RUNNING_IN_FOREGROUND)) {
             WebElement homeScreen = null;
             while (homeScreen == null) {
                 try {
@@ -242,12 +234,12 @@ public class AppTest {
                 }
                 if (homeScreen == null) {
                     System.out.println("Back");
-                    driver.navigate().back(); // 180, 1550 860, 1960
+                    driver.navigate().back();
                 }
             }
-        }
-        else{
+        } else {
             driver.activateApp("com.atomberg.app");
         }
     }
 }
+

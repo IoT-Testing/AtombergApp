@@ -9,7 +9,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.interactions.PointerInput;
-
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
@@ -18,7 +17,6 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class Connect2 {
     public String copiedText;
@@ -35,11 +33,12 @@ public class Connect2 {
         WebDriver localDriver = driver.get();
 
         localDriver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-        String URL = "http://192.168.106.23:7100/";
+        String URL = "http://192.168.163.154:7100/";
         localDriver.get(URL);
         System.out.println("Website Opened");
         localDriver.manage().window().maximize();
         stfLogin(localDriver);
+        DeviceManager.init(localDriver);
         remoteDebug(localDriver);
     }
     private String getUniqueUserDataDir() {

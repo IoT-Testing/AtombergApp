@@ -6,8 +6,8 @@
 10:15:16.502 [main] INFO  c.b.config.BrowserStackConfig - Setting value of testObservability as specified in your browserstack.yml to true
 10:15:16.885 [main] DEBUG c.b.logger.BrowserstackLoggerFactory - Log Level set to DEBUG
 10:15:16.885 [main] DEBUG c.b.logger.BrowserstackLoggerFactory - Log Level set to INFO
-10:15:17.161 [main] DEBUG c.b.utils.FrameworkDetectionUtils - Java command - com.intellij.rt.junit.JUnitStarter -ideVersion5 -junit5 ZTests.AppTest
-10:15:17.161 [main] DEBUG c.b.utils.FrameworkDetectionUtils - Test classes detected: ZTests.AppTest
+10:15:17.161 [main] DEBUG c.b.utils.FrameworkDetectionUtils - Java command - com.intellij.rt.junit.JUnitStarter -ideVersion5 -junit5 Tests.AppTest
+10:15:17.161 [main] DEBUG c.b.utils.FrameworkDetectionUtils - Test classes detected: Tests.AppTest
 10:15:17.266 [main] DEBUG c.b.utils.FrameworkDetectionUtils - Runner: junit5, Engine: none
 10:15:17.306 [main] DEBUG c.b.utils.FrameworkDetectionUtils - Runner: junit5, Engine: none from dependencies
 10:15:17.306 [main] DEBUG c.b.utils.FrameworkDetectionUtils - Detected final framework as: junit5
@@ -173,8 +173,8 @@ Caused by: sun.security.provider.certpath.SunCertPathBuilderException: unable to
 10:16:40.906 [main] INFO  c.b.config.BrowserStackConfig - Setting value of testObservability as specified in your browserstack.yml to true
 10:16:41.304 [main] DEBUG c.b.logger.BrowserstackLoggerFactory - Log Level set to DEBUG
 10:16:41.304 [main] DEBUG c.b.logger.BrowserstackLoggerFactory - Log Level set to INFO
-10:16:41.613 [main] DEBUG c.b.utils.FrameworkDetectionUtils - Java command - com.intellij.rt.junit.JUnitStarter -ideVersion5 -junit5 ZTests.AppTest
-10:16:41.613 [main] DEBUG c.b.utils.FrameworkDetectionUtils - Test classes detected: ZTests.AppTest
+10:16:41.613 [main] DEBUG c.b.utils.FrameworkDetectionUtils - Java command - com.intellij.rt.junit.JUnitStarter -ideVersion5 -junit5 Tests.AppTest
+10:16:41.613 [main] DEBUG c.b.utils.FrameworkDetectionUtils - Test classes detected: Tests.AppTest
 10:16:41.708 [main] DEBUG c.b.utils.FrameworkDetectionUtils - Runner: junit5, Engine: none
 10:16:41.744 [main] DEBUG c.b.utils.FrameworkDetectionUtils - Runner: junit5, Engine: none from dependencies
 10:16:41.745 [main] DEBUG c.b.utils.FrameworkDetectionUtils - Detected final framework as: junit5
@@ -245,8 +245,8 @@ Caused by: sun.security.provider.certpath.SunCertPathBuilderException: unable to
 10:17:32.195 [main] INFO  c.b.config.BrowserStackConfig - Setting value of testObservability as specified in your browserstack.yml to true
 10:17:32.542 [main] DEBUG c.b.logger.BrowserstackLoggerFactory - Log Level set to DEBUG
 10:17:32.542 [main] DEBUG c.b.logger.BrowserstackLoggerFactory - Log Level set to INFO
-10:17:32.813 [main] DEBUG c.b.utils.FrameworkDetectionUtils - Java command - com.intellij.rt.junit.JUnitStarter -ideVersion5 -junit5 ZTests.AppTest
-10:17:32.813 [main] DEBUG c.b.utils.FrameworkDetectionUtils - Test classes detected: ZTests.AppTest
+10:17:32.813 [main] DEBUG c.b.utils.FrameworkDetectionUtils - Java command - com.intellij.rt.junit.JUnitStarter -ideVersion5 -junit5 Tests.AppTest
+10:17:32.813 [main] DEBUG c.b.utils.FrameworkDetectionUtils - Test classes detected: Tests.AppTest
 10:17:32.907 [main] DEBUG c.b.utils.FrameworkDetectionUtils - Runner: junit5, Engine: none
 10:17:32.941 [main] DEBUG c.b.utils.FrameworkDetectionUtils - Runner: junit5, Engine: none from dependencies
 10:17:32.941 [main] DEBUG c.b.utils.FrameworkDetectionUtils - Detected final framework as: junit5

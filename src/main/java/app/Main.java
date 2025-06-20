@@ -1,21 +1,11 @@
 package app;
 
-import app.Analytics.Analytics;
-import app.MoreTab.Help;
-import app.MoreTab.Manage;
-import app.MoreTab.Play;
-import app.STF.Connect;
 import app.STF.Connect2;
 import app.util.ActionsUtil;
+import app.util.ScreenRecording;
 import io.appium.java_client.android.AndroidDriver;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Arrays;
-
-import static app.util.AppUtil.device;
-
 
 public class Main {
     public static AndroidDriver atomberg;
@@ -26,5 +16,17 @@ public class Main {
         Connect2 connect = new Connect2();
         connect.ipAddress();
         command = connect.copiedText;
+        Runtime.getRuntime().exec(command);
+        server.startServer();
+        AppInitializer appInitializer = new AppInitializer();
+        appInitializer.initializeDriverWithURL(server.service.getUrl(), command);
+        atomberg = appInitializer.getDriver();
+
+        ScreenRecording recording = new ScreenRecording(atomberg);
+        recording.start();
+
+        ActionsUtil.SSleep(2);
+        atomberg.activateApp("com.atomberg.app");
+        appInitializer.checkMainScreen();
     }
 }
