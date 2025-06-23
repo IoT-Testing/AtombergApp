@@ -114,6 +114,7 @@ public class ROManagement {
         health.click();
         ActionsUtil.SSleep(1);
         health();
+        ActionsUtil.SSleep(1);
         mode();
         atomberg.navigate().back();
     }

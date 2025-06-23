@@ -6,7 +6,6 @@ import app.MoreTab.Help;
 import app.MoreTab.Manage;
 import app.MoreTab.Play;
 import app.MoreTab.Profile;
-import app.STF.Connect2;
 import app.ServerInitializer;
 import app.util.ActionsUtil;
 import app.util.ScreenRecording;
@@ -16,30 +15,11 @@ import io.appium.java_client.appmanagement.ApplicationState;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.annotations.*;
-import ExtentReports.ExtentReportAT;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.IOException;
 
-public class AppTest {
+
+public class AppTest extends BaseTest{
 
     public AndroidDriver driver;
-    public ServerInitializer server = new ServerInitializer();
-    public String command;
-    private String deviceSlot;
-    private ExtentReportAT reporter;
-
-    @BeforeClass
-    @Parameters({"deviceSlot"})
-    void setup(String deviceSlot) throws IOException, UnsupportedFlavorException {
-        this.deviceSlot = deviceSlot;
-        reporter = new ExtentReportAT(deviceSlot);
-        reporter.startTest("Device Setup", deviceSlot);
-        Connect2 connect = new Connect2();
-        connect.ipAddress();
-        command = connect.copiedText;
-        Runtime.getRuntime().exec(command);
-        server.startServer();
-    }
 
 
     @Test(priority = 1)
@@ -47,7 +27,6 @@ public class AppTest {
         try {
             reporter.startTest("Open App", deviceSlot);
             System.out.println("OpenApp test start");
-
             AppInitializer appInitializer = new AppInitializer();
             appInitializer.initializeDriverWithURL(server.service.getUrl(), command);
             driver = appInitializer.getDriver();

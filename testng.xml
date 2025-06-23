@@ -2,13 +2,13 @@
     <test name="Device1">
         <parameter name="deviceSlot" value="1"/>
         <classes>
-            <class name="Tests.OpenAppTest"/>
+            <class name="Tests.AppTest"/>
         </classes>
     </test>
     <test name="Device2">
         <parameter name="deviceSlot" value="2"/>
         <classes>
-            <class name="Tests.OpenAppTest"/>
+            <class name="Tests.AppTest"/>
         </classes>
     </test>
 <!--    <test name="Device3">-->
