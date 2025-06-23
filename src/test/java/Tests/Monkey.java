@@ -1,7 +1,7 @@
 package Tests;
 
-import AtombergTest.Method;
-import Email;
+import app.Login;
+import app.util.AppUtil;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import io.appium.java_client.android.AndroidDriver;
@@ -57,7 +57,7 @@ public class Monkey {
 		}
 		System.out.println("Atomberg App Opened...");
 		sleep(6000);
-		Method.captureScreenshot(driver);
+		AppUtil.captureScreenshot(driver);
 
 	}
   @Test
@@ -68,7 +68,8 @@ public class Monkey {
 	  String timestamp;
 	  openAtomberg();
 
-	  Email.Login(driver);
+	  Login login = new Login(driver);
+	  login.email();
 	  timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 	  System.out.println(" " + timestamp + " "); // Adjusting the timeout duration for the 'adb' command
 	  System.out.println("Monkey Started....");

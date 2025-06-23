@@ -1,6 +1,6 @@
 package app.Widget;
 
-import Actions.Swipe;
+import app.util.ActionsUtil.Swipe;
 import io.appium.java_client.android.AndroidDriver;
 import org.awaitility.Awaitility;
 import org.openqa.selenium.By;

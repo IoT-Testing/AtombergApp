@@ -1,9 +1,6 @@
 package app.ScreenCheck;
 
-import app.Resources.CommonElements;
-import app.Resources.HomeELements;
-import app.ScreenCheckCallbackAction;
-import app.util.ActionsUtil;
+import app.Resources.*;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;

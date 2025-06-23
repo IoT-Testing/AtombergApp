@@ -1,10 +1,10 @@
 package app.Supports;
 
-import Actions.Tap;
+import app.util.ActionsUtil.Tap;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import io.appium.java_client.android.AndroidDriver;
-import Actions.Swipe;
+import app.util.ActionsUtil.Swipe;
 
 import java.util.List;
 import java.util.stream.Collectors;

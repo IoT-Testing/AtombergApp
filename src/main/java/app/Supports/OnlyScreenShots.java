@@ -6,13 +6,14 @@ import java.net.URL;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import app.util.ActionsUtil;
+import app.util.AppUtil;
 import org.awaitility.Awaitility;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities; //Selenium Dependencies for Mobile capabilities
-import org.testng.Assert;
 
-import AtombergTest.Method;
+
 import io.appium.java_client.android.AndroidDriver;
 
 public class OnlyScreenShots {
@@ -46,12 +47,11 @@ public class OnlyScreenShots {
 			System.out.println("Appium driver initialized.");
 		} catch (MalformedURLException e) {
 			System.out.println("Error initializing Appium driver: " + e.getMessage());
-			Assert.fail("Expected element to click not found");
-			Method.captureScreenshot(driver);
+			AppUtil.captureScreenshot(driver);
 			e.printStackTrace();
 			return;
 		}
-		Method.captureScreenshot(driver);
+		AppUtil.captureScreenshot(driver);
 		List<WebElement> el = driver.findElements(By.xpath("//android.widget.ImageView"));
 		System.out.println("List Size: " + el.size() + "\n");
 

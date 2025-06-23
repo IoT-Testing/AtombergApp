@@ -1,7 +1,6 @@
 package app.Supports;
 
-import Actions.Tap;
-
+import app.util.ActionsUtil.Tap;
 import io.appium.java_client.android.AndroidDriver;
 import org.awaitility.Awaitility;
 import org.openqa.selenium.By;

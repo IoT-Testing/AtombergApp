@@ -10,10 +10,9 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class SwitchFamily {
-    private AndroidDriver atomberg;
+    private final AndroidDriver atomberg;
     String fam1;
-    SwitchFamilyIntermediateCallback callback;
-
+    private final SwitchFamilyIntermediateCallback callback;
     public SwitchFamily(AndroidDriver driver, SwitchFamilyIntermediateCallback callback) {
         this.atomberg = driver;
         atomberg.manage().timeouts().implicitlyWait(Duration.ofSeconds(6));
