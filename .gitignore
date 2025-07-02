@@ -6,7 +6,11 @@ logs/
 /target/surefire-reports/
 /target
 accounts.csv
-/products.json
 products.json
+category_products.json
+categories.json
+product flow.xlsx
+Product_Categories.xlsx
+Element Id.xlsx
 
 
