@@ -293,10 +293,15 @@ public class Help {
             }
             else if (Objects.equals(dialogueButtons.get(i).getDomAttribute("content-desc"), "No")) {
                 dialogueButtons.get(i).click();
-                WebElement Email = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Email\"]"));
-                Email.click();
+                WebElement appEmail = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Email (app support)\"]"));
+                appEmail.click();
                 AppUtil.captureScreenshot(atomberg);
-                System.out.println("Email ...");
+                System.out.println("app Email ...");
+                atomberg.navigate().back();
+                WebElement genericEmail = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Email (generic support)\"]"));
+                appEmail.click();
+                AppUtil.captureScreenshot(atomberg);
+                System.out.println("app Email ...");
                 atomberg.navigate().back();
                 WebElement Call = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Call\"]"));
                 Call.click();

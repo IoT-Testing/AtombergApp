@@ -2,11 +2,13 @@ package Tests;
 
 import app.Analytics.Analytics;
 import app.AppInitializer;
+import app.Fan.FanManagement;
+import app.Lock.LockManagement;
 import app.MoreTab.Help;
 import app.MoreTab.Manage;
 import app.MoreTab.Play;
 import app.MoreTab.Profile;
-import app.ServerInitializer;
+import app.WaterPurifier.ROManagement;
 import app.util.ActionsUtil;
 import app.util.ScreenRecording;
 import com.aventstack.extentreports.Status;
@@ -77,57 +79,59 @@ public class AppTest extends BaseTest{
             reporter.endTest();
         }
     }
-    //  @Test(priority = 4,dependsOnMethods = "testManageProfile")
-//    void testFanControl() {
-//        try {
-//            startTest("Fan Control");
-//            System.out.println("Fan Control test start");
-//            FanManagement fan = new FanManagement(driver);
-//            fan.checkFan();
-//        } catch (Exception e) {
-//            getTest().log(Status.FAIL, "Fan Control failed: " + e.getMessage());
-//        } finally {
-//            System.out.println("Fan Control test end");
-//            if (reporter.getCurrentStatus() == Status.FAIL) afterTestFailure();
-//            endTest();
-//        }
-//    }
-//
-//    @Test(priority = 5,dependsOnMethods = "testManageProfile")
-//    void testLockControl(){
-//        try {
-//            startTest("Lock Control");
-//            System.out.println("Lock Control test start");
-//            LockManagement lock = new LockManagement(driver);
-//            lock.checkLock();
-//        } catch (Exception e) {
-//            getTest().log(Status.FAIL, "Lock Control failed: " + e.getMessage());
-//        } finally {
-//            System.out.println("Lock Control test end");
-//            if (reporter.getCurrentStatus() == Status.FAIL) afterTestFailure();
-//            endTest();
-//        }
-//    }
-//
+      @Test(priority = 4)
+    void testFanControl() {
+        try {
+            reporter.startTest("Fan Control", deviceSlot);
+            System.out.println("Fan Control test start");
+            FanManagement fan = new FanManagement(driver);
+            fan.checkFan();
+        } catch (Exception e) {
+            reporter.log(Status.FAIL, "Fan Control failed: " + e.getMessage());
+        } finally {
+            System.out.println("Fan Control test end");
+            if (reporter.getCurrentStatus() == Status.FAIL) afterTestFailure();
+            reporter.endTest();
+        }
+    }
+
+    @Test(priority = 5,dependsOnMethods = "testManageProfile")
+    void testLockControl(){
+        try {
+            reporter.startTest("Lock  Control", deviceSlot);
+            System.out.println("Lock Control test start");
+            LockManagement lock = new LockManagement(driver);
+            lock.checkLock();
+        } catch (Exception e) {
+            reporter.log(Status.FAIL, "Lock Control failed: " + e.getMessage());
+        } finally {
+            System.out.println("Lock Control test end");
+            if (reporter.getCurrentStatus() == Status.FAIL) afterTestFailure();
+            reporter.endTest();
+        }
+    }
+
 //    @Test(priority = 6,dependsOnMethods = "testManageProfile")
 //    void testROControl(){
 //        try {
-//            startTest("RO Control");
+//            reporter.startTest("RO control", deviceSlot);
 //            System.out.println("RO Control test start");
 //            ROManagement ro = new ROManagement(driver);
 //            ro.checkRO();
 //        } catch (Exception e) {
-//            getTest().log(Status.FAIL, "RO Control failed: " + e.getMessage());
+//            reporter.log(Status.FAIL, "RO Control failed: " + e.getMessage());
 //        } finally {
 //            System.out.println("RO Control test end");
 //            if (reporter.getCurrentStatus() == Status.FAIL) afterTestFailure();
-//            endTest();
+//            reporter.endTest();
 //        }
 //    }
-//
+
     @Test(priority = 7, dependsOnMethods = "testManageFamily")
     void testAnalytics() {
         try {
+            //TO DO: check analytics for multiple cycles even if one device is present
+
             reporter.startTest("Analytics", deviceSlot);
             System.out.println("Analytics test start");
             Analytics analytics = new Analytics(driver);
@@ -171,7 +175,7 @@ public class AppTest extends BaseTest{
         }
     }
 
-    @Test(priority = 9, dependsOnMethods = "testHelp")
+    @Test(priority = 9)
     void testLogout() {
         try {
             reporter.startTest("Logout", deviceSlot);

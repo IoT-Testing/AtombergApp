@@ -6,4 +6,7 @@ logs/
 /target/surefire-reports/
 /target
 accounts.csv
+/products.json
+products.json
+
 

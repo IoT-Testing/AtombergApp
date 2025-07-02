@@ -1,7 +1,7 @@
 package app.Resources;
 
 
-public class HomeELements {
+public class HomeElements {
 
     public String devicesId = "//android.view.View[@content-desc=\"Devices\"]";
     public String addYourFirstSmartDeviceId = "//android.widget.ImageView[@content-desc=\"Add your first smart device\"]";

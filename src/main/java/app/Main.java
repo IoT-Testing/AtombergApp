@@ -1,32 +1,58 @@
 package app;
 
-import app.STF.Connect2;
-import app.util.ActionsUtil;
-import app.util.ScreenRecording;
+import app.marketPlace.Marketplace;
+import app.marketPlace.RandomSelector;
+import app.marketPlace.SelectedPath;
 import io.appium.java_client.android.AndroidDriver;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.IOException;
+import org.openqa.selenium.WebElement;
 
 public class Main {
     public static AndroidDriver atomberg;
-    public static String command;
-    public static ServerInitializer server = new ServerInitializer();
+    public String command;
+    public ServerInitializer server = new ServerInitializer();
 
-    public static void main(String[] args) throws IOException, UnsupportedFlavorException, InterruptedException {
-        Connect2 connect = new Connect2();
-        connect.ipAddress();
-        command = connect.copiedText;
-        Runtime.getRuntime().exec(command);
-        server.startServer();
-        AppInitializer appInitializer = new AppInitializer();
-        appInitializer.initializeDriverWithURL(server.service.getUrl(), command);
-        atomberg = appInitializer.getDriver();
+    public static void main(String[] args) throws Exception {
+        try {
+            AppInitializer app = new AppInitializer();
+            app.openApp();
+            atomberg = app.getDriver();
+            app.checkMainScreen();
+            Marketplace marketplace = new Marketplace(atomberg);
+            marketplace.openMarket();
+            marketplace.selectRandomProduct();
+            SelectedPath selected = RandomSelector.selectRandomPath();
 
-        ScreenRecording recording = new ScreenRecording(atomberg);
-        recording.start();
+// Now you can use each part:
+            String category = selected.category.name;
+            String rating = selected.rating;
+            String product = selected.product.name;
+            String color = selected.color;
+            String sweep = selected.sweep;
+            String rate = selected.product.rate;
+            System.out.println(rate);
 
-        ActionsUtil.SSleep(2);
-        atomberg.activateApp("com.atomberg.app");
-        appInitializer.checkMainScreen();
+            marketplace.swipeTillCategoryAvailable(category);
+            WebElement productID = marketplace.findProductElement(selected.product);
+//            System.out.println(productID.getDomAttribute("content-desc"));
+            marketplace.scrollTillProductAvailable(productID);
+        } catch (Exception ignored) {
+        }
     }
 }
+
+//            CategoryReader reader = new CategoryReader();
+//            List<CategoryReader.Category> categories = reader.getCategories();
+//     Run full random path
+//            RandomSelector.selectRandomPath(categories);
+//            CategoryReader reader = new CategoryReader();
+//            List<CategoryReader.Category> categories = reader.getCategories();
+//
+//            for (CategoryReader.Category cat : categories) {
+//                System.out.println("Category: " + cat.name);
+//                for (CategoryReader.Product prod : cat.products) {
+//                    System.out.println("  Product: " + prod.name);
+//                    System.out.println("    Rating: " + prod.rating);
+//                    System.out.println("    Colors: " + String.join(", ", prod.colors));
+//                    System.out.println("    Sweep Sizes: " + String.join(", ", prod.sweeps));
+//                }
+//            }

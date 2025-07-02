@@ -19,14 +19,13 @@ import java.util.stream.Collectors;
 public class ScreenCheck {
     public AndroidDriver atomberg;
     CommonElements ce = new CommonElements();
-    HomeELements he = new HomeELements();
+    HomeElements he = new HomeElements();
 
     public ScreenCheck(AndroidDriver atomberg){
         this.atomberg = atomberg;
     }
 
     public void moreTab(){
-
         //Check for More Tab Screen
         WebElement moreTab = null;
         try {

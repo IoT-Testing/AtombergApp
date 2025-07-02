@@ -33,12 +33,12 @@ public class Connect2 {
         WebDriver localDriver = driver.get();
 
         localDriver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-        String URL = "http://192.168.163.10:7100/";
+        String URL = "http://192.168.8.139:7100/";
         localDriver.get(URL);
         System.out.println("Website Opened");
         localDriver.manage().window().maximize();
         stfLogin(localDriver);
-        DeviceManager.init(localDriver);
+        DeviceManager2.init(localDriver);
         remoteDebug(localDriver);
     }
     private String getUniqueUserDataDir() {

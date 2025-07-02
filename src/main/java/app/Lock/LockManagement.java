@@ -89,7 +89,7 @@ public class LockManagement {
         } else System.out.println("No Lock Available");
     }
     // inside the lock control
-    public void LockControl() {
+    private void LockControl() {
         ActionsUtil.sleep(7500);
         // click on the handle(tap to unlock)
         atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Pull down to unlock\"]")).click();

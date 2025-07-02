@@ -178,7 +178,7 @@ public class FanManagement {
         if(buyNow==null) {
             List<WebElement> FANS = atomberg.findElements(By.className("android.widget.Button"));
             System.out.println(FANS.size());
-            List<WebElement> fans = FANS.stream().filter(dev -> dev.getDomAttribute("content-desc") != null).collect(Collectors.toList());
+            List<WebElement> fans = FANS.stream().filter(dev -> dev.getDomAttribute("content-desc") != null && !Objects.requireNonNull(dev.getDomAttribute("content-desc")).startsWith("Analytics") && !Objects.requireNonNull(dev.getDomAttribute("content-desc")).equals("null")).collect(Collectors.toList());
             if (fans.size() > 1) {
                 System.out.println("Fan Available " + fans.size());
             }

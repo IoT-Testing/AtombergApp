@@ -165,12 +165,12 @@ public class Manage {
         int numberOfFamilies = families.size();
         for (int i = 0; i < numberOfFamilies; i++) {
             List<WebElement> familyElements = atomberg.findElements(By.className("android.widget.ImageView"));
-            List<WebElement> familyElement = familyElements.stream().filter(element -> element.getDomAttribute("content-desc") != null).collect(Collectors.toList());
+            List<WebElement> familyElement = familyElements.stream().filter(element -> element.getDomAttribute("content-desc") != null && !Objects.equals(element.getDomAttribute("content-desc"), "null")).collect(Collectors.toList());
             String familyName = familyElement.get(i).getDomAttribute("content-desc");
             ActionsUtil.sleep(500);
             System.out.println(familyElement.get(i).getDomAttribute("content-desc"));
+            if(Objects.equals(familyName, "null")) continue;
             familyElement.get(i).click();
-            System.out.println(Objects.equals(familyName, "Add") && familyName.endsWith("Script"));
             System.out.println(Objects.equals(familyName, "1\n" +
                     "Script"));
             if (!Objects.equals(familyName, "Add") && !Objects.requireNonNull(familyName).endsWith("Script")) {
@@ -206,6 +206,7 @@ public class Manage {
                 System.out.println(numberOfFamilies);
             } else {
                 addHome();
+                numberOfFamilies += 1;
             }
         }
         atomberg.navigate().back();//Back to more tab from Manage Family
