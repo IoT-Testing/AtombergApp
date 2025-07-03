@@ -7,9 +7,10 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class CategoryReader {
+public class CategoryReader2 {
 
     public static class Product {
         public String name;
@@ -35,7 +36,7 @@ public class CategoryReader {
 
     private final List<Category> categories = new ArrayList<>();
 
-    public CategoryReader() throws Exception {
+    public CategoryReader2() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode root = mapper.readTree(new File("category_products.json"));
 
@@ -71,7 +72,18 @@ public class CategoryReader {
                             }
                         }
                     }
+                    JsonNode attributes = productNode.path("attributes");
+                    if (attributes.isArray()) {
+                        for (JsonNode attr : attributes) {
+                            String code = attr.path("code").asText();
+                            String label = attr.path("label").asText();
 
+//                            if ("color".equalsIgnoreCase(code) && storedColorLabel.equalsIgnoreCase(label)) {
+//                                colorMatched = true;
+//                                break;
+//                            }
+                        }
+                    }
                     category.products.add(product);
                 }
                 categories.add(category);

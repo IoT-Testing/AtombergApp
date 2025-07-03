@@ -7,6 +7,7 @@ public class SelectedPath {
     public String color;
     public String sweep;
     public String rate;
+    public String stock;
 
     public SelectedPath(CategoryReader.Category category, CategoryReader.Product product, String color, String sweep) {
         this.category = category;
@@ -15,6 +16,7 @@ public class SelectedPath {
         this.color = color;
         this.sweep = sweep;
         this.rate = product.rate;
+        this.stock = product.stock;
     }
 }
 

@@ -2,23 +2,20 @@ package app.marketPlace;
 
 import app.ScreenCheck.ScreenCheck;
 import app.util.ActionsUtil;
-import app.util.AppUtil;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class Marketplace {
     public AndroidDriver atomberg;
-
-    public Marketplace(AndroidDriver driver){
+///  TO DO : Try all the products from MarketPlace.
+    public Marketplace(AndroidDriver driver) {
         this.atomberg = driver;
     }
 
-    public void openMarket(){
+    public void openMarket() {
         ScreenCheck screen = new ScreenCheck(atomberg);
         screen.moreTab();
         try {
@@ -33,16 +30,14 @@ public class Marketplace {
                     WebElement logout = null;
                     try {
                         logout = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Logout\"]"));
-                    }catch (Exception ignored){}
-                    if(logout!=null)ActionsUtil.Scroll.Down(atomberg);
+                    } catch (Exception ignored) {
+                    }
+                    if (logout != null) ActionsUtil.Scroll.Down(atomberg);
                 }
             }
             marketPlace.click();
-        }catch (Exception ignored){}
-    }
-
-    public void selectAndAddTOCart() throws Exception {
-
+        } catch (Exception ignored) {
+        }
     }
 
     private void back() {
@@ -56,25 +51,60 @@ public class Marketplace {
         }
     }
 
-    public void scrollTillProductAvailable(WebElement xPath){
+    public void scrollTillProductAvailable(SelectedPath path, WebElement xPath) throws Exception {
+        String color;
         WebElement product = null;
+        while (product == null) {
+            try {
+                product = xPath;
+            } catch (Exception ignored) {
+            }
+            if (product == null) ActionsUtil.Scroll.slowUp(atomberg);
+        }
+        WebElement addTOCart = null;
         try {
-            product = xPath;
-        } catch (Exception ignored) {}
-        if(!product.isDisplayed()) ActionsUtil.Scroll.Up(atomberg);
+            addTOCart = product.findElement(By.xpath(".//android.widget.Button[@content-desc=\"Add to Cart\"]"));
+        } catch (Exception ignored) {
+        }
+        System.out.println(addTOCart == null);
+        if (addTOCart == null) {
+            ActionsUtil.Scroll.slowUp(atomberg);
+            addTOCart = product.findElement(By.xpath(".//android.widget.Button[@content-desc=\"Add to Cart\"]"));
+        }
+        addTOCart.click();
 
-        product.click();
+        color = path.color;
+        if (color != null && !color.equals("null")) {
+            List<WebElement> availableColors = atomberg.findElements(By.className("android.view.View"));
+            for (WebElement availableColor : availableColors) {
+                if (Objects.requireNonNull(availableColor.getDomAttribute("content-desc")).endsWith(color)) {
+                    availableColor.click();
+                }
+            }
+        }
+        try {
+            addTOCart = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Add to Cart\"]"));
+        } catch (Exception ignored) {
+        }
+        if (addTOCart != null) addTOCart.click();
+        else {
+            WebElement outOfStock = null;
+            try {
+                outOfStock = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Out of stock\"]"));
+            } catch (Exception ignored) {
+            }
+            if (outOfStock == null) back();
+        }
     }
 
-    public void swipeTillCategoryAvailable(String category){
-        String xPath = "//android.widget.ImageView[@content-desc=\""+category+"\"]";
-        if (!Objects.equals(category, "Ceiling Fans"))
-        {
+
+    public void swipeTillCategoryAvailable(String category) {
+        String xPath = "//android.widget.ImageView[@content-desc=\"" + category + "\"]";
+        if (!Objects.equals(category, "Ceiling Fans")) {
             WebElement product = null;
-            if(Objects.equals(category, "Exhaust Fans") || Objects.equals(category, "Wall Fans")){
+            if (Objects.equals(category, "Exhaust Fans") || Objects.equals(category, "Wall Fans")) {
                 product = atomberg.findElement(By.xpath(xPath));
-            }
-            else {
+            } else {
                 while (product == null) {
                     ActionsUtil.Swipe.Right(atomberg, 0.80, 0.25);
                     try {
@@ -89,13 +119,13 @@ public class Marketplace {
 
     public WebElement findProductElement(CategoryReader.Product product) {
         String xpath;
-        if (product.rating != null && !product.rating.isEmpty()&& !product.rating.equals("null")) {
+        if (product.rating != null && !product.rating.isEmpty() && !product.rating.equals("null")) {
             // With rating
-            xpath = "//android.widget.ImageView[@content-desc=\""+product.rating+"\n"+product.name+"\n"+ product.rate +"\"]";
+            xpath = "//android.widget.ImageView[@content-desc=\"" + product.rating + "\n" + product.name + "\n" + product.rate + "\"]";
             System.out.println(xpath);
         } else {
             // No rating — product name is the first line
-            xpath = "//android.widget.ImageView[@content-desc=\"" +product.name+"\n"+ product.rate +"\"]";
+            xpath = "//android.widget.ImageView[@content-desc=\"" + product.name + "\n" + product.rate + "\"]";
             System.out.println(xpath);
         }
         return atomberg.findElement(By.xpath(xpath));
@@ -103,8 +133,9 @@ public class Marketplace {
 
     public void selectRandomProduct() throws Exception {
         CategoryReader reader = new CategoryReader();
-            List<CategoryReader.Category> categories = reader.getCategories();
+        List<CategoryReader.Category> categories = reader.getCategories();
 //     Run full random path
-            RandomSelector.selectRandomPath();
+        RandomSelector.selectRandomPath();
     }
+
 }
