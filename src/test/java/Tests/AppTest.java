@@ -29,15 +29,14 @@ public class AppTest extends BaseTest{
         try {
             reporter.startTest("Open App", deviceSlot);
             System.out.println("OpenApp test start");
-            AppInitializer appInitializer = new AppInitializer();
-            appInitializer.initializeDriverWithURL(server.service.getUrl(), command);
-            driver = appInitializer.getDriver();
-
+            driver = getDriver();
             ScreenRecording recording = new ScreenRecording(driver);
             recording.start();
 
             ActionsUtil.SSleep(2);
+
             driver.activateApp("com.atomberg.app");
+            AppInitializer appInitializer = new AppInitializer();
             appInitializer.checkMainScreen();
 
         } catch (Exception e) {

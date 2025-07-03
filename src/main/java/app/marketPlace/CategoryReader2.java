@@ -7,9 +7,10 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class CategoryReader {
+public class CategoryReader2 {
 
     public static class Product {
         public String name;
@@ -35,12 +36,13 @@ public class CategoryReader {
 
     private final List<Category> categories = new ArrayList<>();
 
-    public CategoryReader() throws Exception {
+    public CategoryReader2() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode root = mapper.readTree(new File("category_products.json"));
 
         JsonNode items = root.path("data").path("categories").path("items");
-
+        JsonNode currency = root.path("data").path("currency");
+        String currencyCode = currency.path("default_display_currency_symbol").asText();
         for (JsonNode defaultCategory : items) {
             for (JsonNode catNode : defaultCategory.path("children")) {
                 Category category = new Category(catNode.path("name").asText());
@@ -54,7 +56,6 @@ public class CategoryReader {
                     JsonNode price_range = productNode.path("price_range").path("minimum_price");
 //                    String currency = price_range.path("final_price").path("currency").asText();
                     String price = price_range.path("final_price").path("value").asText();
-                    String currencyCode = "₹ ";
                     product.rate = currencyCode + price;
                     JsonNode options = productNode.path("configurable_options");
                     for (JsonNode option : options) {
@@ -71,7 +72,18 @@ public class CategoryReader {
                             }
                         }
                     }
+                    JsonNode attributes = productNode.path("attributes");
+                    if (attributes.isArray()) {
+                        for (JsonNode attr : attributes) {
+                            String code = attr.path("code").asText();
+                            String label = attr.path("label").asText();
 
+//                            if ("color".equalsIgnoreCase(code) && storedColorLabel.equalsIgnoreCase(label)) {
+//                                colorMatched = true;
+//                                break;
+//                            }
+                        }
+                    }
                     category.products.add(product);
                 }
                 categories.add(category);

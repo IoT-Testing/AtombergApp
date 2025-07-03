@@ -43,38 +43,45 @@ public class Login {
         WebElement continueButton1 = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Continue\"]"));
         continueButton1.click(); // Continue to Log in
         System.out.println("Continue...");
-        ActionsUtil.sleep(5000);
-        PermissionUtil.allow(atomberg);
+
     }
 
-    public void emailForDebug() {
+    public void email(String email, String password) {
         WebElement emailLoginButton = atomberg.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[4]"));
-        emailLoginButton.click();
+        emailLoginButton.click(); //
         AppUtil.captureScreenshot(atomberg);
         WebElement emailField = atomberg.findElement(By.xpath("//android.widget.EditText"));
         emailField.click();
-//        emailField.sendKeys("tiposi3964@nozamas.com"); // Enter Email id
-//        AppUtil.captureScreenshot(driver);
-//        System.out.println(" " + emailField.getText() + " ");
-//        System.out.println("Email Entered...");
-//        AppUtil.captureScreenshot(driver);
-//        WebElement continueButton = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Continue\"]"));
-//        continueButton.click(); // Continue button
-//        AppUtil.captureScreenshot(driver);
-//        try {
-//            sleep(1000);
-//        } catch (InterruptedException e) {
-//            throw new RuntimeException(e);
-//        }
-//        WebElement passwordField = driver.findElement(By.xpath("//android.widget.EditText"));
-//        passwordField.click();
-//        passwordField.sendKeys("Atomberg@123");
-//        AppUtil.captureScreenshot(driver);
-//        System.out.println("Password entered..."); // Enter Password
-//        WebElement continueButton1 = driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Continue\"]"));
-//        continueButton1.click(); // Continue to Log in
-//        System.out.println("Continue...");
-//        ActionsUtil.sleep(5000);
-//        PermissionUtil.allow(driver);
+        ActionsUtil.sleep(1500);
+        emailField.sendKeys(email); // Enter Email id
+        AppUtil.captureScreenshot(atomberg);
+        System.out.println(" " + emailField.getText() + " ");
+        System.out.println("Email Entered...");
+        AppUtil.captureScreenshot(atomberg);
+        WebElement continueButton = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Continue\"]"));
+        String continueButtonClick = continueButton.getDomAttribute("clickable");
+        assert continueButtonClick != null;
+        if (continueButtonClick.equals("true"))
+        {
+            continueButton.click(); // Continue button
+            AppUtil.captureScreenshot(atomberg);
+            try {
+                sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            WebElement passwordField = atomberg.findElement(By.xpath("//android.widget.EditText"));
+            passwordField.click();
+            passwordField.sendKeys(password);
+            AppUtil.captureScreenshot(atomberg);
+            System.out.println("Password entered..."); // Enter Password
+            WebElement continueButton1 = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Continue\"]"));
+            continueButton1.click(); // Continue to Log in
+            System.out.println("Continue...");
+        }
+        else {
+            System.out.println(" Incorrect Email or Password");
+            atomberg.navigate().back();
+        }
     }
 }

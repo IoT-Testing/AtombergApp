@@ -33,7 +33,7 @@ public class Connect2 {
         WebDriver localDriver = driver.get();
 
         localDriver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-        String URL = "http://192.168.8.139:7100/";
+        String URL = "http://192.168.11.88:7100/";
         localDriver.get(URL);
         System.out.println("Website Opened");
         localDriver.manage().window().maximize();

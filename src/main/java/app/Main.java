@@ -19,7 +19,7 @@ public class Main {
             app.checkMainScreen();
             Marketplace marketplace = new Marketplace(atomberg);
             marketplace.openMarket();
-            marketplace.selectRandomProduct();
+//            marketplace.selectRandomProduct();
             SelectedPath selected = RandomSelector.selectRandomPath();
 
 // Now you can use each part:
@@ -29,14 +29,17 @@ public class Main {
             String color = selected.color;
             String sweep = selected.sweep;
             String rate = selected.product.rate;
-            System.out.println(rate);
+            String stock = selected.stock;
 
+
+/// TO DO : Check for all possible data in the .json file for further easy
             marketplace.swipeTillCategoryAvailable(category);
             WebElement productID = marketplace.findProductElement(selected.product);
 //            System.out.println(productID.getDomAttribute("content-desc"));
-            marketplace.scrollTillProductAvailable(productID);
+            marketplace.scrollTillProductAvailable(selected, productID);
         } catch (Exception ignored) {
         }
+//        atomberg.quit();
     }
 }
 

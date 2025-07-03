@@ -45,7 +45,8 @@ public class AppInitializer {
         atomberg.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
     }
 
-    public void checkMainScreen() {
+    public boolean checkMainScreen() {
+        boolean screenCheck = true;
         ApplicationState appState = atomberg.queryAppState("com.atomberg.app");
         if (appState == ApplicationState.RUNNING_IN_FOREGROUND)
         {
@@ -57,10 +58,10 @@ public class AppInitializer {
             }
             if (isMainScreenDisplayed != null) {
                 System.out.println("Login Screen Displayed");
-                Login login = new Login(atomberg);
-                login.email();
             } else {
                 System.out.println("Already logged in");
+                screenCheck = false;
+                
             }
         }
         else if(appState != ApplicationState.RUNNING_IN_BACKGROUND)
@@ -74,12 +75,12 @@ public class AppInitializer {
             }
             if (isMainScreenDisplayed != null) {
                 System.out.println("Login Screen Displayed");
-                Login login = new Login(atomberg);
-                login.email();
             } else {
                 System.out.println("Already logged in");
+                screenCheck = false;
             }
         }
+        return screenCheck;
     }
 
     public void initializeDriver(){

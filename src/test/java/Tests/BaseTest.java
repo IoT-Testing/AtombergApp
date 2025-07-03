@@ -1,8 +1,13 @@
 package Tests;
 
 import ExtentReports.ExtentReportAT;
+import app.AppInitializer;
 import app.STF.Connect2;
 import app.ServerInitializer;
+import app.util.ScreenRecording;
+import com.applitools.eyes.BatchInfo;
+import com.applitools.eyes.RectangleSize;
+import com.applitools.eyes.appium.Eyes;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.appmanagement.ApplicationState;
 import org.openqa.selenium.By;
@@ -10,6 +15,7 @@ import org.openqa.selenium.WebElement;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
+
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 
@@ -17,27 +23,52 @@ public class BaseTest {
     protected String deviceSlot;
     protected ExtentReportAT reporter;
     protected String command;
-    protected ServerInitializer server = new ServerInitializer(); // or however you define it
+    protected ServerInitializer server = new ServerInitializer();
+    protected Eyes eyes;
+    protected AndroidDriver driver;  // Optional if not already managed elsewhere
 
     @BeforeClass
     @Parameters({"deviceSlot"})
-    public void setup(String deviceSlot) throws IOException, UnsupportedFlavorException {
+    public void setup(String deviceSlot) throws IOException, UnsupportedFlavorException, InterruptedException {
         this.deviceSlot = deviceSlot;
         reporter = new ExtentReportAT(deviceSlot);
         reporter.startTest("Device Setup", deviceSlot);
+
         Connect2 connect = new Connect2();
         connect.ipAddress();
         command = connect.copiedText;
         Runtime.getRuntime().exec(command);
         server.startServer();
+
+        AppInitializer appInitializer = new AppInitializer();
+        appInitializer.initializeDriverWithURL(server.service.getUrl(), command);
+        driver = appInitializer.getDriver();
+        ScreenRecording recording = new ScreenRecording(driver);
+        recording.start();
+
+//        eyes = new Eyes();
+//        eyes.setApiKey("dU99lvCSii97QyTCEyW9n70lEuHnFur6D5Hb3CEZ7Rcg110");  // ⚠️ Replace or use env var
+//        eyes.setBatch(new BatchInfo("Atomberg Visual Test Batch"));
+
+    }
+
+    public AndroidDriver getDriver() {
+        return driver;
     }
 
     @AfterClass
     public void tearDown() {
-        server.stopServer();  // Optional
-        reporter.endTest();  // Optional
+        // Safely abort if not already closed
+        if (eyes != null) {
+            eyes.abortIfNotClosed();
+        }
+        ScreenRecording recording = new ScreenRecording(driver);
+        recording.stop();
+        server.stopServer();       // Optional
+        reporter.endTest();        // Optional
     }
 
+    // Used by failed test recovery logic
     void afterTestFailure(AndroidDriver driver) {
         ApplicationState state = driver.queryAppState("com.atomberg.app");
         if (state.equals(ApplicationState.RUNNING_IN_FOREGROUND)) {
@@ -57,4 +88,3 @@ public class BaseTest {
         }
     }
 }
-

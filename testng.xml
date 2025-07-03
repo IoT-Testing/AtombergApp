@@ -2,7 +2,7 @@
     <test name="Device1">
         <parameter name="deviceSlot" value="1"/>
         <classes>
-            <class name="Tests.AppTest"/>
+            <class name="Tests.LoginTest"/>
         </classes>
     </test>
 <!--    <test name="Device2">-->

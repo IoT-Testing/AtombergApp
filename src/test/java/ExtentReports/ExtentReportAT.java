@@ -33,7 +33,6 @@ public class ExtentReportAT {
             extent.setSystemInfo("Tester", "Rohit Bhagat");
             System.out.println("Report created at " + filePath);
         }
-
         // Only create the parent node once per deviceSlot
         parentMap.computeIfAbsent(deviceSlot, slot -> extent.createTest("Device " + slot));
     }
@@ -43,14 +42,26 @@ public class ExtentReportAT {
         ExtentTest node = parent.createNode(testName);
         testNode.set(node);
     }
+    public void log(Status status, String message, String screenshotPath) {
+        ExtentTest test = testNode.get();
+        if (test != null) {
+            if (screenshotPath != null) {
+                test.log(status, message,
+                        MediaEntityBuilder.createScreenCaptureFromPath(screenshotPath).build());
+            } else {
+                test.log(status, message);
+            }
+        }
+    }
 
     public void log(Status status, String message) {
-        testNode.get().log(status, message);
+        log(status, message, null);
     }
 
     public void endTest() {
         extent.flush();
     }
+
     public Status getCurrentStatus() {
         return testNode.get().getStatus();
     }
