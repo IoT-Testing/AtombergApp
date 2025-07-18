@@ -31,7 +31,6 @@ public class Play {
 
         AppUtil.captureScreenshot(driver);
         System.out.println("Alexa Video Opened");
-
         videoTryCatch();
         videoTryCatch();
         videoTryCatch();
@@ -53,7 +52,7 @@ public class Play {
         } catch (Exception ignored) {
         }
         if (SLAppSetup == null) {
-            ActionsUtil.Swipe.Left(driver, 0.80, 0.50);// Tab 0.35 narzo 0.50
+            ActionsUtil.Swipe.Left(driver, 0.80, 0.65);// Tab 0.35 narzo 0.50
 
             WebElement SLInstall = driver
                     .findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Smart Locks Installation\"]"));
@@ -64,10 +63,8 @@ public class Play {
                     .findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Smart Locks Installation\"]"));
             SLInstall.click();
         }
-
         AppUtil.captureScreenshot(driver);
         System.out.println("SL installation Video Opened");
-
         videoTryCatch();
         videoTryCatch();
         ActionsUtil.sleep(5000);
@@ -79,7 +76,7 @@ public class Play {
         } catch (Exception ignored) {
         }
         if (SLAppSetup == null) {
-            ActionsUtil.Swipe.Left(driver, 0.80, 0.50);// Tab 0.35 narzo 0.50
+            ActionsUtil.Swipe.Left(driver, 0.80, 0.65);// Tab 0.35 narzo 0.50
             ActionsUtil.sleep(2000);
             SLAppSetup = driver
                     .findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Smart Locks App Setup\"]"));
@@ -103,7 +100,8 @@ public class Play {
 
     private void videoTryCatch() {
         WebElement VideoTutorials =null;
-        while(VideoTutorials == null)
+        int i =0;
+        while(VideoTutorials == null && i <5)
         {
             try {
                 VideoTutorials = driver.findElement(By.xpath("//android.view.View[@content-desc=\"Video tutorials\"]"));
@@ -112,6 +110,7 @@ public class Play {
                 System.out.println("Back");
                 driver.navigate().back(); // 180, 1550 860, 1960
             }
+            i++;
         }
     }
     

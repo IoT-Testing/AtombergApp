@@ -24,7 +24,7 @@ public class ScreenRecording {
     public void start() throws IOException, InterruptedException {
         driver.activateApp("com.hbisoft.hbrecorderexample");
         ActionsUtil.SSleep(5);
-        driver.findElement(By.xpath("//android.widget.Button[@resource-id=\"com.hbisoft.hbrecorderexample:id/button_start\"]")).click();
+        driver.findElement(By.xpath("//android.widget.Button[@text=\"START\"]")).click();
         WebElement singleApp = null;
         try {
             singleApp = driver.findElement(By.xpath("//android.widget.TextView[@text=\"A single app\"]"));

@@ -1,6 +1,6 @@
 package app.util;
 
-import app.Resources.HomeELements;
+import app.Resources.HomeElements;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -8,7 +8,7 @@ import org.openqa.selenium.WebElement;
 public class PermissionUtil {
 
     public static void allow(AndroidDriver driver){
-        HomeELements he = new HomeELements();
+        HomeElements he = new HomeElements();
         WebElement permission = null;  // Check Direct allow button, when device is already present in the family
         WebElement AddButton = null; // Check direct Add button"+" , When empty Family
 
@@ -54,7 +54,7 @@ public class PermissionUtil {
     }
 
     public static void allowForBrowserStack(AndroidDriver driver){
-        HomeELements he = new HomeELements();
+        HomeElements he = new HomeElements();
         WebElement permission = null;  // Check Direct allow button, when device is already present in the family
         WebElement AddButton = null; // Check direct Add button"+" , When empty Family
         try {
@@ -96,7 +96,7 @@ public class PermissionUtil {
     }
 
     private static void alexaPopUp(AndroidDriver driver){
-        HomeELements he = new HomeELements();
+        HomeElements he = new HomeElements();
         WebElement alexaPopup = null;
         try {
             alexaPopup = driver.findElement(By.xpath(he.alexaPopupId));

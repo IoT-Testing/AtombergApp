@@ -118,6 +118,22 @@ public class ActionsUtil {
             System.out.println("Scrolled Up");
         }
 
+        public static void slowUp(AndroidDriver driver) {
+            Dimension size = driver.manage().window().getSize();
+            int startX = size.getWidth() / 2;
+            int startY = size.getHeight() / 2;
+            int endY = (int) (size.getHeight() * 0.25);
+            PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+            Sequence sequence = new Sequence(finger, 1)
+                    .addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY))
+                    .addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
+                    .addAction(new Pause(finger, Duration.ofMillis(200)))
+                    .addAction(finger.createPointerMove(Duration.ofMillis(500), PointerInput.Origin.viewport(), startX, endY))
+                    .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+            driver.perform(Collections.singletonList(sequence));
+            System.out.println("Scrolled Up");
+        }
+
         public static void element(AndroidDriver driver, WebElement element){
             int elementStartX = element.getLocation().getX();
             int elementWidth = element.getSize().getWidth();
@@ -174,9 +190,9 @@ public class ActionsUtil {
             Sequence sequence = new Sequence(finger, 1)
                     .addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY))
                     .addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
-                    .addAction(new Pause(finger, Duration.ofMillis(150)))
+                    .addAction(new Pause(finger, Duration.ofMillis(200)))
                     .addAction(
-                            finger.createPointerMove(Duration.ofMillis(150), PointerInput.Origin.viewport(), endX, startY))
+                            finger.createPointerMove(Duration.ofMillis(200), PointerInput.Origin.viewport(), endX, startY))
                     .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
 
             driver.perform(Collections.singletonList(sequence));

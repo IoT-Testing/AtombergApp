@@ -1,9 +1,6 @@
 package app.ScreenCheck;
 
-import app.Resources.CommonElements;
-import app.Resources.HomeELements;
-import app.ScreenCheckCallbackAction;
-import app.util.ActionsUtil;
+import app.Resources.*;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -22,14 +19,13 @@ import java.util.stream.Collectors;
 public class ScreenCheck {
     public AndroidDriver atomberg;
     CommonElements ce = new CommonElements();
-    HomeELements he = new HomeELements();
+    HomeElements he = new HomeElements();
 
     public ScreenCheck(AndroidDriver atomberg){
         this.atomberg = atomberg;
     }
 
     public void moreTab(){
-
         //Check for More Tab Screen
         WebElement moreTab = null;
         try {

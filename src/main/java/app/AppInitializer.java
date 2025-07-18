@@ -1,6 +1,5 @@
 package app;
 
-import app.STF.Connect;
 import app.util.ActionsUtil;
 import app.util.AppUtil;
 import app.util.PermissionUtil;
@@ -9,7 +8,6 @@ import io.appium.java_client.android.options.UiAutomator2Options;
 import io.appium.java_client.appmanagement.ApplicationState;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -47,7 +45,8 @@ public class AppInitializer {
         atomberg.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
     }
 
-    public void checkMainScreen() {
+    public boolean checkMainScreen() {
+        boolean screenCheck = true;
         ApplicationState appState = atomberg.queryAppState("com.atomberg.app");
         if (appState == ApplicationState.RUNNING_IN_FOREGROUND)
         {
@@ -59,10 +58,10 @@ public class AppInitializer {
             }
             if (isMainScreenDisplayed != null) {
                 System.out.println("Login Screen Displayed");
-                Login login = new Login(atomberg);
-                login.email();
             } else {
                 System.out.println("Already logged in");
+                screenCheck = false;
+                
             }
         }
         else if(appState != ApplicationState.RUNNING_IN_BACKGROUND)
@@ -76,20 +75,19 @@ public class AppInitializer {
             }
             if (isMainScreenDisplayed != null) {
                 System.out.println("Login Screen Displayed");
-                Login login = new Login(atomberg);
-                login.email();
             } else {
                 System.out.println("Already logged in");
+                screenCheck = false;
             }
         }
+        return screenCheck;
     }
 
     public void initializeDriver(){
-        //These caps only get the device, need to select Atomberg Home ap separately
+        //These caps only get the device, need to select Atomberg Home app separately
         UiAutomator2Options options = new UiAutomator2Options();
         options.setCapability("platformName", "Android");
         options.setCapability("platformVersion", "15");
-
         URL url = null;
         try {
             url = new URL("http://127.0.0.1:4723/wd/hub");
@@ -102,8 +100,6 @@ public class AppInitializer {
     }
 
     public void initializeDriverWithURL(URL url, String text) throws IOException, InterruptedException {
-        //These options only connect to the device, need to select Atomberg Home app separately
-//        Runtime.getRuntime().exec("appium driver install uiautomator2");
         UiAutomator2Options options = new UiAutomator2Options();
         options.setCapability("platformName", "Android");
         String[] arr = text.split(" ");
@@ -120,18 +116,18 @@ public class AppInitializer {
         osVersion = output.toString();
         System.out.println("ADB Output:\n" + osVersion);
         options.setCapability("platformVersion", osVersion);
+        options.setCapability("appium:udid", ip);
         atomberg = new AndroidDriver(url, options);
         atomberg.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
     }
 
-    public void initializeDriverWithURL(URL url) throws IOException, InterruptedException {
+    public void initializeDriverWithURL(URL url){
         //These options only connect to the device, need to select Atomberg Home app separately
         UiAutomator2Options options = new UiAutomator2Options();
         options.setCapability("platformName", "Android");
         atomberg = new AndroidDriver(url, options);
         atomberg.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
     }
-
 
     public void login(String login, String pass) {
         WebElement emailLoginButton = atomberg.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[4]"));
@@ -211,5 +207,4 @@ public class AppInitializer {
         atomberg = new AndroidDriver(url, options);
         atomberg.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
     }
-
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.appmanagement.ApplicationState;
 import org.awaitility.Awaitility;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -292,10 +293,15 @@ public class Help {
             }
             else if (Objects.equals(dialogueButtons.get(i).getDomAttribute("content-desc"), "No")) {
                 dialogueButtons.get(i).click();
-                WebElement Email = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Email\"]"));
-                Email.click();
+                WebElement appEmail = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Email (app support)\"]"));
+                appEmail.click();
                 AppUtil.captureScreenshot(atomberg);
-                System.out.println("Email ...");
+                System.out.println("app Email ...");
+                atomberg.navigate().back();
+                WebElement genericEmail = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Email (generic support)\"]"));
+                appEmail.click();
+                AppUtil.captureScreenshot(atomberg);
+                System.out.println("app Email ...");
                 atomberg.navigate().back();
                 WebElement Call = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Call\"]"));
                 Call.click();
@@ -323,7 +329,8 @@ public class Help {
 
     private void videoTryCatch() {
         WebElement VideoTutorials =null;
-        while(VideoTutorials == null)
+        int i = 0;
+        while(VideoTutorials == null && i < 5)
         {
             try {
                 VideoTutorials = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Video tutorials\"]"));
@@ -332,6 +339,16 @@ public class Help {
                 System.out.println("Back");
                 atomberg.navigate().back(); // 180, 1550 860, 1960
             }
+            i++;
+            if (i == 5){
+                ApplicationState state = atomberg.queryAppState("com.atomberg.app");
+                if(state!= ApplicationState.RUNNING_IN_FOREGROUND){
+                    atomberg.activateApp("com.atomberg.app");
+                    ActionsUtil.SSleep(5);
+                    videoTryCatch();
+                }
+            }
+
         }
     }
 

@@ -3,7 +3,7 @@ package app.Automations;
 import java.util.*;
 import java.time.Duration;
 
-import app.Resources.HomeELements;
+import app.Resources.HomeElements;
 import app.util.ActionsUtil;
 import org.openqa.selenium.By;
 import java.text.SimpleDateFormat;
@@ -19,7 +19,7 @@ public class Automation {
     public AndroidDriver driver;
     public WebElement automations;
     private WebElement quickAccess;
-    HomeELements he = new HomeELements();
+    HomeElements he = new HomeElements();
     public Automation(AndroidDriver driver){
         this.driver = driver;
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(6));

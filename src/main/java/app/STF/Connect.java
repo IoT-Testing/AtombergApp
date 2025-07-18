@@ -42,20 +42,8 @@ public class Connect {
         ActionsUtil.SSleep(1);
     }
 
-    void selectDevices(){
-        List<WebElement> elementList = driver.findElements(By.tagName("li"));
-        List<WebElement> devicesList = elementList.stream().filter(webElement -> webElement.getDomAttribute("id")!=null).collect(Collectors.toList());
-        for(WebElement device:devicesList){
-            driver.switchTo().frame(device);
-        }
-    }
-
     void remoteDebug() throws IOException, UnsupportedFlavorException {
-        List<WebElement> elementList = driver.findElements(By.tagName("li"));
-        List<WebElement> devicesList = elementList.stream().filter(webElement -> webElement.getDomAttribute("id")!=null).collect(Collectors.toList());
-        int i = (int) (Math.random() * devicesList.size());
-        System.out.println("Device number "+ i +" Selected");
-        devicesList.get(0).click();
+        new STFDeviceSelect(driver);
         List<WebElement> listOfTextBox = driver.findElements(By.tagName("textarea"));
         WebElement ip = listOfTextBox.get(1);
         Actions actions = new Actions(driver);
