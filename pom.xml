@@ -114,7 +114,6 @@
                 <configuration>
                     <parallel>methods</parallel>
                     <threadCount>2</threadCount>
-                    <groups>acceptance | !features-a</groups>
                     <excludedGroups>integration, regression</excludedGroups>
                     <excludes>
                         <exclude/>

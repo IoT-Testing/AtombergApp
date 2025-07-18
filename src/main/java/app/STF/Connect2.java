@@ -1,9 +1,15 @@
 package app.STF;
 
 import app.util.ActionsUtil;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.interactions.*;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.interactions.PointerInput;
+
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
@@ -11,24 +17,36 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class Connect {
-    WebDriver driver = null;
+public class Connect2 {
     public String copiedText;
     public String ip;
+    ThreadLocal<ChromeDriver> driver = new ThreadLocal<>();
+
     public void ipAddress() throws IOException, UnsupportedFlavorException {
-        driver = new ChromeDriver();
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--disable-popup-blocking");
+        options.addArguments("--remote-allow-origins=*");
+        driver.set(new ChromeDriver(options));
+        WebDriver localDriver = driver.get();
+
+        localDriver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         String URL = "http://192.168.82.202:7100/";
-        driver.get(URL);
+        localDriver.get(URL);
         System.out.println("Website Opened");
-        driver.manage().window().maximize();
-        stfLogin();
-        remoteDebug();
+        localDriver.manage().window().maximize();
+        stfLogin(localDriver);
+        remoteDebug(localDriver);
+    }
+    private String getUniqueUserDataDir() {
+        return System.getProperty("java.io.tmpdir") + "/profile-" + UUID.randomUUID();
     }
 
-    void stfLogin(){
+    void stfLogin(WebDriver driver){
         ActionsUtil.sleep(1000);
         WebElement username = driver.findElement(By.name("username"));
         username.click();
@@ -42,20 +60,9 @@ public class Connect {
         ActionsUtil.SSleep(1);
     }
 
-    void selectDevices(){
-        List<WebElement> elementList = driver.findElements(By.tagName("li"));
-        List<WebElement> devicesList = elementList.stream().filter(webElement -> webElement.getDomAttribute("id")!=null).collect(Collectors.toList());
-        for(WebElement device:devicesList){
-            driver.switchTo().frame(device);
-        }
-    }
 
-    void remoteDebug() throws IOException, UnsupportedFlavorException {
-        List<WebElement> elementList = driver.findElements(By.tagName("li"));
-        List<WebElement> devicesList = elementList.stream().filter(webElement -> webElement.getDomAttribute("id")!=null).collect(Collectors.toList());
-        int i = (int) (Math.random() * devicesList.size());
-        System.out.println("Device number "+ i +" Selected");
-        devicesList.get(0).click();
+    void remoteDebug(WebDriver driver) throws IOException, UnsupportedFlavorException {
+        new STFDeviceSelect(driver);
         List<WebElement> listOfTextBox = driver.findElements(By.tagName("textarea"));
         WebElement ip = listOfTextBox.get(1);
         Actions actions = new Actions(driver);
@@ -69,5 +76,4 @@ public class Connect {
         copiedText = (String) clipboard.getData(DataFlavor.stringFlavor);
         System.out.println(copiedText);
     }
-
 }
