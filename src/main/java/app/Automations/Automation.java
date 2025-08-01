@@ -2,7 +2,6 @@ package app.Automations;
 
 import java.util.*;
 import java.time.Duration;
-
 import app.Resources.HomeElements;
 import app.util.ActionsUtil;
 import org.openqa.selenium.By;

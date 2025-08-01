@@ -4,7 +4,6 @@ import app.util.ActionsUtil;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;

@@ -22,7 +22,7 @@ public class AtombergHome {
         UiAutomator2Options options = new UiAutomator2Options();
         options.setAppPackage("com.atomberg.app");
         options.setAppActivity("com.atomberg.app.MainActivity");
-//        options.setUdid("24c04d85");
+
         URL url = null;
         try {
             url = new URL("http://127.0.0.1:4723/wd/hub");

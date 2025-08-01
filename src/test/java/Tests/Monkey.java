@@ -1,6 +1,5 @@
 package Tests;
 
-import app.Login;
 import app.util.AppUtil;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;

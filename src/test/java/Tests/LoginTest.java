@@ -1,11 +1,10 @@
 package Tests;
 
 import app.AppInitializer;
-import app.Login;
+import app.Login.Email;
 import app.MoreTab.Manage;
 import app.util.ActionsUtil;
 import app.util.PermissionUtil;
-import app.util.ScreenRecording;
 import com.aventstack.extentreports.Status;
 import io.appium.java_client.android.AndroidDriver;
 import org.testng.annotations.Test;
@@ -26,7 +25,7 @@ public class LoginTest extends BaseTest{
             appInitializer.setDriver(driver);
             appInitializer.checkMainScreen();
             if(appInitializer.checkMainScreen()){
-                Login login = new Login(driver);
+                Email login = new Email(driver);
                 if(appInitializer.checkMainScreen()){
                     login.email("hiwitaw422@wuzak.com", "Atomberg@1234");
                 }
@@ -36,7 +35,7 @@ public class LoginTest extends BaseTest{
                 manage.logout();
                 driver.terminateApp("com.atomberg.app");
             }
-;        } catch (Exception e) {
+        } catch (Exception e) {
             reporter.log(Status.FAIL, "App Open failed: " + e.getMessage());
         } finally {
             System.out.println("OpenApp test end");
@@ -55,7 +54,7 @@ public class LoginTest extends BaseTest{
             AppInitializer appInitializer = new AppInitializer();
             appInitializer.setDriver(driver);
             appInitializer.checkMainScreen();
-            Login login = new Login(driver);
+            Email login = new Email(driver);
             if(appInitializer.checkMainScreen()){
                 login.email("hiwitaw422wuzak.com", "password");
             }
@@ -80,7 +79,7 @@ public class LoginTest extends BaseTest{
             AppInitializer appInitializer = new AppInitializer();
             appInitializer.setDriver(driver);
             appInitializer.checkMainScreen();
-            Login login = new Login(driver);
+            Email login = new Email(driver);
             if(appInitializer.checkMainScreen()){
                 login.email("hiwitaw422@wuzak.com", "Atomberg@12345");
             }
@@ -106,7 +105,7 @@ public class LoginTest extends BaseTest{
             AppInitializer appInitializer = new AppInitializer();
             appInitializer.setDriver(driver);
             appInitializer.checkMainScreen();
-            Login login = new Login(driver);
+            Email login = new Email(driver);
             if(appInitializer.checkMainScreen()){
                 login.email("hiwitaw422@wuzak.com", "Atomberg@1234");
             }

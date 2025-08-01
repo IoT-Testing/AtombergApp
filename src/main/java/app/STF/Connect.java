@@ -11,12 +11,13 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Connect {
     WebDriver driver = null;
     public String copiedText;
     public String ip;
+
+
     public void ipAddress() throws IOException, UnsupportedFlavorException {
         driver = new ChromeDriver();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
