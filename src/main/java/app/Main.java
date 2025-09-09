@@ -1,9 +1,10 @@
 package app;
 
-import app.marketPlace.Marketplace;
-import app.marketPlace.RandomSelector;
-import app.marketPlace.SelectedPath;
+import app.server.AppiumServerManager;
+import app.util.ActionsUtil;
+import com.aventstack.extentreports.util.Assert;
 import io.appium.java_client.android.AndroidDriver;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 public class Main {
@@ -12,36 +13,167 @@ public class Main {
     public ServerInitializer server = new ServerInitializer();
 
     public static void main(String[] args) throws Exception {
-        try {
-            AppInitializer app = new AppInitializer();
-            app.openApp();
-            atomberg = app.getDriver();
-            app.checkMainScreen();
-            Marketplace marketplace = new Marketplace(atomberg);
-            marketplace.openMarket();
-//            marketplace.selectRandomProduct();
-            SelectedPath selected = RandomSelector.selectRandomPath();
+        String platform = "ios";
+        System.out.println("Starting appium Server");
+        AppiumServerManager.startServer(platform);
+        ActionsUtil.SSleep(30);
 
-// Now you can use each part:
-            String category = selected.category.name;
-            String rating = selected.rating;
-            String product = selected.product.name;
-            String color = selected.color;
-            String sweep = selected.sweep;
-            String rate = selected.product.rate;
-            String stock = selected.stock;
-
-
-/// TO DO : Check for all possible data in the .json file for further easy
-            marketplace.swipeTillCategoryAvailable(category);
-            WebElement productID = marketplace.findProductElement(selected.product);
-//            System.out.println(productID.getDomAttribute("content-desc"));
-            marketplace.scrollTillProductAvailable(selected, productID);
-        } catch (Exception ignored) {
-        }
-//        atomberg.quit();
+//        AppInitializer app = new AppInitializer();
+//        app.initializeDriver();
+//        atomberg = app.getDriver();
+//        ActionsUtil.SSleep(2);
+//        atomberg.activateApp("com.atomberg.app");
+//        ActionsUtil.SSleep(2);
+//        ActionsUtil.Scroll.Down(atomberg);
+//        atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Intellon Water Purifier\n" +
+//                "Kitchen\"]/android.widget.ImageView[2]")).click();
+//        WebElement popup = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"RO + UV Mode is selected\"]"));
+//        assert popup.isDisplayed();
+//        atomberg.navigate().back();
+//        Assert.notNull(popup, "Should Not be null");
+//        ActionsUtil.Swipe.screenRight(atomberg);
+//        analytics analytics = new analytics(atomberg);
+//        analytics.Show();
+//        List<WebElement> elementList = atomberg.findElements(By.className("android.widget.Button"));xetDomAttribute("clickable"), "true")).collect(Collectors.toList());
+//        System.out.println(clickableElements.size());
+        
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //            CategoryReader reader = new CategoryReader();
 //            List<CategoryReader.Category> categories = reader.getCategories();

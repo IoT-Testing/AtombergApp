@@ -37,12 +37,12 @@ public class PermissionUtil {
                 permission = driver.findElement(By.id("com.android.permissioncontroller:id/permission_icon"));
             }catch (Exception ignored){}
             if(permission!=null) {
-                WebElement allowButton = driver.findElement(By.id("com.android.permissioncontroller:id/permission_allow_button"));
+                WebElement allowButton = driver.findElement(By.id(he.allowButtonId));
                 allowButton.click();
                 System.out.println("Permissions");
-                driver.findElement(By.id("com.android.permissioncontroller:id/permission_allow_foreground_only_button")).click();
+                driver.findElement(By.id(he.locationId)).click();
                 ActionsUtil.sleep(1000);
-                driver.findElement(By.id("com.android.permissioncontroller:id/permission_allow_button")).click();
+                driver.findElement(By.id(he.allowButtonId)).click();
                 System.out.println("All Permissions Granted");
                 alexaPopUp(driver);
             }

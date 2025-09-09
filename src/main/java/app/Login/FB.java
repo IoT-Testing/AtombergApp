@@ -2,8 +2,8 @@ package app.Login;
 
 //Add First Device
 
-import AtombergTest.Method;
-import Permissions.Permission;
+import app.util.AppUtil;
+import app.util.PermissionUtil;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -30,21 +30,21 @@ public class FB {
 		} catch (Exception exp) {
 		}
 		if (Home != null) {
-			Permission.Allow(driver);
+			PermissionUtil.allow(driver);
 		} else {
 			WebElement Continue = driver.findElement(By.xpath("//android.widget.Button[@text=\"Continue as Rohit\"]"));
 			Continue.click(); // Enter Email id
-			Method.captureScreenshot(driver);
+			AppUtil.captureScreenshot(driver);
 
 			sleep(10000);
 			System.out.println("On Home Screen");
-			Method.captureScreenshot(driver);
+			AppUtil.captureScreenshot(driver);
 
 			WebElement appLogo =driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.widget.ImageView"));
 			assert appLogo.isDisplayed();
 			await().atMost(10, TimeUnit.SECONDS).until(appLogo::isDisplayed);
 			System.out.println("Test Passed");
-			Permission.Allow(driver);
+			PermissionUtil.allow(driver);
 		}
 	}
 

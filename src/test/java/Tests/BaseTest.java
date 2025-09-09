@@ -4,9 +4,8 @@ import ExtentReports.ExtentReportAT;
 import app.AppInitializer;
 import app.STF.Connect2;
 import app.ServerInitializer;
+import app.util.ActionsUtil;
 import app.util.ScreenRecording;
-import com.applitools.eyes.BatchInfo;
-import com.applitools.eyes.RectangleSize;
 import com.applitools.eyes.appium.Eyes;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.appmanagement.ApplicationState;
@@ -14,6 +13,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -29,14 +29,15 @@ public class BaseTest {
 
     @BeforeClass
     @Parameters({"deviceSlot"})
-    public void setup(String deviceSlot) throws IOException, UnsupportedFlavorException, InterruptedException {
+    public void setup(@Optional("0") String deviceSlot) throws IOException, UnsupportedFlavorException, InterruptedException {
         this.deviceSlot = deviceSlot;
         reporter = new ExtentReportAT(deviceSlot);
         reporter.startTest("Device Setup", deviceSlot);
 
         Connect2 connect = new Connect2();
         connect.ipAddress();
-        command = connect.copiedText;
+        command = connect.getCopiedText();
+        ActionsUtil.SSleep(5);
         Runtime.getRuntime().exec(command);
         server.startServer();
 
@@ -45,11 +46,6 @@ public class BaseTest {
         driver = appInitializer.getDriver();
         ScreenRecording recording = new ScreenRecording(driver);
         recording.start();
-
-//        eyes = new Eyes();
-//        eyes.setApiKey("dU99lvCSii97QyTCEyW9n70lEuHnFur6D5Hb3CEZ7Rcg110");  // ⚠️ Replace or use env var
-//        eyes.setBatch(new BatchInfo("Atomberg Visual Test Batch"));
-
     }
 
     public AndroidDriver getDriver() {
@@ -64,6 +60,7 @@ public class BaseTest {
         }
         ScreenRecording recording = new ScreenRecording(driver);
         recording.stop();
+
         server.stopServer();       // Optional
         reporter.endTest();        // Optional
     }

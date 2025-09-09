@@ -1,9 +1,10 @@
 package Tests;
 
-import app.Analytics.Analytics;
+import app.Analytics.analytics;
 import app.AppInitializer;
 import app.Fan.FanManagement;
 import app.Lock.LockManagement;
+import app.Login.Email;
 import app.MoreTab.Help;
 import app.MoreTab.Manage;
 import app.MoreTab.Play;
@@ -17,11 +18,12 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.annotations.*;
 
+import static io.appium.java_client.appmanagement.ApplicationState.RUNNING_IN_FOREGROUND;
+
 
 public class AppTest extends BaseTest{
 
     public AndroidDriver driver;
-
 
     @Test(priority = 1)
     void testOpenApp() {
@@ -29,15 +31,21 @@ public class AppTest extends BaseTest{
             reporter.startTest("Open App", deviceSlot);
             System.out.println("OpenApp test start");
             driver = getDriver();
-            ScreenRecording recording = new ScreenRecording(driver);
-            recording.start();
-
             ActionsUtil.SSleep(2);
-
             driver.activateApp("com.atomberg.app");
+            ActionsUtil.SSleep(5);
             AppInitializer appInitializer = new AppInitializer();
+            appInitializer.setDriver(driver);
             appInitializer.checkMainScreen();
-
+            System.out.println(appInitializer.checkMainScreen());
+            if(appInitializer.checkMainScreen()){
+                Email login = new Email(driver);
+                try{
+                    login.email("hiwitaw422@wuzak.com", "Atomberg@1234");
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+            }
         } catch (Exception e) {
             reporter.log(Status.FAIL, "App Open failed: " + e.getMessage());
         } finally {
@@ -132,7 +140,7 @@ public class AppTest extends BaseTest{
 
             reporter.startTest("Analytics", deviceSlot);
             System.out.println("Analytics test start");
-            Analytics analytics = new Analytics(driver);
+            analytics analytics = new analytics(driver);
             analytics.Show();
         } catch (Exception e) {
             reporter.log(Status.FAIL, "Analytics failed: " + e.getMessage());
@@ -206,7 +214,7 @@ public class AppTest extends BaseTest{
 
     void afterTestFailure() {
         ApplicationState state = driver.queryAppState("com.atomberg.app");
-        if (state.equals(ApplicationState.RUNNING_IN_FOREGROUND)) {
+        if (state.equals(RUNNING_IN_FOREGROUND)) {
             WebElement homeScreen = null;
             while (homeScreen == null) {
                 try {

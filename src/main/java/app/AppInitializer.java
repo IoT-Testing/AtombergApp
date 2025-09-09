@@ -53,7 +53,7 @@ public class AppInitializer {
             ActionsUtil.SSleep(5);
             WebElement isMainScreenDisplayed = null;
             try {
-                isMainScreenDisplayed = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Experience smart living \n" + " with Atomberg\"]"));
+                isMainScreenDisplayed = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Experience smart living \n with Atomberg\"]"));
             } catch (Exception ignored) {
             }
             if (isMainScreenDisplayed != null) {
@@ -61,7 +61,6 @@ public class AppInitializer {
             } else {
                 System.out.println("Already logged in");
                 screenCheck = false;
-                
             }
         }
         else if(appState != ApplicationState.RUNNING_IN_BACKGROUND)

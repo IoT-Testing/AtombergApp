@@ -176,7 +176,8 @@ public class Manage {
             if (!Objects.equals(familyName, "Add") && !Objects.requireNonNull(familyName).endsWith("Script")) {
                 home();
                 back();
-            } else if (familyName.endsWith("Script")) {
+            }
+            else if (familyName.endsWith("Script")) {
                 WebElement FamilyEdit = atomberg.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View[2]"));
                 FamilyEdit.click();
                 System.out.println("Family Edit");
@@ -204,9 +205,10 @@ public class Manage {
                 System.out.println(numberOfFamilies);
                 numberOfFamilies -= 1;
                 System.out.println(numberOfFamilies);
-            } else {
+            }
+            else {
                 addHome();
-                numberOfFamilies += 1;
+                i += 1;
             }
         }
         atomberg.navigate().back();//Back to more tab from Manage Family

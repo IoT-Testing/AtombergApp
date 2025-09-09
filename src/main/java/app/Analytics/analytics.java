@@ -8,12 +8,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class Analytics {
+public class analytics {
     private WebElement analytics;
     private WebElement moreTab;
     AndroidDriver atomberg;
 
-    public Analytics(AndroidDriver driver){
+    public analytics(AndroidDriver driver){
         this.atomberg = driver;
     }
     public void Show() {
@@ -34,6 +34,12 @@ public class Analytics {
             nextFan();
         }
         else System.out.println("Fan Not Available in Analytics");
+        WebElement popup = null;
+        try {
+            popup = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Scrim\"]"));
+        }catch (Exception ignored){}
+        if (popup != null)
+            atomberg.navigate().back();
     }
 
     private void fanChange() {

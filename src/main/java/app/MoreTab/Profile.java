@@ -54,8 +54,7 @@ public class Profile {
         EditNumber.click();
         AppUtil.captureScreenshot(atomberg);
         atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Update\"]")).click();
-        ActionsUtil.sleep(250);
-
+        ActionsUtil.SSleep(2);
         back(atomberg);
     }
 

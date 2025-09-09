@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.Date;
 import java.util.Map;
+import app.Login.*;
 
 
 public class Monkey {
@@ -67,7 +68,7 @@ public class Monkey {
 	  String timestamp;
 	  openAtomberg();
 
-	  Login login = new Login(driver);
+	  Email login = new Email(driver);
 	  login.email();
 	  timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 	  System.out.println(" " + timestamp + " "); // Adjusting the timeout duration for the 'adb' command

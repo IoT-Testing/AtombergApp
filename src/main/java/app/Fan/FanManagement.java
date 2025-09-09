@@ -15,6 +15,7 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import static app.AndroidDriverCheck.AtombergHome.atomberg;
 import static app.util.ActionsUtil.sleep;
 import static app.util.AppUtil.SearchWiFi;
 // 50:78:7d:19:16:88
@@ -391,5 +392,51 @@ public class FanManagement {
     public void LED(){
         ActionsUtil.Tap.withCoordinates(atomberg, 540, 1800);
         ActionsUtil.SSleep(10);
+    }
+
+    public void deviceChildElements(){
+        List<WebElement> availableElements = atomberg.findElements(By.className("android.widget.Button"));
+        System.out.println(availableElements.size());
+        List<WebElement> availableDevices = availableElements.stream().filter(element -> element.getDomAttribute("content-desc") != null).collect(Collectors.toList());
+        availableDevices.remove(availableDevices.size()-1);
+        System.out.println(availableDevices.size());
+        for(WebElement device: availableDevices){
+            System.out.println(device.getDomAttribute("content-desc"));
+        }
+        if (availableDevices.size() >= 4) // only 4 devices are visible on the screen
+        {
+            String lastFan = availableDevices.get(availableDevices.size() - 1).getDomAttribute("content-desc");
+            ActionsUtil.Scroll.Up(atomberg);
+            ActionsUtil.Scroll.Up(atomberg);
+            List<WebElement> newElement = atomberg.findElements(By.className("android.widget.Button"));
+            List<WebElement> newDevices = newElement.stream().filter(dev -> dev.getDomAttribute("content-desc") != null).collect(Collectors.toList());
+            if (Objects.equals(newDevices.get(newDevices.size() - 1).getDomAttribute("content-desc"), lastFan)) { // to check if there are more than 4 fans in family
+                System.out.println("No more devices");
+            }
+            newDevices.remove(newDevices.size()-1);
+            System.out.println(newDevices.size());
+            availableDevices.addAll(newDevices);
+            System.out.println(availableDevices.size());
+
+            ActionsUtil.Scroll.Down(atomberg);
+            ActionsUtil.Scroll.Down(atomberg);
+        }
+
+
+        for(int i =0 ; i < availableDevices.size(); i++){
+            if(i == 5) {
+                ActionsUtil.Scroll.Up(atomberg);
+                ActionsUtil.Scroll.Up(atomberg);
+            }
+            List<WebElement> childElements = availableDevices.get(i).findElements(By.xpath(".//*"));
+            List<WebElement> clickable = childElements.stream().filter(element -> Objects.equals(element.getDomAttribute("clickable"), "true")).collect(Collectors.toList());
+            System.out.println(clickable.size());
+            for (WebElement child : clickable){
+                System.out.println(child.getDomAttribute("content-desc"));
+                child.click();
+                ActionsUtil.SSleep(3);
+                atomberg.navigate().back();
+            }
+        }
     }
 }

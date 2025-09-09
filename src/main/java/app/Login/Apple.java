@@ -45,7 +45,7 @@ public class Apple {
 			AppUtil.captureScreenshot(atomberg);
 
 			WebElement passwordField = atomberg.findElement(By.xpath(
-					"//android.webkit.WebView[@text=\"Sign in with Apple ID\"]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View[2]/android.view.View/android.widget.EditText"));
+					"//android.widget.EditText[@resource-id=\"password_text_field\"]"));
 			passwordField.click();
 			passwordField.sendKeys("SumitaBH@133");
 			AppUtil.captureScreenshot(atomberg);

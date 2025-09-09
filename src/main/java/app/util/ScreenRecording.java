@@ -8,6 +8,7 @@ import org.openqa.selenium.WebElement;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.Duration;
 
 
 public class ScreenRecording {

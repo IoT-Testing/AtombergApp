@@ -5,6 +5,7 @@ import app.util.ActionsUtil;
 import app.util.AppUtil;
 import app.util.PermissionUtil;
 import io.appium.java_client.android.AndroidDriver;
+import org.apache.xmlbeans.impl.xb.xmlschema.LangAttribute;
 import org.awaitility.Awaitility;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -27,7 +28,6 @@ public class Email {
 
         WebElement emailLoginButton = atomberg.findElement(By.xpath(
                 "//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[4]"));
-//        assert  emailLoginButton.isDisplayed();
         emailLoginButton.click();
 
         AppUtil.captureScreenshot(atomberg);
@@ -94,7 +94,7 @@ public class Email {
 
     }
 
-    public void email(String email, String password) {
+    public void email(String email, String password) throws Exception {
         WebElement emailLoginButton = atomberg.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[4]"));
         emailLoginButton.click(); //
         AppUtil.captureScreenshot(atomberg);
@@ -108,7 +108,6 @@ public class Email {
         AppUtil.captureScreenshot(atomberg);
         WebElement continueButton = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Continue\"]"));
         String continueButtonClick = continueButton.getDomAttribute("clickable");
-        assert continueButtonClick != null;
         if (continueButtonClick.equals("true"))
         {
             continueButton.click(); // Continue button
@@ -122,11 +121,18 @@ public class Email {
             WebElement continueButton1 = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Continue\"]"));
             continueButton1.click(); // Continue to Log in
             System.out.println("Continue...");
+            WebElement error = null;
+            try{
+                error = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"! Incorrect password\"]"));
+            }catch (Exception ignored){}
+            if(error==null){
+                throw new Exception("Invalid Password");
+            }
         }
         else {
-            System.out.println(" Incorrect Email or Password");
-            atomberg.navigate().back();
+            throw new Exception("Invalid Email Exception");
         }
+        atomberg.navigate().back();
     }
 
     private static void sleep(long millis) {
