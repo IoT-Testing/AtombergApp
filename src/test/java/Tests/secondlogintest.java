@@ -16,7 +16,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 import java.time.Duration;
 
-public class loginTest2 extends BaseTest {
+public class secondlogintest extends BaseTest {
 
     private AndroidDriver driver;
 

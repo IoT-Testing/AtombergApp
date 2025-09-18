@@ -40,16 +40,15 @@ public class AppInitializer {
     private static final String APP_PACKAGE = "com.atomberg.app";
     private static final String APP_ACTIVITY = "com.atomberg.app.MainActivity";
     private static final String APPIUM_SERVER_URL = "http://127.0.0.1:4723/wd/hub";
-    private static final Duration IMPLICIT_WAIT = Duration.ofSeconds(5);
+    private static final Duration IMPLICIT_WAIT = Duration.ofSeconds(1);
     private static final int ADB_TIMEOUT_SECONDS = 10;
 
     // === Locators (could move to Page Object later) ===
     private static final By LOGIN_SCREEN_INDICATOR = By.xpath(
-            "//android.view.View[@content-desc=\"Experience smart living \\n with Atomberg\"]"
+            "//android.view.View[@content-desc=\"Experience smart living \n" +
+                    " with Atomberg\"]"
     );
-    private static final By EMAIL_LOGIN_BUTTON = By.xpath(
-            "(//android.widget.ImageView)[4]" // Simplified from deep hierarchy
-    );
+    private static final By EMAIL_LOGIN_BUTTON = By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[4]");
     private static final By CONTINUE_BUTTON = By.xpath("//android.widget.Button[@content-desc='Continue']");
     private static final By EDIT_TEXT_FIELD = By.xpath("//android.widget.EditText");
 
@@ -65,8 +64,6 @@ public class AppInitializer {
     public String getOsVersion() {
         return osVersion;
     }
-
-    // === Driver Initialization Methods ===
 
     /**
      * Launches the Atomberg app with default capabilities.
@@ -221,8 +218,7 @@ public class AppInitializer {
     public boolean checkMainScreen() {
         ApplicationState appState = atomberg.queryAppState(APP_PACKAGE);
 
-        if (appState == ApplicationState.RUNNING_IN_FOREGROUND ||
-                appState == ApplicationState.RUNNING_IN_BACKGROUND) {
+        if (appState == ApplicationState.RUNNING_IN_FOREGROUND) {
 
             ActionsUtil.SSleep(5); // Wait for UI to stabilize
 

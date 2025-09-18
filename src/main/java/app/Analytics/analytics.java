@@ -2,165 +2,248 @@ package app.Analytics;
 
 import app.util.ActionsUtil;
 import io.appium.java_client.android.AndroidDriver;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class analytics {
-    private WebElement analytics;
-    private WebElement moreTab;
-    AndroidDriver atomberg;
+import static app.resources.Locators.AnalyticsLocators.*;
+import static app.resources.Locators.HomeLocators.*;
 
-    public analytics(AndroidDriver driver){
+
+/**
+ * analytics - Handles analytics screen interactions: device switching, data inspection.
+ *
+ * <p>This version avoids all assertions and focuses on robust execution,
+ * graceful failure, and reusability as a utility class.
+ */
+public class analytics {
+    private final AndroidDriver atomberg;
+
+    // Swipe constants
+    private static final double SWIPE_START_X_RATIO = 0.75;
+    private static final double SWIPE_Y_RATIO = 0.50;
+
+    public analytics(AndroidDriver driver) {
         this.atomberg = driver;
     }
+
+    /**
+     * Navigates to Analytics and inspects available devices.
+     */
     public void Show() {
-        analytics = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Analytics\n" +
-                "Tab 1 of 3\"]"));
-        moreTab = atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\n" +
-                "Tab 3 of 3\"]"));
-        analytics.click(); //Compulsory switch to analytics screen
-//        Assertions.assertTrue();
-        System.out.println("switched to Analytics");
-        WebElement FanCheck = null;
-        try { // check if  the fan is available
-            FanCheck = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Please add a smart device to view analytics\"]"));
-        } catch (Exception ignored) {
+        navigateToAnalytics();
+        rateUs(); // Dismiss any popup
+
+        if (isNoDeviceMessagePresent()) {
+            System.out.println("Fan Not Available in Analytics");
+            return;
         }
-        if (FanCheck == null) {
-            System.out.println("Fan Available in Analytics");
-            nextFan();
-        }
-        else System.out.println("Fan Not Available in Analytics");
-        WebElement popup = null;
+
+        System.out.println("Fan Available in Analytics");
+        inspectAllDevices();
+    }
+
+    // === Internal Helpers ===
+
+    /**
+     * Switches to Analytics tab.
+     */
+    private void navigateToAnalytics() {
         try {
-            popup = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Scrim\"]"));
-        }catch (Exception ignored){}
-        if (popup != null)
-            atomberg.navigate().back();
+            WebElement analyticsTab = atomberg.findElement(ANALYTICS_TAB);
+            analyticsTab.click();
+            System.out.println("Switched to Analytics");
+        } catch (NoSuchElementException e) {
+            System.err.println("Analytics tab not found.");
+        }
     }
 
+    /**
+     * Checks if "no devices" message is shown.
+     */
+    private boolean isNoDeviceMessagePresent() {
+        try {
+            return atomberg.findElement(NO_DEVICES_MESSAGE).isDisplayed();
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Inspects analytics for all available devices.
+     */
+    private void inspectAllDevices() {
+        List<String> deviceNames = getAvailableDeviceNames();
+        if (deviceNames.isEmpty()) {
+            System.out.println("No selectable devices found.");
+            return;
+        }
+
+        for (int i = 0; i < deviceNames.size(); i++) {
+            String deviceName = deviceNames.get(i);
+            selectDevice(deviceName);
+            inspectDeviceData(deviceName);
+
+            // Return to analytics unless last device
+            if (i < deviceNames.size() - 1) {
+                navigateBackToAnalytics();
+            }
+        }
+    }
+
+    /**
+     * Gets list of available device names from UI.
+     */
+    private List<String> getAvailableDeviceNames() {
+        fanChange(); // Open device list
+
+        List<WebElement> elements = atomberg.findElements(By.className("android.view.View"));
+        return elements.stream()
+                .map(el -> el.getDomAttribute("content-desc"))
+                .filter(Objects::nonNull)
+                .filter(desc -> desc.endsWith("Fan") || desc.endsWith("Purifier"))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Opens the device selection dropdown.
+     */
     private void fanChange() {
-        List<WebElement> FANS = atomberg.findElements(By.className("android.view.View"));
-        List<WebElement> Fans = FANS.stream().filter(ele -> ele.getDomAttribute("content-desc") != null).collect(Collectors.toList());
-        List<WebElement> fans = Fans.stream().filter(ele -> Objects.requireNonNull(ele.getDomAttribute("content-desc")).endsWith("Fan")).collect(Collectors.toList());
-        for (WebElement fan : fans) {
-            fan.click();
+        List<WebElement> fans = atomberg.findElements(By.className("android.view.View")).stream()
+                .filter(el -> {
+                    String desc = el.getDomAttribute("content-desc");
+                    return desc != null && (desc.endsWith("Fan") || desc.contains("Select"));
+                })
+                .collect(Collectors.toList());
+
+        if (!fans.isEmpty()) {
+            fans.get(0).click();
+            ActionsUtil.sleep(2000);
         }
     }
 
-    private void nextFan() {
-        fanChange(); //to click on the fan name to get the list of available fans
-        List<WebElement> availFans = atomberg.findElements(By.className("android.view.View"));
-        List<WebElement> fans = availFans.stream().filter(ele -> ele.getDomAttribute("content-desc") != null).collect(Collectors.toList());
-        System.out.println(fans.size());
-        fans.remove(fans.size() - 1);
-        System.out.println(fans.size());
-        for (int i = 0; i < fans.size(); i++) {
+    /**
+     * Selects a specific device by name.
+     */
+    private void selectDevice(String deviceName) {
+        try {
+            WebElement device = atomberg.findElement(By.xpath("//android.view.View[@content-desc='" + deviceName + "']"));
+            device.click();
             ActionsUtil.sleep(2000);
-            List<WebElement> availFans1 = atomberg.findElements(By.className("android.view.View"));
-            List<WebElement> anaFans = availFans1.stream().filter(ele -> ele.getDomAttribute("content-desc") != null).collect(Collectors.toList());
-            System.out.println(anaFans.size());
-            anaFans.remove(anaFans.size() - 1);
-            System.out.println(anaFans.size());
-            System.out.println(i);//To check which iteration is running
-            System.out.println(anaFans.get(i).getDomAttribute("content-desc"));
-            String deviceType = anaFans.get(i).getDomAttribute("content-desc");
-            anaFans.get(i).click();
-            assert deviceType != null;
-            info(deviceType);
-            System.out.println(i < (anaFans.size()));
-            if (i < (anaFans.size() - 1)) { // to go to the analytics screen and
-                moreTab.click();
-                rateUs(); //check for rate us pop-up
+        } catch (NoSuchElementException e) {
+            System.err.println("Failed to select device: " + deviceName);
+        }
+    }
+
+    /**
+     * Inspects data screens based on device type.
+     */
+    private void inspectDeviceData(String deviceName) {
+        int screenCount = deviceName.endsWith("Purifier") ? 2 : 4;
+
+        for (int i = 0; i < screenCount; i++) {
+            inspectInteractiveIcons();
+            confetti(); // Check for confetti animation
+
+            if (i < screenCount - 1) {
+                ActionsUtil.Swipe.Left(atomberg, SWIPE_START_X_RATIO, SWIPE_Y_RATIO);
                 ActionsUtil.sleep(1500);
-                analytics.click();
-                rateUs(); //check for rate us pop-up
-            }
-            System.out.println(anaFans.size() > 1);
-            if (anaFans.size() > 1){
-            fanChange();
             }
         }
     }
 
+    /**
+     * Clicks on all interactive icons in current analytics view.
+     */
+    private void inspectInteractiveIcons() {
+        List<WebElement> icons = atomberg.findElements(CLICKABLE_ICONS).stream()
+                .filter(el -> el.getDomAttribute("content-desc") == null)
+                .collect(Collectors.toList());
+
+        for (WebElement icon : icons) {
+            try {
+                icon.click();
+                ActionsUtil.sleep(2000);
+                atomberg.navigate().back();
+                ActionsUtil.sleep(1500);
+            } catch (Exception e) {
+                System.err.println("Failed to interact with icon: " + e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Checks for and interacts with confetti animation.
+     */
+    private void confetti() {
+        System.out.println("Checking confetti");
+        List<WebElement> images = atomberg.findElements(CONFETTI_IMAGE);
+
+        List<WebElement> confettiCandidates = images.stream()
+                .filter(el -> el.getDomAttribute("content-desc") == null)
+                .filter(this::hasConfettiBounds) // Use method reference
+                .collect(Collectors.toList());
+
+        System.out.println("Confetti size: " + confettiCandidates.size());
+
+        for (WebElement e : confettiCandidates) {
+            try {
+                System.out.println("Confetti bounds: " + e.getDomAttribute("bounds"));
+                e.click();
+                ActionsUtil.sleep(2000);
+                atomberg.navigate().back();
+            } catch (Exception ex) {
+                System.err.println("Error interacting with confetti: " + ex.getMessage());
+            }
+        }
+    }
+
+    private boolean hasConfettiBounds(WebElement el) {
+        try {
+            String bounds = el.getDomAttribute("bounds");
+            return bounds != null && bounds.endsWith("482]");
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Navigates back to Analytics screen after visiting another tab.
+     */
+    private void navigateBackToAnalytics() {
+        try {
+            atomberg.findElement(MORE_TAB).click();
+            rateUs();
+            ActionsUtil.sleep(1500);
+            atomberg.findElement(ANALYTICS_TAB).click();
+            rateUs();
+        } catch (Exception e) {
+            System.err.println("Failed to return to Analytics: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Dismisses 'Rate Us' or other modals.
+     */
     public void rateUs() {
-        List<WebElement> dialogueBox = atomberg.findElements(By.className("android.widget.Button"));
-        List<WebElement> cancel = dialogueBox.stream().filter(webElement -> Objects.equals(webElement.getDomAttribute("content-desc"), "Cancel")).collect(Collectors.toList());
-        for (WebElement ele : cancel) {
-            if (Objects.equals(ele.getDomAttribute("content-desc"), "Cancel")) { //checks for the cancel button and the clicks on it if there
-                ele.click();
-                System.out.println("Canceled Rate us");
-                analytics = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Analytics\n" +
-                        "Tab 1 of 3\"]"));
-                moreTab = atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\n" +
-                        "Tab 3 of 3\"]"));
-            }
-        }
-    }
-
-    private void info(String string) {
-        int i;
-        if(string.endsWith("Fan")){
-            for (i = 0; i < 4; i++) {// there are 4 screens in analytics
-                ActionsUtil.sleep(2000);
-                List<WebElement> ICONS = atomberg.findElements(By.xpath("//android.view.View[@clickable=\"true\"]"));
-                List<WebElement> icons = ICONS.stream().filter(element -> element.getDomAttribute("content-desc") == null).collect(Collectors.toList());
-//            icons.remove(icons.size() - 1);
-                for (WebElement icon : icons) {
-                    System.out.println(icon.getDomAttribute("content-desc"));
-                    icon.click();
-                    ActionsUtil.sleep(2000);
-                    atomberg.navigate().back();
-                    ActionsUtil.sleep(1500);
-                    confetti();
-                }
-                if (i < 3) {// only three swipes for the screen
-                    ActionsUtil.Swipe.Left(atomberg, 0.75, 0.50);
-                    //TODO : try the screen change buttons in the analytics
-                    ActionsUtil.sleep(1500);
+        try {
+            List<WebElement> buttons = atomberg.findElements(CANCEL_BUTTON);
+            for (WebElement btn : buttons) {
+                if ("Cancel".equals(btn.getDomAttribute("content-desc"))) {
+                    btn.click();
+                    System.out.println("Canceled Rate us");
+                    break;
                 }
             }
-        }
-        else if(string.endsWith("Purifier")){
-            for (i = 0; i < 2; i++) {// there are 4 screens in analytics
-                ActionsUtil.sleep(2000);
-                List<WebElement> ICONS = atomberg.findElements(By.xpath("//android.view.View[@clickable=\"true\"]"));
-                List<WebElement> icons = ICONS.stream().filter(element -> element.getDomAttribute("content-desc") == null).collect(Collectors.toList());
-//            icons.remove(icons.size() - 1);
-                for (WebElement icon : icons) {
-                    System.out.println(icon.getDomAttribute("content-desc"));
-                    icon.click();
-                    ActionsUtil.sleep(2000);
-                    atomberg.navigate().back();
-                    ActionsUtil.sleep(1500);
-                    confetti();
-                }
-                if (i < 1) {// only three swipes for the screen
-                    ActionsUtil.Swipe.Left(atomberg, 0.75, 0.50);
-                    //TODO : try the screen change buttons in the analytics
-                    ActionsUtil.sleep(1500);
-                }
-            }
+        } catch (Exception e) {
+            System.err.println("Error dismissing popup: " + e.getMessage());
         }
 
-    }
-
-    private void confetti(){
-        System.out.println("checking confetti");
-        List<WebElement> CONFETTI = atomberg.findElements(By.className("android.widget.ImageView"));
-        List<WebElement> confetti1 = CONFETTI.stream().filter(element -> element.getDomAttribute("content-desc")==null).collect(Collectors.toList());
-        List<WebElement> confetti2 = confetti1.stream().filter(webElement -> Objects.requireNonNull(webElement.getDomAttribute("bounds")).endsWith("482]")).collect(Collectors.toList());
-        System.out.println("confetti size "+ confetti2.size());
-        //[380,410][452,482] TODO : Try and get a dynamic value for confetti, it is a static value at present
-        for (WebElement e: confetti2)
-        {
-            System.out.println(e.getDomAttribute("bounds"));
-            e.click();
-            ActionsUtil.sleep(2000);
-            atomberg.navigate().back();
-        }
+        // Re-cache tabs after potential navigation
+        try {
+            atomberg.findElement(ANALYTICS_TAB); // Just verify existence
+            atomberg.findElement(MORE_TAB);
+        } catch (Exception ignored) {}
     }
 }

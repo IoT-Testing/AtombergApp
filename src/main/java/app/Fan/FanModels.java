@@ -51,19 +51,19 @@ public class FanModels {
      */
     public void Renesa() {
         String[] colors = {"Brown and Black", "White and Black"};
-        By[] xpaths = {
+        By[] xPaths = {
                 By.xpath("//android.widget.ImageView[@content-desc='Brown and Black']"),
                 By.xpath("//android.widget.ImageView[@content-desc='White and Black']")
         };
 
         String[] scrolledColors = {"Midnight Black", "Pebble Grey", "Misty Teal"};
-        By[] scrolledXpaths = {
+        By[] scrolledXPaths = {
                 By.xpath("//android.widget.ImageView[@content-desc='Midnight Black']"),
                 By.xpath("//android.widget.ImageView[@content-desc='Pebble Grey']"),
                 By.xpath("//android.widget.ImageView[@content-desc='Misty Teal']")
         };
 
-        selectRandomColorWithScroll(colors, xpaths, scrolledColors, scrolledXpaths, 2);
+        selectRandomColorWithScroll(colors, xPaths, scrolledColors, scrolledXPaths, 2);
     }
 
     /**
@@ -77,12 +77,12 @@ public class FanModels {
         };
 
         String[] scrolledColors = {"Earth Brown", "Natural Oakwood"};
-        By[] scrolledXpaths = {
+        By[] scrolledXPaths = {
                 By.xpath("//android.widget.ImageView[@content-desc='Earth Brown']"),
                 By.xpath("//android.widget.ImageView[@content-desc='Natural Oakwood']")
         };
 
-        selectRandomColorWithScroll(colors, xpaths, scrolledColors, scrolledXpaths, 2);
+        selectRandomColorWithScroll(colors, xpaths, scrolledColors, scrolledXPaths, 2);
     }
 
     /**
@@ -112,17 +112,17 @@ public class FanModels {
      */
     public void Jaguar() {
         String[] colors = {"Marble White", "Regent Gray"};
-        By[] xpaths = {
+        By[] xPaths = {
                 By.xpath("//android.widget.ImageView[@content-desc='Marble White']"),
                 By.xpath("//android.widget.ImageView[@content-desc='Regent Gray']")
         };
 
         String[] scrolledColors = {"Matte Black"};
-        By[] scrolledXpaths = {
+        By[] scrolledXPaths = {
                 By.xpath("//android.widget.ImageView[@content-desc='Matte Black']")
         };
 
-        selectRandomColorWithScroll(colors, xpaths, scrolledColors, scrolledXpaths, 2);
+        selectRandomColorWithScroll(colors, xPaths, scrolledColors, scrolledXPaths, 2);
     }
 
     /**
@@ -151,12 +151,6 @@ public class FanModels {
 
     /**
      * Selects a random color, optionally using swipe to reveal more options.
-     *
-     * @param initialColors     First N non-scrolled colors
-     * @param initialLocators   Locators for initial colors
-     * @param scrolledColors    Colors available after swipe
-     * @param scrolledLocators  Locators for scrolled colors
-     * @param initialCount      Number of non-scrolled items before needing swipe
      */
     private void selectRandomColorWithScroll(
             String[] initialColors,

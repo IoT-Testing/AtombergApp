@@ -3,11 +3,16 @@ package app.util;
 import io.appium.java_client.android.AndroidDriver;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+
+import static app.resources.Locators.FanLocators.ADD_BUTTON_XPATH;
+import static app.util.ActionsUtil.sleep;
 
 /**
  * Utility class providing common helper functions for test automation.
@@ -26,7 +31,7 @@ public class AppUtil {
     // === Directory Constants ===
     private static final String SCREENSHOT_DIR = System.getProperty("user.dir") + File.separator + "screenshots" + File.separator;
     private static final File DIR_FILE = new File(SCREENSHOT_DIR);
-
+    private static WebDriverWait wait;
     // === Wi-Fi Constants ===
     private static final String DEFAULT_WIFI_SSID = "Better_Together";
     private static final String DEFAULT_WIFI_PASSWORD = "123@ToMb^rg#2425";
@@ -44,6 +49,7 @@ public class AppUtil {
             System.err.println("Failed to create screenshots directory: " + SCREENSHOT_DIR);
         }
     }
+
 
     /**
      * Captures a screenshot and saves it with a timestamp.
@@ -122,11 +128,11 @@ public class AppUtil {
                     return;
                 } else {
                     enterSsidAndPassword(driver, targetSsid, FALLBACK_PASSWORD);
-                    ActionsUtil.sleep(2000); // Allow UI update
+                    sleep(2000); // Allow UI update
                 }
             } catch (Exception e) {
                 System.err.println("Error during Wi-Fi setup (attempt " + attempt + "): " + e.getMessage());
-                ActionsUtil.sleep(3000);
+                sleep(3000);
             }
         }
 
@@ -172,11 +178,60 @@ public class AppUtil {
         field.sendKeys(text);
         System.out.println(label + ": '" + text + "'");
     }
+    public static boolean isElementPresent(AndroidDriver driver, By locator) {
+        try {
+            return driver.findElement(locator).isDisplayed();
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Navigates to Add screen using fallback tap if needed.
+     */
+    public static void navigateToAddScreen(AndroidDriver driver) {
+        try {
+            WebElement addButton = wait.until(ExpectedConditions.presenceOfElementLocated(ADD_BUTTON_XPATH));
+            addButton.click();
+        } catch (TimeoutException | NullPointerException e) {
+            System.out.println("Add button not found via XPath, using coordinate fallback.");
+            ActionsUtil.Tap.withCoordinates(driver, 540, 1850); // Fallback tap
+        }
+        sleep(3);
+    }
+
+    /**
+    Perform Phone Bluetooth On-Off
+     */
+
+    public void turnOffBluetoothViaAdb() {
+        Process process = null;
+        BufferedReader reader = null;
+        try {
+            process = Runtime.getRuntime().exec("adb shell am broadcast -a android.bluetooth.adapter.action.REQUEST_DISABLE");
+            process.waitFor();
+
+            reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println("[ADB] " + line);
+            }
+        } catch (IOException | InterruptedException e) {
+            System.err.println("Failed to disable Bluetooth: " + e.getMessage());
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException ignored) { }
+            }
+            if (process != null) {
+                process.destroyForcibly();
+            }
+        }
+    }
 
     /**
      * Clicks continue button with retry.
-     *
-     * @param driver AndroidDriver
      */
     private static void clickContinue(AndroidDriver driver) {
         clickElement(driver, CONTINUE_BUTTON, "Continue Button");
@@ -184,12 +239,8 @@ public class AppUtil {
 
     /**
      * Safely finds element without throwing exception.
-     *
-     * @param driver  Driver instance
-     * @param locator Element locator
-     * @return Found element or null
      */
-    private static WebElement findOptionalElement(AndroidDriver driver, By locator) {
+    public static WebElement findOptionalElement(AndroidDriver driver, By locator) {
         try {
             return driver.findElement(locator);
         } catch (NoSuchElementException e) {
@@ -199,19 +250,14 @@ public class AppUtil {
 
     /**
      * Waits up to N seconds for element to be present.
-     *
-     * @param driver     Driver instance
-     * @param locator    Element locator
-     * @param timeoutSec Timeout in seconds
-     * @return WebElement if found
      */
-    private static WebElement waitForElement(AndroidDriver driver, By locator, long timeoutSec) {
+    public static WebElement waitForElement(AndroidDriver driver, By locator, long timeoutSec) {
         long start = System.currentTimeMillis();
         while (System.currentTimeMillis() - start < timeoutSec * 1000) {
             try {
                 return driver.findElement(locator);
             } catch (NoSuchElementException ignored) {
-                ActionsUtil.sleep(500);
+                sleep(500);
             }
         }
         throw new RuntimeException("Element not found after " + timeoutSec + "s: " + locator);
@@ -219,12 +265,8 @@ public class AppUtil {
 
     /**
      * Clicks an element with logging.
-     *
-     * @param driver AndroidDriver
-     * @param locator Element locator
-     * @param label   Action label
      */
-    private static void clickElement(AndroidDriver driver, By locator, String label) {
+    public static void clickElement(AndroidDriver driver, By locator, String label) {
         try {
             driver.findElement(locator).click();
             System.out.println(label + " clicked.");

@@ -13,14 +13,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * ExtentReportAT - Thread-safe wrapper for ExtentReports with multi-device support.
- *
- * <p>Refactored to:
- * <ul>
- *   <li>Ensure singleton thread safety</li>
- *   <li>Improve path portability</li>
- *   <li>Add error handling</li>
- *   <li>Enhance code clarity</li>
- * </ul>
  */
 public class ExtentReportAT {
 

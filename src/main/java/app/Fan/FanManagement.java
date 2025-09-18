@@ -12,15 +12,16 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
+import static app.util.AppUtil.*;
+import static app.resources.Locators.FanLocators.*;
 
 /**
  * FanManagement - Manages fan-related operations in the Atomberg app.
  *
- * Refactored to improve code clarity, reduce duplication, enhance error handling,
- * and follow test automation best practices (e.g., explicit waits, POM-like structure).
  */
+
 public class FanManagement {
-    private final AndroidDriver atomberg;
+    private static AndroidDriver atomberg;
     private final WebDriverWait wait; // For explicit waits
 
     public FanManagement(AndroidDriver driver) {
@@ -34,7 +35,7 @@ public class FanManagement {
      * Retries scanning up to 10 times if no device is found.
      */
     public void addFan() {
-        navigateToAddScreen();
+        AppUtil.navigateToAddScreen(atomberg);
 
         System.out.println("Searching for available devices...");
 
@@ -69,44 +70,30 @@ public class FanManagement {
     // --- Helper Methods for addFan ---
 
     /**
-     * Navigates to the 'Add Device' screen using either UI element or fallback tap.
-     */
-    private void navigateToAddScreen() {
-        try {
-            WebElement addButton = wait.until(ExpectedConditions.presenceOfElementLocated(ADD_BUTTON_XPATH));
-            addButton.click();
-        } catch (TimeoutException e) {
-            System.out.println("Add button not found via XPath, using coordinate fallback.");
-            ActionsUtil.Tap.withCoordinates(atomberg, 540, 1850); // Fallback tap
-        }
-        sleep(3);
-    }
-
-    /**
      * Handles known error states post-connection attempt.
      *
      * @return true if an error was handled (retry needed), false if successful
      */
     private boolean handleConnectionErrors() {
         try {
-            if (isElementPresent(CONNECTING_TO_LOCK_MODAL)) {
+            if (isElementPresent(atomberg, CONNECTING_TO_LOCK_MODAL)) {
                 atomberg.navigate().back();
                 System.out.println("Back: Connecting to Lock modal appeared.");
                 return true;
             }
-            if (isElementPresent(COULD_NOT_ADD_LOCK)) {
+            if (isElementPresent(atomberg, COULD_NOT_ADD_LOCK)) {
                 atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]")).click();
                 System.out.println("Cancel clicked: Could not add lock.");
                 sleep(1);
                 return true;
             }
-            if (isElementPresent(DEVICE_ALREADY_PAIRED)) {
+            if (isElementPresent(atomberg, DEVICE_ALREADY_PAIRED)) {
                 atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]")).click();
                 System.out.println("Cancel clicked: Device already paired.");
                 sleep(1);
                 return true;
             }
-            if (isElementPresent(COULD_NOT_REACH_DEVICE)) {
+            if (isElementPresent(atomberg, COULD_NOT_REACH_DEVICE)) {
                 System.out.println("Out of reach.");
                 atomberg.navigate().back();
                 atomberg.navigate().back();
@@ -375,9 +362,7 @@ public class FanManagement {
 
     /**
      * Finds element without throwing exception. Returns null if not found.
-     *
-     * @param locator Locator strategy
-     * @return WebElement or null
+
      */
     private WebElement findOptionalElement(By locator) {
         try {
@@ -385,16 +370,6 @@ public class FanManagement {
         } catch (NoSuchElementException e) {
             return null;
         }
-    }
-
-    /**
-     * Checks if element is present (without failing).
-     *
-     * @param locator Locator to check
-     * @return true if present
-     */
-    private boolean isElementPresent(By locator) {
-        return findOptionalElement(locator) != null;
     }
 
     /**
@@ -442,28 +417,31 @@ public class FanManagement {
     // === Static Inner Class: Model Selection ===
     public static class Select {
         public static void Fan(AndroidDriver atomberg) {
-            if (isElementPresent(atomberg, "//android.view.View[@content-desc=\"Pick the fan model you're having\"]")) {
+            if (isElementPresent(atomberg, SELECT_FAN_MODEL )) {
                 SixLED(atomberg);
             } else {
                 handleOtherModels(atomberg);
             }
         }
 
-        private static boolean isElementPresent(AndroidDriver driver, String xpath) {
-            try {
-                driver.findElement(By.xpath(xpath));
-                return true;
-            } catch (NoSuchElementException e) {
-                return false;
-            }
+        public void manageFanDevice() {
+            FanManagement fan = new FanManagement(atomberg);
+
+            fan.addFan();
+            fan.additionProcess();
+            fan.checkFan();
+            fan.fanControl();
+
+            System.out.println("Fan operations completed.");
         }
 
+
         private static void handleOtherModels(AndroidDriver atomberg) {
-            if (isElementPresent(atomberg, "//android.view.View[@content-desc=\"Select your device color\"]")) {
+            if (isElementPresent(atomberg, SELECT_COLOR)) {
                 FanModels models = new FanModels(atomberg);
-                if (isElementPresent(atomberg, "//android.widget.ImageView[@content-desc=\"Dark Teakwood\"]")) {
+                if (isElementPresent(atomberg, DARK_TEAKWOOD )) {
                     models.Aris();
-                } else if (isElementPresent(atomberg, "//android.widget.ImageView[@content-desc=\"Regent Gray\"]")) {
+                } else if (isElementPresent(atomberg,REGENT_GREY)) {
                     models.Jaguar();
                 } else {
                     models.Erica();
@@ -476,8 +454,8 @@ public class FanManagement {
 
         public static void SixLED(AndroidDriver atomberg) {
             int choice = new Random().nextInt(3);
-            By[] options = {RENESA, STUDIO_PLUS, RENESA_PLUS};
-            String[] labels = {"Renesa", "Studio+", "Renesa+"};
+            By[] options = {RENESA, STUDIO_PLUS, RENESA_PLUS, RENESA_HALO, LOAD_MORE};
+            String[] labels = {"Renesa", "Studio+", "Renesa+", "Renesa Halo", "Load More"};
 
             try {
                 WebElement model = atomberg.findElement(options[choice]);
@@ -497,42 +475,6 @@ public class FanManagement {
                     .until(ExpectedConditions.elementToBeClickable(locator)).click();
         }
     }
-
-    // === Locator Constants (Centralized) ===
-    private static final By ADD_BUTTON_XPATH = By.xpath(
-            "//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]/android.widget.ImageView"
-    );
-    private static final By FAN_DISCOVERY_XPATH = By.xpath("//android.view.View[@content-desc=\"Atomberg Smart Fan\"]");
-    private static final By CONNECT_BUTTON = By.xpath("//android.view.View[@content-desc=\"Connect\"]");
-    private static final By NEXT_BUTTON = By.xpath("//android.widget.Button[@content-desc=\"Next\"]");
-    private static final By FANS_TAB = By.xpath("//android.widget.ImageView[@content-desc=\"Fans\"]");
-    private static final By BUY_NOW_BUTTON = By.xpath("//android.widget.Button[@content-desc=\"Buy Now!\"]");
-    private static final By ADD_FIRST_DEVICE_ICON = By.xpath("//android.widget.ImageView[@content-desc=\"Add your first smart device\"]");
-
-    // Fan Control Buttons
-    private static final By SPEED_1 = By.xpath("//android.widget.Button[@content-desc=\"1\"]");
-    private static final By SPEED_2 = By.xpath("//android.widget.Button[@content-desc=\"2\"]");
-    private static final By SPEED_3 = By.xpath("//android.widget.Button[@content-desc=\"3\"]");
-    private static final By SPEED_4 = By.xpath("//android.widget.Button[@content-desc=\"4\"]");
-    private static final By SPEED_5 = By.xpath("//android.widget.Button[@content-desc=\"5\"]");
-    private static final By BOOST_BUTTON = By.xpath(
-            "(//android.view.View[@content-desc=\"Boost\"])[1]" // Prefer content-desc over deep hierarchy
-    );
-    private static final By POWER_BUTTON = By.xpath(
-            "(//android.view.View[@content-desc=\"Power\"])[1]"
-    );
-
-    // Modal Messages
-    private static final By CONNECTING_TO_LOCK_MODAL = By.xpath("//android.view.View[contains(@content-desc, 'Connecting to the Lock')]");
-    private static final By COULD_NOT_ADD_LOCK = By.xpath("//android.view.View[@content-desc=\"Could not add the lock\"]");
-    private static final By DEVICE_ALREADY_PAIRED = By.xpath("//android.view.View[@content-desc=\"Device already paired\"]");
-    private static final By COULD_NOT_REACH_DEVICE = By.xpath("//android.view.View[contains(@content-desc, 'Could not reach')]");
-
-    // Model Selection
-    private static final By RENESA = By.xpath("//android.widget.ImageView[@content-desc=\"Renesa\"]");
-    private static final By STUDIO_PLUS = By.xpath("//android.widget.ImageView[@content-desc=\"Studio+\"]");
-    private static final By RENESA_PLUS = By.xpath("//android.widget.ImageView[@content-desc=\"Renesa+\"]");
-    private static final By CONTINUE_BUTTON = By.xpath("//android.widget.Button[@content-desc=\"Continue\"]");
 
     // === Reusable Action ===
     private void performBasicFanActions() {

@@ -5,8 +5,10 @@ import app.util.AppUtil;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.*;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static app.resources.Messages.*;
+import static app.util.AppUtil.navigateToAddScreen;
 
 /**
  * LockManagement - End-to-end automation for Atomberg Smart Lock setup and control.
@@ -27,19 +29,19 @@ public class LockManagement {
     private static final By ADD_BUTTON = By.xpath(
             "//android.widget.ImageView[@content-desc='Add']" // Simplified assumption
     );
-    private static final By SMART_LOCK_INDICATOR = By.xpath("//android.view.View[@content-desc='Atomberg Smart Lock']");
-    private static final By CONNECT_BUTTON = By.xpath("//android.view.View[@content-desc='Connect']");
-    private static final By LOCK_TAB = By.xpath("//android.widget.ImageView[@content-desc='Locks']");
-    private static final By UNLOCK_HANDLE = By.xpath("//android.view.View[@content-desc='Pull down to unlock']");
-    private static final By SUCCESS_MESSAGE = By.xpath("//android.view.View[contains(@content-desc, 'Added Successfully')]");
-    private static final By HISTORY_BUTTON = By.xpath("//android.view.View[@content-desc='History']");
-    private static final By SETTINGS_BUTTON = By.xpath("//android.view.View[@content-desc='Settings']");
-    private static final By ACCESS_KEYS_BUTTON = By.xpath("//android.view.View[@content-desc='Access\\nkeys']");
-    private static final By USERS_BUTTON = By.xpath("//android.widget.Button[@content-desc='Users']");
-    private static final By PREFERENCES_SECTION = By.xpath("//android.view.View[@content-desc='Preferences']");
-    private static final By DONE_BUTTON = By.xpath("//android.widget.Button[@content-desc='Done']");
-    private static final By UPDATE_BUTTON = By.xpath("//android.widget.Button[@content-desc='Update']");
-    private static final By YES_BUTTON = By.xpath("//android.widget.Button[@content-desc='Yes']");
+    private static final By SMART_LOCK_INDICATOR = By.xpath("//android.view.View[@content-desc=\"Atomberg Smart Lock\"]");
+    private static final By CONNECT_BUTTON = By.xpath("//android.view.View[@content-desc=\"Connect\"]");
+    private static final By LOCK_TAB = By.xpath("//android.widget.ImageView[@content-desc=\"Locks\"]");
+    private static final By UNLOCK_HANDLE = By.xpath("//android.view.View[@content-desc=\"Pull down to unlock\"]");
+    public static final By SUCCESS_MESSAGE = By.xpath("//android.view.View[contains@content-desc=\"Added Successfully\"]");
+    private static final By HISTORY_BUTTON = By.xpath("//android.view.View[@content-desc=\"History\"\"]");
+    private static final By SETTINGS_BUTTON = By.xpath("//android.view.View[@content-desc=\"Settings]");
+    private static final By ACCESS_KEYS_BUTTON = By.xpath("//android.view.View[@content-desc=\"Access\\nkeys\"]");
+    private static final By USERS_BUTTON = By.xpath("//android.widget.Button[@content-desc=\"Users\"]");
+    private static final By PREFERENCES_SECTION = By.xpath("//android.view.View[@content-desc=\"Preferences\"]");
+    private static final By DONE_BUTTON = By.xpath("//android.widget.Button[@content-desc=\"Done\"]");
+    private static final By UPDATE_BUTTON = By.xpath("//android.widget.Button[@content-desc=\"Update\"]");
+    private static final By YES_BUTTON = By.xpath("//android.widget.Button[@content-desc=\"Yes\"]");
 
     // Switch indices in Preferences (assumed order)
     private static final int SILENT_MODE_SWITCH_INDEX = 0;
@@ -49,14 +51,7 @@ public class LockManagement {
     private static final int PINS_SWITCH_INDEX = 4;
 
     // Messages
-    private static final By PASSAGE_MODE_PROMPT_1 = By.xpath("//android.view.View[contains(@content-desc, 'enabling passage mode')]");
-    private static final By PASSAGE_MODE_PROMPT_2 = By.xpath("//android.view.View[@content-desc='Please read this below. Do you still want to continue?']");
-    private static final By PASSAGE_MODE_SUCCESS = By.xpath("//android.view.View[@content-desc='Passage Mode Enabled Successfully']");
 
-    private static final By FP_DISABLED_MSG = By.xpath("//android.view.View[@content-desc='All Fingerprints Disabled Successfully!']");
-    private static final By FP_ENABLED_MSG = By.xpath("//android.view.View[@content-desc='All Fingerprints Enabled Successfully!']");
-
-    private static final By CARD_NOT_AVAILABLE = By.xpath("//android.view.View[@content-desc='No Cards present for this Lock.']");
 
     public LockManagement(AndroidDriver driver) {
         this.atomberg = driver;
@@ -66,7 +61,7 @@ public class LockManagement {
      * Discovers and adds a new smart lock.
      */
     public void addLock() {
-        navigateToAddScreen();
+        navigateToAddScreen(atomberg);
         System.out.println("Searching for available devices...");
         ActionsUtil.sleep(15000); // Allow scan
 
@@ -77,6 +72,14 @@ public class LockManagement {
             System.out.println("No smart lock detected.");
         }
     }
+
+    private void manageLockDevice(){
+        LockManagement lock = new LockManagement(atomberg);
+
+        lock.addLock();
+        lock.lockAdditionProcess();
+    }
+
 
     /**
      * Completes PIN setup for newly added lock.
@@ -369,23 +372,7 @@ public class LockManagement {
 
     // === Utility Methods ===
 
-    /**
-     * Navigates to Add screen using fallback tap if needed.
-     */
-    private void navigateToAddScreen() {
-        try {
-            WebElement addButton = atomberg.findElement(ADD_BUTTON);
-            if (addButton.isDisplayed()) {
-                addButton.click();
-                ActionsUtil.sleep(1000);
-                return;
-            }
-        } catch (NoSuchElementException ignored) {}
 
-        // Fallback tap
-        ActionsUtil.Tap.withCoordinates(atomberg, 540, 1940);
-        ActionsUtil.sleep(1000);
-    }
 
     /**
      * Safely checks if element is present.

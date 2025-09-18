@@ -1,43 +1,30 @@
 package app.ScreenCheck;
 
-import app.Resources.CommonElements;
-import app.Resources.HomeElements;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static app.resources.Locators.HomeLocators.ANALYTICS_TAB;
+import static app.resources.Locators.HomeLocators.MORE_TAB;
 
 /**
  * ScreenCheck - Verifies presence and navigates to main app screens: Home, Analytics, More.
- *
- * <p>Refactored to:
- * <ul>
- *   <li>Eliminate silent exception swallowing</li>
- *   <li>Separate screen checking from navigation</li>
- *   <li>Add explicit waits</li>
- *   <li>Improve reliability and readability</li>
- *   <li>Remove unsafe assertions</li>
- * </ul>
  */
 public class ScreenCheck {
     private final AndroidDriver atomberg;
-    private final CommonElements ce;
-    private final HomeElements he;
 
     public ScreenCheck(AndroidDriver atomberg) {
         this.atomberg = atomberg;
-        this.ce = new CommonElements();
-        this.he = new HomeElements();
     }
 
     /**
      * Navigates to the More tab. If already selected, does nothing.
      */
     public void moreTab() {
-        ensureOnScreen(ce.moreTabId, "More");
+        ensureOnScreen(MORE_TAB, "More");
         rateUsPopup();
     }
 
@@ -63,7 +50,8 @@ public class ScreenCheck {
      * Navigates to the Analytics tab. If already selected, does nothing.
      */
     public void analytics() {
-        ensureOnScreen(ce.analyticsId, "Analytics");
+        ensureOnScreen(ANALYTICS_TAB, "Analytics");
+
         rateUsPopup();
     }
 
@@ -75,8 +63,8 @@ public class ScreenCheck {
      * @param xpath Locator string
      * @param label Tab name for logging
      */
-    private void ensureOnScreen(String xpath, String label) {
-        By locator = By.xpath(xpath);
+    private void ensureOnScreen(By xpath, String label) {
+        By locator = xpath;
         WebElement tab = waitForElement(locator, 10);
 
         System.out.println(label + " tab selected: " + tab.isSelected());

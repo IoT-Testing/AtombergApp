@@ -4,306 +4,296 @@ import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Pause;
-import org.openqa.selenium.interactions.PointerInput;
-import org.openqa.selenium.interactions.Sequence;
+import org.openqa.selenium.interactions.*;
 import java.time.Duration;
 import java.util.Collections;
 
+
 public class ActionsUtil {
-    public AndroidDriver driver;
+
+    /**
+     * Tap - Provides various tap actions.
+     */
     public static class Tap {
-        // TO perform a Tap action
+        /**
+         * Taps at specific screen coordinates.
+         */
         public static void withCoordinates(AndroidDriver driver, int x, int y) {
-            //To perform tap action at the specified coordinates.
             PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
-            Sequence sequence = new Sequence(finger, 1)
+            Sequence tap = new Sequence(finger, 1)
                     .addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), x, y))
                     .addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
                     .addAction(new Pause(finger, Duration.ofMillis(150)))
                     .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
-            driver.perform(Collections.singletonList(sequence));
-            System.out.println("Tap with Coordinates");
+            driver.perform(Collections.singletonList(tap));
+            System.out.println("Tap at (" + x + ", " + y + ")");
         }
 
-        public static void withPercentage(AndroidDriver driver, double x, double y) {
-            //To perform tap action on an element without locator, and is located according to the screen of the device
-            Dimension size = driver.manage().window().getSize(); // Assuming getWindowSize() returns the window size
-            int startY = (int) (size.getHeight() * y);
-            int startX = (int) (size.getWidth() * x); // Adjusted to swipe left
-
-            PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
-            Sequence sequence = new Sequence(finger, 1)
-                    .addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY))
-                    .addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
-                    .addAction(new Pause(finger, Duration.ofMillis(150)))
-                    .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
-            driver.perform(Collections.singletonList(sequence));
-            System.out.println("Tap With %");
+        /**
+         * Taps at a position defined by percentage of screen size.
+         */
+        public static void withPercentage(AndroidDriver driver, double xRatio, double yRatio) {
+            Dimension size = driver.manage().window().getSize();
+            int x = (int) (size.getWidth() * xRatio);
+            int y = (int) (size.getHeight() * yRatio);
+            withCoordinates(driver, x, y);
         }
 
-        public static void connectButton(AndroidDriver driver, WebElement element){
-            int elementStartY = element.getLocation().getY();
-            int elementHeight = element.getSize().getHeight();
-            int midY = elementStartY + (int) (elementHeight * 0.5);
-            WebElement connect = driver.findElement(By.xpath("(//android.view.View[@content-desc=\"Connect\"])[1]"));
-            int connectStartX = connect.getLocation().getX();
-            int connectWidth = connect.getSize().getWidth();
-            int midX = connectStartX + (int) (connectWidth * 0.5);
+        /**
+         * Taps the center of a given element.
+         */
+        public static void element(AndroidDriver driver, WebElement element) {
+            int midX = getElementCenterX(element);
+            int midY = getElementCenterY(element);
             withCoordinates(driver, midX, midY);
         }
 
-        public static void element(AndroidDriver driver, WebElement element){
-            int elementStartX = element.getLocation().getX();
-            int elementWidth = element.getSize().getWidth();
-            int elementStartY = element.getLocation().getY();
-            int elementHeight = element.getSize().getHeight();
+        /**
+         * Specialized tap for Connect button relative to another element.
+         */
+        public static void connectButton(AndroidDriver driver, WebElement targetElement) {
+            int midY = getElementCenterY(targetElement);
 
-            int midX = elementStartX + (int) (elementWidth * 0.5);
-            int midY = elementStartY + (int) (elementHeight * 0.5);
-            withCoordinates(driver,midX,midY);
+            // Find Connect button and calculate its horizontal center
+            try {
+                WebElement connectBtn = driver.findElement(By.xpath("(//android.view.View[@content-desc='Connect'])[1]"));
+                int midX = getElementCenterX(connectBtn);
+                withCoordinates(driver, midX, midY);
+            } catch (Exception e) {
+                System.err.println("Failed to locate 'Connect' button: " + e.getMessage());
+            }
+        }
+
+        // === Internal Helpers ===
+        private static int getElementCenterX(WebElement el) {
+            return el.getLocation().getX() + (el.getSize().getWidth() / 2);
+        }
+
+        private static int getElementCenterY(WebElement el) {
+            return el.getLocation().getY() + (el.getSize().getHeight() / 2);
         }
     }
 
-    public static  void refresh(AndroidDriver driver){
-        //Performs Refresh screen action.
-        Dimension size = driver.manage().window().getSize();
-        int startX = size.getWidth() / 2;
-        int startY = (int) (size.getHeight() * 0.35);
-        int endY = (int) (size.getHeight() * 0.60);
-        PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
-        Sequence sequence = new Sequence(finger, 1)
-                .addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY))
-                .addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
-                .addAction(new Pause(finger, Duration.ofMillis(200)))
-                .addAction(finger.createPointerMove(Duration.ofMillis(150), PointerInput.Origin.viewport(), startX, endY))
-                .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+    /**
+     * Scroll - Vertical scrolling utilities.
+     */
+    public static class Scroll {
+        private static final double SCROLL_START_Y_RATIO = 0.5;
+        private static final double SCROLL_UP_END_RATIO = 0.20;
+        private static final double SCROLL_DOWN_END_RATIO = 0.80;
+        private static final long DEFAULT_DURATION_MS = 250;
 
-        driver.perform(Collections.singletonList(sequence));
-        System.out.println("Home Screen Refreshed");
-    }
+        public static void Up(AndroidDriver driver) {
+            performScroll(driver, SCROLL_START_Y_RATIO, SCROLL_UP_END_RATIO, DEFAULT_DURATION_MS);
+            System.out.println("Scrolled Up");
+        }
 
-    public static class Scroll{
-        //Performs Scroll actions
         public static void Down(AndroidDriver driver) {
-            Dimension size = driver.manage().window().getSize(); // Assuming getWindowSize() returns the window size
-            int startX = size.getWidth() / 2;
-            int startY = size.getHeight() / 2;
-            int endY = (int) (size.getHeight() * 0.80); // Adjusted to scroll down
-
-            PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
-            Sequence sequence = new Sequence(finger, 1)
-                    .addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY))
-                    .addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
-                    .addAction(new Pause(finger, Duration.ofMillis(200)))
-                    .addAction(finger.createPointerMove(Duration.ofMillis(250), PointerInput.Origin.viewport(), startX, endY))
-                    .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
-            driver.perform(Collections.singletonList(sequence));
+            performScroll(driver, SCROLL_START_Y_RATIO, SCROLL_DOWN_END_RATIO, DEFAULT_DURATION_MS);
             System.out.println("Scrolled Down");
         }
 
-        public static void Up(AndroidDriver driver) {
-            Dimension size = driver.manage().window().getSize();
-            int startX = size.getWidth() / 2;
-            int startY = size.getHeight() / 2;
-            int endY = (int) (size.getHeight() * 0.20);
-            PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
-            Sequence sequence = new Sequence(finger, 1)
-                    .addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY))
-                    .addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
-                    .addAction(new Pause(finger, Duration.ofMillis(200)))
-                    .addAction(finger.createPointerMove(Duration.ofMillis(250), PointerInput.Origin.viewport(), startX, endY))
-                    .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
-            driver.perform(Collections.singletonList(sequence));
-            System.out.println("Scrolled Up");
-        }
-
         public static void slowUp(AndroidDriver driver) {
-            Dimension size = driver.manage().window().getSize();
-            int startX = size.getWidth() / 2;
-            int startY = size.getHeight() / 2;
-            int endY = (int) (size.getHeight() * 0.25);
-            PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
-            Sequence sequence = new Sequence(finger, 1)
-                    .addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY))
-                    .addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
-                    .addAction(new Pause(finger, Duration.ofMillis(200)))
-                    .addAction(finger.createPointerMove(Duration.ofMillis(500), PointerInput.Origin.viewport(), startX, endY))
-                    .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
-            driver.perform(Collections.singletonList(sequence));
-            System.out.println("Scrolled Up");
+            performScroll(driver, SCROLL_START_Y_RATIO, SCROLL_UP_END_RATIO, 500);
+            System.out.println("Slowly Scrolled Up");
         }
 
-        public static void element(AndroidDriver driver, WebElement element){
-            int elementStartX = element.getLocation().getX();
-            int elementWidth = element.getSize().getWidth();
-            int elementStartY = element.getLocation().getY();
-            int elementHeight = element.getSize().getHeight();
+        /**
+         * Scrolls within a specific element's bounds.
+         */
+        public static void element(AndroidDriver driver, WebElement element) {
+            int centerX = Tap.getElementCenterX(element);
+            int startY = getElementBottom(element);
+            int endY = getElementTop(element) + (int) (element.getSize().getHeight() * 0.2);
 
-            // Calculate positions for scroll (30% below mid to 40% above mid)
-            int startX = elementStartX + (int) (elementWidth * 0.5);
-            int midY = elementStartY + (int) (elementHeight * 0.5);
-            int startY = midY + (int) (elementHeight * 0.2);
-            int endY = midY - (int) (elementHeight * 0.2);
+            PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+            Sequence scroll = new Sequence(finger, 1)
+                    .addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), centerX, startY))
+                    .addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
+                    .addAction(new Pause(finger, Duration.ofMillis(200)))
+                    .addAction(finger.createPointerMove(Duration.ofMillis(250), PointerInput.Origin.viewport(), centerX, endY))
+                    .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+            driver.perform(Collections.singletonList(scroll));
+            System.out.println("Scrolled inside element");
+        }
+
+        // === Internal Helpers ===
+        private static void performScroll(AndroidDriver driver, double startRatio, double endRatio, long durationMs) {
+            Dimension size = driver.manage().window().getSize();
+            int startX = size.getWidth() / 2;
+            int startY = (int) (size.getHeight() * startRatio);
+            int endY = (int) (size.getHeight() * endRatio);
 
             PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
             Sequence sequence = new Sequence(finger, 1)
                     .addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY))
                     .addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
                     .addAction(new Pause(finger, Duration.ofMillis(200)))
-                    .addAction(finger.createPointerMove(Duration.ofMillis(250), PointerInput.Origin.viewport(), startX, endY))
+                    .addAction(finger.createPointerMove(Duration.ofMillis(durationMs), PointerInput.Origin.viewport(), startX, endY))
                     .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
             driver.perform(Collections.singletonList(sequence));
+        }
 
-            System.out.println("Scroll action completed!");
+        private static int getElementTop(WebElement el) {
+            return el.getLocation().getY();
+        }
+
+        private static int getElementBottom(WebElement el) {
+            return el.getLocation().getY() + el.getSize().getHeight();
         }
     }
 
+    /**
+     * Swipe - Horizontal swiping utilities.
+     */
     public static class Swipe {
-        // Performs Screen swipes
-        public static void Left(AndroidDriver driver, double x, double y) {
-            Dimension size = driver.manage().window().getSize(); // Assuming getWindowSize() returns the window size
-            int startY = (int) (size.getHeight() * y);
-            int startX = (int) (size.getWidth() * x); // Adjusted to swipe left
-            int endX = (int) (size.getWidth() * 0.50); // Adjusted to swipe left
+        private static final int FLING_DURATION_MS = 150;
+        private static final int SLOW_SWIPE_DURATION_MS = 300;
 
-            PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
-            Sequence sequence = new Sequence(finger, 1)
-                    .addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY))
-                    .addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
-                    .addAction(new Pause(finger, Duration.ofMillis(150)))
-                    .addAction(
-                            finger.createPointerMove(Duration.ofMillis(150), PointerInput.Origin.viewport(), endX, startY))
-                    .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
-
-            driver.perform(Collections.singletonList(sequence));
-            System.out.println("Left Swipe");
+        public static void Left(AndroidDriver driver, double startXRatio, double yRatio) {
+            performSwipe(driver, startXRatio, yRatio, 0.50, FLING_DURATION_MS);
+            System.out.println("Swiped Left");
         }
 
-        public static void Right(AndroidDriver driver, double x, double y) {
-            Dimension size = driver.manage().window().getSize(); // Assuming getWindowSize() returns the window size
-            int startY = (int) (size.getHeight() * y);
-            int startX = (int) (size.getWidth() * x); // Adjusted to swipe right
-            int endX = (int) (size.getWidth() * 0.50); // Adjusted to swipe right
-
-            PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
-            Sequence sequence = new Sequence(finger, 1)
-                    .addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY))
-                    .addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
-                    .addAction(new Pause(finger, Duration.ofMillis(200)))
-                    .addAction(
-                            finger.createPointerMove(Duration.ofMillis(200), PointerInput.Origin.viewport(), endX, startY))
-                    .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
-
-            driver.perform(Collections.singletonList(sequence));
-            System.out.println("Right Swipe");
-        }
-
-        public static void screenRight(AndroidDriver driver) {
-            Dimension size = driver.manage().window().getSize(); // Assuming getWindowSize() returns the window size
-
-            int startY = (int) (size.getHeight() * 0.5);
-            int startX = (int) (size.getWidth() * 0.9); // Adjusted to swipe right
-            int endX = (int) (size.getWidth() * 0.50); // Adjusted to swipe right
-            PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
-            Sequence sequence = new Sequence(finger, 1)
-                    .addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY))
-                    .addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
-                    .addAction(new Pause(finger, Duration.ofMillis(150)))
-                    .addAction(
-                            finger.createPointerMove(Duration.ofMillis(150), PointerInput.Origin.viewport(), endX, startY))
-                    .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
-            driver.perform(Collections.singletonList(sequence));
-            System.out.println("Right Swipe");
+        public static void Right(AndroidDriver driver, double startXRatio, double yRatio) {
+            performSwipe(driver, startXRatio, yRatio, 0.50, FLING_DURATION_MS);
+            System.out.println("Swiped Right");
         }
 
         public static void screenLeft(AndroidDriver driver) {
-            Dimension size = driver.manage().window().getSize(); // Assuming getWindowSize() returns the window size
+            performSwipe(driver, 0.1, 0.5, 0.50, FLING_DURATION_MS);
+            System.out.println("Screen Swiped Left");
+        }
 
-            int startY = (int) (size.getHeight() * 0.5);
-            int startX = (int) (size.getWidth() * 0.1); // Adjusted to swipe right
-            int endX = (int) (size.getWidth() * 0.50); // Adjusted to swipe left
+        public static void screenRight(AndroidDriver driver) {
+            performSwipe(driver, 0.9, 0.5, 0.50, FLING_DURATION_MS);
+            System.out.println("Screen Swiped Right");
+        }
+
+        public static void Notifications(AndroidDriver driver, double xRatio, double startYRatio) {
+            performVerticalSwipe(driver, xRatio, startYRatio, 0.50, FLING_DURATION_MS);
+            System.out.println("Pulled down notifications");
+        }
+
+        // === Internal Helpers ===
+        private static void performSwipe(AndroidDriver driver, double startXRation, double yRatio, double endXRation, long durationMs) {
+            Dimension size = driver.manage().window().getSize();
+            int startX = (int) (size.getWidth() * startXRation);
+            int y = (int) (size.getHeight() * yRatio);
+            int endX = (int) (size.getWidth() * endXRation);
+
             PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
-            Sequence sequence = new Sequence(finger, 1)
-                    .addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY))
+            Sequence swipe = new Sequence(finger, 1)
+                    .addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, y))
                     .addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
                     .addAction(new Pause(finger, Duration.ofMillis(150)))
-                    .addAction(finger.createPointerMove(Duration.ofMillis(150), PointerInput.Origin.viewport(), endX, startY))
+                    .addAction(finger.createPointerMove(Duration.ofMillis(durationMs), PointerInput.Origin.viewport(), endX, y))
                     .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
-            driver.perform(Collections.singletonList(sequence));
-            System.out.println("Left Swipe");
+            driver.perform(Collections.singletonList(swipe));
         }
 
-        public static void Notifications(AndroidDriver driver, double x,double y) {
-            Dimension size = driver.manage().window().getSize(); // Assuming getWindowSize() returns the window size
-            int startX = (int) (size.getWidth() * x);
-            int startY = (int) (size.getHeight() * y);
-            int endY = size.getHeight() /2; // Adjusted to scroll down
+        private static void performVerticalSwipe(AndroidDriver driver, double xRatio, double startYRatio, double endYRatio, long durationMs) {
+            Dimension size = driver.manage().window().getSize();
+            int x = (int) (size.getWidth() * xRatio);
+            int startY = (int) (size.getHeight() * startYRatio);
+            int endY = (int) (size.getHeight() * endYRatio);
 
             PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
-            Sequence sequence = new Sequence(finger, 1)
-                    .addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY))
-                    .addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
-                    .addAction(new Pause(finger, Duration.ofMillis(200)))
-                    .addAction(finger.createPointerMove(Duration.ofMillis(250), PointerInput.Origin.viewport(), startX, endY))
-                    .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
-            driver.perform(Collections.singletonList(sequence));
-
-            System.out.println("Notifications");
-        }
-    }
-
-    public static void minimize(AndroidDriver driver) {
-        //Taps on the minimize button (button mode)
-            Tap.withPercentage(driver, 0.50, 1.05);// Tap on the minimize button on the navigation bar
-            sleep(2000);
-    }
-
-    public static void killApp(AndroidDriver driver) {
-        // this is to minimize the app and kill the main activity of the app
-        Tap.withPercentage(driver, 0.28, 1.05);// Tap on the recent button on the navigation bar
-        sleep(2000);
-            Dimension size = driver.manage().window().getSize(); // Assuming getWindowSize() returns the window size
-            int startY = (int) (size.getHeight() * 0.50);
-            int startX = (int) (size.getWidth() * 0.50); // Adjusted to swipe left
-            int endY = (int) (size.getWidth() * 0.15); // Adjusted to swipe left
-            // To remove the app from the recent section
-            PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
-            Sequence sequence = new Sequence(finger, 1)
-                    .addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY))
+            Sequence swipe = new Sequence(finger, 1)
+                    .addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), x, startY))
                     .addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
                     .addAction(new Pause(finger, Duration.ofMillis(150)))
-                    .addAction(finger.createPointerMove(Duration.ofMillis(150), PointerInput.Origin.viewport(), startX, endY))
+                    .addAction(finger.createPointerMove(Duration.ofMillis(durationMs), PointerInput.Origin.viewport(), x, endY))
                     .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
-            driver.perform(Collections.singletonList(sequence));
-    }
-
-    public static void sleep(long millis){
-        try {
-            Thread.sleep(millis);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            driver.perform(Collections.singletonList(swipe));
         }
     }
 
-    public static void SSleep(long seconds){
-        long millis = seconds*1000;
-        try {
-            Thread.sleep(millis);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    /**
+     * Performs refresh gesture (pull-to-refresh).
+     */
+    public static void refresh(AndroidDriver driver) {
+        Dimension size = driver.manage().window().getSize();
+        int centerX = size.getWidth() / 2;
+        int startY = (int) (size.getHeight() * 0.35);
+        int endY = (int) (size.getHeight() * 0.60);
 
-    public static void longPress(AndroidDriver driver, int x, int y){
-        //Performs Long Press action on the screen.
         PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
-        Sequence sequence = new Sequence(finger, 1)
-            .addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), x, y))
-            .addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
-            .addAction(new Pause(finger, Duration.ofMillis(2000)))
-            .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
-        driver.perform(Collections.singletonList(sequence));
-        System.out.println("Tap with Coordinates");
+        Sequence refresh = new Sequence(finger, 1)
+                .addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), centerX, startY))
+                .addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
+                .addAction(new Pause(finger, Duration.ofMillis(200)))
+                .addAction(finger.createPointerMove(Duration.ofMillis(150), PointerInput.Origin.viewport(), centerX, endY))
+                .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+        driver.perform(Collections.singletonList(refresh));
+        System.out.println("Pull-to-refresh performed");
+    }
+
+    /**
+     * Long press at coordinates.
+     */
+    public static void longPress(AndroidDriver driver, int x, int y) {
+        PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+        Sequence longPress = new Sequence(finger, 1)
+                .addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), x, y))
+                .addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
+                .addAction(new Pause(finger, Duration.ofSeconds(2)))
+                .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+        driver.perform(Collections.singletonList(longPress));
+        System.out.println("Long press at (" + x + ", " + y + ")");
+    }
+
+    /**
+     * Minimizes app via navigation bar.
+     */
+    public static void minimize(AndroidDriver driver) {
+        Tap.withPercentage(driver, 0.50, 1.05); // Bottom center
+        sleep(2000);
+    }
+
+    /**
+     * Closes app from recent apps list.
+     */
+    public static void killApp(AndroidDriver driver) {
+        // Open recent apps
+        Tap.withPercentage(driver, 0.28, 1.05);
+        sleep(2000);
+
+        Dimension size = driver.manage().window().getSize();
+        int centerX = size.getWidth() / 2;
+        int startY = (int) (size.getHeight() * 0.50);
+        int endY = (int) (size.getHeight() * 0.15);
+
+        PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+        Sequence swipeAway = new Sequence(finger, 1)
+                .addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), centerX, startY))
+                .addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
+                .addAction(new Pause(finger, Duration.ofMillis(150)))
+                .addAction(finger.createPointerMove(Duration.ofMillis(150), PointerInput.Origin.viewport(), centerX, endY))
+                .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+        driver.perform(Collections.singletonList(swipeAway));
+
+        System.out.println("App removed from recent tasks");
+    }
+
+    // === Sleep Utilities ===
+
+    /**
+     * Pauses thread for given milliseconds.
+     */
+    public static void sleep(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("Sleep interrupted", e);
+        }
+    }
+
+    /**
+     * Pauses thread for given seconds.
+     */
+    public static void SSleep(long seconds) {
+        sleep(seconds * 1000);
     }
 }
