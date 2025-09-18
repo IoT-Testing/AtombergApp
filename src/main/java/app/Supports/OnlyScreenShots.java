@@ -47,11 +47,10 @@ public class OnlyScreenShots {
 			System.out.println("Appium driver initialized.");
 		} catch (MalformedURLException e) {
 			System.out.println("Error initializing Appium driver: " + e.getMessage());
-			AppUtil.captureScreenshot(driver);
-			e.printStackTrace();
+			AppUtil.captureScreenshot(driver, "driver initialized");
 			return;
 		}
-		AppUtil.captureScreenshot(driver);
+		AppUtil.captureScreenshot(driver,"driver successful");
 		List<WebElement> el = driver.findElements(By.xpath("//android.widget.ImageView"));
 		System.out.println("List Size: " + el.size() + "\n");
 

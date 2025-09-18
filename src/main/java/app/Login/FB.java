@@ -48,8 +48,6 @@ public class FB {
 			System.err.println("Failed to click Facebook login button.");
 			return;
 		}
-
-		AppUtil.captureScreenshot(driver);
 		ActionsUtil.sleep(5000); // Allow OAuth redirect
 
 		// Step 2: Check if already on Home Screen
@@ -62,14 +60,14 @@ public class FB {
 		// Step 3: Otherwise, continue as saved user
 		if (clickElementIfExists(driver, CONTINUE_AS_BUTTON)) {
 			System.out.println("Clicked 'Continue as Rohit'");
-			AppUtil.captureScreenshot(driver);
+			AppUtil.captureScreenshot(driver, "Account selected");
 
 			// Wait for navigation to complete
 			waitForHomeScreen(driver);
 
 			if (isOnHomeScreen(driver)) {
 				System.out.println("Test Passed: Successfully logged in via Facebook.");
-				AppUtil.captureScreenshot(driver);
+				AppUtil.captureScreenshot(driver, "Facebook Login Successful");
 				PermissionUtil.allow(driver);
 			} else {
 				System.err.println("Login appeared to succeed, but home screen was not detected.");

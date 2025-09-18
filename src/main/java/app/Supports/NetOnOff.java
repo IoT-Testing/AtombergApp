@@ -32,7 +32,7 @@ public class NetOnOff {
 		}
 		System.out.println("Atomberg App Opened...");
 		sleep(6000);
-		AppUtil.captureScreenshot(driver);
+		AppUtil.captureScreenshot(driver,"driver");
 	}
 
 	public static void main(String[] args) {

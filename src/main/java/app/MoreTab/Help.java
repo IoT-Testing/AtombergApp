@@ -8,46 +8,19 @@ import org.openqa.selenium.*;
 import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
-
+import static app.resources.Locators.MoreTabLocators.*;
 import static org.awaitility.Awaitility.await;
 
-/**
- * Help - Handles help & support features: complaints, manuals, troubleshooting.
- *
- * <p>This version avoids all assertions and focuses on robust execution,
- * graceful failure, and reusability in non-testing contexts.
- */
 public class Help {
     private final AndroidDriver atomberg;
 
-    // === Locator Constants ===
-    private static final By NEW_COMPLAINT_BUTTON = By.xpath("//android.view.View[@content-desc='New complaint']");
-    private static final By INSTALLATION_REQUEST_BUTTON = By.xpath("//android.view.View[@content-desc='Installation Request']");
-    private static final By SERVICE_REQUEST_BUTTON = By.xpath("//android.view.View[@content-desc='New service (Water Purifiers)']");
-    private static final By TRACK_COMPLAINTS_BUTTON = By.xpath("//android.view.View[@content-desc='Track complaints/ requests']");
-    private static final By COMPLAINT_STATUS_HEADER = By.xpath("//android.view.View[@content-desc='Complaint/ Request status']");
-    private static final By NO_COMPLAINTS_INDICATOR = By.xpath("(//android.view.View)[1]"); // Adjust based on actual UI
-    private static final By MANUAL_BUTTON = By.xpath("//android.widget.ImageView[@content-desc='Manual']");
-    private static final By CONNECTIVITY_TROUBLESHOOT = By.xpath("//android.widget.ImageView[@content-desc='Connectivity Troubleshoot']");
-    private static final By EMAIL_US_BUTTON = By.xpath("//android.view.View[@content-desc='Email us']");
-    private static final By CALL_US_BUTTON = By.xpath("//android.view.View[@content-desc='Call us']");
-    private static final By HELP_HEADER = By.xpath("//android.view.View[@content-desc='Help']");
-    private static final By VIDEO_TUTORIALS_LINK = By.xpath("//android.view.View[@content-desc='Video tutorials']");
-    private static final By RETURN_TO_HOME_BUTTON = By.xpath("//android.widget.Button[@content-desc='Return to home']");
-    private static final By OK_BUTTON = By.xpath("//android.widget.Button[@content-desc='Ok']");
-    private static final By CANT_FIND_SERIAL_NUMBER = By.xpath("//android.view.View[@content-desc='Can't find serial number?']");
-    private static final By DOWNLOAD_BUTTON = By.xpath("//android.widget.Button[@content-desc='Download']");
-    private static final By APP_EMAIL_OPTION = By.xpath("//android.view.View[@content-desc='Email (app support)']");
-    private static final By GENERIC_EMAIL_OPTION = By.xpath("//android.view.View[@content-desc='Email (generic support)']");
-    private static final By CALL_OPTION = By.xpath("//android.view.View[@content-desc='Call']");
-    private static final By CONTACT_SUPPORT_HEADER = By.xpath("//android.view.View[@content-desc='Contact Support']");
 
     // Fan model names (used in troubleshoot)
     private static final String[] FAN_MODELS = {
             "Renesa", "Renesa Smart", "Renesa+", "Renesa Smart+",
-            "Studio+", "Studio Smart+", "Erica", "Erica Smart",
-            "Renesa Elite", "Renesa Elite Smart", "Aris Starlight",
-            "Aris", "Aris Contour", "Renesa Alpha", "Efficio",
+            "Studio+", "Studio Smart+", "Erica", "Erica Smart", "Renesa Halo",
+            "Renesa Elite", "Renesa Elite Smart", "Studio Nexus","Studio Nexus Smart",
+            "Aris Starlight", "Aris", "Aris Contour", "Renesa Alpha", "Efficio",
             "Ikano", "Ozeo", "Ameza", "Other"
     };
 
@@ -59,21 +32,18 @@ public class Help {
 
     public void newComplaint() {
         if (!clickElementIfExists(NEW_COMPLAINT_BUTTON, "New Complaint")) return;
-        AppUtil.captureScreenshot(atomberg);
         videoTryCatch();
         ActionsUtil.sleep(2000);
     }
 
     public void installationRequest() {
         if (!clickElementIfExists(INSTALLATION_REQUEST_BUTTON, "Installation Request")) return;
-        AppUtil.captureScreenshot(atomberg);
         videoTryCatch();
         ActionsUtil.sleep(2000);
     }
 
     public void serviceRequest() {
         if (!clickElementIfExists(SERVICE_REQUEST_BUTTON, "Service Request")) return;
-        AppUtil.captureScreenshot(atomberg);
         videoTryCatch();
         ActionsUtil.sleep(2000);
     }
@@ -82,15 +52,12 @@ public class Help {
         if (!clickElementIfExists(TRACK_COMPLAINTS_BUTTON, "Track Complaints")) return;
 
         waitForPresence(COMPLAINT_STATUS_HEADER, 10);
-        AppUtil.captureScreenshot(atomberg);
 
         if (isElementPresent(NO_COMPLAINTS_INDICATOR)) {
             System.out.println("No Complaints Raised.");
         } else {
             System.out.println("Complaints are present.");
         }
-
-        AppUtil.captureScreenshot(atomberg);
         videoTryCatch();
     }
 
@@ -130,10 +97,6 @@ public class Help {
 
     /**
      * Safely clicks element if present and visible.
-     *
-     * @param locator Locator
-     * @param label   Label for logs
-     * @return true if clicked successfully
      */
     private boolean clickElementIfExists(By locator, String label) {
         try {
@@ -141,7 +104,7 @@ public class Help {
             if (el.isDisplayed()) {
                 el.click();
                 System.out.println("Tap on " + label);
-                AppUtil.captureScreenshot(atomberg);
+                AppUtil.captureScreenshot(atomberg, label);
                 return true;
             } else {
                 System.out.println(label + " found but not displayed.");
@@ -170,7 +133,7 @@ public class Help {
                 By modelLocator = By.xpath("//android.widget.ImageView[@content-desc='" + model + "']");
                 WebElement device = atomberg.findElement(modelLocator);
                 device.click();
-                AppUtil.captureScreenshot(atomberg);
+                AppUtil.captureScreenshot(atomberg, "Model Selected");
                 System.out.println(category + ": " + model);
 
                 if (model.contains("Smart") || "Other".equals(model)) {
@@ -185,7 +148,7 @@ public class Help {
                 }
             } catch (NoSuchElementException e) {
                 System.out.println("Model not available: " + model + " (optional)");
-                continue;
+
             } catch (Exception e) {
                 System.err.println("Unexpected error during model selection: " + e.getMessage());
             }
@@ -205,13 +168,13 @@ public class Help {
             if (manualEnter == null) return;
 
             manualEnter.click();
-            AppUtil.captureScreenshot(atomberg);
+            AppUtil.captureScreenshot(atomberg, "Enter Barcode Manually");
             System.out.println("Enter Barcode Manually...");
 
             List<WebElement> images = manualEnter.findElements(By.tagName("ImageView"));
             if (!images.isEmpty()) {
                 images.get(0).click();
-                AppUtil.captureScreenshot(atomberg);
+                AppUtil.captureScreenshot(atomberg, "Scan Barcode");
                 System.out.println("Scan Barcode ...");
             }
 
@@ -219,7 +182,7 @@ public class Help {
             if (isElementPresent(By.id("com.android.permissioncontroller:id/permission_message"))) {
                 try {
                     atomberg.findElement(By.id("com.android.permissioncontroller:id/permission_allow_foreground_only_button")).click();
-                    AppUtil.captureScreenshot(atomberg);
+                    AppUtil.captureScreenshot(atomberg, "Permission");
                     ActionsUtil.sleep(2000);
                 } catch (Exception ignored) {}
             }
@@ -254,8 +217,6 @@ public class Help {
      */
     private void cantFindSerialNumber() {
         if (!clickElementIfExists(CANT_FIND_SERIAL_NUMBER, "Can't find serial number?")) return;
-        AppUtil.captureScreenshot(atomberg);
-
         List<WebElement> buttons = getVisibleButtons();
         for (WebElement btn : buttons) {
             String desc = btn.getDomAttribute("content-desc");
@@ -266,17 +227,14 @@ public class Help {
             } else if ("No".equals(desc)) {
                 btn.click();
                 clickElementIfExists(APP_EMAIL_OPTION, "App Email");
-                AppUtil.captureScreenshot(atomberg);
                 System.out.println("app Email ...");
                 atomberg.navigate().back();
 
                 clickElementIfExists(GENERIC_EMAIL_OPTION, "Generic Email");
-                AppUtil.captureScreenshot(atomberg);
                 System.out.println("generic Email ...");
                 atomberg.navigate().back();
 
                 clickElementIfExists(CALL_OPTION, "Call");
-                AppUtil.captureScreenshot(atomberg);
                 System.out.println("Call ...");
 
                 waitForElement(CONTACT_SUPPORT_HEADER, 10);

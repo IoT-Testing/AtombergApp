@@ -1,6 +1,7 @@
 package Tests;
 
 import app.AppInitializer;
+import app.Fan.FanManagement;
 import app.Login.Email;
 import app.MoreTab.Manage;
 import app.ScreenCheck.ScreenCheck;
@@ -11,126 +12,131 @@ import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.appmanagement.ApplicationState;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.testng.annotations.AfterSuite;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 
 import static io.appium.java_client.appmanagement.ApplicationState.RUNNING_IN_FOREGROUND;
 
+/**
+ * DeviceProvTest - End-to-end test: login → fan control → logout.
+ *
+ * <p>This version improves structure, separation of concerns,
+ * error handling, and reporting integration.
+ */
+public class DeviceProvTest extends BaseTest {
 
-public class DeviceProvTest extends BaseTest{
+    private AndroidDriver driver;
 
-    public AndroidDriver driver;
+    @BeforeClass
+    public void setup() {
+        this.driver = getDriver();
+        reporter.startTest("Device Provisioning Suite", deviceSlot);
+        System.out.println("Starting test suite for slot: " + deviceSlot);
+    }
 
     @Test(priority = 1)
-    void testOpenApp() {
+    public void openAppAndLogin() throws Exception {
         try {
-            reporter.startTest("Open App", deviceSlot);
-            System.out.println("OpenApp test start");
-            driver = getDriver();
-            ActionsUtil.SSleep(2);
+            reporter.startTest("Open App & Login", deviceSlot);
+            System.out.println("Opening app...");
+
             driver.activateApp("com.atomberg.app");
             ActionsUtil.SSleep(5);
+
             AppInitializer appInitializer = new AppInitializer();
             appInitializer.setDriver(driver);
-            appInitializer.checkMainScreen();
-            System.out.println(appInitializer.checkMainScreen());
-            if(appInitializer.checkMainScreen()){
-                Email login = new Email(driver);
-                try{
-                    login.email("iot.alpha@protonmail.com", "Atomberg@123");
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                }
+
+            if (!appInitializer.checkMainScreen()) {
+                performLogin();
+            } else {
+                System.out.println("Already logged in.");
             }
+
+            reporter.log(Status.PASS, "App launched and user logged in successfully");
         } catch (Exception e) {
-            reporter.log(Status.FAIL, "App Open failed: " + e.getMessage());
+            reporter.log(Status.FAIL, "Failed to open app or login: " + e.getMessage());
+            afterTestFailure(driver); // Recovery
+            throw e; // Fail fast
         } finally {
-            System.out.println("OpenApp test end");
             reporter.endTest();
         }
     }
 
     @Test(priority = 2)
-    void testDeviceProvisioning(){
+    public void verifyHomeScreenAndControlFan() {
         try {
-            reporter.startTest("Open App", deviceSlot);
-            System.out.println("OpenApp test start");
-            driver = getDriver();
+            reporter.startTest("Verify Home Screen & Control Fan", deviceSlot);
             ScreenCheck screen = new ScreenCheck(driver);
             screen.homeScreen();
 
-        } catch (Exception e) {
-            reporter.log(Status.FAIL, "App Open failed: " + e.getMessage());
-        } finally {
-            System.out.println("OpenApp test end");
-            reporter.endTest();
-        }
-    }
-
-    @Test(priority = 4)
-    void testFanControl() {
-        try {
-            reporter.startTest("Fan Control", deviceSlot);
-            System.out.println("Fan Control test start");
             FanManagement fan = new FanManagement(driver);
             fan.checkFan();
+
+            reporter.log(Status.PASS, "Fan control verified successfully");
         } catch (Exception e) {
-            reporter.log(Status.FAIL, "Fan Control failed: " + e.getMessage());
+            reporter.log(Status.FAIL, "Fan control failed: " + e.getMessage());
+            afterTestFailure(driver);
+            throw e;
         } finally {
-            System.out.println("Fan Control test end");
-            if (reporter.getCurrentStatus() == Status.FAIL) afterTestFailure();
             reporter.endTest();
         }
     }
 
-    @Test(priority = 9)
-    void testLogout() {
+    @Test(priority = 3)
+    public void logoutFromApp() {
         try {
             reporter.startTest("Logout", deviceSlot);
-            System.out.println("Logout test start");
+            System.out.println("Logging out...");
+
             Manage manage = new Manage(driver);
             manage.logout();
             ActionsUtil.SSleep(5);
+
+            // Verify logout success
+            String currentActivity = driver.currentActivity();
+            boolean isOnLoginScreen = currentActivity.contains("Login") || currentActivity.contains("Splash");
+
+            if (isOnLoginScreen) {
+                reporter.log(Status.PASS, "Successfully logged out");
+            } else {
+                reporter.log(Status.WARNING, "Logout completed but still on main screen");
+            }
         } catch (Exception e) {
             reporter.log(Status.FAIL, "Logout failed: " + e.getMessage());
+            afterTestFailure(driver);
+            throw e;
         } finally {
-            System.out.println("Logout test end");
-            if (reporter.getCurrentStatus() == Status.FAIL) afterTestFailure();
             reporter.endTest();
         }
     }
 
-    @Test(priority = 10, dependsOnMethods = "testLogout")
-    void testDriverClose() {
-        ScreenRecording recording = new ScreenRecording(driver);
-        recording.stop();
-        server.stopServer();
+    @AfterClass
+    public void tearDownSuite() {
+        System.out.println("Tearing down test suite for device slot: " + deviceSlot);
+
+        // Stop screen recording
+        if (getDriver() != null) {
+            ScreenRecording recording = new ScreenRecording(getDriver());
+            recording.stop();
+        }
+
+        // Server already stopped in BaseTest.tearDown()
+        reporter.endTest(); // Final flush
     }
 
-    @AfterSuite
-    public void tearDown() {
-        if (reporter != null) {
-            reporter.endTest();
-        }
-    }
+    // === Internal Helpers ===
 
-    void afterTestFailure() {
-        ApplicationState state = driver.queryAppState("com.atomberg.app");
-        if (state.equals(RUNNING_IN_FOREGROUND)) {
-            WebElement homeScreen = null;
-            while (homeScreen == null) {
-                try {
-                    homeScreen = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"More\nTab 3 of 3\"]"));
-                } catch (Exception ignored) {
-                }
-                if (homeScreen == null) {
-                    System.out.println("Back");
-                    driver.navigate().back();
-                }
-            }
-        } else {
-            driver.activateApp("com.atomberg.app");
+    private void performLogin() throws Exception {
+        String email = System.getenv("TEST_EMAIL");
+        String password = System.getenv("TEST_PASSWORD");
+
+        if (email == null || password == null) {
+            System.err.println("Environment variables TEST_EMAIL/TEST_PASSWORD not set. Using fallback...");
+            email = "iot.alpha@protonmail.com";
+            password = "Atomberg@123";
         }
+
+        Email login = new Email(driver);
+        login.email(email, password);
+        ActionsUtil.SSleep(5);
     }
 }
-

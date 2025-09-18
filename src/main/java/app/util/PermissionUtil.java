@@ -1,10 +1,12 @@
 package app.util;
 
-import app.Resources.HomeElements;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
+
+import static app.resources.Locators.FanLocators.*;
+import static app.resources.Locators.HomeLocators.*;
 
 /**
  * Utility class to handle Android runtime permissions and common startup popups.
@@ -37,7 +39,6 @@ public class PermissionUtil {
 
     /**
      * Handles permission flow optimized for BrowserStack environment.
-     *
      * @param driver AndroidDriver instance
      */
     public static void allowForBrowserStack(AndroidDriver driver) {
@@ -47,11 +48,9 @@ public class PermissionUtil {
     // === Internal Handler Class (Encapsulates Logic) ===
     private static class PermissionHandler {
         private final AndroidDriver driver;
-        private final HomeElements he;
 
         public PermissionHandler(AndroidDriver driver) {
             this.driver = driver;
-            this.he = new HomeElements();
         }
 
         /**
@@ -67,7 +66,7 @@ public class PermissionUtil {
                 System.out.println("All Permissions Granted");
                 alexaPopUp();                 // Optional cancel
                 clickEnableIfPresent();       // Handle Enable button
-            } else if (isAddDeviceButtonPresent(he.addButtonId)) {
+            } else if (isAddDeviceButtonPresent(ADD_BUTTON_XPATH)) {
                 handleEmptyFamilyFlow();
             }
         }
@@ -81,7 +80,7 @@ public class PermissionUtil {
                 clickAllowForegroundOnly();   // Only one prompt expected
                 System.out.println("Permissions Granted");
                 alexaPopUp();                 // Cancel Alexa
-            } else if (isAddDeviceButtonPresent(he.addYourFirstSmartDeviceId)) {
+            } else if (isAddDeviceButtonPresent(ADD_FIRST_DEVICE_ICON)) {
                 handleEmptyFamilyFlow();
             }
         }
@@ -138,7 +137,7 @@ public class PermissionUtil {
          * Looks for Alexa setup popup and cancels it.
          */
         private void alexaPopUp() {
-            WebElement alexaPopup = findOptionalElement(By.xpath(he.alexaPopupId));
+            WebElement alexaPopup = findOptionalElement(ALEXA_POPUP);
             if (alexaPopup != null) {
                 try {
                     driver.findElement(By.xpath("//android.widget.Button[@content-desc='Cancel']")).click();
@@ -170,8 +169,8 @@ public class PermissionUtil {
          * @param xpathLocator The dynamic XPath to test
          * @return true if element exists
          */
-        private boolean isAddDeviceButtonPresent(String xpathLocator) {
-            return findOptionalElement(By.xpath(xpathLocator)) != null;
+        private boolean isAddDeviceButtonPresent(By xpathLocator) {
+            return findOptionalElement(xpathLocator) != null;
         }
 
         /**

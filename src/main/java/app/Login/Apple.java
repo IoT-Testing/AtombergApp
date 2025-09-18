@@ -10,6 +10,8 @@ import org.openqa.selenium.WebElement;
 
 import java.util.concurrent.TimeUnit;
 
+import static app.resources.Locators.HomeLocators.*;
+import static app.resources.Locators.LoginLocators.*;
 import static org.awaitility.Awaitility.await;
 
 /**
@@ -21,19 +23,7 @@ import static org.awaitility.Awaitility.await;
 public class Apple {
 
 	// === Locator Constants ===
-	private static final By APPLE_LOGIN_BUTTON = By.xpath(
-			"(//android.widget.ImageView)[1]" // First image assumed to be Apple login
-	);
 
-	private static final By EMAIL_INPUT_FIELD = By.className("android.widget.EditText");
-	private static final By CONTINUE_BUTTON_TEXT = By.xpath("//android.widget.Button[@text='Continue']");
-	private static final By PASSWORD_INPUT_FIELD = By.id("password_text_field");
-	private static final By SIGN_IN_BUTTON = By.xpath("//android.widget.Button[@text='Sign In']");
-
-	// Home screen indicator
-	private static final By APP_LOGO = By.xpath(
-			"//android.widget.ImageView[contains(@resource-id, 'content')]"
-	);
 
 	/**
 	 * Performs Apple ID login with fallback to manual email/password entry.
@@ -43,12 +33,12 @@ public class Apple {
 	public static void Login(AndroidDriver atomberg) {
 		System.out.println("Starting Apple login process...");
 
-		if (!clickElementIfExists(atomberg, APPLE_LOGIN_BUTTON)) {
+		if (clickElementIfExists(atomberg, APPLE_LOGIN_BUTTON)) {
 			System.err.println("Failed to find or click Apple Login button.");
 			return;
 		}
 
-		AppUtil.captureScreenshot(atomberg);
+		AppUtil.captureScreenshot(atomberg, "Apple Login");
 		ActionsUtil.sleep(5000); // Allow for navigation or redirect
 
 		if (isOnHomeScreen(atomberg)) {
@@ -63,9 +53,6 @@ public class Apple {
 
 	/**
 	 * Checks if the app logo (home screen indicator) is visible.
-	 *
-	 * @param driver Driver instance
-	 * @return true if home screen is detected
 	 */
 	private static boolean isOnHomeScreen(AndroidDriver driver) {
 		try {
@@ -78,10 +65,6 @@ public class Apple {
 
 	/**
 	 * Attempts to click an element. Returns false if not found or clickable.
-	 *
-	 * @param driver  Driver instance
-	 * @param locator Element locator
-	 * @return true if clicked successfully
 	 */
 	private static boolean clickElementIfExists(AndroidDriver driver, By locator) {
 		try {
@@ -89,17 +72,17 @@ public class Apple {
 			if (element.isDisplayed() && Boolean.parseBoolean(element.getDomAttribute("clickable"))) {
 				element.click();
 				System.out.println("Clicked element: " + locator);
-				return true;
+				return false;
 			} else {
 				System.out.println("Element found but not clickable: " + locator);
-				return false;
+				return true;
 			}
 		} catch (NoSuchElementException e) {
 			System.out.println("Element not found: " + locator);
-			return false;
+			return true;
 		} catch (Exception e) {
 			System.err.println("Unexpected error clicking element " + locator + ": " + e.getMessage());
-			return false;
+			return true;
 		}
 	}
 
@@ -111,27 +94,27 @@ public class Apple {
 	private static void performFallbackLogin(AndroidDriver driver) {
 		System.out.println("Apple redirect failed. Falling back to email/password login...");
 
-		if (!enterTextSafely(driver, EMAIL_INPUT_FIELD, "bhagatrb4174@gmail.com", "Email")) {
+		if (enterTextSafely(driver, TEXT_INPUT_FIELD, "bhagatrb4174@gmail.com", "Email")) {
 			System.err.println("Failed to enter email. Aborting login.");
 			return;
 		}
 
-		AppUtil.captureScreenshot(driver);
+		AppUtil.captureScreenshot(driver, "Email Enter");
 
-		if (!clickElementIfExists(driver, CONTINUE_BUTTON_TEXT)) {
+		if (clickElementIfExists(driver, CONTINUE_BUTTON_TEXT)) {
 			System.err.println("Failed to click Continue after email entry.");
 			return;
 		}
 
 		ActionsUtil.sleep(2000);
-		AppUtil.captureScreenshot(driver);
+		AppUtil.captureScreenshot(driver, "Password Entering");
 
-		if (!enterTextSafely(driver, PASSWORD_INPUT_FIELD, "SumitaBH@133", "Password")) {
+		if (enterTextSafely(driver, TEXT_INPUT_FIELD, "SumitaBH@133", "Password")) {
 			System.err.println("Failed to enter password. Aborting login.");
 			return;
 		}
 
-		if (!clickElementIfExists(driver, SIGN_IN_BUTTON)) {
+		if (clickElementIfExists(driver, SIGN_IN_BUTTON)) {
 			System.err.println("Failed to click Sign In button.");
 			return;
 		}
@@ -142,7 +125,7 @@ public class Apple {
 
 		if (isOnHomeScreen(driver)) {
 			System.out.println("Test Passed: Successfully logged in and reached home screen.");
-			AppUtil.captureScreenshot(driver);
+			AppUtil.captureScreenshot(driver, "Login Successful");
 			PermissionUtil.allow(driver);
 		} else {
 			System.err.println("Login appeared to succeed, but home screen was not detected.");
@@ -165,13 +148,13 @@ public class Apple {
 			field.clear();
 			field.sendKeys(text);
 			System.out.println(label + " entered: " + maskSensitiveData(text));
-			return true;
+			return false;
 		} catch (NoSuchElementException e) {
 			System.err.println(label + " field not found: " + locator);
-			return false;
+			return true;
 		} catch (Exception e) {
 			System.err.println("Error entering " + label.toLowerCase() + ": " + e.getMessage());
-			return false;
+			return true;
 		}
 	}
 

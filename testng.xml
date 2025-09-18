@@ -11,7 +11,7 @@
     <test name="Device_1 - Pixel 6" group-by-instances="true">
         <parameter name="deviceSlot" value="1"/>
         <classes>
-            <class name="Tests.loginTest2"/>
+            <class name="Tests.LoginTest"/>
             <!-- Add more classes as needed -->
             <!-- <class name="Tests.AppTest"/> -->
         </classes>
@@ -19,7 +19,7 @@
     <test name="Device_2 - OnePlus 8" group-by-instances="true">
         <parameter name="deviceSlot" value="2"/>
         <classes>
-            <class name="Tests.loginTest2"/>
+            <class name="Tests.LoginTest"/>
         </classes>
     </test>
 <!--    <groups>-->

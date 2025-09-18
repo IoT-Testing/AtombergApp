@@ -56,7 +56,7 @@ public class Google {
 			return;
 		}
 
-		AppUtil.captureScreenshot(driver);
+		AppUtil.captureScreenshot(driver, "Google Login");
 		ActionsUtil.sleep(3000); // Allow WebView to load
 
 		// Step 2: Check if already on Home Screen (already logged in)
@@ -69,14 +69,14 @@ public class Google {
 		// Step 3: Otherwise, interact with Google WebView
 		if (waitForAndClick(driver, CONTINUE_IN_WEBVIEW, 60)) {
 			System.out.println("Clicked continue in Google WebView");
-			AppUtil.captureScreenshot(driver);
+			AppUtil.captureScreenshot(driver, "Google Webview");
 
 			// Wait for navigation to home screen
 			waitForHomeScreen(driver);
 
 			if (isOnHomeScreen(driver)) {
 				System.out.println("Test Passed: Successfully logged in via Google.");
-				AppUtil.captureScreenshot(driver);
+				AppUtil.captureScreenshot(driver, "Test Successful");
 				PermissionUtil.allow(driver);
 			} else {
 				System.err.println("Login appeared to succeed, but home screen was not detected.");

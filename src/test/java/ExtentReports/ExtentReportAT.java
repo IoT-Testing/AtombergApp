@@ -13,14 +13,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * ExtentReportAT - Thread-safe wrapper for ExtentReports with multi-device support.
- *
- * <p>Refactored to:
- * <ul>
- *   <li>Ensure singleton thread safety</li>
- *   <li>Improve path portability</li>
- *   <li>Add error handling</li>
- *   <li>Enhance code clarity</li>
- * </ul>
  */
 public class ExtentReportAT {
 
@@ -170,8 +162,6 @@ public class ExtentReportAT {
     public void endTest() {
         ExtentTest current = testNode.get();
         if (current != null) {
-            // Optional: Add completion log
-//            current.info("Test ended.");
             testNode.remove(); // Prevent memory leak
         }
         extent.flush(); // Always flush to write to disk
@@ -191,7 +181,7 @@ public class ExtentReportAT {
      * Shuts down the reporter and releases resources.
      * Should be called once at suite level.
      */
-    public static void close() {
+    public void close() {
         if (extent != null) {
             extent.flush();
             extent = null;

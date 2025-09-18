@@ -10,6 +10,9 @@ import org.openqa.selenium.WebElement;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import static app.resources.Credentials.*;
+import static app.resources.Locators.LoginLocators.*;
+import static app.util.AppUtil.*;
 
 /**
  * Email - Handles login using email/password credentials.
@@ -25,23 +28,6 @@ import java.util.stream.Collectors;
  */
 public class Email {
     private final AndroidDriver atomberg;
-
-    // === Locator Constants ===
-    private static final By EMAIL_LOGIN_BUTTON = By.xpath(
-            "(//android.widget.ImageView)[4]" // Simplified from deep hierarchy
-    );
-    private static final By EDIT_TEXT_FIELD = By.xpath("//android.widget.EditText");
-    private static final By CONTINUE_BUTTON = By.xpath("//android.widget.Button[@content-desc='Continue']");
-    private static final By ALEXA_POPUP_TITLE = By.xpath(
-            "//android.view.View[@content-desc='Use Alexa to control your smart fan(s) with voice']"
-    );
-    private static final By CANCEL_BUTTON = By.xpath("//android.widget.Button[@content-desc='Cancel']");
-    private static final By INCORRECT_PASSWORD_MESSAGE = By.xpath("//android.view.View[@content-desc='! Incorrect password']");
-
-    // === Test Accounts (Should be moved to config/secrets later) ===
-    private static final String DEFAULT_EMAIL = "teboham827@agaseo.com";
-    private static final String DEFAULT_PASSWORD = "Atomberg@123";
-
 
     public Email(AndroidDriver driver) {
         this.atomberg = driver;
@@ -106,19 +92,19 @@ public class Email {
      */
     private boolean performLogin(String email, String password) {
         clickEmailLoginButton();
-        AppUtil.captureScreenshot(atomberg);
+        AppUtil.captureScreenshot(atomberg,"email-password");
 
         enterEmail(email);
-        AppUtil.captureScreenshot(atomberg);
+        AppUtil.captureScreenshot(atomberg,"email entered");
 
         boolean isClickable = isContinueButtonClickable();
         if (!isClickable) return false;
 
         clickContinue();
-        AppUtil.captureScreenshot(atomberg);
+        AppUtil.captureScreenshot(atomberg,  "Continue");
 
         enterPassword(password);
-        AppUtil.captureScreenshot(atomberg);
+        AppUtil.captureScreenshot(atomberg, "Password");
 
         clickContinue();
         System.out.println("Login submitted.");
@@ -129,7 +115,7 @@ public class Email {
      * Clicks the initial 'Email Login' button.
      */
     private void clickEmailLoginButton() {
-        WebElement button = waitForElement(EMAIL_LOGIN_BUTTON, 10);
+        WebElement button = waitForElement(atomberg, EMAIL_LOGIN_BUTTON, 10);
         button.click();
         System.out.println("Email login option selected.");
     }
@@ -140,7 +126,7 @@ public class Email {
      * @param email Email to enter
      */
     private void enterEmail(String email) {
-        WebElement field = waitForElement(EDIT_TEXT_FIELD, 10);
+        WebElement field = waitForElement(atomberg, EDIT_TEXT_FIELD, 10);
         field.click();
         field.clear(); // Ensure no pre-filled text
         field.sendKeys(email);
@@ -153,7 +139,7 @@ public class Email {
      * @param password Password to enter
      */
     private void enterPassword(String password) {
-        WebElement field = waitForElement(EDIT_TEXT_FIELD, 10);
+        WebElement field = waitForElement(atomberg, EDIT_TEXT_FIELD, 10);
         field.click();
         field.clear();
         field.sendKeys(password);
@@ -167,7 +153,7 @@ public class Email {
      */
     private boolean isContinueButtonClickable() {
         try {
-            WebElement continueBtn = atomberg.findElement(CONTINUE_BUTTON);
+            WebElement continueBtn = atomberg.findElement(LOGIN_CONTINUE_BUTTON);
             String clickable = continueBtn.getDomAttribute("clickable");
             return "true".equals(clickable);
         } catch (NoSuchElementException e) {
@@ -179,7 +165,7 @@ public class Email {
      * Clicks Continue button.
      */
     private void clickContinue() {
-        clickElement(CONTINUE_BUTTON, "Continue Button");
+        clickElement(LOGIN_CONTINUE_BUTTON, "Continue Button");
     }
 
     /**
@@ -207,25 +193,6 @@ public class Email {
     }
 
     // === Utility Methods ===
-
-    /**
-     * Waits up to N seconds for element to be present.
-     *
-     * @param locator    Element locator
-     * @param timeoutSec Timeout in seconds
-     * @return WebElement if found
-     */
-    private WebElement waitForElement(By locator, long timeoutSec) {
-        long start = System.currentTimeMillis();
-        while (System.currentTimeMillis() - start < timeoutSec * 1000) {
-            try {
-                return atomberg.findElement(locator);
-            } catch (NoSuchElementException ignored) {
-                ActionsUtil.sleep(500);
-            }
-        }
-        throw new RuntimeException("Element not found after " + timeoutSec + "s: " + locator);
-    }
 
     /**
      * Safely checks if element is present.

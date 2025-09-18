@@ -2,7 +2,7 @@ package Tests;
 
 import ExtentReports.ExtentReportAT;
 import app.AppInitializer;
-import app.STF.Connect2;
+import app.STF.Connect;
 import app.ServerInitializer;
 import app.util.ActionsUtil;
 import app.util.ScreenRecording;
@@ -21,23 +21,15 @@ import java.time.Duration;
 
 /**
  * BaseTest - Base class for all test classes.
- *
- * <p>Refactored to:
- * <ul>
- *   <li>Ensure safe resource cleanup</li>
- *   <li>Improve error visibility</li>
- *   <li>Remove silent exceptions</li>
- *   <li>Follow test lifecycle best practices</li>
- * </ul>
  */
 public class BaseTest {
 
-    protected String deviceSlot;
-    protected ExtentReportAT reporter;
-    protected String adbCommand;
-    protected ServerInitializer server;
-    protected Eyes eyes; // Optional: Applitools integration
-    protected AndroidDriver driver;
+    public static String deviceSlot;
+    public static ExtentReportAT reporter;
+    public String adbCommand;
+    public static ServerInitializer server;
+    public Eyes eyes; // Optional: Applitools integration
+    public AndroidDriver driver;
 
     private ScreenRecording screenRecording; // Track for cleanup
     private boolean setupSuccessful = false;
@@ -83,8 +75,8 @@ public class BaseTest {
     /**
      * Fetches ADB connect command from system (via Connect2).
      */
-    private void fetchAdbCommand() throws IOException, InterruptedException, UnsupportedFlavorException {
-        Connect2 connect = new Connect2();
+    private void fetchAdbCommand() throws IOException, UnsupportedFlavorException {
+        Connect connect = new Connect();
         connect.ipAddress();
         this.adbCommand = connect.getCopiedText();
 
@@ -221,7 +213,7 @@ public class BaseTest {
             try {
                 // Note: In full suite, flush should be in @AfterSuite
                 // This is here just in case
-                ExtentReportAT.close(); // Static method ensures one-time flush
+                reporter.close(); // Static method ensures one-time flush
             } catch (Exception e) {
                 System.err.println("Error flushing report: " + e.getMessage());
             }
@@ -270,7 +262,7 @@ public class BaseTest {
      * @param driver Driver instance
      * @return true if home indicator is visible
      */
-    private boolean isOnHomeScreen(AndroidDriver driver) {
+    boolean isOnHomeScreen(AndroidDriver driver) {
         try {
             WebElement element = driver.findElement(HOME_INDICATOR);
             return !element.isDisplayed();

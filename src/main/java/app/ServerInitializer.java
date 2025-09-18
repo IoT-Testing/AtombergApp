@@ -23,7 +23,7 @@ import java.nio.file.Paths;
  */
 public class ServerInitializer {
 
-    private AppiumDriverLocalService service;
+    public AppiumDriverLocalService service;
     private static final int DEFAULT_PORT = 4723;
 
     /**

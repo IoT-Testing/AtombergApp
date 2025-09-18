@@ -4,335 +4,288 @@ import app.ScreenCheck.ScreenCheck;
 import app.util.ActionsUtil;
 import app.util.AppUtil;
 import io.appium.java_client.android.AndroidDriver;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static app.resources.Locators.MoreTabLocators.*;
+
+/**
+ * Manage - Handles 'More' tab operations: logout, family, settings.
+ */
 public class Manage {
-    public AndroidDriver atomberg;
+    private final AndroidDriver atomberg;
+    private final ScreenCheck screenCheck;
+
+    // === Locator Constants ===
 
     public Manage(AndroidDriver driver) {
         this.atomberg = driver;
+        this.screenCheck = new ScreenCheck(driver);
     }
 
-    public void theme() {
-        WebElement Theme = atomberg.findElement(By.xpath("//android.widget.ScrollView/android.widget.ImageView[5]"));
-        Theme.click();
-        System.out.println("Theme");
+    // === Public Methods ===
 
+    public void theme() {
+        if (clickElementIfExists(THEME_BUTTON, "Theme")) {
+            System.out.println("Theme");
+        }
     }
 
     public void electricityUnitPrice() {
-        WebElement unitPrice = null;
-        try {
-            unitPrice = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Electricity unit price\"]"));
-        } catch (Exception ignored) {
-        }
-        if (unitPrice == null) ActionsUtil.Scroll.Up(atomberg);
-        atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Electricity unit price\"]")).click();
-        AppUtil.captureScreenshot(atomberg);
-        System.out.println("Tap on Unit Price");
+        if (!scrollToAndClick(ELECTRICITY_UNIT_PRICE, "Electricity Unit Price")) return;
+        AppUtil.captureScreenshot(atomberg, "Electricity Unit Price");
 
-        WebElement ChangeAmount = atomberg.findElement(By.xpath("//android.widget.EditText[@text=\"7.0\"]"));
-        ChangeAmount.click();
-        AppUtil.captureScreenshot(atomberg);
+        if (clickElementIfExists(UNIT_PRICE_INPUT, "Unit Price Input")) {
+            AppUtil.captureScreenshot(atomberg, "Unit Price Input");
+        }
     }
 
     public void changeCurrency() {
-        WebElement ChangeCurrency = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"INR\"]"));
-        ChangeCurrency.click();
-        AppUtil.captureScreenshot(atomberg);
-        atomberg.navigate().back();
+        if (clickElementIfExists(CHANGE_CURRENCY, "Change Currency")) {
+            AppUtil.captureScreenshot(atomberg, "Change Currency");
+            atomberg.navigate().back();
+        }
     }
 
     public void help() {
-        ScreenCheck screenCheck = new ScreenCheck(atomberg);
         screenCheck.moreTab();
-        List<WebElement> moreTab;
-        do {
-            List<WebElement> MT = atomberg.findElements(By.className("android.view.View"));
-            System.out.println(MT.size());
-            List<WebElement> mt = MT.stream().filter(webElement -> webElement.getDomAttribute("content-desc") != null).collect(Collectors.toList());
-            System.out.println(mt.size());
-            moreTab = mt.stream().filter(webElement -> Objects.equals(webElement.getDomAttribute("content-desc"), "Help")).collect(Collectors.toList());
-            System.out.println(moreTab.size());
-            if (moreTab.isEmpty()) {
-                ActionsUtil.Scroll.Up(atomberg);
-            } else if (!moreTab.get(0).isDisplayed()) // Rare case where the Logout button is in the DOM but not on the Screen
-            {
-                System.out.println(!moreTab.get(0).isDisplayed());
-                ActionsUtil.Scroll.Up(atomberg);
-            }
-        } while (moreTab.isEmpty());
-        atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Help\"]")).click();
+        if (scrollToAndClick(HELP_BUTTON, "Help")) {
+            System.out.println("Navigated to Help section.");
+        }
     }
 
     public void changePassword() {
-        /*
-          CLICK ON THE CHANGE PASSWORD
-        */
-        checkLogout();
-        WebElement ChangePassword = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Change password\"]"));
-        ChangePassword.click();
-        AppUtil.captureScreenshot(atomberg);
-        System.out.println("Tap on Change Password");
-        atomberg.navigate().back();
+        ensureOnMoreTab();
+        if (scrollToAndClick(CHANGE_PASSWORD, "Change Password")) {
+            AppUtil.captureScreenshot(atomberg,"Change Password");
+            atomberg.navigate().back();
+        }
     }
 
     public void deleteAccount() {
-        /*
-            CLICK ON DELETE ACCOUNT
-        */
-        WebElement DeleteAccount = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Delete account\"]"));
-        DeleteAccount.click();
-        AppUtil.captureScreenshot(atomberg);
-        System.out.println("Tap on Delete Account");
-        atomberg.navigate().back();
+        ensureOnMoreTab();
+        if (scrollToAndClick(DELETE_ACCOUNT, "Delete Account")) {
+            AppUtil.captureScreenshot(atomberg, "Delete Account");
+            atomberg.navigate().back();
+        }
     }
 
     public void developerOptions() {
-        /*
-            CLICK ON DEVELOPER OPTIONS
-        */
-        WebElement developerOptions = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Developer options\"]"));
-        assert developerOptions.isDisplayed();
-        developerOptions.click();
-        AppUtil.captureScreenshot(atomberg);
-        System.out.println("Tap on Developer Options");
-        ActionsUtil.sleep(1000);
-        atomberg.navigate().back();
+        ensureOnMoreTab();
+        if (scrollToAndClick(DEVELOPER_OPTIONS, "Developer Options")) {
+            AppUtil.captureScreenshot(atomberg, "Developer Options");
+            ActionsUtil.sleep(1000);
+            atomberg.navigate().back();
+        }
     }
 
     public void logout() {
-        /*
-            CLICK ON LOGOUT
-            CONFIRM LOGOUT
-        */
-        checkLogout();
-        WebElement logout = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Logout\"]"));
-        assert logout.isDisplayed();
-        logout.click();
-        AppUtil.captureScreenshot(atomberg);
-        System.out.println("Tap on Logout");
-        WebElement yes = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Yes\"]"));
-        yes.click();
-        /*driver.navigate().back();*/
+        ensureOnMoreTab();
+        if (!scrollToAndClick(LOGOUT_BUTTON, "Logout")) return;
+        AppUtil.captureScreenshot(atomberg, "Logout");
+        if (clickElementIfExists(YES_BUTTON, "Yes (Confirm Logout)")) {
+            System.out.println("Logged out successfully.");
+        }
     }
 
     public void family() {
-        /*
-            GO TO MORE TAB
-            SCROLL TILL MANAGE FAMILY IS IN THE SCREEN
-            TAP ON MANAGE FAMILY
-            CHECK AVAILABLE FAMILIES
-            CLICK ON FAMILY
-            CLICK ON FAMILY OPTIONS
-            CLICK ON LEAVE FAMILY
-            CANCEL
-            CLICK ON DELETE
-            CANCEL
-            IF FAMILY NAME "SCRIPT"
-            DELETE FAMILY
-            IF ADD BUTTON ON SCREEN
-            ADD HOME PROCESS WITH HOME NAME -> SCRIPT
-        */
-        ScreenCheck screen = new ScreenCheck(atomberg);
-        screen.moreTab();
-        WebElement ManageFamily = null;
-        while (ManageFamily == null) {
-            try {
-                ManageFamily = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Manage family\"]"));
-            } catch (Exception ignored) {
-            }
-            if (ManageFamily == null) {
-                ActionsUtil.Scroll.Up(atomberg);
-                WebElement logout = null;
-                try {
-                    logout = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Logout\"]"));
-                }catch (Exception ignored){}
-                if(logout!=null)ActionsUtil.Scroll.Down(atomberg);
-            }
-        }
-        ManageFamily.click();
-        AppUtil.captureScreenshot(atomberg);
+        screenCheck.moreTab();
+        if (!scrollToAndClick(MANAGE_FAMILY, "Manage Family")) return;
+        AppUtil.captureScreenshot(atomberg, "Manage Family");
         System.out.println("Tap on Manage Family");
 
-        List<WebElement> elements = atomberg.findElements(By.className("android.widget.ImageView"));
-        List<WebElement> families = elements.stream().filter(element -> element.getDomAttribute("content-desc") != null).collect(Collectors.toList());
-        System.out.println(families.size());
-        int numberOfFamilies = families.size();
-        for (int i = 0; i < numberOfFamilies; i++) {
-            List<WebElement> familyElements = atomberg.findElements(By.className("android.widget.ImageView"));
-            List<WebElement> familyElement = familyElements.stream().filter(element -> element.getDomAttribute("content-desc") != null && !Objects.equals(element.getDomAttribute("content-desc"), "null")).collect(Collectors.toList());
-            String familyName = familyElement.get(i).getDomAttribute("content-desc");
-            ActionsUtil.sleep(500);
-            System.out.println(familyElement.get(i).getDomAttribute("content-desc"));
-            if(Objects.equals(familyName, "null")) continue;
-            familyElement.get(i).click();
-            System.out.println(Objects.equals(familyName, "1\n" +
-                    "Script"));
-            if (!Objects.equals(familyName, "Add") && !Objects.requireNonNull(familyName).endsWith("Script")) {
-                home();
-                back();
-            }
-            else if (familyName.endsWith("Script")) {
-                WebElement FamilyEdit = atomberg.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View[2]"));
-                FamilyEdit.click();
-                System.out.println("Family Edit");
-                AppUtil.captureScreenshot(atomberg);
-                WebElement LeaveHome = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Leave home\"]"));
-                LeaveHome.click();
-                System.out.println("Leave home");
-                AppUtil.captureScreenshot(atomberg);
-                WebElement Cancel = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]"));
-                Cancel.click();
-                System.out.println("Cancel");
-                AppUtil.captureScreenshot(atomberg);
-                WebElement delete = null;
-                try {
-                    delete = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Delete home\"]"));
-                } catch (Exception ignored) {
-                }
-                if (delete != null) {
-                    delete.click();
-                    WebElement yes = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Yes\"]"));
-                    yes.click(); // android.widget.Button[@content-desc="Cancel"]
-                    ActionsUtil.sleep(3000);
-                }
-                i--;
-                System.out.println(numberOfFamilies);
-                numberOfFamilies -= 1;
-                System.out.println(numberOfFamilies);
-            }
-            else {
+        List<WebElement> families = getVisibleFamilyNames();
+        int initialCount = families.size();
+
+        for (int i = 0; i < families.size(); i++) {
+            WebElement family = families.get(i);
+            String name = getElementText(family);
+
+            if ("Add".equals(name)) {
                 addHome();
-                i += 1;
+                break; // Exit after adding
+            }
+
+            if (name != null && name.endsWith("Script")) {
+                handleExistingScriptFamily();
+                i--; // Adjust index due to deletion
+            } else if (name != null) {
+                // Optional: leave or ignore other homes
+                System.out.println("Skipping family: " + name);
             }
         }
-        atomberg.navigate().back();//Back to more tab from Manage Family
+
+        atomberg.navigate().back(); // Back to More tab
     }
 
-    private void member() {
+    // === Internal Helpers ===
 
-        WebElement RemoveMember = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Remove Member\"]"));
-        RemoveMember.click();
-        System.out.println("Remove Member");
-        AppUtil.captureScreenshot(atomberg);
-
-        WebElement Cancel2 = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]"));
-        Cancel2.click();
-        WebElement MakeAdmin = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Make Admin\"]"));
-        MakeAdmin.click();
-
-        System.out.println("Make Admin");
-        AppUtil.captureScreenshot(atomberg);
-
-        WebElement Cancel3 = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]"));
-        Cancel3.click();
-        atomberg.navigate().back();
-
-        WebElement AddMember = atomberg.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]"));
-        AddMember.click();
-
-        AppUtil.captureScreenshot(atomberg);
-        ActionsUtil.sleep(3000);
-
-        WebElement Share = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Share\"]"));
-        Share.click();
-        AppUtil.captureScreenshot(atomberg);
-
-        atomberg.navigate().back();
-        atomberg.navigate().back();
-        atomberg.navigate().back();
+    /**
+     * Ensures we're on the More tab before proceeding.
+     */
+    private void ensureOnMoreTab() {
+        screenCheck.moreTab();
+        scrollToTop(); // Reset scroll position
     }
 
-    private void addHome() {
-        List<WebElement> accountCreation = atomberg.findElements(By.className("android.view.View"));
-        List<WebElement> buttons = accountCreation.stream().filter(element -> element.getDomAttribute("content-desc") != null).collect(Collectors.toList());
-        List<WebElement> button = buttons.stream().filter(Object -> Objects.requireNonNull(Object.getDomAttribute("content-desc")).startsWith("Create a new smart home")).collect(Collectors.toList());
-        if (!button.isEmpty()) button.get(0).click();
-        AppUtil.captureScreenshot(atomberg);
-//        ActionsUtil.Tap.withPercentage(atomberg, 0.50, 0.75); // Narzo 0.50, 0.625 Tab 0.50, 0.75
-        AppUtil.captureScreenshot(atomberg);
-        WebElement HomeName = atomberg.findElement(By.xpath("//android.widget.EditText"));
-        HomeName.click();
-        HomeName.sendKeys("Script");
-        AppUtil.captureScreenshot(atomberg);
-        WebElement Create = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Create\"]"));
-        Create.click();
-        AppUtil.captureScreenshot(atomberg);
-        ActionsUtil.sleep(5000);
+    /**
+     * Scrolls up until element is found and clicks it.
+     *
+     * @param locator Locator
+     * @param label   Label for logs
+     * @return true if clicked
+     */
+    private boolean scrollToAndClick(By locator, String label) {
+        if (clickElementIfExists(locator, label)) return true;
+
+        int attempts = 0;
+        while (attempts < 10) {
+            ActionsUtil.Scroll.Up(atomberg);
+            ActionsUtil.sleep(500);
+            if (clickElementIfExists(locator, label)) return true;
+            attempts++;
+        }
+
+        System.err.println("Failed to find and click: " + label);
+        return false;
     }
 
-    private void home() {
-        WebElement FamilyEdit = atomberg.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View[2]"));
-        FamilyEdit.click();
-        System.out.println("Family Edit");
-        AppUtil.captureScreenshot(atomberg);
-
-        WebElement LeaveHome = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Leave home\"]"));
-        LeaveHome.click();
-        System.out.println("Leave home");
-        AppUtil.captureScreenshot(atomberg);
-
-        WebElement Cancel = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]"));
-        Cancel.click();
-        System.out.println("Cancel");
-        AppUtil.captureScreenshot(atomberg);
-
-        WebElement delete = null;
+    /**
+     * Safely clicks element if present and displayed.
+     *
+     * @param locator Locator
+     * @param label   Label for logs
+     * @return true if clicked
+     */
+    private boolean clickElementIfExists(By locator, String label) {
         try {
-            delete = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Delete home\"]"));
-        } catch (Exception ignored) {
-        }
-        if (delete != null) {
-            delete.click();
-            Cancel = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]"));
-            Cancel.click(); // android.widget.Button[@content-desc="Cancel"]
-        }
-    }
-
-    private void countMember() {
-        List<WebElement> Elements = atomberg.findElements(By.className("android.view.View"));
-        List<WebElement> elements = Elements.stream().filter(element -> Objects.equals(element.getDomAttribute("clickable"), "true")).collect(Collectors.toList());
-        System.out.println(elements.size());
-        for (WebElement e : elements) {
-            System.out.println(e.getTagName());
-        }
-    }
-
-    private void back() {
-        WebElement manageFamily = null;
-        while (manageFamily == null) {
-            try {
-                manageFamily = atomberg.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.widget.ImageView"));
-            } catch (Exception ignored) {
+            WebElement el = atomberg.findElement(locator);
+            if (el.isDisplayed()) {
+                el.click();
+                System.out.println("Tap on " + label);
+                return true;
+            } else {
+                System.out.println(label + " found but not displayed.");
+                return false;
             }
-            if (manageFamily == null) atomberg.navigate().back();
+        } catch (NoSuchElementException e) {
+            System.out.println(label + " not found.");
+            return false;
+        } catch (Exception e) {
+            System.err.println("Error clicking " + label + ": " + e.getMessage());
+            return false;
         }
     }
 
-    private void checkLogout() {
-        ScreenCheck screen = new ScreenCheck(atomberg);
-        screen.moreTab();
-        List<WebElement> moreTab;
-        do {
-            List<WebElement> MT = atomberg.findElements(By.className("android.view.View"));
-            System.out.println(MT.size());
-            List<WebElement> mt = MT.stream().filter(webElement -> webElement.getDomAttribute("content-desc") != null).collect(Collectors.toList());
-            System.out.println(mt.size());
-            moreTab = mt.stream().filter(webElement -> Objects.equals(webElement.getDomAttribute("content-desc"), "Logout")).collect(Collectors.toList());
-            System.out.println(moreTab.size());
-            if (moreTab.isEmpty()) {
-                ActionsUtil.Scroll.Up(atomberg);
-            } else if (!moreTab.get(0).isDisplayed()) // Rare case where the Logout button is in the DOM but not on the Screen
-            {
-                System.out.println(!moreTab.get(0).isDisplayed());
-                ActionsUtil.Scroll.Up(atomberg);
-            }
-        } while (moreTab.isEmpty());
+    /**
+     * Gets text from element's content-desc.
+     */
+    private String getElementText(WebElement el) {
+        try {
+            return el.getDomAttribute("content-desc");
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
+     * Gets list of visible family names.
+     */
+    private List<WebElement> getVisibleFamilyNames() {
+        return atomberg.findElements(By.className("android.widget.ImageView")).stream()
+                .filter(el -> getElementText(el) != null)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Handles an existing "Script" family: edit → leave/delete.
+     */
+    private void handleExistingScriptFamily() {
+        if (!clickElementIfExists(FAMILY_EDIT_ICON, "Family Edit")) return;
+        System.out.println("Family Edit");
+        AppUtil.captureScreenshot(atomberg, "Family Edit Screen");
+
+        if (clickElementIfExists(LEAVE_HOME, "Leave Home")) {
+            AppUtil.captureScreenshot(atomberg, "Leave Home");
+            clickElementIfExists(CANCEL_BUTTON, "Cancel");
+            AppUtil.captureScreenshot(atomberg, "Cancel button");
+        }
+
+        WebElement deleteBtn = findOptionalElement(DELETE_HOME);
+        if (deleteBtn != null) {
+            deleteBtn.click();
+            clickElementIfExists(YES_BUTTON, "Yes (Confirm Delete)");
+            ActionsUtil.sleep(3000);
+        }
+    }
+
+    /**
+     * Adds a new home named "Script".
+     */
+    private void addHome() {
+        if (clickElementIfExists(CREATE_HOME_BUTTON, "Create New Smart Home")) {
+            AppUtil.captureScreenshot(atomberg, "Create New Smart Home");
+        }
+
+        if (clickElementIfExists(HOME_NAME_INPUT, "Home Name Input")) {
+            WebElement input = atomberg.findElement(HOME_NAME_INPUT);
+            input.clear();
+            input.sendKeys("Script");
+            AppUtil.captureScreenshot(atomberg, "Home Name Input");
+        }
+
+        if (clickElementIfExists(CREATE_BUTTON, "Create")) {
+            AppUtil.captureScreenshot(atomberg, "Create Family button");
+            ActionsUtil.sleep(5000);
+        }
+    }
+
+    /**
+     * Navigates back to a known element safely.
+     */
+    private void navigateBackTo(By target, String description) {
+        int backCount = 0;
+        while (!isElementPresent(target) && backCount < 10) {
+            atomberg.navigate().back();
+            backCount++;
+        }
+        if (!isElementPresent(target)) {
+            System.err.println("Could not return to: " + description);
+        }
+    }
+
+    /**
+     * Scrolls toward top of screen.
+     */
+    private void scrollToTop() {
+        for (int i = 0; i < 3; i++) {
+            ActionsUtil.Scroll.Down(atomberg);
+            ActionsUtil.sleep(300);
+        }
+    }
+
+    // === Utility Methods ===
+
+    /**
+     * Safely checks if element is present.
+     */
+    private boolean isElementPresent(By locator) {
+        try {
+            return atomberg.findElement(locator).isDisplayed();
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Finds element without throwing exception.
+     */
+    private WebElement findOptionalElement(By locator) {
+        try {
+            return atomberg.findElement(locator);
+        } catch (NoSuchElementException e) {
+            return null;
+        }
     }
 }
-
