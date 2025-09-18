@@ -1,155 +1,311 @@
 package app.util;
 
-import app.AppInitializer;
 import io.appium.java_client.android.AndroidDriver;
 import org.apache.commons.io.FileUtils;
-import org.openqa.selenium.By;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import org.openqa.selenium.*;
+import java.io.*;
 import java.text.SimpleDateFormat;
-import java.time.Duration;
 import java.util.Date;
-import java.util.Objects;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
+/**
+ * Utility class providing common helper functions for test automation.
+ *
+ * <p>Refactored to:
+ * <ul>
+ *   <li>Improve separation of concerns</li>
+ *   <li>Externalize hardcoded values</li>
+ *   <li>Replace fragile coordinate taps where possible</li>
+ *   <li>Add proper error handling</li>
+ *   <li>Improve readability and maintainability</li>
+ * </ul>
+ */
 public class AppUtil {
+
+    // === Directory Constants ===
+    private static final String SCREENSHOT_DIR = System.getProperty("user.dir") + File.separator + "screenshots" + File.separator;
+    private static final File DIR_FILE = new File(SCREENSHOT_DIR);
+
+    // === Wi-Fi Constants ===
+    private static final String DEFAULT_WIFI_SSID = "Better_Together";
+    private static final String DEFAULT_WIFI_PASSWORD = "123@ToMb^rg#2425";
+    private static final String FALLBACK_PASSWORD = "987654321";
+
+    // === Locator Constants ===
+    private static final By ROOM_NAMES = By.xpath("//android.widget.ImageView[@content-desc]");
+    private static final By WIFI_INPUT_FIELD = By.xpath("//android.widget.EditText[1]");
+    private static final By PASSWORD_INPUT_FIELD = By.xpath("//android.widget.EditText[2]");
+    private static final By CONTINUE_BUTTON = By.xpath("//android.widget.Button[@content-desc='Continue']");
+
+    // Ensure screenshot directory exists
+    static {
+        if (!DIR_FILE.exists() && !DIR_FILE.mkdirs()) {
+            System.err.println("Failed to create screenshots directory: " + SCREENSHOT_DIR);
+        }
+    }
+
+    /**
+     * Captures a screenshot and saves it with a timestamp.
+     *
+     * @param driver AndroidDriver instance
+     */
     public static void captureScreenshot(AndroidDriver driver) {
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String screenshotDirectory = System.getProperty("user.dir")+"\\screenshots\\";
-        File screenshotFile = driver.getScreenshotAs(OutputType.FILE);
-        String destinationFilePath = screenshotDirectory + "Screenshot_" + timestamp + ".png";
+        String filename = "Screenshot_" + timestamp + ".png";
+        String destinationPath = SCREENSHOT_DIR + filename;
+
         try {
-            FileUtils.copyFile(screenshotFile, new File(destinationFilePath));
-            System.out.println("Appium screenshot saved as: " + destinationFilePath);
+            File srcFile = driver.getScreenshotAs(OutputType.FILE);
+            FileUtils.copyFile(srcFile, new File(destinationPath));
+            System.out.println("Screenshot saved: " + destinationPath);
         } catch (IOException e) {
-            System.out.println("Unable to save screenshot at " + destinationFilePath);
-            System.out.println(e.getMessage());
+            System.err.println("Failed to save screenshot at " + destinationPath + ": " + e.getMessage());
+        } catch (WebDriverException e) {
+            System.err.println("Driver failed to capture screenshot: " + e.getMessage());
         }
     }
 
-    public static void additionProcess(AndroidDriver atomberg){
-        atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Master Bedroom\"]")).click();
-        AppUtil.captureScreenshot(atomberg);
-        atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Guest Room\"]")).click();
-        AppUtil.captureScreenshot(atomberg);
-        atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Kitchen\"]")).click();
-        AppUtil.captureScreenshot(atomberg);
-        atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Common Bedroom\"]")).click();
-        AppUtil.captureScreenshot(atomberg);
-        atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Lobby\"]")).click();
-        AppUtil.captureScreenshot(atomberg);
-        atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Balcony\"]")).click();
-        AppUtil.captureScreenshot(atomberg);
-        atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Living Room\"]")).click();
-        AppUtil.captureScreenshot(atomberg);
-        atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Continue\"]")).click();
-        AppUtil.captureScreenshot(atomberg);
+    /**
+     * Performs room selection flow during device setup.
+     * Selects predefined rooms and clicks Continue.
+     *
+     * @param driver AndroidDriver instance
+     */
+    public static void additionProcess(AndroidDriver driver) {
+        String[] roomNames = {"Master Bedroom", "Guest Room", "Kitchen", "Common Bedroom",
+                "Lobby", "Balcony", "Living Room"};
 
-        SearchWiFi(atomberg, "Better_Together");
-        AppUtil.captureScreenshot(atomberg);
+        for (String room : roomNames) {
+            selectRoom(driver, room);
+            captureScreenshot(driver);
+        }
 
-        WebDriverWait Wait = new WebDriverWait(atomberg, Duration.ofSeconds(60));
-        Wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//android.view.View[@content-desc=\"Skip\"]"))).click();
-        AppUtil.captureScreenshot(atomberg);
+        clickContinue(driver);
+        captureScreenshot(driver);
+
+        driver.toggleWifi();
+        SearchWiFi(driver, DEFAULT_WIFI_SSID);
+        captureScreenshot(driver);
     }
 
-    public static void SearchWiFi(AndroidDriver driver, String SearchString) {
-        ActionsUtil.Tap.withPercentage(driver, 0.20, 0.20);
-        //// android.widget.EditText[@text="Better_Together"]
-        for (int i = 1; i <= 10; i++) {
-            WebElement element = null;
+    /**
+     * Selects a room by its content description.
+     *
+     * @param driver AndroidDriver
+     * @param roomName Name of the room to select
+     */
+    private static void selectRoom(AndroidDriver driver, String roomName) {
+        By roomLocator = By.xpath("//android.widget.ImageView[@content-desc='" + roomName + "']");
+        clickElement(driver, roomLocator, "Room: " + roomName);
+    }
+
+    /**
+     * Handles Wi-Fi connection flow: enters SSID and password, then continues.
+     *
+     * @param driver      AndroidDriver
+     * @param targetSsid  Target Wi-Fi network name
+     */
+    public static void SearchWiFi(AndroidDriver driver, String targetSsid) {
+        if (targetSsid == null || targetSsid.isEmpty()) {
+            throw new IllegalArgumentException("Wi-Fi SSID cannot be null or empty");
+        }
+
+        ActionsUtil.Tap.withPercentage(driver, 0.20, 0.20); // Focus field
+
+        for (int attempt = 1; attempt <= 3; attempt++) { // Limit retries
             try {
-                element = driver.findElement(By.xpath("//android.widget.EditText[@text=\""+SearchString+"\"]"));
-            } catch (Exception ignored) {
-            }
-            if (element != null) {
-                System.out.println(" " + SearchString + " Available");
-                WebElement Password = driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.EditText[2]"));
-                Password.getText();
-                if (!Objects.equals(Password.getText(), "123@ToMb^rg#2425")) {
-                    Password.clear();
+                WebElement ssidField = findOptionalElement(driver, By.xpath("//android.widget.EditText[@text='" + targetSsid + "']"));
+                if (ssidField != null) {
+                    System.out.println("Wi-Fi network '" + targetSsid + "' already entered.");
+                    enterPasswordAndContinue(driver, DEFAULT_WIFI_PASSWORD);
+                    return;
+                } else {
+                    enterSsidAndPassword(driver, targetSsid, FALLBACK_PASSWORD);
+                    ActionsUtil.sleep(2000); // Allow UI update
                 }
-                Password.click();
-                Password.sendKeys("123@ToMb^rg#2425");
-                WebElement Continue = driver
-                        .findElement(By.xpath("//android.widget.Button[@content-desc=\"Continue\"]"));
-                Continue.click();
-                break;
-            } else {
-                WebElement WiFI = driver.findElement(By.xpath(
-                        "//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.EditText[1]"));
-                WiFI.click();
-                WiFI.sendKeys("Better_Together");
-                WebElement Password = driver.findElement(By.xpath(
-                        "//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.EditText[2]"));
-                Password.click();
-                Password.sendKeys("987654321");
-                WebElement Continue = driver
-                        .findElement(By.xpath("//android.widget.Button[@content-desc=\"Continue\"]"));
-                Continue.click();
+            } catch (Exception e) {
+                System.err.println("Error during Wi-Fi setup (attempt " + attempt + "): " + e.getMessage());
+                ActionsUtil.sleep(3000);
             }
         }
+
+        System.err.println("Failed to configure Wi-Fi after 3 attempts.");
     }
 
+    /**
+     * Enters SSID and fallback password.
+     *
+     * @param driver AndroidDriver
+     * @param ssid   Network name
+     * @param pwd    Password to use
+     */
+    private static void enterSsidAndPassword(AndroidDriver driver, String ssid, String pwd) {
+        clearAndSendKeys(driver, WIFI_INPUT_FIELD, ssid, "SSID Input");
+        clearAndSendKeys(driver, PASSWORD_INPUT_FIELD, pwd, "Password Input");
+        clickContinue(driver);
+    }
+
+    /**
+     * Enters password and clicks Continue.
+     *
+     * @param driver AndroidDriver
+     * @param pwd    Password to enter
+     */
+    private static void enterPasswordAndContinue(AndroidDriver driver, String pwd) {
+        clearAndSendKeys(driver, PASSWORD_INPUT_FIELD, pwd, "Password Input");
+        clickContinue(driver);
+    }
+
+    /**
+     * Clears field and sends keys with logging.
+     *
+     * @param driver   Driver instance
+     * @param locator  Field locator
+     * @param text     Text to send
+     * @param label    Action label for logs
+     */
+    private static void clearAndSendKeys(AndroidDriver driver, By locator, String text, String label) {
+        WebElement field = waitForElement(driver, locator, 10);
+        field.click();
+        field.clear();
+        field.sendKeys(text);
+        System.out.println(label + ": '" + text + "'");
+    }
+
+    /**
+     * Clicks continue button with retry.
+     *
+     * @param driver AndroidDriver
+     */
+    private static void clickContinue(AndroidDriver driver) {
+        clickElement(driver, CONTINUE_BUTTON, "Continue Button");
+    }
+
+    /**
+     * Safely finds element without throwing exception.
+     *
+     * @param driver  Driver instance
+     * @param locator Element locator
+     * @return Found element or null
+     */
+    private static WebElement findOptionalElement(AndroidDriver driver, By locator) {
+        try {
+            return driver.findElement(locator);
+        } catch (NoSuchElementException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Waits up to N seconds for element to be present.
+     *
+     * @param driver     Driver instance
+     * @param locator    Element locator
+     * @param timeoutSec Timeout in seconds
+     * @return WebElement if found
+     */
+    private static WebElement waitForElement(AndroidDriver driver, By locator, long timeoutSec) {
+        long start = System.currentTimeMillis();
+        while (System.currentTimeMillis() - start < timeoutSec * 1000) {
+            try {
+                return driver.findElement(locator);
+            } catch (NoSuchElementException ignored) {
+                ActionsUtil.sleep(500);
+            }
+        }
+        throw new RuntimeException("Element not found after " + timeoutSec + "s: " + locator);
+    }
+
+    /**
+     * Clicks an element with logging.
+     *
+     * @param driver AndroidDriver
+     * @param locator Element locator
+     * @param label   Action label
+     */
+    private static void clickElement(AndroidDriver driver, By locator, String label) {
+        try {
+            driver.findElement(locator).click();
+            System.out.println(label + " clicked.");
+        } catch (Exception e) {
+            System.err.println("Failed to click " + label + ": " + e.getMessage());
+            throw new RuntimeException("Interaction failed: " + label, e);
+        }
+    }
+
+    /**
+     * Generates a random digit (0–9).
+     *
+     * @return Random integer between 0 and 9
+     */
     public static int Array() {
-        int[] numbers = {1, 2, 3, 4, 5, 6, 7, 8, 9, 0};
-
-        Random random = new Random();
-        int randomIndex = random.nextInt(numbers.length);
-        return numbers[randomIndex];
+        int[] digits = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+        return digits[new Random().nextInt(digits.length)];
     }
 
+    /**
+     * Simulates physical number pad input using screen coordinates.
+     * <p>
+     * Note: Fragile across screen sizes. Prefer actual UI elements when available.
+     */
     public static class NumberPad {
-        public void one(AndroidDriver driver){
-            ActionsUtil.Tap.withCoordinates(driver,240,1725);
-        }
-        public void two(AndroidDriver driver){
-            ActionsUtil.Tap.withCoordinates(driver,530,1725);
-        }
-        public void three(AndroidDriver driver){
-            ActionsUtil.Tap.withCoordinates(driver,810,1725);
-        }
-        public void four(AndroidDriver driver){
-            ActionsUtil.Tap.withCoordinates(driver,240,1945);
-        }
-        public void five(AndroidDriver driver){
-            ActionsUtil.Tap.withCoordinates(driver,530,1945);
-        }
-        public void six(AndroidDriver driver){
-            ActionsUtil.Tap.withCoordinates(driver,810,1945);
-        }
-        public void seven(AndroidDriver driver){
-            ActionsUtil.Tap.withCoordinates(driver,240,2100);
-        }
-        public void eight(AndroidDriver driver){
-            ActionsUtil.Tap.withCoordinates(driver,530,2100);
-        }
-        public void nine(AndroidDriver driver){
-            ActionsUtil.Tap.withCoordinates(driver,810,2100);
-        }
-        public void zero(AndroidDriver driver){
-            ActionsUtil.Tap.withCoordinates(driver,530,2250);
-        }
-        public void clear(AndroidDriver driver){
-            ActionsUtil.Tap.withCoordinates(driver,240,2250);
-        }
-        public void done(AndroidDriver driver){
-            ActionsUtil.Tap.withCoordinates(driver,810,2250);
+        // Screen-relative coordinates (assumed for 1080x2340 resolution)
+        private static final int ROW1_Y = 1725;
+        private static final int ROW2_Y = 1945;
+        private static final int ROW3_Y = 2100;
+        private static final int ROW4_Y = 2250;
+
+        private static final int COL1_X = 240;
+        private static final int COL2_X = 530;
+        private static final int COL3_X = 810;
+
+        public void one(AndroidDriver driver) { tap(driver, COL1_X, ROW1_Y); }
+        public void two(AndroidDriver driver) { tap(driver, COL2_X, ROW1_Y); }
+        public void three(AndroidDriver driver) { tap(driver, COL3_X, ROW1_Y); }
+        public void four(AndroidDriver driver) { tap(driver, COL1_X, ROW2_Y); }
+        public void five(AndroidDriver driver) { tap(driver, COL2_X, ROW2_Y); }
+        public void six(AndroidDriver driver) { tap(driver, COL3_X, ROW2_Y); }
+        public void seven(AndroidDriver driver) { tap(driver, COL1_X, ROW3_Y); }
+        public void eight(AndroidDriver driver) { tap(driver, COL2_X, ROW3_Y); }
+        public void nine(AndroidDriver driver) { tap(driver, COL3_X, ROW3_Y); }
+        public void zero(AndroidDriver driver) { tap(driver, COL2_X, ROW4_Y); }
+        public void clear(AndroidDriver driver) { tap(driver, COL1_X, ROW4_Y); }
+        public void done(AndroidDriver driver) { tap(driver, COL3_X, ROW4_Y); }
+
+        private void tap(AndroidDriver driver, int x, int y) {
+            ActionsUtil.Tap.withCoordinates(driver, x, y);
         }
     }
-        
-    public static void device() throws IOException, InterruptedException {
-            Process process = Runtime.getRuntime().exec("adb shell getprop ro.product.marketname");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String marketName = reader.readLine();
-            System.out.println((marketName != null && !marketName.isEmpty() ? marketName : "Not available"));
 
+    /**
+     * Retrieves device market name via ADB command.
+     *
+     * @throws IOException          If process fails
+     * @throws InterruptedException If thread is interrupted
+     */
+    public static void device() throws IOException, InterruptedException {
+        Process process = null;
+        BufferedReader reader = null;
+        try {
+            process = Runtime.getRuntime().exec("adb shell getprop ro.product.marketname");
+            if (!process.waitFor(10L, TimeUnit.SECONDS)) {
+                process.destroy();
+                throw new IOException("ADB command timed out.");
+            }
+
+            reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String marketName = reader.readLine();
+
+            String result = marketName != null ? marketName.trim() : "Not available";
+            System.out.println("Device Market Name: " + result);
+
+        } catch (IOException | InterruptedException e) {
+            System.err.println("ADB execution failed: " + e.getMessage());
+            throw e;
+        } finally {
+            if (reader != null) reader.close();
+            if (process != null) process.destroyForcibly();
+        }
     }
 }

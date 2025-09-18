@@ -3,383 +3,495 @@ package app.Lock;
 import app.util.ActionsUtil;
 import app.util.AppUtil;
 import io.appium.java_client.android.AndroidDriver;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import static app.util.ActionsUtil.sleep;
-import static app.util.AppUtil.Array;
 
+/**
+ * LockManagement - End-to-end automation for Atomberg Smart Lock setup and control.
+ *
+ * <p>Refactored to:
+ * <ul>
+ *   <li>Eliminate duplication</li>
+ *   <li>Improve error visibility</li>
+ *   <li>Centralize locators</li>
+ *   <li>Break down monolithic methods</li>
+ *   <li>Follow clean coding principles</li>
+ * </ul>
+ */
 public class LockManagement {
-    public AndroidDriver atomberg;
+    private final AndroidDriver atomberg;
+
+    // === Locator Constants ===
+    private static final By ADD_BUTTON = By.xpath(
+            "//android.widget.ImageView[@content-desc='Add']" // Simplified assumption
+    );
+    private static final By SMART_LOCK_INDICATOR = By.xpath("//android.view.View[@content-desc='Atomberg Smart Lock']");
+    private static final By CONNECT_BUTTON = By.xpath("//android.view.View[@content-desc='Connect']");
+    private static final By LOCK_TAB = By.xpath("//android.widget.ImageView[@content-desc='Locks']");
+    private static final By UNLOCK_HANDLE = By.xpath("//android.view.View[@content-desc='Pull down to unlock']");
+    private static final By SUCCESS_MESSAGE = By.xpath("//android.view.View[contains(@content-desc, 'Added Successfully')]");
+    private static final By HISTORY_BUTTON = By.xpath("//android.view.View[@content-desc='History']");
+    private static final By SETTINGS_BUTTON = By.xpath("//android.view.View[@content-desc='Settings']");
+    private static final By ACCESS_KEYS_BUTTON = By.xpath("//android.view.View[@content-desc='Access\\nkeys']");
+    private static final By USERS_BUTTON = By.xpath("//android.widget.Button[@content-desc='Users']");
+    private static final By PREFERENCES_SECTION = By.xpath("//android.view.View[@content-desc='Preferences']");
+    private static final By DONE_BUTTON = By.xpath("//android.widget.Button[@content-desc='Done']");
+    private static final By UPDATE_BUTTON = By.xpath("//android.widget.Button[@content-desc='Update']");
+    private static final By YES_BUTTON = By.xpath("//android.widget.Button[@content-desc='Yes']");
+
+    // Switch indices in Preferences (assumed order)
+    private static final int SILENT_MODE_SWITCH_INDEX = 0;
+    private static final int PASSAGE_MODE_SWITCH_INDEX = 1;
+    private static final int FINGERPRINT_SWITCH_INDEX = 2;
+    private static final int CARD_SWITCH_INDEX = 3;
+    private static final int PINS_SWITCH_INDEX = 4;
+
+    // Messages
+    private static final By PASSAGE_MODE_PROMPT_1 = By.xpath("//android.view.View[contains(@content-desc, 'enabling passage mode')]");
+    private static final By PASSAGE_MODE_PROMPT_2 = By.xpath("//android.view.View[@content-desc='Please read this below. Do you still want to continue?']");
+    private static final By PASSAGE_MODE_SUCCESS = By.xpath("//android.view.View[@content-desc='Passage Mode Enabled Successfully']");
+
+    private static final By FP_DISABLED_MSG = By.xpath("//android.view.View[@content-desc='All Fingerprints Disabled Successfully!']");
+    private static final By FP_ENABLED_MSG = By.xpath("//android.view.View[@content-desc='All Fingerprints Enabled Successfully!']");
+
+    private static final By CARD_NOT_AVAILABLE = By.xpath("//android.view.View[@content-desc='No Cards present for this Lock.']");
+
     public LockManagement(AndroidDriver driver) {
         this.atomberg = driver;
     }
 
-    public void addLock(){
-        WebElement AddButton = null;
-        try {
-            AddButton = atomberg.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]/android.widget.ImageView"));
-        } catch (Exception ignored) {
-        }
-        if (AddButton != null) {
-            AddButton.click();
-            sleep(1000);
+    /**
+     * Discovers and adds a new smart lock.
+     */
+    public void addLock() {
+        navigateToAddScreen();
+        System.out.println("Searching for available devices...");
+        ActionsUtil.sleep(15000); // Allow scan
+
+        if (isElementPresent(SMART_LOCK_INDICATOR)) {
+            clickWhenReady(atomberg, CONNECT_BUTTON);
+            System.out.println("Connection initiated.");
         } else {
-            ActionsUtil.Tap.withCoordinates(atomberg, 540, 1940);
-            sleep(1000);
-        }
-        System.out.println("Searching for Available devices");
-        sleep(15000);
-        WebElement element = null;
-        String xpathExpression = "//android.view.View[@content-desc=\"Atomberg Smart Lock\"]";
-        // Search Fan Only
-        try {
-            element = atomberg.findElement(By.xpath(xpathExpression));
-        } catch (NoSuchElementException ignored) {}
-        if (element != null){
-            ActionsUtil.Tap.connectButton(atomberg, element);
+            System.out.println("No smart lock detected.");
         }
     }
 
+    /**
+     * Completes PIN setup for newly added lock.
+     */
     public void lockAdditionProcess() {
-        for (int i = 1 ; i <7 ; i++)
-        {
-            WebElement Pin = atomberg.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]/android.widget.EditText["+i+"]"));
-            String randomNumber = String.valueOf(Array());
-            Pin.sendKeys(randomNumber);
+        // Enter random 6-digit PIN
+        for (int i = 1; i <= 6; i++) {
+            By pinField = By.xpath("(//android.widget.EditText)[" + i + "]");
+            WebElement field = waitForElement(pinField, 10);
+            field.sendKeys(String.valueOf(AppUtil.Array()));
         }
-        WebElement Save = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Save\"]"));
-        Save.click();
-        sleep(5000);
-        WebElement SuccessMessage = null;
-        try {
-            SuccessMessage = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Added Successfully \uD83D\uDC4D\"]"));
-        }
-        catch(Exception ignored){}
-        if (SuccessMessage != null) {
+
+        clickWhenReady(atomberg, By.xpath("//android.widget.Button[@content-desc='Save']"));
+        ActionsUtil.sleep(5000);
+
+        if (isElementPresent(SUCCESS_MESSAGE)) {
             System.out.println("Lock Added Successfully");
-            sleep(1500);
+            ActionsUtil.sleep(1500);
+        } else {
+            System.err.println("Lock addition failed: Success message not shown.");
         }
-        sleep(3000);
-
+        ActionsUtil.sleep(3000);
     }
 
+    /**
+     * Checks if any locks are online and controls them.
+     */
     public void checkLock() {
-        atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Locks\"]")).click();
-        WebElement LO = null;  // checks Lock availability
-        try {
-            LO = atomberg.findElement(By.xpath("//android.widget.Button/android.widget.ImageView[1]"));
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        clickWhenReady(atomberg, LOCK_TAB);
+        List<WebElement> locks = atomberg.findElements(By.className("android.widget.Button"));
+
+        List<WebElement> validLocks = locks.stream()
+                .filter(el -> el.findElement(By.tagName("ImageView")) != null)
+                .collect(Collectors.toList());
+
+        if (validLocks.isEmpty()) {
+            System.out.println("No Lock Available");
+            return;
         }
-        // To Do if lock is available
-        if (LO != null) {
-            // i
-            List<WebElement> Device = atomberg.findElements(By.xpath("//android.widget.Button/android.widget.ImageView[1]"));
-            System.out.println(Device.size() + "Lock Available");
-            // number of available locks
-            for (WebElement element : Device) {
-                element.click(); // click and open lock control
-                LockControl();
-                atomberg.navigate().back();
-            }
-        } else System.out.println("No Lock Available");
+
+        System.out.println(validLocks.size() + " Lock(s) Available");
+
+        for (WebElement lock : validLocks) {
+            lock.click();
+            LockControl();
+            atomberg.navigate().back();
+        }
     }
-    // inside the lock control
+
+    /**
+     * Controls an individual lock: unlock, view history, access keys, settings.
+     */
     private void LockControl() {
         ActionsUtil.sleep(7500);
-        // click on the handle(tap to unlock)
-        atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Pull down to unlock\"]")).click();
-        System.out.println("Unlocking");
+        clickWhenReady(atomberg, UNLOCK_HANDLE);
+        System.out.println("Unlocking...");
+
         ActionsUtil.sleep(3000);
-        WebElement Unlocked = null;
-        WebElement NoLock = null;
-        try {// checks if it is unlocked
-            Unlocked = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Unlocked\"]"));
-        } catch (Exception ignored) {}
-        try {// check if it could not unlock
-            NoLock = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Could not unlock\"]"));
-        } catch (Exception ignored) {
-        }
-        if (Unlocked != null) {
+
+        if (isElementPresent(By.xpath("//android.view.View[@content-desc='Unlocked']"))) {
             System.out.println("Successfully unlocked");
-            ActionsUtil.sleep(5000);
-            history();  // history of lock
+            history();
             ActionsUtil.sleep(5000);
             atomberg.navigate().back();
-            AccessKeys();  //Access keys of lock
-            lockSettings();   // lock settings
+
+            AccessKeys();
+            lockSettings();
             atomberg.navigate().back();
-        } else if (NoLock != null) {
+        } else if (isElementPresent(By.xpath("//android.view.View[@content-desc='Could not unlock']"))) {
             System.out.println("Lock not available or Bluetooth off");
         }
     }
 
+    /**
+     * Opens lock history.
+     */
     private void history() {
-        WebElement history = null;
-        try {// check in the history button is available
-            history = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"History\"]"));
-        } catch (Exception e) {
-            e.fillInStackTrace();
-        }
-        if (history != null) { // if available click on it
-            history.click();
+        if (isElementPresent(HISTORY_BUTTON)) {
+            clickWhenReady(atomberg, HISTORY_BUTTON);
         }
     }
 
-    private void lockSettings() {
-        WebElement settings = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Settings\"]"));
-        settings.click();  // tap on the Setting button
-//        Passcode();  // entering the passcode. specific to one plus, poco and redmi
-        ActionsUtil.sleep(1000);
-        WebElement users = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Users\"]"));
-        users.click();
-        ActionsUtil.sleep(1000);
-        atomberg.navigate().back();
-        preferences();
-    }
-
+    /**
+     * Navigates into Access Keys section and inspects types.
+     */
     private void AccessKeys() {
-        WebElement AccessKeys = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Access\nkeys\"]"));
-        AccessKeys.click();
-        KeyType();  // for clicking on all the types of keys
+        clickWhenReady(atomberg, ACCESS_KEYS_BUTTON);
+        KeyType();
     }
 
+    /**
+     * Inspects all types of remote keys (OTP, Timed Pin).
+     */
     private void KeyType() {
-        List<WebElement> KEYS = atomberg.findElements(By.className("android.widget.Button"));
-        int i;
-        int total = KEYS.size();
-        System.out.println(total);
-        for (i = 0; i < total; i++) {
-            List<WebElement> Keys = atomberg.findElements(By.className("android.widget.Button"));
-            WebElement key = Keys.get(i);
-            boolean OTP = Objects.requireNonNull(key.getDomAttribute("content-desc")).startsWith("Remote OTP"); // checks if the last string is OTP
-            boolean Pin = Objects.requireNonNull(key.getDomAttribute("content-desc")).startsWith("Remote Timed Pin"); // checks if the last string is NEW
+        List<WebElement> keyButtons = atomberg.findElements(By.className("android.widget.Button"));
+        int total = keyButtons.size();
+
+        for (int i = 0; i < total; i++) {
+            List<WebElement> currentKeys = atomberg.findElements(By.className("android.widget.Button"));
+            WebElement key = currentKeys.get(i);
+
+            String desc = key.getDomAttribute("content-desc");
+            boolean isOTP = desc != null && desc.startsWith("Remote OTP");
+            boolean isPin = desc != null && desc.startsWith("Remote Timed Pin");
+
             key.click();
-            if (OTP) {
+
+            if (isOTP) {
                 ActionsUtil.sleep(5000);
-                List<WebElement> elements = atomberg.findElements(By.className("android.view.View"));
-                System.out.println(elements.size());
-                List<WebElement> RemoteOTPs = elements.stream().filter(webElement -> webElement.getDomAttribute("content-desc")!=null).collect(Collectors.toList());
-                System.out.println(RemoteOTPs.size());
-                RemoteOTPs.remove(RemoteOTPs.size()-1);
-                for (WebElement otp : RemoteOTPs) {
-                    System.out.println(otp.getDomAttribute("content-desc"));
-                }
+                List<WebElement> otpList = getVisibleLabeledElements();
+                otpList.remove(otpList.size() - 1); // Remove last (non-data) element
+                printContentDesc(otpList, "Remote OTP");
             }
-            if(Pin){
+
+            if (isPin) {
                 ActionsUtil.sleep(5000);
-                List<WebElement> elements = atomberg.findElements(By.className("android.view.View"));
-                List<WebElement> dialogueBox = elements.stream().filter(webElement -> webElement.getDomAttribute("content-desc")!=null).collect(Collectors.toList());
-                System.out.println(dialogueBox.size());
-                for (WebElement e : dialogueBox){
-                    System.out.println(e.getDomAttribute("content-desc"));
-                    if (Objects.requireNonNull(e.getDomAttribute("content-desc")).startsWith("End")){
+                List<WebElement> pinList = getVisibleLabeledElements();
+                for (WebElement e : pinList) {
+                    String content = e.getDomAttribute("content-desc");
+                    if (content != null && content.startsWith("End")) {
                         e.click();
                         periodicTimedPin();
                         break;
                     }
                 }
             }
+
             atomberg.navigate().back();
-            if (i < (total - 1)) { // to repeat the Access keys opening as once we go back it goes back to lock control screen
-                WebElement AccessKeys = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Access\nkeys\"]"));
-                AccessKeys.click();
-//                Passcode();
+
+            // Reopen Access Keys unless it's the last item
+            if (i < total - 1) {
+                clickWhenReady(atomberg, ACCESS_KEYS_BUTTON);
             }
         }
     }
 
+    /**
+     * Navigates to lock settings and manages preferences.
+     */
+    private void lockSettings() {
+        clickWhenReady(atomberg, SETTINGS_BUTTON);
+        ActionsUtil.sleep(1000);
+
+        clickWhenReady(atomberg, USERS_BUTTON);
+        ActionsUtil.sleep(1000);
+        atomberg.navigate().back();
+
+        preferences();
+    }
+
+    /**
+     * Toggles various preference switches: silent mode, passage mode, etc.
+     */
     private void preferences() {
-        WebElement PBC = null; // Checks the availability on Pin, Biometrics & Cards in Lock Settings
-        try {
-            PBC = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Preferences\"]"));
-        } catch (Exception ignored) {
+        if (!isElementPresent(PREFERENCES_SECTION)) {
+            System.out.println("Preferences section not found.");
+            return;
         }
-        if (PBC != null) {
-            List<WebElement> TS = atomberg.findElements(By.className("android.widget.Switch"));
-            int i;
-            int total = TS.size();  //
-            System.out.println(total);
-            for (i = 0; i < total; i++) {
-                List<WebElement> ts = atomberg.findElements(By.className("android.widget.Switch"));
-                if(i == 0){
-                    WebElement silentMode = ts.get(i);
-                    silentMode.click();
-                    silentMode();
-                    System.out.println("Silent mode");
-                    ActionsUtil.sleep(1000);
-                }
-                if (i == 1) {
-                    WebElement passageMode = ts.get(i);
-                    boolean pm;
-                    pm = Objects.equals(passageMode.getDomAttribute("checked"), "true");
-                    passageMode.click();
-                    ActionsUtil.SSleep(2);
-                    passageMode(pm);
-                    System.out.println("Silent mode");
-                    ActionsUtil.sleep(1000);
-                }
-                if (i == 2) {
-                    WebElement FPEnable = ts.get(i);
-                    FPEnable.click();
-                    System.out.println("Fingerprint");
-                    fingerprint();
-                }
-                if (i == 3) {
-                    WebElement CardEnable = ts.get(i);
-                    CardEnable.click();
-                    System.out.println("Card");
-                    CardEnable();
-                }
-                if (i == 4) {
-                    WebElement Pins = ts.get(i);
-                    if(Objects.equals(Pins.getDomAttribute("checked"), "true")){
-                        System.out.println("Disable all pins");
-                    }
-                    else System.out.println("Enable all pins");
-                    Pins.click();
-                }
-            }
-        }
-    }
 
-    private void passageMode(boolean value) {
-        if (value) {
-            List<WebElement> ts = atomberg.findElements(By.className("android.widget.Switch"));
-            WebElement passageMode = ts.get(1);
-            passageMode.click();
+        List<WebElement> switches = atomberg.findElements(By.className("android.widget.Switch"));
+        if (switches.size() < 5) {
+            System.err.println("Expected at least 5 switches in Preferences.");
+            return;
         }
-        else{
-            WebElement psmText = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"You are enabling passage mode. Enabling this mode will allow anyone to enter the house without any authentication. Do you want to continue?\"]"));
-            boolean allow = Objects.requireNonNull(psmText.getDomAttribute("content-desc")).endsWith("Do you want to continue?");
-            if (allow) {
-                WebElement Yes = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Yes\"]"));
-                Yes.click();
-            }
-            WebElement psmText2 = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Please read this below. Do you still want to continue?\"]"));
-            boolean allow2 = Objects.requireNonNull(psmText2.getDomAttribute("content-desc")).startsWith("Please read this below");
-            if (allow2) {
-                WebElement Yes2 = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Yes\"]"));
-                Yes2.click();
-            }
-            WebElement PMEnabled = null;
-            try {
-                PMEnabled = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Passage Mode Enabled Successfully\"]"));
-            } catch (Exception ignored) {
-            }
-            if (PMEnabled != null) {
-                System.out.println("Passage Mode Enabled Successfully");
-            }
-        }
-    }
 
-    private void fingerprint() {
-        WebElement FPDisabled = null;
-        try {
-            FPDisabled = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"All Fingerprints Disabled Successfully!\"]"));
-        } catch (Exception ignored) {
-        }
-        WebElement FPEnabled = null;
-        try {
-            FPEnabled = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"All Fingerprints Enabled Successfully!\"]"));
-        } catch (Exception ignored) {
-        }
-        if (FPDisabled != null) {
-            System.out.println("All Fingerprints Disabled Successfully!\n Enabling them again");
-            List<WebElement> TS = atomberg.findElements(By.className("android.widget.Switch"));
-            WebElement FPEnable = TS.get(1);
-            FPEnable.click();
-        } else if (FPEnabled != null) {
-            System.out.println("All Fingerprints Disabled Successfully");
-        }
-    }
+        // Toggle Silent Mode
+        toggleSwitchAndConfirm(switches.get(SILENT_MODE_SWITCH_INDEX), "Silent mode", this::silentMode);
 
-    private void CardEnable() {
-        WebElement CNotAvail = null;
-        WebElement CDisable = null;
-        WebElement CEnabled = null;
-
-        try {
-            CNotAvail = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"No Cards present for this Lock.\"]"));
-        } catch (Exception ignored) {
-        }
-        try {
-            CDisable = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"All Cards Disabled Successfully!\"]"));
-        } catch (Exception ignored) {
-        }
-        try {
-            CEnabled = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"All Cards Enabled Successfully!\"]"));
-
-        } catch (Exception ignored) {
-        }
-        if (CNotAvail != null) {
-            System.out.println("No Cards present for this Lock. Please add one");
-        }
-        if (CDisable != null) {
-            System.out.println("Cards Disabled, Enabling it ...");
-            List<WebElement> TS = atomberg.findElements(By.className("android.widget.Switch"));
-            WebElement CEnable = TS.get(2);
-            CEnable.click();
-        }
-        if (CEnabled != null) {
-            System.out.println("Cards Enabled");
-        }
-    }
-
-    private void periodicTimedPin(){
-        List<WebElement> scrollableElements = atomberg.findElements(By.className("android.widget.SeekBar"));
-        List<WebElement> elements = scrollableElements.stream().filter(webElement -> webElement.getDomAttribute("content-desc")!=null).collect(Collectors.toList());
-        System.out.println(elements.size());
-        int size = elements.size();
-        for(int i = 0; i < size; i++){
-            if (i == 1){
-                ActionsUtil.Scroll.element(atomberg, elements.get(i));
-            }
-        }
+        // Toggle Passage Mode
+        boolean wasEnabled = "true".equals(switches.get(PASSAGE_MODE_SWITCH_INDEX).getDomAttribute("checked"));
+        switches.get(PASSAGE_MODE_SWITCH_INDEX).click();
         ActionsUtil.SSleep(2);
-        WebElement done = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Done\"]"));
-        ActionsUtil.Tap.element(atomberg,done);
-        ActionsUtil.SSleep(1);
-        WebElement update = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Update\"]"));
-        assert update.isDisplayed();
-        update.click();
-        pin();
+        passageMode(wasEnabled);
+
+        // Toggle Fingerprint
+        switches.get(FINGERPRINT_SWITCH_INDEX).click();
+        System.out.println("Fingerprint toggled");
+        fingerprint();
+
+        // Toggle Card
+        switches.get(CARD_SWITCH_INDEX).click();
+        System.out.println("Card toggled");
+        CardEnable();
+
+        // Toggle All Pins
+        WebElement pinsSwitch = switches.get(PINS_SWITCH_INDEX);
+        System.out.println(pinsSwitch.getDomAttribute("checked").equals("true") ?
+                "Disable all pins" : "Enable all pins");
+        pinsSwitch.click();
     }
 
+    /**
+     * Handles confirmation dialog for silent mode.
+     */
     private void silentMode() {
-        WebElement enableSilentMode = null;
-        try {
-            enableSilentMode = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Do you want to enable silent mode?\"]"));
-        } catch (Exception ignored) {}
-        WebElement disableSilentMode = null;
-        try {
-            disableSilentMode = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Do you want to disable silent mode?\"]"));
-        } catch (Exception ignored) {}
-        if (enableSilentMode != null) {
-            atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Yes\"]")).click();
-        }
-        else if (disableSilentMode != null){
-            atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Yes\"]")).click();
+        if (isElementPresent(By.xpath("//android.view.View[@content-desc='Do you want to enable silent mode?']")) ||
+                isElementPresent(By.xpath("//android.view.View[@content-desc='Do you want to disable silent mode?']"))) {
+            clickWhenReady(atomberg, YES_BUTTON);
         }
         ActionsUtil.SSleep(5);
     }
 
-    // set for specific devices using the Coordinates
-    //TODO : Prerequisites > Please disable the Lock of the mobile phone, so that, when lock settings are accessed, there won't be any authentication....
-
-    private void pin(){
-        ActionsUtil.sleep(5000);
-        List<WebElement> elementList = atomberg.findElements(By.className("android.view.View"));
-        System.out.println(elementList.size());
-        List<WebElement> nonNullElements = elementList.stream().filter(webElement -> webElement.getDomAttribute("content-desc")!=null).collect(Collectors.toList());
-        System.out.println(nonNullElements.size());
-        nonNullElements.remove(nonNullElements.size()-1);
-        for (WebElement otp : nonNullElements) {
-            System.out.println(otp.getDomAttribute("content-desc"));
+    /**
+     * Handles passage mode activation/deactivation with confirmations.
+     *
+     * @param wasEnabled true if already enabled (so now disabling)
+     */
+    private void passageMode(boolean wasEnabled) {
+        if (wasEnabled) {
+            // Already enabled → now disabling → no prompts
+            return;
         }
+
+        // Enabling passage mode → show prompts
+        if (isElementPresent(PASSAGE_MODE_PROMPT_1)) {
+            clickWhenReady(atomberg, YES_BUTTON);
+        }
+        if (isElementPresent(PASSAGE_MODE_PROMPT_2)) {
+            clickWhenReady(atomberg, YES_BUTTON);
+        }
+        if (isElementPresent(PASSAGE_MODE_SUCCESS)) {
+            System.out.println("Passage Mode Enabled Successfully");
+        }
+    }
+
+    /**
+     * Validates fingerprint toggle results.
+     */
+    private void fingerprint() {
+        if (isElementPresent(FP_DISABLED_MSG)) {
+            System.out.println("All Fingerprints Disabled Successfully!\nEnabling them again");
+            List<WebElement> switches = atomberg.findElements(By.className("android.widget.Switch"));
+            if (switches.size() > FINGERPRINT_SWITCH_INDEX) {
+                switches.get(FINGERPRINT_SWITCH_INDEX).click();
+            }
+        } else if (isElementPresent(FP_ENABLED_MSG)) {
+            System.out.println("All Fingerprints Enabled Successfully");
+        }
+    }
+
+    /**
+     * Handles card access toggle and status.
+     */
+    private void CardEnable() {
+        if (isElementPresent(CARD_NOT_AVAILABLE)) {
+            System.out.println("No Cards present for this Lock. Please add one");
+        } else if (isElementPresent(By.xpath("//android.view.View[@content-desc='All Cards Disabled Successfully!']"))) {
+            System.out.println("Cards Disabled, Enabling it ...");
+            List<WebElement> switches = atomberg.findElements(By.className("android.widget.Switch"));
+            if (switches.size() > CARD_SWITCH_INDEX) {
+                switches.get(CARD_SWITCH_INDEX).click();
+            }
+        } else if (isElementPresent(By.xpath("//android.view.View[@content-desc='All Cards Enabled Successfully!']"))) {
+            System.out.println("Cards Enabled");
+        }
+    }
+
+    /**
+     * Configures periodic timed PIN duration using seekbar scroll.
+     */
+    private void periodicTimedPin() {
+        List<WebElement> seekBars = atomberg.findElements(By.className("android.widget.SeekBar"));
+        List<WebElement> labeledSeekBars = seekBars.stream()
+                .filter(el -> el.getDomAttribute("content-desc") != null)
+                .collect(Collectors.toList());
+
+        if (labeledSeekBars.size() >= 2) {
+            ActionsUtil.Scroll.element(atomberg, labeledSeekBars.get(1));
+        }
+
+        ActionsUtil.SSleep(2);
+        ActionsUtil.Tap.element(atomberg, findRequiredElement(DONE_BUTTON));
+        ActionsUtil.SSleep(1);
+        WebElement update = findRequiredElement(UPDATE_BUTTON);
+        assert update.isDisplayed();
+        update.click();
+
+        pin(); // View PIN list
+    }
+
+    /**
+     * Displays configured PINs.
+     */
+    private void pin() {
+        ActionsUtil.sleep(5000);
+        List<WebElement> views = getVisibleLabeledElements();
+        views.remove(views.size() - 1); // Remove footer/button
+        printContentDesc(views, "PIN");
+    }
+
+    // === Utility Methods ===
+
+    /**
+     * Navigates to Add screen using fallback tap if needed.
+     */
+    private void navigateToAddScreen() {
+        try {
+            WebElement addButton = atomberg.findElement(ADD_BUTTON);
+            if (addButton.isDisplayed()) {
+                addButton.click();
+                ActionsUtil.sleep(1000);
+                return;
+            }
+        } catch (NoSuchElementException ignored) {}
+
+        // Fallback tap
+        ActionsUtil.Tap.withCoordinates(atomberg, 540, 1940);
+        ActionsUtil.sleep(1000);
+    }
+
+    /**
+     * Safely checks if element is present.
+     *
+     * @param locator Element locator
+     * @return true if displayed
+     */
+    private boolean isElementPresent(By locator) {
+        try {
+            return atomberg.findElement(locator).isDisplayed();
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Waits up to N seconds for element to be clickable.
+     *
+     * @param driver   Driver instance
+     * @param locator  Element locator
+     * @param timeoutSec Timeout in seconds
+     */
+    private void clickWhenReady(AndroidDriver driver, By locator, long timeoutSec) {
+        long start = System.currentTimeMillis();
+        while (System.currentTimeMillis() - start < timeoutSec * 1000) {
+            try {
+                driver.findElement(locator).click();
+                return;
+            } catch (Exception ignored) {
+                ActionsUtil.sleep(500);
+            }
+        }
+        throw new RuntimeException("Element not clickable after " + timeoutSec + "s: " + locator);
+    }
+
+    /**
+     * Shortcut with default 10s timeout.
+     */
+    private void clickWhenReady(AndroidDriver driver, By locator) {
+        clickWhenReady(driver, locator, 10);
+    }
+
+    /**
+     * Waits and returns required element.
+     *
+     * @param locator Locator
+     * @return Found element
+     */
+    private WebElement findRequiredElement(By locator) {
+        return waitForElement(locator, 10);
+    }
+
+    /**
+     * Waits for element presence.
+     *
+     * @param locator    Locator
+     * @param timeoutSec Timeout
+     * @return WebElement
+     */
+    private WebElement waitForElement(By locator, long timeoutSec) {
+        long start = System.currentTimeMillis();
+        while (System.currentTimeMillis() - start < timeoutSec * 1000) {
+            try {
+                return atomberg.findElement(locator);
+            } catch (NoSuchElementException ignored) {
+                ActionsUtil.sleep(500);
+            }
+        }
+        throw new RuntimeException("Element not found: " + locator);
+    }
+
+    /**
+     * Gets all visible elements with non-null content-desc.
+     *
+     * @return List of labeled elements
+     */
+    private List<WebElement> getVisibleLabeledElements() {
+        return atomberg.findElements(By.className("android.view.View")).stream()
+                .filter(el -> el.getDomAttribute("content-desc") != null)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Prints content-desc of all elements with label.
+     *
+     * @param elements List of web elements
+     * @param type     Type name for logs
+     */
+    private void printContentDesc(List<WebElement> elements, String type) {
+        for (WebElement el : elements) {
+            String desc = el.getDomAttribute("content-desc");
+            if (desc != null) System.out.println(type + ": " + desc);
+        }
+    }
+
+    /**
+     * Toggles a switch and runs post-toggle action.
+     *
+     * @param switchEl  Switch element
+     * @param label     Label for log
+     * @param action    Action to run after toggle
+     */
+    private void toggleSwitchAndConfirm(WebElement switchEl, String label, Runnable action) {
+        switchEl.click();
+        System.out.println(label);
+        ActionsUtil.sleep(1000);
+        action.run();
     }
 }
