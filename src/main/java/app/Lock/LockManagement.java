@@ -1,12 +1,13 @@
 package app.Lock;
 
+import app.SmartDevice;
 import app.util.ActionsUtil;
 import app.util.AppUtil;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.*;
 import java.util.List;
 import java.util.stream.Collectors;
-
+import static app.resources.Locators.LockLocators.*;
 import static app.resources.Messages.*;
 import static app.util.AppUtil.navigateToAddScreen;
 
@@ -22,33 +23,11 @@ import static app.util.AppUtil.navigateToAddScreen;
  *   <li>Follow clean coding principles</li>
  * </ul>
  */
-public class LockManagement {
+public class LockManagement implements SmartDevice {
     private final AndroidDriver atomberg;
 
     // === Locator Constants ===
-    private static final By ADD_BUTTON = By.xpath(
-            "//android.widget.ImageView[@content-desc='Add']" // Simplified assumption
-    );
-    private static final By SMART_LOCK_INDICATOR = By.xpath("//android.view.View[@content-desc=\"Atomberg Smart Lock\"]");
-    private static final By CONNECT_BUTTON = By.xpath("//android.view.View[@content-desc=\"Connect\"]");
-    private static final By LOCK_TAB = By.xpath("//android.widget.ImageView[@content-desc=\"Locks\"]");
-    private static final By UNLOCK_HANDLE = By.xpath("//android.view.View[@content-desc=\"Pull down to unlock\"]");
-    public static final By SUCCESS_MESSAGE = By.xpath("//android.view.View[contains@content-desc=\"Added Successfully\"]");
-    private static final By HISTORY_BUTTON = By.xpath("//android.view.View[@content-desc=\"History\"\"]");
-    private static final By SETTINGS_BUTTON = By.xpath("//android.view.View[@content-desc=\"Settings]");
-    private static final By ACCESS_KEYS_BUTTON = By.xpath("//android.view.View[@content-desc=\"Access\\nkeys\"]");
-    private static final By USERS_BUTTON = By.xpath("//android.widget.Button[@content-desc=\"Users\"]");
-    private static final By PREFERENCES_SECTION = By.xpath("//android.view.View[@content-desc=\"Preferences\"]");
-    private static final By DONE_BUTTON = By.xpath("//android.widget.Button[@content-desc=\"Done\"]");
-    private static final By UPDATE_BUTTON = By.xpath("//android.widget.Button[@content-desc=\"Update\"]");
-    private static final By YES_BUTTON = By.xpath("//android.widget.Button[@content-desc=\"Yes\"]");
 
-    // Switch indices in Preferences (assumed order)
-    private static final int SILENT_MODE_SWITCH_INDEX = 0;
-    private static final int PASSAGE_MODE_SWITCH_INDEX = 1;
-    private static final int FINGERPRINT_SWITCH_INDEX = 2;
-    private static final int CARD_SWITCH_INDEX = 3;
-    private static final int PINS_SWITCH_INDEX = 4;
 
     // Messages
 
@@ -60,7 +39,7 @@ public class LockManagement {
     /**
      * Discovers and adds a new smart lock.
      */
-    public void addLock() {
+    public void addition() {
         navigateToAddScreen(atomberg);
         System.out.println("Searching for available devices...");
         ActionsUtil.sleep(15000); // Allow scan
@@ -73,18 +52,18 @@ public class LockManagement {
         }
     }
 
-    private void manageLockDevice(){
-        LockManagement lock = new LockManagement(atomberg);
+//    private void manageLockDevice(){
+//        LockManagement lock = new LockManagement(atomberg);
+//        lock.addition();
+//    }
 
-        lock.addLock();
-        lock.lockAdditionProcess();
-    }
+    public void deletion(){}
 
 
     /**
      * Completes PIN setup for newly added lock.
      */
-    public void lockAdditionProcess() {
+    public void additionProcess() {
         // Enter random 6-digit PIN
         for (int i = 1; i <= 6; i++) {
             By pinField = By.xpath("(//android.widget.EditText)[" + i + "]");
@@ -112,8 +91,10 @@ public class LockManagement {
         List<WebElement> locks = atomberg.findElements(By.className("android.widget.Button"));
 
         List<WebElement> validLocks = locks.stream()
-                .filter(el -> el.findElement(By.tagName("ImageView")) != null)
-                .collect(Collectors.toList());
+                .filter(el -> {
+                    el.findElement(By.tagName("ImageView"));
+                    return true;
+                }).toList();
 
         if (validLocks.isEmpty()) {
             System.out.println("No Lock Available");
@@ -124,7 +105,7 @@ public class LockManagement {
 
         for (WebElement lock : validLocks) {
             lock.click();
-            LockControl();
+            control();
             atomberg.navigate().back();
         }
     }
@@ -132,7 +113,7 @@ public class LockManagement {
     /**
      * Controls an individual lock: unlock, view history, access keys, settings.
      */
-    private void LockControl() {
+    public void control() {
         ActionsUtil.sleep(7500);
         clickWhenReady(atomberg, UNLOCK_HANDLE);
         System.out.println("Unlocking...");
@@ -457,7 +438,6 @@ public class LockManagement {
 
     /**
      * Prints content-desc of all elements with label.
-     *
      * @param elements List of web elements
      * @param type     Type name for logs
      */

@@ -1,18 +1,18 @@
 package app.BLEOnlyFans;
 
-
-import app.AppInitializer;
-import app.Login.Email;
 import app.ServerInitializer;
-import app.util.ActionsUtil;
-import app.util.PermissionUtil;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.android.options.UiAutomator2Options;
+import java.net.URL;
 import java.time.Duration;
+import java.util.Scanner;
+
+import static app.util.AppUtil.confirmOnHomeScreen;
 
 public class TestRunner {
-
-    private AndroidDriver driver;
+    public AndroidDriver driver;
     private final ServerInitializer server = new ServerInitializer();
+    private static final int DEFAULT_ATTEMPTS = 20;
 
     public static void main(String[] args) {
         TestRunner main = new TestRunner();
@@ -20,22 +20,10 @@ public class TestRunner {
             main.runTestFlow();
         } catch (Exception e) {
             System.err.println("Test failed with exception: " + e.getMessage());
+            e.printStackTrace();
         } finally {
             main.quitDriverSafely();
-        }
-    }
-
-    public void runTestFlow() throws Exception {
-        startAppiumServer();
-        initializeDriver();
-//
-        System.out.println("Attempt Number   | Action ID          | Iteration  | Status");
-        System.out.println("-----------------|--------------------|------------|--------");
-
-        OpenAndControl control = new OpenAndControl(driver);
-
-        for (int i = 1; i <= 20; i++) { // 1-based attempt number as shown in your table
-            control.runOneAttempt(i);
+            FirmwareVersionChecker.closeCSV(); // Properly close CSV file
         }
     }
 
@@ -44,72 +32,130 @@ public class TestRunner {
      */
     private void startAppiumServer() {
         server.startServer();
-        System.out.println("Appium server started.");
+        System.out.println("🚀 Appium server started.");
     }
 
-    // === Setup Methods ===
+    public void runTestFlow() throws Exception {
+        startAppiumServer();
+        URL url = server.service.getUrl();
+        initializeDriverWithURL(url);
 
-    private void initializeDriver() throws Exception {
-        AppInitializer initializer = new AppInitializer();
-        initializer.initializeDriver(); // Connects to device
-        this.driver = initializer.getDriver();
-
-        // Set implicit wait
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
-        System.out.println("Driver initialized successfully.");
-    }
-
-
-    private void launchApp() {
-        ActionsUtil.SSleep(2);
         driver.activateApp("com.atomberg.app");
-        ActionsUtil.SSleep(3);
-        System.out.println("App launched.");
+        sleep(4000);
+
+        // Get number of attempts from user
+
+        // Initialize CSV with header (this will be done in FirmwareVersionChecker)
+        System.out.println("\n📊 CSV Log Format:");
+        System.out.println("Attempt Number,Action ID,Iteration,Status,Updated Version");
+        System.out.println("--------------------------------------------------");
+
+        // Run test flow for specified number of attempts
+        for (int i = 1; i <= 20; i++) {
+            System.out.println("\n=== ATTEMPT #" + i + " ===");
+
+            try {
+                // Ensure we're on home screen
+                confirmOnHomeScreen(driver);
+                sleep(1000);
+
+                // Execute the full firmware verification and pause-resume sequence
+                FirmwareVersionChecker checker = new FirmwareVersionChecker(driver);
+                checker.runSequentialFirmwareUpdates();
+                System.out.println("✅ Attempt #" + i + " completed successfully");
+
+            } catch (Exception e) {
+                System.err.println("❌ Error during attempt #" + i + ": " + e.getMessage());
+                // Continue with next attempt even if current fails
+            }
+
+            // Return to home screen for next attempt
+            driver.navigate().back();
+            sleep(1000);
+            confirmOnHomeScreen(driver);
+            sleep(1000);
+        }
+
+        System.out.println("\n✅ All 20 attempts completed!");
+        System.out.println("📊 CSV report saved to: firmware_test_results_*.csv");
     }
 
-    private boolean isOnLoginScreen() {
-        AppInitializer appCheck = new AppInitializer();
-        appCheck.setDriver(driver);
-        boolean onLogin = appCheck.checkMainScreen();
-        System.out.println("On login screen: " + onLogin);
-        return onLogin;
-    }
+    /**
+     * Gets number of attempts from user input (with default)
+     */
+    private int getNumberOfAttempts() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter number of test attempts (default 20): ");
 
-    private void performLogin() throws Exception {
-        String email = getEnvOrFallback("TEST_EMAIL", "iot.alpha@protonmail.com");
-        String password = getEnvOrFallback("TEST_PASSWORD", "Atomberg@123");
-
-        Email login = new Email(driver);
         try {
-            login.email(email, password);
-            System.out.println("Login successful.");
+            String input = scanner.nextLine().trim();
+            if (input.isEmpty()) {
+                return DEFAULT_ATTEMPTS;
+            }
+            return Integer.parseInt(input);
         } catch (Exception e) {
-            System.err.println("Login failed: " + e.getMessage());
-            throw e; // Re-throw after logging
+            System.out.println("⚠️ Invalid input. Using default of " + DEFAULT_ATTEMPTS + " attempts.");
+            return DEFAULT_ATTEMPTS;
         }
     }
 
-    private void handlePermissions() {
-        PermissionUtil.allow(driver);
-        System.out.println("Permissions handled.");
+    /**
+     * Initializes driver without launching any specific app.
+     *
+     * @param url Appium server URL
+     */
+    public void initializeDriverWithURL(URL url) {
+        UiAutomator2Options options = baseOptions();
+        options.setCapability("platformName", "Android");
+        createDriver(url, options);
     }
 
+    private UiAutomator2Options baseOptions() {
+        try {
+            return new UiAutomator2Options().merge(new UiAutomator2Options()
+                    .setAdbExecTimeout(Duration.ofMinutes(5)) // Prevent early timeout
+                    .setEnsureWebviewsHavePages(true)
+                    .setAutoGrantPermissions(true) // Automatically grant permissions
+                    .setNoReset(false)); // Clear app data between runs
+        } catch (Exception e) {
+            System.err.println("Failed to configure base options: " + e.getMessage());
+            return new UiAutomator2Options();
+        }
+    }
+
+    private void createDriver(URL url, UiAutomator2Options options) {
+        if (url == null) throw new IllegalArgumentException("Appium server URL cannot be null");
+        if (options == null) throw new IllegalArgumentException("Driver options cannot be null");
+
+        try {
+            driver = new AndroidDriver(url, options);
+            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+            System.out.println("✅ Driver created successfully.");
+        } catch (Exception e) {
+            System.err.println("❌ Failed to create AndroidDriver: " + e.getMessage());
+            throw new RuntimeException("Driver initialization failed", e);
+        }
+    }
 
     // === Utility Methods ===
 
     public void quitDriverSafely() {
         if (driver != null) {
             try {
+                System.out.println("\n🧹 Cleaning up resources...");
                 driver.quit();
-                System.out.println("Driver session ended.");
+                System.out.println("✅ Driver session ended.");
             } catch (Exception e) {
-                System.err.println("Error during driver quit: " + e.getMessage());
+                System.err.println("⚠️ Error during driver quit: " + e.getMessage());
             }
         }
     }
 
-    private String getEnvOrFallback(String key, String fallback) {
-        String value = System.getenv(key);
-        return value != null ? value : fallback;
+    private void sleep(int millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 }

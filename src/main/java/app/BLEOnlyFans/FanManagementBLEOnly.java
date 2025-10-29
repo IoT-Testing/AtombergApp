@@ -46,11 +46,12 @@ public class FanManagementBLEOnly {
                             return false; // Skip stale or inaccessible elements
                         }
                     })
-                    .collect(Collectors.toList());
+                    .toList();
             System.out.println("Available BLE Device Count " + availableBLEDevice.size());
 
         }
     }
+
     public boolean checkFan() {
         ScreenCheck screen = new ScreenCheck(atomberg);
         screen.homeScreen();

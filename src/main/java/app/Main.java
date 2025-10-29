@@ -1,14 +1,16 @@
 package app;
 
-
-import app.BLEOnlyFans.OpenAndControl;
+import app.Fan.FanManagement;
 import app.Login.Email;
+import app.resources.Locators.FanLocators;
 import app.util.ActionsUtil;
 import app.util.PermissionUtil;
 import io.appium.java_client.android.AndroidDriver;
-import java.time.Duration;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 public class Main {
+    private static final By bof = By.xpath("//android.view.View[@content-desc=\"Atomberg_R3_fea1f937004b1200\"]");
 
     private AndroidDriver driver;
     private final ServerInitializer server = new ServerInitializer();
@@ -26,32 +28,61 @@ public class Main {
 
     public void runTestFlow() throws Exception {
         initializeDriver();
-//        launchApp();
-//
-//        if (isOnLoginScreen()) {
-//            performLogin();
-//        }
-//        handlePermissions();
-//        FanManagementBLEOnly bleOnly = new FanManagementBLEOnly(driver);
-//        try{
-//        bleOnly.addBLEFan();
-//        }catch (Exception e){
-//            System.out.println(e.getMessage());
-//        }
-//            FirmwareVersionChecker checker = new FirmwareVersionChecker(driver);
-//            checker.runSequentialFirmwareUpdates();
-
-// Print header ONCE
-        System.out.println("Attempt Number   | Action ID          | Iteration  | Status");
-        System.out.println("-----------------|--------------------|------------|--------");
-
-        OpenAndControl control = new OpenAndControl(driver);
-
-        for (int i = 1; i <= 20; i++) { // 1-based attempt number as shown in your table
-            control.runOneAttempt(i);
+        driver.activateApp("com.atomberg.app");
+        ActionsUtil.SSleep(5);
+        ActionsUtil.Tap.withCoordinates(driver,540,1940);
+        FanManagement fan = new FanManagement(driver);
+        fan.addition(bof);
+//        driver.openNotifications();
+//        ActionsUtil.sleep(750);
+//        ActionsUtil.Tap.withCoordinates(driver, 500, 500);
+        By acceptBtn = By.id("android:id/button1");
+        driver.findElement(acceptBtn).click();
+        ActionsUtil.SSleep(6);
+//        driver.openNotifications();
+//        ActionsUtil.sleep(500);
+//        ActionsUtil.Tap.withCoordinates(driver, 500, 500);
+        driver.findElement(acceptBtn).click();
+        bleFanAddition();
+    }
+    private boolean isElementPresent(By locator) {
+        try {
+            return driver.findElement(locator).isDisplayed();
+        } catch (Exception e) {
+            return false;
         }
     }
+    private boolean clickElementWithRetry(By locator) {
+        for (int i = 0; i < 5; i++) {
+            try {
+                WebElement el = driver.findElement(locator);
+                if (el.isDisplayed() && Boolean.parseBoolean(el.getDomAttribute("clickable"))) {
+                    el.click();
+                    return true;
+                }
+            } catch (Exception ignored) {}
+        }
+        return false;
+    }
 
+    private void bleFanDeletion(){
+        ActionsUtil.Tap.withCoordinates(driver, 700, 975);
+        driver.findElement(By.xpath("//android.view.View[@index=\"4\"]")).click();
+        driver.findElement(By.xpath("//android.view.View[@content-desc=\"Delete device\"]")).click();
+
+    }
+
+    private void bleFanAddition(){
+        driver.findElement(FanLocators.NEXT_BUTTON).click();
+        ActionsUtil.sleep(500);
+        driver.findElement(FanLocators.CONTINUE_BUTTON).click();
+    }
+
+
+
+
+//TODO :  Custom timer
+    //TODO : All Commands
     // === Setup Methods ===
 
     private void initializeDriver() throws Exception {
@@ -60,7 +91,7 @@ public class Main {
         this.driver = initializer.getDriver();
 
         // Set implicit wait
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+//        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
         System.out.println("Driver initialized successfully.");
     }
 

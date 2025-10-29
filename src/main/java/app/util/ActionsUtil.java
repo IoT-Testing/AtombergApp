@@ -26,7 +26,7 @@ public class ActionsUtil {
                     .addAction(new Pause(finger, Duration.ofMillis(150)))
                     .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
             driver.perform(Collections.singletonList(tap));
-//            System.out.println("Tap at (" + x + ", " + y + ")");
+            System.out.println("Tap at (" + x + ", " + y + ")");
         }
 
         /**

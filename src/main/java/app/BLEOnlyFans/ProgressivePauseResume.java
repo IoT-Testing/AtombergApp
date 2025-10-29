@@ -1,126 +1,102 @@
 package app.BLEOnlyFans;
 
+import app.resources.Locators.BLEFan;
 import app.util.ActionsUtil;
-import app.util.Navigation;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import java.util.List;
-import java.util.Objects;
+
 import static app.resources.Locators.BLEFan.*;
 
 public class ProgressivePauseResume {
 
     private final AndroidDriver driver;
-    public String  expectedVersion;
+    private final FirmwareVersionChecker csvLogger;
 
-    public ProgressivePauseResume(AndroidDriver driver) {
+    // === Configuration ===
+    private static final int PAUSE_RESUME_CYCLES = 20;
+    private static final long HOLD_DURATION_MS = 800;
+
+    public ProgressivePauseResume(AndroidDriver driver, FirmwareVersionChecker csvLogger) {
         this.driver = driver;
+        this.csvLogger = csvLogger;
     }
 
     /**
-     * Uses coordinate-based taps to perform accurate pause-resume cycles.
-     * Each cycle: Tap → Wait 1.4s → Tap → Wait 1.4s (simulates 1s on/off)
+     * Executes the pause-resume sequence with retry capability
      */
-    public void runProgressivePauseResume() {
-        System.out.println("⏱ Starting high-accuracy pause-resume using coordinate taps...");
+    public boolean runPauseResumeCycle(int attemptNumber) {
+        String actionId = "Pause-Resume Cycle";
+        int iteration = 1;
+        boolean success = false;
 
-        try {
-            // Step 1: Click Start (if not already started)
+        while (iteration <= 5) {
+            String status = "Fail";
+            String versionForLogging = ""; // Always empty for pause-resume
+
             try {
-                driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Start\"]")).click();
-                System.out.println("▶️ Start button clicked.");
-            } catch (Exception e) {
-                System.out.println("⚠️ 'Start' button not found or already running.");
-            }
-            sleep(HOLD_DURATION_MS);
-
-            // Step 2: Perform 20 cycles of pause-resume via tap
-            for (int i = 0; i < PAUSE_RESUME_CYCLES; i++) {
-                // ⏸️ Pause: Tap at center-bottom
-                ActionsUtil.Tap.withCoordinates(driver, 525, 2020);
-                sleep(HOLD_DURATION_MS);
-
-                // ▶️ Resume: Tap again
-                ActionsUtil.Tap.withCoordinates(driver, 525, 2020);
-                sleep(HOLD_DURATION_MS);
-
-                System.out.println("🔁 Cycle " + (i + 1) + "/" + PAUSE_RESUME_CYCLES + " completed");
-                if (i==(PAUSE_RESUME_CYCLES-1)){
-                    clickIfExists(RESUME);
+                // Step 1: Click Start (if not already started)
+                try {
+                    driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Start\"]")).click();
+                    System.out.println("▶️ Start button clicked.");
+                } catch (Exception e) {
+                    System.out.println("⚠️ 'Start' button not found or already running.");
                 }
+
+                // Step 2: Perform pause-resume cycles
+                boolean allCyclesSuccessful = true;
+                for (int i = 0; i < PAUSE_RESUME_CYCLES; i++) {
+                    // ⏸️ Pause: Tap at center-bottom
+                    ActionsUtil.Tap.withCoordinates(driver, 525, 2020);
+
+                    ActionsUtil.sleep(HOLD_DURATION_MS);
+                    // ▶️ Resume: Tap again
+                    ActionsUtil.Tap.withCoordinates(driver, 525, 2020);
+
+                    System.out.println("🔁 Cycle " + (i + 1) + "/" + PAUSE_RESUME_CYCLES + " completed");
+
+                    // Check if we're still connected
+                    if (!isDeviceConnected()) {
+                        allCyclesSuccessful = false;
+                        break;
+                    }
+                }
+                if(isElementPresent(RESUME)) driver.findElement(RESUME).click();
+                if (allCyclesSuccessful) {
+                    status = "Success";
+                    success = true;
+                }
+            } catch (Exception e) {
+                // Ignore and retry
             }
 
-            System.out.println("✅ All pause-resume cycles completed with high accuracy.");
+            // Log to the shared CSV (versionForLogging is always empty)
+            csvLogger.printRow(attemptNumber, actionId, iteration, status, versionForLogging);
 
-        } catch (Exception e) {
-            throw new RuntimeException("❌ Error during pause-resume cycle: " + e.getMessage(), e);
-        }
-
-        verifyFirmwareUpgradeAndClickDone(FirmwareVersionChecker.previousExpectedVersion);
-    }
-
-    /**
-     * Waits for success toast, clicks Done, opens fan control, verifies firmware version.
-     *
-     * @param expectedVersion Expected firmware version (e.g., "1.0.3")
-     */
-    public void verifyFirmwareUpgradeAndClickDone(String expectedVersion) {
-        System.out.println("🔍 Waiting for firmware upgrade success message...");
-
-        long start = System.currentTimeMillis();
-
-        // Wait for success message
-        while ((System.currentTimeMillis() - start) < FIRMWARE_SUCCESS_TIMEOUT_MS) {
-            if (isElementPresent(FIRMWARE_SUCCESS_TOAST)) {
-                System.out.println("✅ Firmware upgrade successful message displayed.");
-                System.out.println(expectedVersion);
+            if (success) {
                 break;
             }
-            sleep(500);
+
+            if (iteration == 5) {
+                break;
+            }
+
+            iteration++;
         }
 
-        if (!isElementPresent(FIRMWARE_SUCCESS_TOAST)) {
-            throw new RuntimeException("❌ Timeout: 'Firmware upgrade successful' not shown.");
-        }
-
-        // Click Done
-        if (clickIfExists(DONE_BUTTON)) {
-            System.out.println("✅ Clicked 'Done' button.");
-        } else {
-            throw new RuntimeException("❌ 'Done' button not found.");
-        }
-
-        // Confirm on Home Screen
-        confirmOnHomeScreen();
-
-        // Navigate back to device control
-        Navigation.openFanControl(driver); // Reuse utility
-
-        // Open Menu
-        openMenuAndWait();
-
-        // Verify Version
-        String actualVersion = getCurrentFirmwareVersionFromMenu();
-        if (actualVersion == null) {
-            throw new RuntimeException("❌ Could not read firmware version from device.");
-        }
-
-        if (actualVersion.equals(expectedVersion)) {
-            System.out.println("✅ Firmware version verified: " + actualVersion);
-        } else {
-            throw new RuntimeException(
-                    "❌ Version mismatch! Expected: " + expectedVersion + ", Got: " + actualVersion);
-        }
-
-        // Close menu
-        driver.navigate().back();
-        System.out.println("📁 Menu closed. Ready for next update.");
-        clickIfExists(MENU_BUTTON);
-
+        return success;
     }
 
-    // === Helper Methods ===
+    /**
+     * Checks if device is connected
+     */
+    private boolean isDeviceConnected() {
+        try {
+            return !driver.getPageSource().contains("Device not connected");
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
     /**
      * Checks if an element is present and visible
@@ -130,87 +106,6 @@ public class ProgressivePauseResume {
             return driver.findElement(locator).isDisplayed();
         } catch (Exception e) {
             return false;
-        }
-    }
-
-    /**
-     * Safely clicks element if present and displayed.
-     */
-    private boolean clickIfExists(By locator) {
-        try {
-            WebElement el = driver.findElement(locator);
-            if (el.isDisplayed() && Boolean.parseBoolean(el.getDomAttribute("clickable"))) {
-                el.click();
-                return true;
-            }
-        } catch (Exception e) {
-            return false;
-        }
-        return false;
-    }
-
-    /**
-     * Confirms that app has returned to Home Screen
-     */
-    private void confirmOnHomeScreen() {
-        By moreTab = By.xpath("//android.widget.ImageView[@content-desc=\"More\nTab 3 of 3\"]");
-        long start = System.currentTimeMillis();
-
-        while ((System.currentTimeMillis() - start) < 10_000) {
-            if (isElementPresent(moreTab)) {
-                System.out.println("🏠 Back on Home Screen.");
-                return;
-            }
-            sleep(500);
-        }
-        System.err.println("⚠️ Could not confirm return to Home Screen.");
-    }
-
-    /**
-     * Opens the menu button and waits.
-     */
-    private void openMenuAndWait() {
-        if (!clickIfExists(MENU_BUTTON)) {
-            throw new RuntimeException("❌ Menu button not found after returning to device control");
-        }
-        System.out.println("✅ Menu opened");
-        sleep(3000); // Allow load
-    }
-
-    /**
-     * Reads current firmware version from menu option.
-     */
-    private String getCurrentFirmwareVersionFromMenu() {
-        try {
-            List<WebElement> views = driver.findElements(By.className("android.view.View"));
-            return views.stream()
-                    .map(el -> {
-                        try {
-                            return el.getDomAttribute("content-desc");
-                        } catch (Exception e) {
-                            return null;
-                        }
-                    })
-                    .filter(Objects::nonNull)
-                    .filter(desc -> desc.startsWith("Firmware Version"))
-                    .map(desc -> desc.replaceFirst("Firmware Version\\s*", "").trim())
-                    .findFirst()
-                    .orElse(null);
-        } catch (Exception e) {
-            System.err.println("Error reading firmware version: " + e.getMessage());
-            return null;
-        }
-    }
-
-    /**
-     * Wrapper for Thread.sleep()
-     */
-    private void sleep(long millis) {
-        try {
-            Thread.sleep(millis);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            System.err.println("Sleep interrupted: " + e.getMessage());
         }
     }
 }

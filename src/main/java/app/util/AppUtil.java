@@ -379,9 +379,10 @@ public class AppUtil {
 
         while ((System.currentTimeMillis() - start) < 10_000) {
             if (isElementPresent(driver, moreTab)) {
-                System.out.println("🏠 Back on Home Screen.");
+                System.out.println("🏠 On Home Screen.");
                 return;
             }
+            else{driver.navigate().back();}
             sleep(500);
         }
         System.err.println("⚠️ Could not confirm return to Home Screen.");
