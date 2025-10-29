@@ -1,8 +1,11 @@
 package app.BLEOnlyFans;
 
 import app.ServerInitializer;
+import app.util.AppUtil;
+import app.util.Navigation;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.options.UiAutomator2Options;
+import org.openqa.selenium.By;
 import java.net.URL;
 import java.time.Duration;
 import java.util.Scanner;
@@ -10,7 +13,7 @@ import java.util.Scanner;
 import static app.util.AppUtil.confirmOnHomeScreen;
 
 public class TestRunner {
-    public AndroidDriver driver;
+    private AndroidDriver driver;
     private final ServerInitializer server = new ServerInitializer();
     private static final int DEFAULT_ATTEMPTS = 20;
 
@@ -23,7 +26,7 @@ public class TestRunner {
             e.printStackTrace();
         } finally {
             main.quitDriverSafely();
-            FirmwareVersionChecker.closeCSV(); // Properly close CSV file
+            ProgressivePauseResume.closeCSV(); // Ensure CSV is properly closed
         }
     }
 
@@ -41,14 +44,11 @@ public class TestRunner {
         initializeDriverWithURL(url);
 
         driver.activateApp("com.atomberg.app");
-        sleep(4000);
+        sleep(3000);
 
-        // Get number of attempts from user
-
-        // Initialize CSV with header (this will be done in FirmwareVersionChecker)
+        // Initialize CSV with header
         System.out.println("\n📊 CSV Log Format:");
-        System.out.println("Attempt Number,Action ID,Iteration,Status,Updated Version");
-        System.out.println("--------------------------------------------------");
+        System.out.println("Attempt Number,Action ID,Iteration,Status");
 
         // Run test flow for specified number of attempts
         for (int i = 1; i <= 20; i++) {
@@ -77,7 +77,7 @@ public class TestRunner {
         }
 
         System.out.println("\n✅ All 20 attempts completed!");
-        System.out.println("📊 CSV report saved to: firmware_test_results_*.csv");
+        System.out.println("📊 CSV report saved to: test_results_*.csv");
     }
 
     /**
@@ -129,7 +129,7 @@ public class TestRunner {
 
         try {
             driver = new AndroidDriver(url, options);
-            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
             System.out.println("✅ Driver created successfully.");
         } catch (Exception e) {
             System.err.println("❌ Failed to create AndroidDriver: " + e.getMessage());

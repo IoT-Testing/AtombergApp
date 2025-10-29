@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-import static app.resources.Locators.BLEFan.FILE_TRANSFER_ERROR_TOAST;
 import static app.util.AppUtil.confirmOnHomeScreen;
 
 public class FirmwareVersionChecker {
@@ -32,8 +31,8 @@ public class FirmwareVersionChecker {
     );
     private static final String FIRMWARE_VERSION_PREFIX = "Firmware Version";
     private static final By SELECT_FILE_OPTION = By.xpath("//android.widget.Button[@content-desc=\"Select File\"]");
-    private static final By FIRMWARE_SUCCESS_TOAST = By.xpath("//android.view.View[@content-desc='Firmware upgrade successful']");
-    private static final By DONE_BUTTON = By.xpath("//android.widget.Button[@content-desc='Done']");
+    private static final By FIRMWARE_SUCCESS_TOAST = By.xpath("//android.view.View[@content-desc=\"Firmware upgrade successful\"]");
+    private static final By DONE_BUTTON = By.xpath("//android.widget.Button[@content-desc=\"Done\"]");
 
     public FirmwareVersionChecker(AndroidDriver driver) {
         this.driver = driver;
@@ -78,7 +77,7 @@ public class FirmwareVersionChecker {
         System.out.println("➡️ Starting from iteration: " + startFrom);
 
         // Main Loop: i = 1 to 20
-        for (int i = 1; i <= 25; i++) {
+        for (int i = 1; i <= 16; i++) {
             if (i < startFrom) {
                 System.out.println("⏭️ Skipping iteration " + i + " (already at or above this version)");
                 continue;
@@ -101,7 +100,7 @@ public class FirmwareVersionChecker {
             sleep(2000);
 
             // Click 'Select File'
-            if (!clickElementWithRetry(SELECT_FILE_OPTION, 3)) {
+            if (!clickElementWithRetry(SELECT_FILE_OPTION, 1)) {
                 throw new RuntimeException("❌ 'Select File' option not clickable");
             }
             System.out.println("📁 Select File clicked. Waiting for file picker...");
@@ -111,41 +110,48 @@ public class FirmwareVersionChecker {
             selectFileWithScroll(fileName);
             sleep(2000);
 
-            // Execute in CORRECT ORDER: Pause-Resume FIRST (with current firmware), THEN firmware update
-            String currentVersionBeforeUpdate = getCurrentFirmwareVersionFromMenu();
-            System.out.println("📊 Current firmware before update: " + currentVersionBeforeUpdate);
+            // Run validation: wait for success → click Done → verify
+            ProgressivePauseResume validator = new ProgressivePauseResume(driver);
+            validator.runProgressivePauseResume();
+            previousExpectedVersion = expectedVersion;
 
-            // 1. Run Pause-Resume Cycle with CURRENT firmware
-//            ProgressivePauseResume pauseResume = new ProgressivePauseResume(driver, this);
-//            pauseResume.runPauseResumeCycle(currentAttempt);
+            // Execute firmware verification
+            boolean firmwareSuccess = executeFirmwareVerification(currentAttempt, expectedVersion);
 
-            // 2. Run OTA cycles without Interruption
-            UploadFirmware upload = new UploadFirmware(driver,this);
-            upload.runProgressiveFWUpload(expectedVersion,currentAttempt);
-            executeFirmwareVerification(currentAttempt, expectedVersion, currentVersionBeforeUpdate);
+            // Only run pause-resume if firmware verification succeeded
+            if (firmwareSuccess) {
+                executePauseResumeCycle(currentAttempt, expectedVersion);
+            }
 
             currentAttempt++;
         }
 
         System.out.println("✅ Completed all 20 dynamic OTA updates successfully!");
-        closeCSV(); // Ensure CSV is properly closed
+        driver.navigate().back();
+        driver.navigate().back();
+        driver.navigate().back();
+        driver.navigate().back();
+        FanManagement fan = new FanManagement(driver);
+        fan.fanControl();
     }
 
     /**
      * Executes firmware verification with retry capability
      */
-    private boolean executeFirmwareVerification(int attemptNumber, String expectedVersion, String currentVersionBeforeUpdate) {
+    private boolean executeFirmwareVerification(int attemptNumber, String expectedVersion) {
         String actionId = "Firmware Verification";
         int iteration = 1;
         boolean success = false;
+        String updatedVersion = "";
 
         while (iteration <= 5) {
             String status = "Fail";
-            String updatedVersion = "";
+            updatedVersion = "";
 
             try {
                 // Wait for success message
                 boolean successMessageFound = waitForElement(FIRMWARE_SUCCESS_TOAST, 15);
+
                 if (successMessageFound) {
                     // Click Done button
                     boolean doneClicked = clickElementWithRetry(DONE_BUTTON, 3);
@@ -168,20 +174,13 @@ public class FirmwareVersionChecker {
                                 status = "Success";
                                 updatedVersion = actualVersion;
                                 success = true;
-                                break;
                             }
                         }
                     }
                 }
-                boolean failedMessageFound = waitForElement(FILE_TRANSFER_ERROR_TOAST,10);
-                if (failedMessageFound) {break;}
             } catch (Exception e) {
                 // Ignore and retry
             }
-
-            // For failed attempts, report the CURRENT version (before update)
-            // For successful attempts, report the NEW version
-            updatedVersion = success ? expectedVersion : currentVersionBeforeUpdate;
 
             printRow(attemptNumber, actionId, iteration, status, updatedVersion);
 
@@ -199,6 +198,59 @@ public class FirmwareVersionChecker {
     }
 
     /**
+     * Executes the pause-resume cycle with retry capability
+     */
+    private boolean executePauseResumeCycle(int attemptNumber, String expectedVersion) {
+        String actionId = "Pause-Resume Cycle";
+        int iteration = 1;
+        boolean success = false;
+        String updatedVersion = "";
+
+        while (iteration <= 5) {
+            String status = "Fail";
+            updatedVersion = "";
+
+            try {
+                // Run pause-resume sequence
+                ProgressivePauseResume validator = new ProgressivePauseResume(driver);
+                validator.runProgressivePauseResume();
+
+                // Verify device is still connected
+                if (isDeviceConnected()) {
+                    status = "Success";
+                    updatedVersion = expectedVersion;
+                    success = true;
+                }
+            } catch (Exception e) {
+                // Ignore and retry
+            }
+
+            printRow(attemptNumber, actionId, iteration, status, updatedVersion);
+
+            if (success) {
+                break;
+            }
+
+            sleep(1000); // Standard delay for pause-resume (not increased)
+
+            iteration++;
+        }
+
+        return success;
+    }
+
+    /**
+     * Checks if device is connected
+     */
+    private boolean isDeviceConnected() {
+        try {
+            return !driver.getPageSource().contains("Device not connected");
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
      * Waits for element to appear with timeout
      */
     private boolean waitForElement(By locator, int timeoutSeconds) {
@@ -207,6 +259,7 @@ public class FirmwareVersionChecker {
             if (isElementPresent(locator)) {
                 return true;
             }
+            sleep(500);
         }
         return false;
     }
@@ -282,7 +335,7 @@ public class FirmwareVersionChecker {
     /**
      * Reads current firmware version from menu option.
      */
-    String getCurrentFirmwareVersionFromMenu() {
+    private String getCurrentFirmwareVersionFromMenu() {
         try {
             List<WebElement> views = driver.findElements(By.className("android.view.View"));
             return views.stream()
@@ -359,7 +412,7 @@ public class FirmwareVersionChecker {
 
     // ===== CSV LOGGING METHODS =====
 
-    public void printRow(int attemptNumber, String actionId, int iteration, String status, String updatedVersion) {
+    private void printRow(int attemptNumber, String actionId, int iteration, String status, String updatedVersion) {
         // Format: clean, no extra spaces
         String row = String.format("%d,%s,%d,%s,%s",
                 attemptNumber, actionId, iteration, status, updatedVersion);
