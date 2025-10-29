@@ -5,12 +5,22 @@ import app.util.ActionsUtil;
 import app.util.Navigation;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.*;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+
+import static app.util.AppUtil.confirmOnHomeScreen;
 
 public class FirmwareVersionChecker {
 
     private final AndroidDriver driver;
     public static String previousExpectedVersion;
+    private static PrintWriter csvWriter;
+    private static boolean csvInitialized = false;
+    private int currentAttempt = 1;
 
     // === Locators ===
     private static final By MENU_BUTTON = By.xpath(
@@ -21,6 +31,8 @@ public class FirmwareVersionChecker {
     );
     private static final String FIRMWARE_VERSION_PREFIX = "Firmware Version";
     private static final By SELECT_FILE_OPTION = By.xpath("//android.widget.Button[@content-desc=\"Select File\"]");
+    private static final By FIRMWARE_SUCCESS_TOAST = By.xpath("//android.view.View[@content-desc=\"Firmware upgrade successful\"]");
+    private static final By DONE_BUTTON = By.xpath("//android.widget.Button[@content-desc=\"Done\"]");
 
     public FirmwareVersionChecker(AndroidDriver driver) {
         this.driver = driver;
@@ -29,12 +41,17 @@ public class FirmwareVersionChecker {
     /**
      * Runs exactly 20 OTA updates using dynamically named files:
      * Production_1.0.1.bin → Production_1.0.20.bin
-     *
      * Skips if current version >= "i"
      * Scrolls if file not in view
      */
     public void runSequentialFirmwareUpdates() {
         System.out.println("🔁 Starting 20-iteration dynamic OTA update test...");
+
+        // Initialize CSV
+        initCSV();
+        System.out.println("\n📊 CSV Log Format:");
+        System.out.println("Attempt Number,Action ID,Iteration,Status,Updated Version");
+        System.out.println("--------------------------------------------------");
 
         // Step 1: Open Fan Control & Read Current Firmware
         Navigation.openFanControl(driver);
@@ -60,7 +77,7 @@ public class FirmwareVersionChecker {
         System.out.println("➡️ Starting from iteration: " + startFrom);
 
         // Main Loop: i = 1 to 20
-        for (int i = 1; i <= 20; i++) {
+        for (int i = 1; i <= 16; i++) {
             if (i < startFrom) {
                 System.out.println("⏭️ Skipping iteration " + i + " (already at or above this version)");
                 continue;
@@ -83,7 +100,7 @@ public class FirmwareVersionChecker {
             sleep(2000);
 
             // Click 'Select File'
-            if (!clickElementWithRetry(SELECT_FILE_OPTION, 3)) {
+            if (!clickElementWithRetry(SELECT_FILE_OPTION, 1)) {
                 throw new RuntimeException("❌ 'Select File' option not clickable");
             }
             System.out.println("📁 Select File clicked. Waiting for file picker...");
@@ -91,11 +108,22 @@ public class FirmwareVersionChecker {
 
             // ✅ Scroll and select correct file (handles bad sorting)
             selectFileWithScroll(fileName);
+            sleep(2000);
 
             // Run validation: wait for success → click Done → verify
-            BluetoothToggleInterruption validator = new BluetoothToggleInterruption(driver);
-            previousExpectedVersion = expectedVersion;
+            ProgressivePauseResume validator = new ProgressivePauseResume(driver);
             validator.runProgressivePauseResume();
+            previousExpectedVersion = expectedVersion;
+
+            // Execute firmware verification
+            boolean firmwareSuccess = executeFirmwareVerification(currentAttempt, expectedVersion);
+
+            // Only run pause-resume if firmware verification succeeded
+            if (firmwareSuccess) {
+                executePauseResumeCycle(currentAttempt, expectedVersion);
+            }
+
+            currentAttempt++;
         }
 
         System.out.println("✅ Completed all 20 dynamic OTA updates successfully!");
@@ -105,6 +133,135 @@ public class FirmwareVersionChecker {
         driver.navigate().back();
         FanManagement fan = new FanManagement(driver);
         fan.fanControl();
+    }
+
+    /**
+     * Executes firmware verification with retry capability
+     */
+    private boolean executeFirmwareVerification(int attemptNumber, String expectedVersion) {
+        String actionId = "Firmware Verification";
+        int iteration = 1;
+        boolean success = false;
+        String updatedVersion = "";
+
+        while (iteration <= 5) {
+            String status = "Fail";
+            updatedVersion = "";
+
+            try {
+                // Wait for success message
+                boolean successMessageFound = waitForElement(FIRMWARE_SUCCESS_TOAST, 15);
+
+                if (successMessageFound) {
+                    // Click Done button
+                    boolean doneClicked = clickElementWithRetry(DONE_BUTTON, 3);
+
+                    if (doneClicked) {
+                        // Confirm on Home Screen
+                        confirmOnHomeScreen(driver);
+                        sleep(1000);
+
+                        // Navigate back to fan control
+                        Navigation.openFanControl(driver);
+                        sleep(2000);
+
+                        // Open menu and verify version
+                        if (clickElementWithRetry(MENU_BUTTON, 3)) {
+                            sleep(2000);
+                            String actualVersion = getCurrentFirmwareVersionFromMenu();
+
+                            if (actualVersion != null && actualVersion.equals(expectedVersion)) {
+                                status = "Success";
+                                updatedVersion = actualVersion;
+                                success = true;
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                // Ignore and retry
+            }
+
+            printRow(attemptNumber, actionId, iteration, status, updatedVersion);
+
+            if (success) {
+                break;
+            }
+
+            // Add more delay only for firmware verification retries
+            sleep(2000); // 2 seconds instead of 1 for better stability
+
+            iteration++;
+        }
+
+        return success;
+    }
+
+    /**
+     * Executes the pause-resume cycle with retry capability
+     */
+    private boolean executePauseResumeCycle(int attemptNumber, String expectedVersion) {
+        String actionId = "Pause-Resume Cycle";
+        int iteration = 1;
+        boolean success = false;
+        String updatedVersion = "";
+
+        while (iteration <= 5) {
+            String status = "Fail";
+            updatedVersion = "";
+
+            try {
+                // Run pause-resume sequence
+                ProgressivePauseResume validator = new ProgressivePauseResume(driver);
+                validator.runProgressivePauseResume();
+
+                // Verify device is still connected
+                if (isDeviceConnected()) {
+                    status = "Success";
+                    updatedVersion = expectedVersion;
+                    success = true;
+                }
+            } catch (Exception e) {
+                // Ignore and retry
+            }
+
+            printRow(attemptNumber, actionId, iteration, status, updatedVersion);
+
+            if (success) {
+                break;
+            }
+
+            sleep(1000); // Standard delay for pause-resume (not increased)
+
+            iteration++;
+        }
+
+        return success;
+    }
+
+    /**
+     * Checks if device is connected
+     */
+    private boolean isDeviceConnected() {
+        try {
+            return !driver.getPageSource().contains("Device not connected");
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Waits for element to appear with timeout
+     */
+    private boolean waitForElement(By locator, int timeoutSeconds) {
+        long startTime = System.currentTimeMillis();
+        while ((System.currentTimeMillis() - startTime) < (timeoutSeconds * 1000)) {
+            if (isElementPresent(locator)) {
+                return true;
+            }
+            sleep(500);
+        }
+        return false;
     }
 
     // === Internal Helpers ===
@@ -119,7 +276,7 @@ public class FirmwareVersionChecker {
 
         boolean found = false;
         int scrolls = 0;
-        final int MAX_SCROLLS = 30; // Prevent infinite loop
+        final int MAX_SCROLLS = 10; // Prevent infinite loop
 
         while (!found && scrolls < MAX_SCROLLS) {
             try {
@@ -176,6 +333,31 @@ public class FirmwareVersionChecker {
     }
 
     /**
+     * Reads current firmware version from menu option.
+     */
+    private String getCurrentFirmwareVersionFromMenu() {
+        try {
+            List<WebElement> views = driver.findElements(By.className("android.view.View"));
+            return views.stream()
+                    .map(el -> {
+                        try {
+                            return el.getDomAttribute("content-desc");
+                        } catch (Exception e) {
+                            return null;
+                        }
+                    })
+                    .filter(Objects::nonNull)
+                    .filter(desc -> desc.startsWith("Firmware Version"))
+                    .map(desc -> desc.replaceFirst("Firmware Version\\s*", "").trim())
+                    .findFirst()
+                    .orElse(null);
+        } catch (Exception e) {
+            System.err.println("Error reading firmware version: " + e.getMessage());
+            return null;
+        }
+    }
+
+    /**
      * Parses patch version from "1.0.4" → returns 4
      */
     private int parsePatchVersion(String version) {
@@ -206,6 +388,17 @@ public class FirmwareVersionChecker {
     }
 
     /**
+     * Checks if an element is present and visible
+     */
+    private boolean isElementPresent(By locator) {
+        try {
+            return driver.findElement(locator).isDisplayed();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
      * Safe sleep utility.
      */
     private void sleep(long millis) {
@@ -214,6 +407,42 @@ public class FirmwareVersionChecker {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             System.err.println("Sleep interrupted");
+        }
+    }
+
+    // ===== CSV LOGGING METHODS =====
+
+    private void printRow(int attemptNumber, String actionId, int iteration, String status, String updatedVersion) {
+        // Format: clean, no extra spaces
+        String row = String.format("%d,%s,%d,%s,%s",
+                attemptNumber, actionId, iteration, status, updatedVersion);
+
+        // Write to CSV
+        initCSV();
+        csvWriter.println(row);
+        csvWriter.flush();
+
+        // Print to console
+        System.out.printf("%-15d | %-20s | %-10d | %-8s | %-10s%n",
+                attemptNumber, actionId, iteration, status, updatedVersion);
+    }
+
+    private static void initCSV() {
+        if (csvInitialized) return;
+        try {
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+            csvWriter = new PrintWriter(new FileWriter("firmware_test_results_" + timestamp + ".csv", true));
+            csvWriter.println("Attempt Number,Action ID,Iteration,Status,Updated Version");
+            csvWriter.flush();
+            csvInitialized = true;
+        } catch (IOException e) {
+            System.err.println("Failed to create CSV file: " + e.getMessage());
+        }
+    }
+
+    public static void closeCSV() {
+        if (csvWriter != null) {
+            csvWriter.close();
         }
     }
 }

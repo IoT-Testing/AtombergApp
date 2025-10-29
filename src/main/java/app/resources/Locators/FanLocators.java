@@ -12,7 +12,7 @@ public class FanLocators {
     public static final By BUY_NOW_BUTTON = By.xpath("//android.widget.Button[@content-desc=\"Buy Now!\"]");
     public static final By ADD_FIRST_DEVICE_ICON = By.xpath("//android.widget.ImageView[@content-desc=\"Add your first smart device\"]");
     public static final By FAN_MENU_BUTTON = By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[4]");
-
+    public static final By BM_BOND_FAILURE = By.xpath("//android.view.View[@content-desc=\"Failed to create bond. BmBondStateEnum.none\"]");
     // Fan Control Buttons
     public static final By SPEED_1 = By.xpath("//android.widget.Button[@content-desc=\"1\"]");
     public static final By SPEED_2 = By.xpath("//android.widget.Button[@content-desc=\"2\"]");

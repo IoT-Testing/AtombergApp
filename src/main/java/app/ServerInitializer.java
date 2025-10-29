@@ -3,6 +3,8 @@ package app;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import org.openqa.selenium.remote.service.DriverService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,9 +41,7 @@ public class ServerInitializer {
         try {
             AppiumServiceBuilder builder = configureServiceBuilder();
             service = builder.build();
-
             service.start();
-
             if (!service.isRunning()) {
                 throw new RuntimeException("Appium service started but not detected as running.");
             }
@@ -96,10 +96,9 @@ public class ServerInitializer {
             builder.withAppiumJS(appiumJs);
             System.out.println("Using Appium JS: " + appiumJs.getAbsolutePath());
         } else {
-            System.out.println("⚠️ Appium JS not found at expected location. Using system-installed Appium (PATH).");
+            System.out.println("⚠️ Appium JS not found at expected location. Using system-installed Appium (PATH)."+appiumJs.getAbsolutePath());
             // Let AppiumDriverLocalService find it via PATH
         }
-
         return builder;
     }
 

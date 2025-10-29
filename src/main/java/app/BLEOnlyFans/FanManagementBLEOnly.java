@@ -51,6 +51,7 @@ public class FanManagementBLEOnly {
 
         }
     }
+
     public boolean checkFan() {
         ScreenCheck screen = new ScreenCheck(atomberg);
         screen.homeScreen();

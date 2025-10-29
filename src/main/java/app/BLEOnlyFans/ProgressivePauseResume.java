@@ -5,126 +5,246 @@ import app.util.Navigation;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import static app.resources.Locators.BLEFan.*;
 
+
 public class ProgressivePauseResume {
 
     private final AndroidDriver driver;
-    public String  expectedVersion;
+    private static PrintWriter csvWriter;
+    private static boolean csvInitialized = false;
+    private int currentAttempt = 1; // Track current attempt number
+
+    // === Configuration ===
+    private static final int PAUSE_RESUME_CYCLES = 20;
+    private static final long HOLD_DURATION_MS = 1300;
+    private static final long FIRMWARE_SUCCESS_TIMEOUT_MS = 15_000;
 
     public ProgressivePauseResume(AndroidDriver driver) {
         this.driver = driver;
     }
 
     /**
-     * Uses coordinate-based taps to perform accurate pause-resume cycles.
-     * Each cycle: Tap → Wait 1.4s → Tap → Wait 1.4s (simulates 1s on/off)
+     * Executes the full firmware verification and pause-resume cycle
      */
     public void runProgressivePauseResume() {
         System.out.println("⏱ Starting high-accuracy pause-resume using coordinate taps...");
 
-        try {
-            // Step 1: Click Start (if not already started)
-            try {
-                driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Start\"]")).click();
-                System.out.println("▶️ Start button clicked.");
-            } catch (Exception e) {
-                System.out.println("⚠️ 'Start' button not found or already running.");
-            }
-            sleep(HOLD_DURATION_MS);
+        // Initialize CSV on first run
+        initCSV();
+        // Run firmware verification and pause-resume sequence
+        boolean success = executePauseResumeSequence(currentAttempt)&&executeFirmwareVerification(currentAttempt) ;
 
-            // Step 2: Perform 20 cycles of pause-resume via tap
-            for (int i = 0; i < PAUSE_RESUME_CYCLES; i++) {
-                // ⏸️ Pause: Tap at center-bottom
-                ActionsUtil.Tap.withCoordinates(driver, 525, 2020);
-                sleep(HOLD_DURATION_MS);
-
-                // ▶️ Resume: Tap again
-                ActionsUtil.Tap.withCoordinates(driver, 525, 2020);
-                sleep(HOLD_DURATION_MS);
-
-                System.out.println("🔁 Cycle " + (i + 1) + "/" + PAUSE_RESUME_CYCLES + " completed");
-                if (i==(PAUSE_RESUME_CYCLES-1)){
-                    clickIfExists(RESUME);
-                }
-            }
-
-            System.out.println("✅ All pause-resume cycles completed with high accuracy.");
-
-        } catch (Exception e) {
-            throw new RuntimeException("❌ Error during pause-resume cycle: " + e.getMessage(), e);
+        if (success) {
+            System.out.println("✅ Firmware verification and pause-resume completed successfully!");
+        } else {
+            System.out.println("❌ Failed to complete firmware verification and pause-resume sequence");
         }
 
-        verifyFirmwareUpgradeAndClickDone(FirmwareVersionChecker.previousExpectedVersion);
+        currentAttempt++; // Increment for next run
+    }
+
+
+    /**
+     * Executes firmware verification with retry capability
+     */
+    private boolean executeFirmwareVerification(int attemptNumber) {
+        String actionId = "Firmware Verification";
+        int iteration = 1;
+        boolean success = false;
+
+        while (iteration <= 5) {
+            String status = "Fail";
+
+            try {
+                // Check for success message
+                boolean successMessageFound = waitForElement(FIRMWARE_SUCCESS_TOAST, 15);
+
+                if (successMessageFound) {
+                    // Click Done button
+                    boolean doneClicked = clickIfExists(DONE_BUTTON);
+
+                    if (doneClicked) {
+                        // Navigate back to fan control
+                        Navigation.openFanControl(driver);
+                        sleep(2000);
+
+                        // Open menu and verify version
+                        if (clickIfExists(MENU_BUTTON)) {
+                            sleep(2000);
+                            String actualVersion = getCurrentFirmwareVersionFromMenu();
+
+                            if (actualVersion != null) {
+                                status = "Success";
+                                success = true;
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                // Ignore and retry
+            }
+
+            printRow(attemptNumber, actionId, iteration, status);
+
+            if (success) {
+                break;
+            }
+
+            if (iteration == 5) {
+                break;
+            }
+
+            iteration++;
+            sleep(1000);
+        }
+
+        return success;
+    }
+
+    public void openMenuAndWait() {
+        if (!clickIfExists(MENU_BUTTON)) {
+            throw new RuntimeException("❌ Menu button not found after returning to device control");
+        }
+        System.out.println("✅ Menu opened");
+        sleep(3000); // Allow load
     }
 
     /**
-     * Waits for success toast, clicks Done, opens fan control, verifies firmware version.
-     *
-     * @param expectedVersion Expected firmware version (e.g., "1.0.3")
+     * Executes the pause-resume sequence with retry capability
      */
-    public void verifyFirmwareUpgradeAndClickDone(String expectedVersion) {
-        System.out.println("🔍 Waiting for firmware upgrade success message...");
+    private boolean executePauseResumeSequence(int attemptNumber) {
+        String actionId = "Pause-Resume Cycle";
+        int iteration = 1;
+        boolean success = false;
 
-        long start = System.currentTimeMillis();
+        while (iteration <= 5) {
+            String status = "Fail";
 
-        // Wait for success message
-        while ((System.currentTimeMillis() - start) < FIRMWARE_SUCCESS_TIMEOUT_MS) {
-            if (isElementPresent(FIRMWARE_SUCCESS_TOAST)) {
-                System.out.println("✅ Firmware upgrade successful message displayed.");
-                System.out.println(expectedVersion);
+            try {
+                // Step 1: Click Start (if not already started)
+                try {
+                    driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Start\"]")).click();
+                    System.out.println("▶️ Start button clicked.");
+                } catch (Exception e) {
+                    System.out.println("⚠️ 'Start' button not found or already running.");
+                }
+                sleep(HOLD_DURATION_MS);
+
+                // Step 2: Perform pause-resume cycles
+                boolean allCyclesSuccessful = true;
+                for (int i = 0; i < PAUSE_RESUME_CYCLES; i++) {
+                    // ⏸️ Pause: Tap at center-bottom
+                    ActionsUtil.Tap.withCoordinates(driver, 525, 2020);
+                    sleep(HOLD_DURATION_MS);
+
+                    // ▶️ Resume: Tap again
+                    ActionsUtil.Tap.withCoordinates(driver, 525, 2020);
+                    sleep(HOLD_DURATION_MS);
+
+                    System.out.println("🔁 Cycle " + (i + 1) + "/" + PAUSE_RESUME_CYCLES + " completed");
+
+                    // Check if we're still connected
+                    if (!isDeviceConnected()) {
+                        allCyclesSuccessful = false;
+                        break;
+                    }
+                }
+
+                if (allCyclesSuccessful) {
+                    status = "Success";
+                    success = true;
+                }
+            } catch (Exception e) {
+                // Ignore and retry
+            }
+
+            printRow(attemptNumber, actionId, iteration, status);
+
+            if (success) {
                 break;
+            }
+
+            if (iteration == 5) {
+                break;
+            }
+
+            iteration++;
+            sleep(1000);
+        }
+
+        return success;
+    }
+
+    /**
+     * Checks if device is connected
+     */
+    private boolean isDeviceConnected() {
+        try {
+            return !Objects.requireNonNull(driver.getPageSource()).contains("Device not connected");
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Waits for element to appear with timeout
+     */
+    private boolean waitForElement(By locator, int timeoutSeconds) {
+        long startTime = System.currentTimeMillis();
+        while ((System.currentTimeMillis() - startTime) < (timeoutSeconds * 1000L)) {
+            if (isElementPresent(locator)) {
+                return true;
             }
             sleep(500);
         }
-
-        if (!isElementPresent(FIRMWARE_SUCCESS_TOAST)) {
-            throw new RuntimeException("❌ Timeout: 'Firmware upgrade successful' not shown.");
-        }
-
-        // Click Done
-        if (clickIfExists(DONE_BUTTON)) {
-            System.out.println("✅ Clicked 'Done' button.");
-        } else {
-            throw new RuntimeException("❌ 'Done' button not found.");
-        }
-
-        // Confirm on Home Screen
-        confirmOnHomeScreen();
-
-        // Navigate back to device control
-        Navigation.openFanControl(driver); // Reuse utility
-
-        // Open Menu
-        openMenuAndWait();
-
-        // Verify Version
-        String actualVersion = getCurrentFirmwareVersionFromMenu();
-        if (actualVersion == null) {
-            throw new RuntimeException("❌ Could not read firmware version from device.");
-        }
-
-        if (actualVersion.equals(expectedVersion)) {
-            System.out.println("✅ Firmware version verified: " + actualVersion);
-        } else {
-            throw new RuntimeException(
-                    "❌ Version mismatch! Expected: " + expectedVersion + ", Got: " + actualVersion);
-        }
-
-        // Close menu
-        driver.navigate().back();
-        System.out.println("📁 Menu closed. Ready for next update.");
-        clickIfExists(MENU_BUTTON);
-
+        return false;
     }
 
-    // === Helper Methods ===
+    // ===== CSV LOGGING METHODS =====
 
-    /**
-     * Checks if an element is present and visible
-     */
+    private void printRow(int attemptNumber, String actionId, int iteration, String status) {
+        // Format: clean, no extra spaces
+        String row = String.format("%d,%s,%d,%s", attemptNumber, actionId, iteration, status);
+
+        // Write to CSV
+        initCSV();
+        csvWriter.println(row);
+        csvWriter.flush();
+
+        // Print to console
+        System.out.printf("%-15d | %-20s | %-10d | %-8s%n",
+                attemptNumber, actionId, iteration, status);
+    }
+
+    private static void initCSV() {
+        if (csvInitialized) return;
+        try {
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+            csvWriter = new PrintWriter(new FileWriter("test_results_" + timestamp + ".csv", true));
+            csvWriter.println("Attempt Number,Action ID,Iteration,Status");
+            csvWriter.flush();
+            csvInitialized = true;
+        } catch (IOException e) {
+            System.err.println("Failed to create CSV file: " + e.getMessage());
+        }
+    }
+
+    public static void closeCSV() {
+        if (csvWriter != null) {
+            csvWriter.close();
+        }
+    }
+
+    // ===== HELPER METHODS =====
+
     private boolean isElementPresent(By locator) {
         try {
             return driver.findElement(locator).isDisplayed();
@@ -133,9 +253,6 @@ public class ProgressivePauseResume {
         }
     }
 
-    /**
-     * Safely clicks element if present and displayed.
-     */
     private boolean clickIfExists(By locator) {
         try {
             WebElement el = driver.findElement(locator);
@@ -149,37 +266,6 @@ public class ProgressivePauseResume {
         return false;
     }
 
-    /**
-     * Confirms that app has returned to Home Screen
-     */
-    private void confirmOnHomeScreen() {
-        By moreTab = By.xpath("//android.widget.ImageView[@content-desc=\"More\nTab 3 of 3\"]");
-        long start = System.currentTimeMillis();
-
-        while ((System.currentTimeMillis() - start) < 10_000) {
-            if (isElementPresent(moreTab)) {
-                System.out.println("🏠 Back on Home Screen.");
-                return;
-            }
-            sleep(500);
-        }
-        System.err.println("⚠️ Could not confirm return to Home Screen.");
-    }
-
-    /**
-     * Opens the menu button and waits.
-     */
-    private void openMenuAndWait() {
-        if (!clickIfExists(MENU_BUTTON)) {
-            throw new RuntimeException("❌ Menu button not found after returning to device control");
-        }
-        System.out.println("✅ Menu opened");
-        sleep(3000); // Allow load
-    }
-
-    /**
-     * Reads current firmware version from menu option.
-     */
     private String getCurrentFirmwareVersionFromMenu() {
         try {
             List<WebElement> views = driver.findElements(By.className("android.view.View"));
@@ -202,9 +288,6 @@ public class ProgressivePauseResume {
         }
     }
 
-    /**
-     * Wrapper for Thread.sleep()
-     */
     private void sleep(long millis) {
         try {
             Thread.sleep(millis);

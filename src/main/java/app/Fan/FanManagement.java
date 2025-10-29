@@ -1,6 +1,7 @@
 package app.Fan;
 
 import app.ScreenCheck.ScreenCheck;
+import app.SmartDevice;
 import app.util.ActionsUtil;
 import app.util.AppUtil;
 import io.appium.java_client.android.AndroidDriver;
@@ -11,6 +12,8 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import static app.util.AppUtil.*;
 import static app.resources.Locators.FanLocators.*;
@@ -20,7 +23,7 @@ import static app.resources.Locators.FanLocators.*;
  *
  */
 
-public class FanManagement {
+public class FanManagement implements SmartDevice {
     private static AndroidDriver atomberg;
     private final WebDriverWait wait; // For explicit waits
 
@@ -34,8 +37,8 @@ public class FanManagement {
      * Adds a new fan by navigating to the add screen and attempting connection.
      * Retries scanning up to 10 times if no device is found.
      */
-    public void addFan() {
-        AppUtil.navigateToAddScreen(atomberg);
+    public void addition() {
+        navigateToAddScreen(atomberg);
 
         System.out.println("Searching for available devices...");
 
@@ -67,7 +70,92 @@ public class FanManagement {
         }
     }
 
-    // --- Helper Methods for addFan ---
+    private Point getCenter(WebElement element) {
+        Pattern pattern = Pattern.compile("\\d+");
+        Matcher matcher = pattern.matcher(Objects.requireNonNull(element.getDomAttribute("bounds")));
+
+        // Use a loop to find each number and store it.
+        int[] coords = new int[4];
+        int i = 0;
+        while (matcher.find()) {
+            coords[i] = Integer.parseInt(matcher.group());
+            i++;
+        }
+
+        // Assign the extracted values to more readable variables
+        int x1 = coords[0];
+        int y1 = coords[1];
+        int x2 = coords[2];
+        int y2 = coords[3];
+
+        // Calculate the center
+        int centerX = (x1 + x2) / 2;
+        int centerY = (y1 + y2) / 2;
+        Point center = new Point(centerX, centerY);
+        System.out.println("Center coordinates: (" + centerX + ", " + centerY + ")");
+        return center;
+    }
+
+    /**
+     * Handles step to add new device, in this case Smart Fan.
+     * Searches for "Atomberg Smart Fan", then clicks on "Connect" button besides it
+     * Uses Coordinates to locate Connect button.
+     */
+    public void addition(By deviceLocator) {
+        navigateToAddScreen(atomberg);
+
+        System.out.println("🔍 Searching for available devices...");
+
+        final int MAX_SCAN_ATTEMPTS = 10;
+        final int SCAN_INTERVAL_MS = 3000; // 3 seconds between scans
+
+        for (int attempt = 1; attempt <= MAX_SCAN_ATTEMPTS; attempt++) {
+            System.out.println("🔄 Scan attempt #" + attempt + " of " + MAX_SCAN_ATTEMPTS);
+
+            // Wait for scan results to populate
+            sleep(SCAN_INTERVAL_MS);
+
+            try {
+                // Check if fan device is visible in scan results
+                WebElement fanElement = atomberg.findElement(deviceLocator);
+
+                System.out.println("✅ Atomberg Smart Fan detected");
+
+                // Click the connect button directly (more reliable than coordinates)
+                WebElement connectButton = atomberg.findElement(CONNECT_BUTTON);
+                connectButton.click();
+
+                System.out.println("🖱️ Tapped Connect button");
+
+                // Wait for connection process to start
+                sleep(2000);
+                return; // Successfully initiated connection
+
+            } catch (NoSuchElementException e) {
+                System.out.println("⚠️ Fan not found in scan results (attempt " + attempt + ")");
+
+                // Only attempt to handle no device on final attempt
+                if (attempt == MAX_SCAN_ATTEMPTS) {
+                    System.out.println("❌ No devices found after " + MAX_SCAN_ATTEMPTS + " attempts");
+                    handleNoDeviceFound();
+                    throw new DeviceNotFoundException("No Atomberg devices detected during BLE scan");
+                }
+            } catch (Exception e) {
+                System.out.println("⚠️ Unexpected error during scan: " + e.getMessage());
+                // Consider adding specific error handling for different exception types
+            }
+        }
+    }
+
+    public static class DeviceNotFoundException extends RuntimeException {
+        public DeviceNotFoundException(String message) {
+            super(message);
+        }
+    }
+
+    public void deletion(){}
+
+    public void control(){}
 
     /**
      * Handles known error states post-connection attempt.
@@ -134,7 +222,7 @@ public class FanManagement {
         WebElement nextBtn = wait.until(ExpectedConditions.elementToBeClickable(NEXT_BUTTON));
         System.out.println("Next");
         nextBtn.click();
-        AppUtil.captureScreenshot(atomberg, "Addition Process");
+        captureScreenshot(atomberg, "Addition Process");
         AppUtil.additionProcess(atomberg); // Select room
     }
 
@@ -427,7 +515,7 @@ public class FanManagement {
         public void manageFanDevice() {
             FanManagement fan = new FanManagement(atomberg);
 
-            fan.addFan();
+            fan.addition();
             fan.additionProcess();
             fan.checkFan();
             fan.fanControl();
@@ -446,7 +534,7 @@ public class FanManagement {
                 } else {
                     models.Erica();
                 }
-                AppUtil.captureScreenshot(atomberg, "Fan Model Selection");
+                captureScreenshot(atomberg, "Fan Model Selection");
             } else {
                 SixLED(atomberg);
             }
@@ -461,7 +549,7 @@ public class FanManagement {
                 WebElement model = atomberg.findElement(options[choice]);
                 model.click();
                 System.out.println(labels[choice] + " Selected");
-                AppUtil.captureScreenshot(atomberg, labels[choice]);
+                captureScreenshot(atomberg, labels[choice]);
             } catch (Exception e) {
                 System.out.println("Model selection failed: " + e.getMessage());
             }
