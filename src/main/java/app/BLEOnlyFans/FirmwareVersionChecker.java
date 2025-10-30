@@ -77,7 +77,7 @@ public class FirmwareVersionChecker {
         System.out.println("➡️ Starting from iteration: " + startFrom);
 
         // Main Loop: i = 1 to 20
-        for (int i = 1; i <= 16; i++) {
+        for (int i = 1; i <= 100; i++) {
             if (i < startFrom) {
                 System.out.println("⏭️ Skipping iteration " + i + " (already at or above this version)");
                 continue;
@@ -111,17 +111,17 @@ public class FirmwareVersionChecker {
             sleep(2000);
 
             // Run validation: wait for success → click Done → verify
-            ProgressivePauseResume validator = new ProgressivePauseResume(driver);
-            validator.runProgressivePauseResume();
+//            ProgressivePauseResume validator = new ProgressivePauseResume(driver);
+//            validator.runProgressivePauseResume();
             previousExpectedVersion = expectedVersion;
 
+            UploadFirmware upload = new UploadFirmware(driver);
+            upload.runProgressiveFWUpload();
+
             // Execute firmware verification
-            boolean firmwareSuccess = executeFirmwareVerification(currentAttempt, expectedVersion);
+            executeFirmwareVerification(currentAttempt, expectedVersion);
 
             // Only run pause-resume if firmware verification succeeded
-            if (firmwareSuccess) {
-                executePauseResumeCycle(currentAttempt, expectedVersion);
-            }
 
             currentAttempt++;
         }

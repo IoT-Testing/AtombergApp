@@ -7,15 +7,13 @@ import org.openqa.selenium.By;
 
 public class UploadFirmware extends FirmwareVersionChecker {
     private final AndroidDriver driver;
-    private final FirmwareVersionChecker csvLogger;
 
-    public UploadFirmware(AndroidDriver driver, FirmwareVersionChecker csvLogger) {
+    public UploadFirmware(AndroidDriver driver) {
         super(driver);
         this.driver = driver;
-        this.csvLogger = csvLogger;
     }
 
-    public boolean runProgressiveFWUpload(String expectedVersion,int attemptNumber) {
+    public boolean runProgressiveFWUpload() {
         String actionId = "Uninterrupted OTA";
         int iteration = 1;
         boolean success = false;
