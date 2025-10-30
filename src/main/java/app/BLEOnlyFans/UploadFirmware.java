@@ -1,16 +1,9 @@
 package app.BLEOnlyFans;
 
-import app.resources.Locators.BLEFan;
 import app.util.ActionsUtil;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
-import static app.resources.Locators.BLEFan.RESUME;
 
 public class UploadFirmware extends FirmwareVersionChecker {
     private final AndroidDriver driver;
