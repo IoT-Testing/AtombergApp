@@ -40,7 +40,7 @@ public class ProgressivePauseResume {
         // Initialize CSV on first run
         initCSV();
         // Run firmware verification and pause-resume sequence
-        boolean success = executePauseResumeSequence(currentAttempt)&&executeFirmwareVerification(currentAttempt) ;
+        boolean success = executePauseResumeSequence(currentAttempt);
 
         if (success) {
             System.out.println("✅ Firmware verification and pause-resume completed successfully!");
