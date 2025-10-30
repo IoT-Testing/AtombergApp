@@ -34,16 +34,16 @@ public class Manage {
 
     public void electricityUnitPrice() {
         if (!scrollToAndClick(ELECTRICITY_UNIT_PRICE, "Electricity Unit Price")) return;
-        AppUtil.captureScreenshot(atomberg, "Electricity Unit Price");
+        AppUtil.captureScreenshot(atomberg);
 
         if (clickElementIfExists(UNIT_PRICE_INPUT, "Unit Price Input")) {
-            AppUtil.captureScreenshot(atomberg, "Unit Price Input");
+            AppUtil.captureScreenshot(atomberg);
         }
     }
 
     public void changeCurrency() {
         if (clickElementIfExists(CHANGE_CURRENCY, "Change Currency")) {
-            AppUtil.captureScreenshot(atomberg, "Change Currency");
+            AppUtil.captureScreenshot(atomberg);
             atomberg.navigate().back();
         }
     }
@@ -58,7 +58,7 @@ public class Manage {
     public void changePassword() {
         ensureOnMoreTab();
         if (scrollToAndClick(CHANGE_PASSWORD, "Change Password")) {
-            AppUtil.captureScreenshot(atomberg,"Change Password");
+            AppUtil.captureScreenshot(atomberg);
             atomberg.navigate().back();
         }
     }
@@ -66,7 +66,7 @@ public class Manage {
     public void deleteAccount() {
         ensureOnMoreTab();
         if (scrollToAndClick(DELETE_ACCOUNT, "Delete Account")) {
-            AppUtil.captureScreenshot(atomberg, "Delete Account");
+            AppUtil.captureScreenshot(atomberg);
             atomberg.navigate().back();
         }
     }
@@ -74,7 +74,7 @@ public class Manage {
     public void developerOptions() {
         ensureOnMoreTab();
         if (scrollToAndClick(DEVELOPER_OPTIONS, "Developer Options")) {
-            AppUtil.captureScreenshot(atomberg, "Developer Options");
+            AppUtil.captureScreenshot(atomberg);
             ActionsUtil.sleep(1000);
             atomberg.navigate().back();
         }
@@ -83,7 +83,7 @@ public class Manage {
     public void logout() {
         ensureOnMoreTab();
         if (!scrollToAndClick(LOGOUT_BUTTON, "Logout")) return;
-        AppUtil.captureScreenshot(atomberg, "Logout");
+        AppUtil.captureScreenshot(atomberg);
         if (clickElementIfExists(YES_BUTTON, "Yes (Confirm Logout)")) {
             System.out.println("Logged out successfully.");
         }
@@ -92,7 +92,7 @@ public class Manage {
     public void family() {
         screenCheck.moreTab();
         if (!scrollToAndClick(MANAGE_FAMILY, "Manage Family")) return;
-        AppUtil.captureScreenshot(atomberg, "Manage Family");
+        AppUtil.captureScreenshot(atomberg);
         System.out.println("Tap on Manage Family");
 
         List<WebElement> families = getVisibleFamilyNames();
@@ -204,12 +204,12 @@ public class Manage {
     private void handleExistingScriptFamily() {
         if (!clickElementIfExists(FAMILY_EDIT_ICON, "Family Edit")) return;
         System.out.println("Family Edit");
-        AppUtil.captureScreenshot(atomberg, "Family Edit Screen");
+        AppUtil.captureScreenshot(atomberg);
 
         if (clickElementIfExists(LEAVE_HOME, "Leave Home")) {
-            AppUtil.captureScreenshot(atomberg, "Leave Home");
+            AppUtil.captureScreenshot(atomberg);
             clickElementIfExists(CANCEL_BUTTON, "Cancel");
-            AppUtil.captureScreenshot(atomberg, "Cancel button");
+            AppUtil.captureScreenshot(atomberg);
         }
 
         WebElement deleteBtn = findOptionalElement(DELETE_HOME);
@@ -225,18 +225,18 @@ public class Manage {
      */
     private void addHome() {
         if (clickElementIfExists(CREATE_HOME_BUTTON, "Create New Smart Home")) {
-            AppUtil.captureScreenshot(atomberg, "Create New Smart Home");
+            AppUtil.captureScreenshot(atomberg);
         }
 
         if (clickElementIfExists(HOME_NAME_INPUT, "Home Name Input")) {
             WebElement input = atomberg.findElement(HOME_NAME_INPUT);
             input.clear();
             input.sendKeys("Script");
-            AppUtil.captureScreenshot(atomberg, "Home Name Input");
+            AppUtil.captureScreenshot(atomberg);
         }
 
         if (clickElementIfExists(CREATE_BUTTON, "Create")) {
-            AppUtil.captureScreenshot(atomberg, "Create Family button");
+            AppUtil.captureScreenshot(atomberg);
             ActionsUtil.sleep(5000);
         }
     }

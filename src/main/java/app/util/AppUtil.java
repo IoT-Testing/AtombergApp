@@ -7,7 +7,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.io.*;
 import java.text.SimpleDateFormat;
-import java.time.Duration;
 import java.util.Date;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -33,17 +32,16 @@ public class AppUtil {
     private static final String SCREENSHOT_DIR = System.getProperty("user.dir") + File.separator + "screenshots" + File.separator;
     private static final File DIR_FILE = new File(SCREENSHOT_DIR);
     private static WebDriverWait wait;
-
     // === Wi-Fi Constants ===
     private static final String DEFAULT_WIFI_SSID = "Better_Together";
     private static final String DEFAULT_WIFI_PASSWORD = "123@ToMb^rg#2425";
+    private static final String FALLBACK_PASSWORD = "987654321";
 
     // === Locator Constants ===
     private static final By ROOM_NAMES = By.xpath("//android.widget.ImageView[@content-desc]");
     private static final By WIFI_INPUT_FIELD = By.xpath("//android.widget.EditText[1]");
     private static final By PASSWORD_INPUT_FIELD = By.xpath("//android.widget.EditText[2]");
     private static final By CONTINUE_BUTTON = By.xpath("//android.widget.Button[@content-desc='Continue']");
-    private static final String FALLBACK_PASSWORD = "123@ToMb^rg#2425";
 
     // Ensure screenshot directory exists
     static {
@@ -58,9 +56,9 @@ public class AppUtil {
      *
      * @param driver AndroidDriver instance
      */
-    public static void captureScreenshot(AndroidDriver driver, String name) {
+    public static void captureScreenshot(AndroidDriver driver) {
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String filename = name +" "+ timestamp + ".png";
+        String filename = "Screenshot_" + timestamp + ".png";
         String destinationPath = SCREENSHOT_DIR + filename;
 
         try {
@@ -77,6 +75,7 @@ public class AppUtil {
     /**
      * Performs room selection flow during device setup.
      * Selects predefined rooms and clicks Continue.
+     *
      * @param driver AndroidDriver instance
      */
     public static void additionProcess(AndroidDriver driver) {
@@ -85,15 +84,15 @@ public class AppUtil {
 
         for (String room : roomNames) {
             selectRoom(driver, room);
-            captureScreenshot(driver,room);
+            captureScreenshot(driver);
         }
 
         clickContinue(driver);
-        captureScreenshot(driver,"Continue button");
+        captureScreenshot(driver);
 
         driver.toggleWifi();
         SearchWiFi(driver, DEFAULT_WIFI_SSID);
-        captureScreenshot(driver,"Wi-FI Toggle Failed Failed");
+        captureScreenshot(driver);
     }
 
     /**
@@ -350,40 +349,5 @@ public class AppUtil {
             if (reader != null) reader.close();
             if (process != null) process.destroyForcibly();
         }
-    }
-    // === Helper Methods ===
-
-
-    /**
-     * Safely clicks element if present and displayed.
-     */
-    public static boolean clickIfExists(AndroidDriver driver, By locator) {
-        try {
-            WebElement el = driver.findElement(locator);
-            if (el.isDisplayed() && Boolean.parseBoolean(el.getDomAttribute("clickable"))) {
-                el.click();
-                return true;
-            }
-        } catch (Exception e) {
-            return false;
-        }
-        return false;
-    }
-
-    /**
-     * Confirms that app has returned to Home Screen
-     */
-    public static void confirmOnHomeScreen(AndroidDriver driver) {
-        By moreTab = By.xpath("//android.widget.ImageView[@content-desc=\"More\nTab 3 of 3\"]");
-        long start = System.currentTimeMillis();
-
-        while ((System.currentTimeMillis() - start) < 10_000) {
-            if (isElementPresent(driver, moreTab)) {
-                System.out.println("🏠 Back on Home Screen.");
-                return;
-            }
-            sleep(500);
-        }
-        System.err.println("⚠️ Could not confirm return to Home Screen.");
     }
 }

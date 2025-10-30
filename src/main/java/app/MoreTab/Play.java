@@ -64,7 +64,7 @@ public class Play {
     private boolean playVideo(By locator, String label) {
         if (!clickElementIfExists(locator, label)) return false;
 
-        AppUtil.captureScreenshot(driver, label);
+        AppUtil.captureScreenshot(driver);
         System.out.println(label + " Video Opened");
 
         // Simulate watching: go back twice (handles overlay/back buttons)

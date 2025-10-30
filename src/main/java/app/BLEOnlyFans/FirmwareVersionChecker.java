@@ -10,7 +10,7 @@ import java.util.*;
 public class FirmwareVersionChecker {
 
     private final AndroidDriver driver;
-    public static String previousExpectedVersion;
+    public static String previousExpectedVersion = null;
 
     // === Locators ===
     private static final By MENU_BUTTON = By.xpath(
@@ -19,8 +19,10 @@ public class FirmwareVersionChecker {
                     "/android.view.View/android.view.View/android.view.View" +
                     "/android.view.View/android.view.View/android.view.View/android.view.View[4]"
     );
+
     private static final String FIRMWARE_VERSION_PREFIX = "Firmware Version";
     private static final By SELECT_FILE_OPTION = By.xpath("//android.widget.Button[@content-desc=\"Select File\"]");
+    private static final By FILE_TITLE = By.id("android:id/title"); // Most stable locator for file items
 
     public FirmwareVersionChecker(AndroidDriver driver) {
         this.driver = driver;
@@ -30,7 +32,7 @@ public class FirmwareVersionChecker {
      * Runs exactly 20 OTA updates using dynamically named files:
      * Production_1.0.1.bin → Production_1.0.20.bin
      *
-     * Skips if current version >= "i"
+     * Skips if current version >= i
      * Scrolls if file not in view
      */
     public void runSequentialFirmwareUpdates() {
@@ -93,7 +95,7 @@ public class FirmwareVersionChecker {
             selectFileWithScroll(fileName);
 
             // Run validation: wait for success → click Done → verify
-            BluetoothToggleInterruption validator = new BluetoothToggleInterruption(driver);
+            ProgressivePauseResume validator = new ProgressivePauseResume(driver);
             previousExpectedVersion = expectedVersion;
             validator.runProgressivePauseResume();
         }
@@ -140,6 +142,22 @@ public class FirmwareVersionChecker {
         throw new RuntimeException("❌ Could not find or click file: " + fileName +
                 " | Total scrolls attempted: " + scrolls);
     }
+
+//    /**
+//     * Performs a downward swipe to scroll file list.
+//     */
+//    private void swipeDown() {
+//        try {
+//            // Swipe from bottom-middle to top-middle
+//            driver.executeScript("mobile: shell", Map.of(
+//                    "command", "input",
+//                    "args", Arrays.asList("swipe", "500", "1600", "500", "1000")
+//            ));
+//        } catch (Exception e) {
+//            System.err.println("⚠️ Swipe command failed: " + e.getMessage());
+//            // Fallback: Use TouchAction if needed
+//        }
+//    }
 
     /**
      * Finds element with content-desc starting with given prefix.

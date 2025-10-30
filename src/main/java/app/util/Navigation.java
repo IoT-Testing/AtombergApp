@@ -5,7 +5,9 @@ import org.openqa.selenium.By;
 
 public class Navigation {
     public static void openFanControl(AndroidDriver driver) {
+        System.out.println("🧭 Opening Fan Control Screen...");
         ActionsUtil.Tap.withCoordinates(driver, 700, 975);
+        System.out.println("✅ Fan tile clicked");
         ActionsUtil.sleep(5000);
     }
 

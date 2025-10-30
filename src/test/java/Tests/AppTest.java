@@ -16,6 +16,7 @@ import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.*;
 import org.testng.Assert;
 import org.testng.annotations.*;
+
 import static app.resources.Locators.HomeLocators.*;
 import static app.resources.Locators.LoginLocators.*;
 import static app.util.AppUtil.findOptionalElement;
@@ -221,7 +222,7 @@ public class AppTest extends BaseTest {
             manage.logout();
             ActionsUtil.SSleep(5);
 
-            // ✅ Assertion: Should return to log in screen
+            // ✅ Assertion: Should return to login screen
             Assert.assertTrue(
                     findElementWithWait(LOGIN_SCREEN_INDICATOR, 5).isDisplayed(),
                     "Login screen should appear after logout"

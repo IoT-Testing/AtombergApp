@@ -1,6 +1,5 @@
 package app.BLEOnlyFans;
 
-import app.util.AppUtil;
 import app.util.Navigation;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
@@ -8,15 +7,7 @@ import org.openqa.selenium.WebElement;
 import java.util.List;
 import java.util.Objects;
 import static app.resources.Locators.BLEFan.*;
-import static app.util.AppUtil.clickIfExists;
-import static app.util.AppUtil.isElementPresent;
 
-/**
- *             How To use....
- *             Navigation.openFanControl(driver);
- *             FirmwareVersionChecker checker = new FirmwareVersionChecker(driver);
- *             checker.runSequentialFirmwareUpdates();
-*/
 public class UploadFirmware {
 
     private final AndroidDriver driver;
@@ -24,18 +15,13 @@ public class UploadFirmware {
     // === Locators ===
     private static final By FIRMWARE_SUCCESS_TOAST = By.xpath("//android.view.View[@content-desc=\"Firmware upgrade successful\"]");
     private static final By DONE_BUTTON = By.xpath("//android.widget.Button[@content-desc=\"Done\"]");
-
+    public String  expectedVersion;
+    // Adjust if needed
     // === Configuration ===
-    private static final long FIRMWARE_SUCCESS_TIMEOUT_MS = 30_000;
+    private static final long FIRMWARE_SUCCESS_TIMEOUT_MS = 20_000;
     public UploadFirmware(AndroidDriver driver) {
         this.driver = driver;
     }
-
-    /**
-     * This is for uploading the firmware without any interruption
-     * No Pause-Resume Cycle
-     * No Bluetooth on-off cycle
-     */
 
     public void runProgressiveFWUpload() {
         System.out.println("⏱ Starting high-accuracy pause-resume using coordinate taps...");
@@ -54,7 +40,7 @@ public class UploadFirmware {
             throw new RuntimeException("❌ Error during pause-resume cycle: " + e.getMessage(), e);
         }
 
-        verifyFirmwareUpgradeAndClickDone(FirmwareVersionChecker.previousExpectedVersion);
+        verifyFirmwareUpgradeAndClickDone(FirmwareVersionCheckerTwo.expectedVersion);
     }
 
     /**
@@ -64,19 +50,12 @@ public class UploadFirmware {
      */
     public void verifyFirmwareUpgradeAndClickDone(String expectedVersion) {
         System.out.println("🔍 Waiting for firmware upgrade success message...");
-        sleep(5000);
-        WebElement element = null;
-        try{
-            element = driver.findElement(FIRMWARE_SUCCESS_TOAST);
-        } catch (Exception e) {
-            System.out.println("Element not found. Waiting...");
-        }
-        if(element == null) sleep(5000);
+        sleep(20000);
         long start = System.currentTimeMillis();
 
         // Wait for success message
         while ((System.currentTimeMillis() - start) < FIRMWARE_SUCCESS_TIMEOUT_MS) {
-            if (isElementPresent(driver, FIRMWARE_SUCCESS_TOAST)) {
+            if (isElementPresent(FIRMWARE_SUCCESS_TOAST)) {
                 System.out.println("✅ Firmware upgrade successful message displayed.");
                 System.out.println(expectedVersion);
                 break;
@@ -84,19 +63,19 @@ public class UploadFirmware {
             sleep(500);
         }
 
-        if (!isElementPresent(driver, FIRMWARE_SUCCESS_TOAST)) {
+        if (!isElementPresent(FIRMWARE_SUCCESS_TOAST)) {
             throw new RuntimeException("❌ Timeout: 'Firmware upgrade successful' not shown.");
         }
 
         // Click Done
-        if (clickIfExists(driver, DONE_BUTTON)) {
+        if (clickIfExists(DONE_BUTTON)) {
             System.out.println("✅ Clicked 'Done' button.");
         } else {
             throw new RuntimeException("❌ 'Done' button not found.");
         }
 
         // Confirm on Home Screen
-        AppUtil.confirmOnHomeScreen(driver);
+        confirmOnHomeScreen();
 
         // Navigate back to device control
         Navigation.openFanControl(driver); // Reuse utility
@@ -120,16 +99,61 @@ public class UploadFirmware {
         // Close menu
         driver.navigate().back();
         System.out.println("📁 Menu closed. Ready for next update.");
-        clickIfExists(driver, MENU_BUTTON);
+        clickIfExists(MENU_BUTTON);
+
     }
 
+    // === Helper Methods ===
 
+    /**
+     * Checks if an element is present and visible
+     */
+    private boolean isElementPresent(By locator) {
+        try {
+            return driver.findElement(locator).isDisplayed();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Safely clicks element if present and displayed.
+     */
+    private boolean clickIfExists(By locator) {
+        try {
+            WebElement el = driver.findElement(locator);
+            if (el.isDisplayed() && Boolean.parseBoolean(el.getDomAttribute("clickable"))) {
+                el.click();
+                return true;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+        return false;
+    }
+
+    /**
+     * Confirms that app has returned to Home Screen
+     */
+    private void confirmOnHomeScreen() {
+        By moreTab = By.xpath("//android.widget.ImageView[@content-desc=\"More\nTab 3 of 3\"]");
+        long start = System.currentTimeMillis();
+
+        while ((System.currentTimeMillis() - start) < 10_000) {
+            if (isElementPresent(moreTab)) {
+                System.out.println("🏠 Back on Home Screen.");
+                return;
+            }
+            sleep(500);
+        }
+        System.err.println("⚠️ Could not confirm return to Home Screen.");
+    }
 
     /**
      * Opens the menu button and waits.
      */
     private void openMenuAndWait() {
-        if (!clickIfExists(driver, MENU_BUTTON)) {
+        if (!clickIfExists(MENU_BUTTON)) {
             throw new RuntimeException("❌ Menu button not found after returning to device control");
         }
         System.out.println("✅ Menu opened");

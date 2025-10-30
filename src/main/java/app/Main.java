@@ -1,9 +1,10 @@
 package app;
 
 
-import app.BLEOnlyFans.OpenAndControl;
+import app.BLEOnlyFans.FirmwareVersionChecker;
 import app.Login.Email;
 import app.util.ActionsUtil;
+import app.util.Navigation;
 import app.util.PermissionUtil;
 import io.appium.java_client.android.AndroidDriver;
 import java.time.Duration;
@@ -38,18 +39,10 @@ public class Main {
 //        }catch (Exception e){
 //            System.out.println(e.getMessage());
 //        }
-//            FirmwareVersionChecker checker = new FirmwareVersionChecker(driver);
-//            checker.runSequentialFirmwareUpdates();
+            Navigation.openFanControl(driver);
+            FirmwareVersionChecker checker = new FirmwareVersionChecker(driver);
+            checker.runSequentialFirmwareUpdates();
 
-// Print header ONCE
-        System.out.println("Attempt Number   | Action ID          | Iteration  | Status");
-        System.out.println("-----------------|--------------------|------------|--------");
-
-        OpenAndControl control = new OpenAndControl(driver);
-
-        for (int i = 1; i <= 20; i++) { // 1-based attempt number as shown in your table
-            control.runOneAttempt(i);
-        }
     }
 
     // === Setup Methods ===

@@ -55,7 +55,7 @@ public class Profile {
         WebElement profileLink = greetings.get(0);
         profileLink.click();
         System.out.println("Edit Profile");
-        AppUtil.captureScreenshot(atomberg,"Edit Profile");
+        AppUtil.captureScreenshot(atomberg);
         ActionsUtil.sleep(3000);
     }
 
@@ -64,7 +64,7 @@ public class Profile {
      */
     private void changeAvatar() {
         if (!clickElementIfExists(CHANGE_AVATAR_BUTTON, "Change Avatar")) return;
-        AppUtil.captureScreenshot(atomberg, "Change Avatar");
+        AppUtil.captureScreenshot(atomberg);
         System.out.println("Tap On Change Avatar");
 
         List<WebElement> avatars = atomberg.findElements(AVATAR_OPTIONS).stream()
@@ -74,7 +74,7 @@ public class Profile {
         for (WebElement avatar : avatars) {
             try {
                 avatar.click();
-                AppUtil.captureScreenshot(atomberg, "Avatar");
+                AppUtil.captureScreenshot(atomberg);
                 ActionsUtil.sleep(1000);
             } catch (Exception e) {
                 System.err.println("Failed to select avatar: " + e.getMessage());
@@ -85,7 +85,7 @@ public class Profile {
     }
 
     /**
-     * Edits username and clicks phone section to trigger edit flow.
+     * Edits user name and clicks phone section to trigger edit flow.
      */
     private void editNameAndTriggerPhoneEdit() {
         // Edit Name
@@ -94,16 +94,16 @@ public class Profile {
             WebElement nameField = textFields.get(0);
             nameField.click();
             nameField.clear();
-            nameField.sendKeys("IoT");
-            System.out.println("Name updated to 'IoT'");
-            AppUtil.captureScreenshot(atomberg,"User Name Changed");
+            nameField.sendKeys("Hi Hi Hi");
+            System.out.println("Name updated to 'Hi Hi Hi'");
+            AppUtil.captureScreenshot(atomberg);
         } else {
             System.err.println("Name input field not found.");
         }
 
         // Trigger phone edit
         if (clickElementIfExists(PHONE_EDIT_SECTION, "Edit Phone Number")) {
-            AppUtil.captureScreenshot(atomberg, "Phone Number");
+            AppUtil.captureScreenshot(atomberg);
         }
     }
 

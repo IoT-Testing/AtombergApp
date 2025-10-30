@@ -10,7 +10,6 @@ import org.openqa.selenium.WebElement;
 
 import java.util.concurrent.TimeUnit;
 
-import static app.resources.Locators.HomeLocators.*;
 import static app.resources.Locators.LoginLocators.*;
 import static org.awaitility.Awaitility.await;
 
@@ -38,7 +37,7 @@ public class Apple {
 			return;
 		}
 
-		AppUtil.captureScreenshot(atomberg, "Apple Login");
+		AppUtil.captureScreenshot(atomberg);
 		ActionsUtil.sleep(5000); // Allow for navigation or redirect
 
 		if (isOnHomeScreen(atomberg)) {
@@ -99,7 +98,7 @@ public class Apple {
 			return;
 		}
 
-		AppUtil.captureScreenshot(driver, "Email Enter");
+		AppUtil.captureScreenshot(driver);
 
 		if (clickElementIfExists(driver, CONTINUE_BUTTON_TEXT)) {
 			System.err.println("Failed to click Continue after email entry.");
@@ -107,7 +106,7 @@ public class Apple {
 		}
 
 		ActionsUtil.sleep(2000);
-		AppUtil.captureScreenshot(driver, "Password Entering");
+		AppUtil.captureScreenshot(driver);
 
 		if (enterTextSafely(driver, TEXT_INPUT_FIELD, "SumitaBH@133", "Password")) {
 			System.err.println("Failed to enter password. Aborting login.");
@@ -125,7 +124,7 @@ public class Apple {
 
 		if (isOnHomeScreen(driver)) {
 			System.out.println("Test Passed: Successfully logged in and reached home screen.");
-			AppUtil.captureScreenshot(driver, "Login Successful");
+			AppUtil.captureScreenshot(driver);
 			PermissionUtil.allow(driver);
 		} else {
 			System.err.println("Login appeared to succeed, but home screen was not detected.");
