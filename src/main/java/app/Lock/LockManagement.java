@@ -94,7 +94,7 @@ public class LockManagement implements SmartDevice {
                 .filter(el -> {
                     el.findElement(By.tagName("ImageView"));
                     return true;
-                }).toList();
+                }).collect(Collectors.toList());
 
         if (validLocks.isEmpty()) {
             System.out.println("No Lock Available");

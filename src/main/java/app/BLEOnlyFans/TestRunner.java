@@ -107,7 +107,7 @@ public class TestRunner {
     public void initializeDriverWithURL(URL url) {
         UiAutomator2Options options = baseOptions();
         options.setCapability("platformName", "Android");
-        options.setCapability("udid","e5b51506054a");
+        options.setCapability("udid","0412523R5000056B");
         createDriver(url, options);
     }
 
