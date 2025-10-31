@@ -1,6 +1,7 @@
 package app.util;
 
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.appmanagement.ApplicationState;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -13,6 +14,7 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import static app.resources.Locators.FanLocators.ADD_BUTTON_XPATH;
+import static app.resources.Locators.HomeLocators.MORE_TAB;
 import static app.util.ActionsUtil.sleep;
 
 /**
@@ -374,17 +376,25 @@ public class AppUtil {
      * Confirms that app has returned to Home Screen
      */
     public static void confirmOnHomeScreen(AndroidDriver driver) {
-        By moreTab = By.xpath("//android.widget.ImageView[@content-desc=\"More\nTab 3 of 3\"]");
+        By homeTab = By.xpath("//android.view.View[@content-desc=\"Home\"]");
         long start = System.currentTimeMillis();
 
         while ((System.currentTimeMillis() - start) < 10_000) {
-            if (isElementPresent(driver, moreTab)) {
+            if (isElementPresent(driver, homeTab)) {
                 System.out.println("🏠 On Home Screen.");
                 return;
             }
-            else{driver.navigate().back();}
+            else{
+                driver.navigate().back();
+            }
             sleep(500);
         }
         System.err.println("⚠️ Could not confirm return to Home Screen.");
+        if(!isElementPresent(driver,homeTab)){
+            ApplicationState state = driver.queryAppState("com.atomberg.app");
+            if(!(state==ApplicationState.RUNNING_IN_FOREGROUND)){
+                driver.activateApp("com.atomberg.app");
+            }
+        }
     }
 }

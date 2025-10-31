@@ -46,7 +46,7 @@ public class FanManagementBLEOnly {
                             return false; // Skip stale or inaccessible elements
                         }
                     })
-                    .toList();
+                    .collect(Collectors.toList());
             System.out.println("Available BLE Device Count " + availableBLEDevice.size());
 
         }
