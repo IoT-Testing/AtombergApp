@@ -117,7 +117,7 @@ public class FirmwareVersionChecker {
             ProgressivePauseResume validator = new ProgressivePauseResume(driver, this);
             validator.runProgressivePauseResume();
             previousExpectedVersion = expectedVersion;
-
+            //TODO : change accordingly
             // 2. Uninterrupted upload.
 //            UploadFirmware upload = new UploadFirmware(driver);
 //            upload.runProgressiveFWUpload();
