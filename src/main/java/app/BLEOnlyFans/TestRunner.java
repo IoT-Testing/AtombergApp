@@ -46,10 +46,6 @@ public class TestRunner {
         driver.activateApp("com.atomberg.app");
         sleep(3000);
 
-        // Initialize CSV with header
-        System.out.println("\n📊 CSV Log Format:");
-        System.out.println("Attempt Number,Action ID,Iteration,Status");
-
         // Run test flow for specified number of attempts
         for (int i = 1; i <= 20; i++) {
             System.out.println("\n=== ATTEMPT #" + i + " ===");
@@ -107,7 +103,7 @@ public class TestRunner {
     public void initializeDriverWithURL(URL url) {
         UiAutomator2Options options = baseOptions();
         options.setCapability("platformName", "Android");
-        options.setCapability("udid","0412523R5000056B");
+        options.setCapability("udid","e5b51506054a"); //TODO : UDID for POCO phone
         createDriver(url, options);
     }
 

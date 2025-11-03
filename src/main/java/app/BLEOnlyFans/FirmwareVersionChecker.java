@@ -114,13 +114,13 @@ public class FirmwareVersionChecker {
 
             // Run validation: wait for success → click Done → verify
             //1. Pause Resume
-            ProgressivePauseResume validator = new ProgressivePauseResume(driver, this);
-            validator.runProgressivePauseResume();
+//            ProgressivePauseResume validator = new ProgressivePauseResume(driver);
+//            validator.runProgressivePauseResume();
             previousExpectedVersion = expectedVersion;
 
             // 2. Uninterrupted upload.
-//            UploadFirmware upload = new UploadFirmware(driver);
-//            upload.runProgressiveFWUpload();
+            UploadFirmware upload = new UploadFirmware(driver);
+            upload.runProgressiveFWUpload();
 
             // Execute firmware verification
             executeFirmwareVerification(currentAttempt, expectedVersion);
@@ -209,13 +209,54 @@ public class FirmwareVersionChecker {
         return success;
     }
 
+    /**
+     * Executes the pause-resume cycle with retry capability
+     */
+    private boolean executePauseResumeCycle(int attemptNumber, String expectedVersion) {
+        String actionId = "Pause-Resume Cycle";
+        int iteration = 1;
+        boolean success = false;
+        String updatedVersion = "";
+
+        while (iteration <= 5) {
+            String status = "Fail";
+            updatedVersion = "";
+
+            try {
+                // Run pause-resume sequence
+                ProgressivePauseResume validator = new ProgressivePauseResume(driver);
+                validator.runProgressivePauseResume();
+
+                // Verify device is still connected
+                if (isDeviceConnected()) {
+                    status = "Success";
+                    updatedVersion = expectedVersion;
+                    success = true;
+                }
+            } catch (Exception e) {
+                // Ignore and retry
+            }
+
+            printRow(attemptNumber, actionId, iteration, status, updatedVersion);
+
+            if (success) {
+                break;
+            }
+
+            sleep(1000); // Standard delay for pause-resume (not increased)
+
+            iteration++;
+        }
+
+        return success;
+    }
 
     /**
      * Checks if device is connected
      */
     private boolean isDeviceConnected() {
         try {
-            return !Objects.requireNonNull(driver.getPageSource()).contains("Device not connected");
+            return !driver.getPageSource().contains("Device not connected");
         } catch (Exception e) {
             return false;
         }
@@ -383,7 +424,7 @@ public class FirmwareVersionChecker {
 
     // ===== CSV LOGGING METHODS =====
 
-    void printRow(int attemptNumber, String actionId, int iteration, String status, String updatedVersion) {
+    private void printRow(int attemptNumber, String actionId, int iteration, String status, String updatedVersion) {
         // Format: clean, no extra spaces
         String row = String.format("%d,%s,%d,%s,%s",
                 attemptNumber, actionId, iteration, status, updatedVersion);
