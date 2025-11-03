@@ -14,13 +14,11 @@ public class UploadFirmware extends FirmwareVersionChecker {
     }
 
     public boolean runProgressiveFWUpload() {
-        String actionId = "Uninterrupted OTA";
         int iteration = 1;
         boolean success = false;
 
         while (iteration <= 5) {
             String status = "Fail";
-            String versionForLogging = ""; // Always empty for pause-resume
 
             try {
                 // Step 1: Click Start (if not already started)

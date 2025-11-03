@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+<suite name="AtombergApp" parallel="tests" thread-count="2" configfailurepolicy="continue" verbose="2">
+
+    <!-- Global parameters (optional) -->
+    <parameter name="appPackage" value="com.atomberg.app"/>
+    <parameter name="testEnvironment" value="staging"/>
+
+    <!-- Test Configuration for Device 1 -->
+    <test name="Device_1 - Pixel 6" group-by-instances="true">
+        <parameter name="deviceSlot" value="1"/>
+        <classes>
+            <class name="Tests.LoginTest"/>
+            <!-- Add more classes as needed -->
+            <!-- <class name="Tests.AppTest"/> -->
+        </classes>
+    </test>
+    <test name="Device_2 - OnePlus 8" group-by-instances="true">
+        <parameter name="deviceSlot" value="2"/>
+        <classes>
+            <class name="Tests.LoginTest"/>
+        </classes>
+    </test>
+<!--    <groups>-->
+<!--        <run>-->
+<!--            <include name="smoke"/>-->
+<!--            <exclude name="wip"/>-->
+<!--        </run>-->
+<!--    </groups>-->
+</suite>
+<!--123@ToMb^rg#2425-->
