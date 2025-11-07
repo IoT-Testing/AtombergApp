@@ -114,11 +114,11 @@ public class FirmwareVersionChecker {
 
             // Run validation: wait for success → click Done → verify
             //1. Pause Resume
-//            ProgressivePauseResume validator = new ProgressivePauseResume(driver);
+//            ProgressivePauseResume validator = new ProgressivePauseResume(driver, this);
 //            validator.runProgressivePauseResume();
             previousExpectedVersion = expectedVersion;
 
-            // 2. Uninterrupted upload.
+//            // 2. Uninterrupted upload.
             UploadFirmware upload = new UploadFirmware(driver);
             upload.runProgressiveFWUpload();
 
@@ -224,7 +224,7 @@ public class FirmwareVersionChecker {
 
             try {
                 // Run pause-resume sequence
-                ProgressivePauseResume validator = new ProgressivePauseResume(driver);
+                ProgressivePauseResume validator = new ProgressivePauseResume(driver, this);
                 validator.runProgressivePauseResume();
 
                 // Verify device is still connected
@@ -424,7 +424,8 @@ public class FirmwareVersionChecker {
 
     // ===== CSV LOGGING METHODS =====
 
-    private void printRow(int attemptNumber, String actionId, int iteration, String status, String updatedVersion) {
+
+    void printRow(int attemptNumber, String actionId, int iteration, String status, String updatedVersion) {
         // Format: clean, no extra spaces
         String row = String.format("%d,%s,%d,%s,%s",
                 attemptNumber, actionId, iteration, status, updatedVersion);

@@ -2,6 +2,8 @@ package app.Fan;
 
 import app.ScreenCheck.ScreenCheck;
 import app.SmartDevice;
+import app.resources.ArduinoRelayControllerModern;
+import app.resources.PythonFileScript;
 import app.util.ActionsUtil;
 import app.util.AppUtil;
 import io.appium.java_client.android.AndroidDriver;
@@ -23,7 +25,7 @@ import static app.resources.Locators.FanLocators.*;
  *
  */
 
-public class FanManagement implements SmartDevice {
+public class  FanManagement implements SmartDevice {
     private static AndroidDriver atomberg;
     private final WebDriverWait wait; // For explicit waits
 
@@ -32,41 +34,59 @@ public class FanManagement implements SmartDevice {
         // Initialize WebDriverWait with a 10-second timeout
         this.wait = new WebDriverWait(atomberg, Duration.ofSeconds(10));
     }
-
     /**
      * Adds a new fan by navigating to the add screen and attempting connection.
      * Retries scanning up to 10 times if no device is found.
      */
     public void addition() {
-        navigateToAddScreen(atomberg);
-
         System.out.println("Searching for available devices...");
-
-        for (int attempt = 0; attempt < 10; attempt++) {
+        for (int attempt = 0; attempt < 5; attempt++) {
+            ActionsUtil.Tap.withCoordinates(atomberg, 540, 1940);
             sleep(15); // Wait for scan results
-
-            WebElement fanElement = findOptionalElement(FAN_DISCOVERY_XPATH);
-            if (fanElement != null) {
-                System.out.println("Atomberg Smart Fan detected.");
-                List<WebElement> connectButtons = atomberg.findElements(CONNECT_BUTTON);
-
-                for (int i = 1; i <= connectButtons.size(); i++) {
-                    WebElement connectButton = atomberg.findElement(By.xpath("(//android.view.View[@content-desc=\"Connect\"])[" + i + "]"));
-                    System.out.println("Clicking Connect button at index: " + i);
-                    connectButton.click();
-
-                    // Check for common error modals after clicking Connect
-                    if (handleConnectionErrors()) {
-                        continue; // Retry next connect option
-                    } else {
-                        System.out.println("Successfully connected or proceeding...");
-                        break; // Exit loop on success
+            int previousElementY = 0;
+            List<WebElement> fanElements = atomberg.findElements(FAN_DISCOVERY_XPATH);
+            List<WebElement> connectButtons = atomberg.findElements(CONNECT_BUTTON);
+            if(connectButtons.size() ==1 && !fanElements.isEmpty()){
+                atomberg.findElement(CONNECT_BUTTON).click();
+                break;
+            }
+            else if (fanElements.size()>1){
+                    for (WebElement fanElement : fanElements) {
+                        int deviceCenterY = getElementY(fanElement); // Y coordinates of "Atomberg Smart Fan"
+                        if (previousElementY == deviceCenterY) continue;
+                        if (fanElement != null) {
+                            System.out.println("Atomberg Smart Fan detected.");
+                            connectButtons = atomberg.findElements(CONNECT_BUTTON);
+                            for (WebElement connect : connectButtons) {
+                                int connectCenter = getElementY(connect); //Y coordinates of connect button
+                                if (deviceCenterY == connectCenter) {
+                                    connect.click();
+                                    sleep(2);
+                                    if(handleConnectionErrors()) {
+//                                        PythonFileScript run = new PythonFileScript();
+//                                        run.script();
+                                        continue;
+                                    }
+                                    By Model = By.xpath("//android.view.View[@content-desc=\"Model: Aris Gladius\"]");
+                                    System.out.println("Checking model");
+                                    if (isElementPresent(atomberg, Model))
+                                        break;
+                                }
+                            }
+                        }
+                        previousElementY = deviceCenterY;
+                        By Model = By.xpath("//android.view.View[@content-desc=\"Model: Aris Gladius\"]");
+                        if (isElementPresent(atomberg, Model))
+                            break;
                     }
                 }
-                break; // Exit outer loop when fan is found and processed
-            } else {
-                handleNoDeviceFound();
-            }
+            else if(fanElements.isEmpty())atomberg.navigate().back();
+
+            //Specific for Arid Gladius model. later change to check if Mode
+
+            By Model = By.xpath("//android.view.View[@content-desc=\"Model: Aris Gladius\"]");
+            if (isElementPresent(atomberg, Model)) break;
+
         }
     }
 
@@ -118,12 +138,10 @@ public class FanManagement implements SmartDevice {
             try {
                 // Check if fan device is visible in scan results
                 WebElement fanElement = atomberg.findElement(deviceLocator);
-
                 System.out.println("✅ Atomberg Smart Fan detected");
-
+                int deviceCenter = getElementY(fanElement);
                 // Click the connect button directly (more reliable than coordinates)
                 WebElement connectButton = atomberg.findElement(CONNECT_BUTTON);
-                connectButton.click();
 
                 System.out.println("🖱️ Tapped Connect button");
 
@@ -153,7 +171,9 @@ public class FanManagement implements SmartDevice {
         }
     }
 
-    public void deletion(){}
+    public void deletion(){
+
+    }
 
     public void control(){}
 
@@ -187,6 +207,9 @@ public class FanManagement implements SmartDevice {
                 atomberg.navigate().back();
                 return true;
             }
+            if(isElementPresent(atomberg,COULD_NOT_CONNECT_PROPERLY)){
+                return true;
+            }
         } catch (Exception e) {
             System.out.println("Error checking connection status: " + e.getMessage());
         }
@@ -211,28 +234,23 @@ public class FanManagement implements SmartDevice {
             System.out.println("Neither 'Connect' nor 'Try Again' found: " + e.getMessage());
         }
     }
-
-    // --- End of addFan helpers ---
-
     /**
      * Completes the addition process: selects model, clicks Next, chooses room.
      */
     public void additionProcess() {
-        Select.Fan(atomberg);
-        WebElement nextBtn = wait.until(ExpectedConditions.elementToBeClickable(NEXT_BUTTON));
-        System.out.println("Next");
-        nextBtn.click();
+//        Select.Fan(atomberg);
+        clickElementWithRetry(NEXT_BUTTON);
         captureScreenshot(atomberg, "Addition Process");
-        AppUtil.additionProcess(atomberg); // Select room
+        AppUtil.additionProcess(atomberg);
+        sleep(10);
+//        if (isElementPresent(atomberg, SUCCESS_MESSAGE)) System.out.println("Device added successfully");
     }
-
     /**
      * Performs basic fan control actions in sequence: Speeds 1–5 → Boost → Power.
      */
     public void fanControl() {
         performBasicFanActions();
     }
-
     /**
      * Executes random fan commands for a given number of iterations.
      *
@@ -257,7 +275,6 @@ public class FanManagement implements SmartDevice {
 
         setImplicitWait(Duration.ofSeconds(5)); // Restore default
     }
-
     /**
      * Repeats full command cycle (1→5, Boost, Power) multiple times.
      *
@@ -273,43 +290,40 @@ public class FanManagement implements SmartDevice {
         setImplicitWait(Duration.ofSeconds(5));
     }
 
+    private int getElementY(WebElement element) {
+        int topY = element.getLocation().getY();
+        int height = element.getRect().getHeight();
+        return topY + (height / 2);
+    }
     /**
      * Checks if any fans are online and controls them.
      * Scrolls if more than 4 fans exist.
      */
+
     public void checkFanOnline() {
         try {
             WebElement fansTab = wait.until(ExpectedConditions.elementToBeClickable(FANS_TAB));
             fansTab.click();
             sleep(3);
 
-            WebElement buyNow = findOptionalElement(BUY_NOW_BUTTON);
-            if (buyNow != null) {
-                System.out.println("No fans added yet.");
-                return;
-            }
-
-            List<WebElement> fanButtons = getVisibleFanList();
-            System.out.println("Fans detected: " + fanButtons.size());
-
-            if (fanButtons.isEmpty()) {
-                System.out.println("No fan online.");
-                return;
-            }
-
-            // Control first set of visible fans
-            controlMultipleFans(fanButtons);
-
-            // Handle scrolling if there might be more fans
-            if (fanButtons.size() >= 4) {
-                scrollAndProcessRemainingFans(fanButtons);
-            }
-
         } catch (Exception e) {
             System.out.println("Error during fan online check: " + e.getMessage());
         } finally {
             sleep(1);
         }
+    }
+
+    private boolean clickElementWithRetry(By locator) {
+        for (int i = 0; i < 5; i++) {
+            try {
+                WebElement el = atomberg.findElement(locator);
+                if (el.isDisplayed() && Boolean.parseBoolean(el.getDomAttribute("clickable"))) {
+                    el.click();
+                    return true;
+                }
+            } catch (Exception ignored) {}
+        }
+        return false;
     }
 
     /**
@@ -340,6 +354,26 @@ public class FanManagement implements SmartDevice {
             fan.click();
             fanControl();
             atomberg.navigate().back();
+        }
+    }
+
+    public void deleteMultipleFans() {
+        List<WebElement> fans = atomberg.findElements(REMOVE_DEVICE);//android.widget.ImageView
+        if (!fans.isEmpty()){
+            for (WebElement fan : fans) {
+                //android.widget.Button[@index="0"] xPath of error triangle
+                String name = fan.getDomAttribute("content-desc");
+                System.out.println("Controlling fan: " + name);
+                fan.click();
+                if (isElementPresent(atomberg, REMOVE_DEVICE)) clickIfExists(atomberg, YES);
+                if (isElementPresent(atomberg, DEVICE_REMOVED_SUCCESSFULLY))
+                    System.out.println("Device Reset complete, please Restart the device");
+            }
+        }else {
+            ActionsUtil.Tap.withCoordinates(atomberg, 730, 950);
+            if (isElementPresent(atomberg, REMOVE_DEVICE)) clickIfExists(atomberg, YES);
+            if (isElementPresent(atomberg, DEVICE_REMOVED_SUCCESSFULLY))
+                System.out.println("Device Reset complete, please Restart the device");
         }
     }
 
@@ -435,8 +469,8 @@ public class FanManagement implements SmartDevice {
      * Entry point: checks home screen and runs fan check if family not empty.
      */
     public void checkFan() {
-        ScreenCheck screen = new ScreenCheck(atomberg);
-        screen.homeScreen();
+//        ScreenCheck screen = new ScreenCheck(atomberg);
+//        screen.homeScreen();
 
         WebElement emptyFamily = findOptionalElement(ADD_FIRST_DEVICE_ICON);
         if (emptyFamily == null) {
@@ -504,7 +538,7 @@ public class FanManagement implements SmartDevice {
 
     // === Static Inner Class: Model Selection ===
     public static class Select {
-        public static void Fan(AndroidDriver atomberg) {
+        public static void Fan() {
             if (isElementPresent(atomberg, SELECT_FAN_MODEL )) {
                 SixLED(atomberg);
             } else {
@@ -512,14 +546,15 @@ public class FanManagement implements SmartDevice {
             }
         }
 
-        public void manageFanDevice() {
+        public void manageFanDevice(AndroidDriver atomberg) {
             FanManagement fan = new FanManagement(atomberg);
-
             fan.addition();
+            ActionsUtil.SSleep(5);
             fan.additionProcess();
-            fan.checkFan();
-            fan.fanControl();
-
+            ActionsUtil.SSleep(10);
+//            fan.checkFan();
+            ScreenCheck check = new ScreenCheck(atomberg);
+            check.rateUsPopup();
             System.out.println("Fan operations completed.");
         }
 

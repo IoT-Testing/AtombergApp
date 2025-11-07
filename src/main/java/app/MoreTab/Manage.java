@@ -126,7 +126,7 @@ public class Manage {
      */
     private void ensureOnMoreTab() {
         screenCheck.moreTab();
-        scrollToTop(); // Reset scroll position
+//        scrollToTop(); // Reset scroll position
     }
 
     /**

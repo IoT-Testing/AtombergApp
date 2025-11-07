@@ -48,7 +48,6 @@ public class FanManagementBLEOnly {
                     })
                     .collect(Collectors.toList());
             System.out.println("Available BLE Device Count " + availableBLEDevice.size());
-
         }
     }
 
@@ -119,7 +118,7 @@ public class FanManagementBLEOnly {
             }
 
             // Click if within reasonable distance (tolerance ~100px)
-            if (bestMatchButton != null && minDiff <= 100) {
+            if (bestMatchButton != null && minDiff <= 50) {
                 String actualName = deviceElement.getAttribute("content-desc");
                 System.out.println("Connecting to device: '" + actualName +
                         "' (matched by prefix: '" + devicePrefix + "')");

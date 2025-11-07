@@ -1,15 +1,10 @@
 package app.BLEOnlyFans;
 
 import app.util.ActionsUtil;
-import app.util.Navigation;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import static app.resources.Locators.BLEFan.*;
@@ -19,15 +14,17 @@ public class ProgressivePauseResume {
 
     private final AndroidDriver driver;
     private static PrintWriter csvWriter;
+    private final FirmwareVersionChecker csvLogger;
     private static boolean csvInitialized = false;
     private int currentAttempt = 1; // Track current attempt number
 
     // === Configuration ===
-    private static final int PAUSE_RESUME_CYCLES = 20;
-    private static final long HOLD_DURATION_MS = 1300;
+    private static final int PAUSE_RESUME_CYCLES = 16;
+    private static final long HOLD_DURATION_MS = 800;
 
-    public ProgressivePauseResume(AndroidDriver driver) {
+    public ProgressivePauseResume(AndroidDriver driver,FirmwareVersionChecker csvLogger) {
         this.driver = driver;
+        this.csvLogger = csvLogger;
     }
 
     /**
@@ -37,7 +34,7 @@ public class ProgressivePauseResume {
         System.out.println("⏱ Starting high-accuracy pause-resume using coordinate taps...");
 
         // Initialize CSV on first run
-        initCSV();
+//        initCSV();
         // Run firmware verification and pause-resume sequence
         boolean success = executePauseResumeSequence(currentAttempt);
 
@@ -48,6 +45,19 @@ public class ProgressivePauseResume {
         }
 
         currentAttempt++; // Increment for next run
+    }
+
+
+    /**
+     * Executes firmware verification with retry capability
+     */
+
+    public void openMenuAndWait() {
+        if (!clickIfExists(MENU_BUTTON)) {
+            throw new RuntimeException("❌ Menu button not found after returning to device control");
+        }
+        System.out.println("✅ Menu opened");
+        sleep(3000); // Allow load
     }
 
     /**
@@ -75,11 +85,13 @@ public class ProgressivePauseResume {
                 boolean allCyclesSuccessful = true;
                 for (int i = 0; i < PAUSE_RESUME_CYCLES; i++) {
                     // ⏸️ Pause: Tap at center-bottom
-                    ActionsUtil.Tap.withCoordinates(driver, 525, 2020);
+//                    ActionsUtil.Tap.withCoordinates(driver, 370, 1220);// for narzo only
+                    ActionsUtil.Tap.withCoordinates(driver, 500, 2020);// for Poco only
                     sleep(HOLD_DURATION_MS);
 
                     // ▶️ Resume: Tap again
-                    ActionsUtil.Tap.withCoordinates(driver, 525, 2020);
+//                    ActionsUtil.Tap.withCoordinates(driver, 370, 1220);// for narzo only
+                    ActionsUtil.Tap.withCoordinates(driver, 500, 2020);// for Poco only
                     sleep(HOLD_DURATION_MS);
 
                     System.out.println("🔁 Cycle " + (i + 1) + "/" + PAUSE_RESUME_CYCLES + " completed");
@@ -89,9 +101,8 @@ public class ProgressivePauseResume {
                         allCyclesSuccessful = false;
                         break;
                     }
-                    if(isElementPresent(RESUME))driver.findElement(RESUME).click();
-
                 }
+                if(isElementPresent(RESUME)) driver.findElement(RESUME).click();
 
                 if (allCyclesSuccessful) {
                     status = "Success";
@@ -100,8 +111,9 @@ public class ProgressivePauseResume {
             } catch (Exception e) {
                 // Ignore and retry
             }
+            String versionForLogging = "";
 
-            printRow(attemptNumber, actionId, iteration, status);
+            csvLogger.printRow(attemptNumber, actionId, iteration, status, versionForLogging);
 
             if (success) {
                 break;
@@ -150,7 +162,6 @@ public class ProgressivePauseResume {
         String row = String.format("%d,%s,%d,%s", attemptNumber, actionId, iteration, status);
 
         // Write to CSV
-        initCSV();
         csvWriter.println(row);
         csvWriter.flush();
 
@@ -159,18 +170,6 @@ public class ProgressivePauseResume {
                 attemptNumber, actionId, iteration, status);
     }
 
-    private static void initCSV() {
-        if (csvInitialized) return;
-        try {
-            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-            csvWriter = new PrintWriter(new FileWriter("test_results_" + timestamp + ".csv", true));
-            csvWriter.println("Attempt Number,Action ID,Iteration,Status");
-            csvWriter.flush();
-            csvInitialized = true;
-        } catch (IOException e) {
-            System.err.println("Failed to create CSV file: " + e.getMessage());
-        }
-    }
 
     public static void closeCSV() {
         if (csvWriter != null) {

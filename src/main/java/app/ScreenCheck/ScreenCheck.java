@@ -7,8 +7,7 @@ import org.openqa.selenium.WebElement;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static app.resources.Locators.HomeLocators.ANALYTICS_TAB;
-import static app.resources.Locators.HomeLocators.MORE_TAB;
+import static app.resources.Locators.HomeLocators.*;
 
 /**
  * ScreenCheck - Verifies presence and navigates to main app screens: Home, Analytics, More.
@@ -33,19 +32,11 @@ public class ScreenCheck {
      * Fails if no home tab is found.
      */
     public void homeScreen() {
+//        alexaPopUp();
         rateUsPopup();
+        ensureOnScreen(DEVICES, "Home");
 
-        List<WebElement> candidateTabs = findVisibleTabs();
-        WebElement homeTab = findHomeTab(candidateTabs);
-
-        if (homeTab == null) {
-            throw new RuntimeException("Home tab not found. Expected element with content-desc starting with 'Hi'");
-        }
-
-        clickIfNotSelected(homeTab, "Home");
-        rateUsPopup();
     }
-
     /**
      * Navigates to the Analytics tab. If already selected, does nothing.
      */
@@ -141,8 +132,26 @@ public class ScreenCheck {
         }
     }
 
-    // === Utility Methods ===
+    private void alexaPopUp() {
+        WebElement alexaPopup = findOptionalElement(ALEXA_POPUP);
+        if (alexaPopup != null) {
+            try {atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]")).click();
 
+                System.out.println("Alexa popup canceled.");
+            } catch (Exception e) {
+                System.out.println("Failed to close Alexa popup: " + e.getMessage());
+            }
+        }
+    }
+    private WebElement findOptionalElement(By locator) {
+        try {
+            return atomberg.findElement(locator);
+        } catch (NoSuchElementException e) {
+            return null;
+        }
+    }
+
+    // === Utility Methods ===
     /**
      * Waits up to N seconds for element to be present.
      *

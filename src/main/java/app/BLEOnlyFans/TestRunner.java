@@ -54,7 +54,7 @@ public class TestRunner {
                 // Ensure we're on home screen
                 confirmOnHomeScreen(driver);
                 sleep(1000);
-
+                Navigation.openFanControl(driver);
                 // Execute the full firmware verification and pause-resume sequence
                 FirmwareVersionChecker checker = new FirmwareVersionChecker(driver);
                 checker.runSequentialFirmwareUpdates();

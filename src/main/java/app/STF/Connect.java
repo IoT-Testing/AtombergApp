@@ -29,7 +29,7 @@ public class Connect {
     private static final ThreadLocal<String> clipboard = new ThreadLocal<>();
 
     // === Configuration Constants ===
-    private static final String STF_URL = "http://192.168.56.1:7100/";
+    private static final String STF_URL = "http://192.168.56.1:7100/";//192.168.56.1
     private static final String USERNAME = "iot testing";
     private static final String EMAIL = "iot.testing@atomberg.com";
 

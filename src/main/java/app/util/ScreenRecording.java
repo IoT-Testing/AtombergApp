@@ -62,7 +62,7 @@ public class ScreenRecording {
             if (clickElementIfExists(STOP_BUTTON)) {
                 System.out.println("Screen recording stopped.");
             } else {
-                System.err.println("Failed to click STOP button.");
+//                System.err.println("Failed to click STOP button.");
             }
         } catch (Exception e) {
             System.err.println("Error while stopping recording: " + e.getMessage());

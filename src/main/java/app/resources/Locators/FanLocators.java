@@ -13,6 +13,11 @@ public class FanLocators {
     public static final By ADD_FIRST_DEVICE_ICON = By.xpath("//android.widget.ImageView[@content-desc=\"Add your first smart device\"]");
     public static final By FAN_MENU_BUTTON = By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[4]");
     public static final By BM_BOND_FAILURE = By.xpath("//android.view.View[@content-desc=\"Failed to create bond. BmBondStateEnum.none\"]");
+    public static final By IDENTIFY_YOUR_DEVICE = By.xpath("//android.view.View[@content-desc=\"Identify your device\"]");
+    public static final By REMOVE_DEVICE = By.xpath("//android.view.View[@content-desc=\"Remove Device?\"]");
+    public static final By YES = By.xpath("//android.widget.Button[@content-desc=\"Yes\"]");
+    public static final By DEVICE_REMOVED_SUCCESSFULLY = By.xpath("//android.view.View[@content-desc=\"Device Removed\nSuccessfully \uD83D\uDC4D\"]");
+    public static final By TRY_AGAIN = By.xpath("//android.view.View[@content-desc=\"Try Again\"]");
     // Fan Control Buttons
     public static final By SPEED_1 = By.xpath("//android.widget.Button[@content-desc=\"1\"]");
     public static final By SPEED_2 = By.xpath("//android.widget.Button[@content-desc=\"2\"]");
@@ -39,6 +44,7 @@ public class FanLocators {
     public static final By COULD_NOT_ADD_LOCK = By.xpath("//android.view.View[@content-desc=\"Could not add the lock\"]");
     public static final By DEVICE_ALREADY_PAIRED = By.xpath("//android.view.View[@content-desc=\"Device already paired\"]");
     public static final By COULD_NOT_REACH_DEVICE = By.xpath("//android.view.View[@content-desc=\"Could not reach\"]");
+    public static final By COULD_NOT_CONNECT_PROPERLY = By.xpath("//android.view.View[@content-desc=\"Cannot connect to the device properly\"]");
     public static final By WRAPPING_UP_LOCK = By.xpath("//android.view.View[@content-desc=\"Wrapping up...\n"+
             "Please don't press back button\"]");
     public static final By COMPLETE_LOCK_ADDITION = By.xpath("//android.view.View[@content-desc=\"Connecting to the Lock...\n" +

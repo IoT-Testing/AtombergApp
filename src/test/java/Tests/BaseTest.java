@@ -10,14 +10,14 @@ import com.applitools.eyes.appium.Eyes;
 import com.aventstack.extentreports.Status;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.appmanagement.ApplicationState;
-import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.testng.annotations.*;
-
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.time.Duration;
+import static app.resources.Locators.HomeLocators.*;
+
 
 /**
  * BaseTest - Base class for all test classes.
@@ -30,13 +30,11 @@ public class BaseTest {
     public static ServerInitializer server;
     public Eyes eyes; // Optional: Applitools integration
     public AndroidDriver driver;
-
     private ScreenRecording screenRecording; // Track for cleanup
     private boolean setupSuccessful = false;
 
     // === Constants ===
     private static final String APP_PACKAGE = "com.atomberg.app";
-    private static final By HOME_INDICATOR = By.xpath("//android.widget.ImageView[@content-desc='More\\nTab 3 of 3']");
 
     @BeforeClass
     @Parameters({"deviceSlot"})
@@ -264,7 +262,7 @@ public class BaseTest {
      */
     boolean isOnHomeScreen(AndroidDriver driver) {
         try {
-            WebElement element = driver.findElement(HOME_INDICATOR);
+            WebElement element = driver.findElement(DEVICES);
             return !element.isDisplayed();
         } catch (NoSuchElementException e) {
             return true;

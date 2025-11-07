@@ -139,8 +139,8 @@ public class PermissionUtil {
         private void alexaPopUp() {
             WebElement alexaPopup = findOptionalElement(ALEXA_POPUP);
             if (alexaPopup != null) {
-                try {
-                    driver.findElement(By.xpath("//android.widget.Button[@content-desc='Cancel']")).click();
+                try {driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]")).click();
+
                     System.out.println("Alexa popup canceled.");
                 } catch (Exception e) {
                     System.out.println("Failed to close Alexa popup: " + e.getMessage());

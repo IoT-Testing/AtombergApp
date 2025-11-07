@@ -2,16 +2,24 @@ package app;
 
 import app.Fan.FanManagement;
 import app.Login.Email;
+import app.resources.ArduinoRelayControllerModern;
 import app.resources.Locators.FanLocators;
+import app.resources.PythonFileScript;
 import app.util.ActionsUtil;
 import app.util.PermissionUtil;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Main {
     private static final By bof = By.xpath("//android.view.View[@content-desc=\"Atomberg_R3_fea1f937004b1200\"]");
-
+    private static PrintWriter csvWriter;
+    private static boolean csvInitialized = false;
     private AndroidDriver driver;
     private final ServerInitializer server = new ServerInitializer();
 
@@ -30,20 +38,31 @@ public class Main {
         initializeDriver();
         driver.activateApp("com.atomberg.app");
         ActionsUtil.SSleep(5);
-        ActionsUtil.Tap.withCoordinates(driver,540,1940);
-        FanManagement fan = new FanManagement(driver);
-        fan.addition(bof);
-//        driver.openNotifications();
-//        ActionsUtil.sleep(750);
-//        ActionsUtil.Tap.withCoordinates(driver, 500, 500);
-        By acceptBtn = By.id("android:id/button1");
-        driver.findElement(acceptBtn).click();
-        ActionsUtil.SSleep(6);
-//        driver.openNotifications();
-//        ActionsUtil.sleep(500);
-//        ActionsUtil.Tap.withCoordinates(driver, 500, 500);
-        driver.findElement(acceptBtn).click();
-        bleFanAddition();
+        boolean success = false;
+        ArduinoRelayControllerModern controller = new ArduinoRelayControllerModern();
+        controller.autoConnect();
+        for(int i = 0; i< 50;i++){
+            try{
+                ActionsUtil.SSleep(5);
+                FanManagement.Select fan = new FanManagement.Select();
+                fan.manageFanDevice(driver);
+                System.out.println("Running Python File for 3 iterations");
+                PythonFileScript run = new PythonFileScript();
+                run.script();
+                System.out.println("Running Python File Complete");
+                ActionsUtil.SSleep(10);
+                FanManagement fanManagement = new FanManagement(driver);
+                fanManagement.deleteMultipleFans();
+                if(!controller.serialPort.isOpen()) controller.autoConnect();
+//                controller.sendLEDCommand(true);
+                ActionsUtil.SSleep(5);
+                success = true;
+            }catch (Exception e){
+                success = false;
+            }
+            if(success)printRow(i,"Successful");
+        }
+        controller.disconnect();
     }
     private boolean isElementPresent(By locator) {
         try {
@@ -52,24 +71,11 @@ public class Main {
             return false;
         }
     }
-    private boolean clickElementWithRetry(By locator) {
-        for (int i = 0; i < 5; i++) {
-            try {
-                WebElement el = driver.findElement(locator);
-                if (el.isDisplayed() && Boolean.parseBoolean(el.getDomAttribute("clickable"))) {
-                    el.click();
-                    return true;
-                }
-            } catch (Exception ignored) {}
-        }
-        return false;
-    }
 
     private void bleFanDeletion(){
         ActionsUtil.Tap.withCoordinates(driver, 700, 975);
         driver.findElement(By.xpath("//android.view.View[@index=\"4\"]")).click();
         driver.findElement(By.xpath("//android.view.View[@content-desc=\"Delete device\"]")).click();
-
     }
 
     private void bleFanAddition(){
@@ -77,9 +83,6 @@ public class Main {
         ActionsUtil.sleep(500);
         driver.findElement(FanLocators.CONTINUE_BUTTON).click();
     }
-
-
-
 
 //TODO :  Custom timer
     //TODO : All Commands
@@ -94,7 +97,6 @@ public class Main {
 //        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
         System.out.println("Driver initialized successfully.");
     }
-
 
     private void launchApp() {
         ActionsUtil.SSleep(2);
@@ -148,4 +150,45 @@ public class Main {
         String value = System.getenv(key);
         return value != null ? value : fallback;
     }
+    private static void initCSV() {
+        if (csvInitialized) return;
+        try {
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+            csvWriter = new PrintWriter(new FileWriter("DeviveProvisioning" + timestamp + ".csv", true));
+            csvWriter.println("Attempt Number,Action ID,Iteration,Status,Updated Version");
+            csvWriter.flush();
+            csvInitialized = true;
+        } catch (IOException e) {
+            System.err.println("Failed to create CSV file: " + e.getMessage());
+        }
+    }
+    void printRow(int attemptNumber, String status) {
+        // Format: clean, no extra spaces
+        String row = String.format("%d,%s",
+                attemptNumber,status);
+
+        // Write to CSV
+        initCSV();
+        csvWriter.println(row);
+        csvWriter.flush();
+
+        // Print to console
+        System.out.printf("%-15d | %-8s%n",
+                attemptNumber, status);
+    }
 }
+
+/**
+ *         fan.addition(bof);
+ * //        driver.openNotifications();
+ * //        ActionsUtil.sleep(750);
+ * //        ActionsUtil.Tap.withCoordinates(driver, 500, 500);
+ *         By acceptBtn = By.id("android:id/button1");
+ *         driver.findElement(acceptBtn).click();
+ *         ActionsUtil.SSleep(6);
+ * //        driver.openNotifications();
+ * //        ActionsUtil.sleep(500);
+ * //        ActionsUtil.Tap.withCoordinates(driver, 500, 500);
+ *         driver.findElement(acceptBtn).click();
+ *         bleFanAddition();
+ */

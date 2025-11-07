@@ -12,7 +12,7 @@ public class Navigation {
 
 
     public static void openFanControl(AndroidDriver driver) {
-        ActionsUtil.Tap.withCoordinates(driver, 500, 590);// for Narzo only
+        ActionsUtil.Tap.withCoordinates(driver, 800, 950);// for Narzo only
 
         ActionsUtil.sleep(5000);
         executeClickBluetooth(driver);

@@ -36,15 +36,18 @@ public class AppUtil {
     private static WebDriverWait wait;
 
     // === Wi-Fi Constants ===
+//    private static final String DEFAULT_WIFI_SSID = "Room-C4";
     private static final String DEFAULT_WIFI_SSID = "Better_Together";
     private static final String DEFAULT_WIFI_PASSWORD = "123@ToMb^rg#2425";
+//    private static final String DEFAULT_WIFI_PASSWORD = "75982256";
 
     // === Locator Constants ===
     private static final By ROOM_NAMES = By.xpath("//android.widget.ImageView[@content-desc]");
     private static final By WIFI_INPUT_FIELD = By.xpath("//android.widget.EditText[1]");
     private static final By PASSWORD_INPUT_FIELD = By.xpath("//android.widget.EditText[2]");
     private static final By CONTINUE_BUTTON = By.xpath("//android.widget.Button[@content-desc='Continue']");
-    private static final String FALLBACK_PASSWORD = "123@ToMb^rg#2425";
+//    private static final String FALLBACK_PASSWORD = "123@ToMb^rg#2425";
+    private static final String FALLBACK_PASSWORD = "75982256";
 
     // Ensure screenshot directory exists
     static {
@@ -81,20 +84,17 @@ public class AppUtil {
      * @param driver AndroidDriver instance
      */
     public static void additionProcess(AndroidDriver driver) {
-        String[] roomNames = {"Master Bedroom", "Guest Room", "Kitchen", "Common Bedroom",
-                "Lobby", "Balcony", "Living Room"};
-
-        for (String room : roomNames) {
-            selectRoom(driver, room);
-            captureScreenshot(driver,room);
-        }
-
-        clickContinue(driver);
+//        String[] roomNames = {"Master Bedroom", "Guest Room", "Kitchen", "Common Bedroom",
+//                "Lobby", "Balcony", "Living Room"};
+//
+//        for (String room : roomNames) {
+//            selectRoom(driver, room);
+//            captureScreenshot(driver,room);
+//        }
+        clickIfExists(driver, CONTINUE_BUTTON);
         captureScreenshot(driver,"Continue button");
 
-        driver.toggleWifi();
         SearchWiFi(driver, DEFAULT_WIFI_SSID);
-        captureScreenshot(driver,"Wi-FI Toggle Failed Failed");
     }
 
     /**
@@ -126,7 +126,8 @@ public class AppUtil {
                 WebElement ssidField = findOptionalElement(driver, By.xpath("//android.widget.EditText[@text='" + targetSsid + "']"));
                 if (ssidField != null) {
                     System.out.println("Wi-Fi network '" + targetSsid + "' already entered.");
-                    enterPasswordAndContinue(driver, DEFAULT_WIFI_PASSWORD);
+//                    enterPasswordAndContinue(driver, DEFAULT_WIFI_PASSWORD);
+                    clickIfExists(driver, CONTINUE_BUTTON);
                     return;
                 } else {
                     enterSsidAndPassword(driver, targetSsid, FALLBACK_PASSWORD);
@@ -151,7 +152,7 @@ public class AppUtil {
     private static void enterSsidAndPassword(AndroidDriver driver, String ssid, String pwd) {
         clearAndSendKeys(driver, WIFI_INPUT_FIELD, ssid, "SSID Input");
         clearAndSendKeys(driver, PASSWORD_INPUT_FIELD, pwd, "Password Input");
-        clickContinue(driver);
+        clickIfExists(driver, CONTINUE_BUTTON);
     }
 
     /**
@@ -162,7 +163,7 @@ public class AppUtil {
      */
     private static void enterPasswordAndContinue(AndroidDriver driver, String pwd) {
         clearAndSendKeys(driver, PASSWORD_INPUT_FIELD, pwd, "Password Input");
-        clickContinue(driver);
+        clickIfExists(driver, CONTINUE_BUTTON);
     }
 
     /**
@@ -235,9 +236,6 @@ public class AppUtil {
     /**
      * Clicks continue button with retry.
      */
-    private static void clickContinue(AndroidDriver driver) {
-        clickElement(driver, CONTINUE_BUTTON, "Continue Button");
-    }
 
     /**
      * Safely finds element without throwing exception.
@@ -376,6 +374,8 @@ public class AppUtil {
      */
     public static void confirmOnHomeScreen(AndroidDriver driver) {
         By moreTab = By.xpath("//android.view.View[@content-desc=\"Home\"]");
+        //TODO : For Guest mode Use the above locator, While for Account Use app.resources.Locators.HomeLocators.MORE_TAB.
+
         long start = System.currentTimeMillis();
 
         while ((System.currentTimeMillis() - start) < 10_000) {

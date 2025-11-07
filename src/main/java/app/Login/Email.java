@@ -78,7 +78,7 @@ public class Email {
         }
 
         // Navigate back only if explicitly called from test (assumption)
-        atomberg.navigate().back();
+//        atomberg.navigate().back();
     }
 
     // === Internal Helpers ===

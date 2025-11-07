@@ -15,5 +15,5 @@ public class HomeLocators {
     public static final By LOCKS = By.xpath("//android.widget.ImageView[@content-desc=\"Locks\"]");
     public static final By WATER_PURIFIERS = By.xpath("//android.widget.ImageView[@content-desc=\"Water Purifier\"]");
     public static final By MIC_ICON = By.xpath("//android.widget.Button[@index=\"5\"]");
-
+    public static final By DEVICES = By.xpath("//android.view.View[@content-desc=\"Devices\"]");
 }

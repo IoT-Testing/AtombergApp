@@ -28,7 +28,7 @@ public class UploadFirmware extends FirmwareVersionChecker {
                 } catch (Exception e) {
                     System.out.println("⚠️ 'Start' button not found or already running.");
                 }
-                ActionsUtil.sleep(20000);
+                ActionsUtil.sleep(25000);
                 status = "Success";
                 success = true;
             } catch (Exception e) {
