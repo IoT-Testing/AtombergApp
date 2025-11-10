@@ -11,6 +11,15 @@ import static app.resources.Locators.LockLocators.*;
 import static app.resources.Messages.*;
 import static app.util.AppUtil.navigateToAddScreen;
 
+//TODO :
+/**
+ *  1. Link Unlink 20 cycles in account mode
+ *  2. 20 Power on-off cycles, while OTA(Account)
+ *  3. 20 Power on-off cycles, while OTA(Guest)
+ *  4. 20 Bluetooth on-off cycles, while OTA(Account)
+ *  5. 20 Bluetooth on-off cycles, while OTA(Guest)
+ */
+
 /**
  * LockManagement - End-to-end automation for Atomberg Smart Lock setup and control.
  *

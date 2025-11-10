@@ -106,35 +106,21 @@ public class ServerInitializer {
      * @return Detected File or null
      */
     private File detectAppiumJsPath() {
-        String os = System.getProperty("os.name").toLowerCase();
-        Path appiumJsPath;
+        // Appium path under NVM (most common on Linux)
+        String nvmAppiumPath = System.getProperty("user.home") +
+                "/.nvm/versions/node/v24.11.0/lib/node_modules/appium/build/lib/main.js";
+        Path appiumJsPath = Paths.get(nvmAppiumPath);
+        if (Files.exists(appiumJsPath)) return appiumJsPath.toFile();
 
-        if (os.contains("win")) {
-            // Windows: Common NPM path
-            String userProfile = System.getenv("USERPROFILE");
-            if (userProfile == null) return null;
-            appiumJsPath = Paths.get(userProfile, "AppData", "Roaming", "npm", "node_modules", "appium", "build", "lib", "main.js");
-        } else {
-            // macOS/Linux: Usually in global node_modules
-            appiumJsPath = Paths.get("/usr", "local", "lib", "node_modules", "appium", "build", "lib", "main.js");
-
-            // Fallback: Check if 'appium' is in PATH
-            if (!Files.exists(appiumJsPath)) {
-                try {
-                    Process which = Runtime.getRuntime().exec("which appium");
-                    java.util.Scanner scanner = new java.util.Scanner(which.getInputStream()).useDelimiter("\\A");
-                    if (scanner.hasNext()) {
-                        String appiumBin = scanner.next().trim();
-                        // Resolve from bin to main.js (common symlink structure)
-                        appiumJsPath = Paths.get(appiumBin).getParent().getParent()
-                                .resolve("lib").resolve("node_modules").resolve("appium").resolve("build").resolve("lib").resolve("main.js");
-                    }
-                    scanner.close();
-                } catch (IOException ignored) {}
-            }
+        // Fallback: check global paths
+        Path[] candidates = {
+                Paths.get("/usr/local/lib/node_modules/appium/build/lib/main.js"),
+                Paths.get("/usr/lib/node_modules/appium/build/lib/main.js")
+        };
+        for (Path candidate : candidates) {
+            if (Files.exists(candidate)) return candidate.toFile();
         }
-
-        return Files.exists(appiumJsPath) ? appiumJsPath.toFile() : null;
+        return null;
     }
 
     /**
