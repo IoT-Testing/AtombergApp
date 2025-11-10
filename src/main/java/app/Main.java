@@ -41,12 +41,13 @@ public class Main {
         boolean success = false;
         ArduinoRelayControllerModern controller = new ArduinoRelayControllerModern();
         controller.autoConnect();
-        for(int i = 0; i< 50;i++){
+        for(int i = 0; i< 10;i++){
             try{
                 ActionsUtil.SSleep(5);
                 FanManagement.Select fan = new FanManagement.Select();
                 fan.manageFanDevice(driver);
-                System.out.println("Running Python File for 3 iterations");
+                ActionsUtil.SSleep(15);
+                System.out.println("Running Python File for 2 iterations");
                 PythonFileScript run = new PythonFileScript();
                 run.script();
                 System.out.println("Running Python File Complete");
@@ -54,13 +55,14 @@ public class Main {
                 FanManagement fanManagement = new FanManagement(driver);
                 fanManagement.deleteMultipleFans();
                 if(!controller.serialPort.isOpen()) controller.autoConnect();
-//                controller.sendLEDCommand(true);
+                controller.sendLEDCommand(true);
                 ActionsUtil.SSleep(5);
                 success = true;
             }catch (Exception e){
                 success = false;
             }
             if(success)printRow(i,"Successful");
+            else printRow(1,"Failed");
         }
         controller.disconnect();
     }

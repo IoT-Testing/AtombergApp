@@ -46,8 +46,8 @@ public class AppUtil {
     private static final By WIFI_INPUT_FIELD = By.xpath("//android.widget.EditText[1]");
     private static final By PASSWORD_INPUT_FIELD = By.xpath("//android.widget.EditText[2]");
     private static final By CONTINUE_BUTTON = By.xpath("//android.widget.Button[@content-desc='Continue']");
-//    private static final String FALLBACK_PASSWORD = "123@ToMb^rg#2425";
-    private static final String FALLBACK_PASSWORD = "75982256";
+    private static final String FALLBACK_PASSWORD = "123@ToMb^rg#2425";
+//    private static final String FALLBACK_PASSWORD = "75982256";
 
     // Ensure screenshot directory exists
     static {
