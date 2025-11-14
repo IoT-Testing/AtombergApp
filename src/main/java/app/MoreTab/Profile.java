@@ -8,7 +8,7 @@ import org.openqa.selenium.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static app.resources.Locators.MoreTabLocators.*;
+import static app.resources.Locators.Android.MoreTabLocators.*;
 
 /**
  * Profile - Handles user profile editing: avatar, name, phone number.

@@ -16,8 +16,8 @@ import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.*;
 import org.testng.Assert;
 import org.testng.annotations.*;
-import static app.resources.Locators.HomeLocators.*;
-import static app.resources.Locators.LoginLocators.*;
+import static app.resources.Locators.Android.HomeLocators.*;
+import static app.resources.Locators.Android.LoginLocators.*;
 import static app.util.AppUtil.findOptionalElement;
 
 /**

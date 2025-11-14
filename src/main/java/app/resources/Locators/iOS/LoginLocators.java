@@ -1,9 +1,9 @@
-package app.resources.Locators;
+package app.resources.Locators.iOS;
 
 import org.openqa.selenium.By;
 
 public class LoginLocators {
-    public static final By LOGIN_SCREEN_INDICATOR = By.xpath("//android.view.View[@content-desc=\"Experience smart living \n with Atomberg\"]");
+    public static final By LOGIN_SCREEN_INDICATOR = By.xpath("");
     public static final By LOGIN_CONTINUE_BUTTON = By.xpath("//android.widget.Button[@content-desc=\"Continue\"]");
     //Apple Login Locators
     public static final By APPLE_LOGIN_BUTTON = By.xpath("//android.widget.ImageView[@index=\"2\"]");// First image assumed to be Apple login

@@ -3,7 +3,7 @@ package app;
 import app.Fan.FanManagement;
 import app.Login.Email;
 import app.resources.ArduinoRelayControllerModern;
-import app.resources.Locators.FanLocators;
+import app.resources.Locators.Android.FanLocators;
 import app.resources.PythonFileScript;
 import app.util.ActionsUtil;
 import app.util.PermissionUtil;
@@ -19,9 +19,8 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import static app.resources.Locators.FanLocators.*;
-import static app.resources.Locators.HomeLocators.MORE_TAB;
-import static app.util.AppUtil.isElementPresent;
+import static app.resources.Locators.Android.FanLocators.*;
+import static app.resources.Locators.Android.HomeLocators.MORE_TAB;
 
 public class Main {
     private static final By bof = By.xpath("//android.view.View[@content-desc=\"Atomberg_R3_fea1f937004b1200\"]");

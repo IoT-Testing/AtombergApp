@@ -8,7 +8,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import java.util.List;
 import java.util.Objects;
-import static app.resources.Locators.BLEFan.*;
+import static app.resources.Locators.Android.BLEFan.*;
 import static app.util.AppUtil.confirmOnHomeScreen;
 
 public class BluetoothToggleInterruption{

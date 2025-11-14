@@ -1,4 +1,4 @@
-package app.resources.Locators;
+package app.resources.Locators.iOS;
 
 import org.openqa.selenium.By;
 

@@ -3,7 +3,7 @@ package app.Fan;
 import app.ScreenCheck.ScreenCheck;
 import app.SmartDevice;
 import app.resources.ArduinoRelayControllerModern;
-import app.resources.Locators.FanLocators;
+import app.resources.Locators.Android.FanLocators;
 import app.resources.PythonFileScript;
 import app.util.ActionsUtil;
 import app.util.AppUtil;
@@ -18,9 +18,9 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import static app.resources.Locators.HomeLocators.*;
+import static app.resources.Locators.Android.HomeLocators.*;
 import static app.util.AppUtil.*;
-import static app.resources.Locators.FanLocators.*;
+import static app.resources.Locators.Android.FanLocators.*;
 
 /**
  * FanManagement - Manages fan-related operations in the Atomberg app.

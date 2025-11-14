@@ -7,7 +7,7 @@ import org.openqa.selenium.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static app.resources.Locators.MoreTabLocators.*;
+import static app.resources.Locators.Android.MoreTabLocators.*;
 
 /**
  * Play - Handles video tutorial playback in the 'Play' section.

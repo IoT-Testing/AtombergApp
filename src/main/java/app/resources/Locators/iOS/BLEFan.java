@@ -1,6 +1,5 @@
-package app.resources.Locators;
+package app.resources.Locators.iOS;
 
-import io.cucumber.java.ar.اذاً;
 import org.openqa.selenium.By;
 
 import java.util.regex.Pattern;

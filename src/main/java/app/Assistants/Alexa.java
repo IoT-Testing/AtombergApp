@@ -5,7 +5,7 @@ import app.util.ActionsUtil;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.*;
 import static app.util.AppUtil.*;
-import static app.resources.Locators.MoreTabLocators.*;
+import static app.resources.Locators.Android.MoreTabLocators.*;
 import static app.resources.Messages.*;
 
 /**

@@ -17,8 +17,8 @@ import io.cucumber.java.en.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
-import static app.resources.Locators.LoginLocators.*;
-import static app.resources.Locators.HomeLocators.*;
+import static app.resources.Locators.Android.LoginLocators.*;
+import static app.resources.Locators.Android.HomeLocators.*;
 import static org.testng.Assert.*;
 
 public class StepDefinitions {

@@ -8,7 +8,7 @@ import org.openqa.selenium.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static app.resources.Locators.MoreTabLocators.*;
+import static app.resources.Locators.Android.MoreTabLocators.*;
 
 /**
  * Manage - Handles 'More' tab operations: logout, family, settings.

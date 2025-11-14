@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-import static app.resources.Locators.BLEFan.*;
+import static app.resources.Locators.Android.BLEFan.*;
 import static app.util.AppUtil.confirmOnHomeScreen;
 
 public class FirmwareVersionChecker {

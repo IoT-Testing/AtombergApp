@@ -14,10 +14,10 @@ import org.testng.Assert;
 import org.testng.annotations.*;
 import org.testng.asserts.SoftAssert;
 import java.net.MalformedURLException;
-import static app.resources.Locators.BLEFan.*;
-import static app.resources.Locators.FanLocators.*;
-import static app.resources.Locators.HomeLocators.*;
-import static app.resources.Locators.LoginLocators.*;
+import static app.resources.Locators.Android.BLEFan.*;
+import static app.resources.Locators.Android.FanLocators.*;
+import static app.resources.Locators.Android.HomeLocators.*;
+import static app.resources.Locators.Android.LoginLocators.*;
 
 import static app.util.AppUtil.clickIfExists;
 import static app.util.AppUtil.waitForElement;

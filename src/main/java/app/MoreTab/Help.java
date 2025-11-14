@@ -8,7 +8,7 @@ import org.openqa.selenium.*;
 import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
-import static app.resources.Locators.MoreTabLocators.*;
+import static app.resources.Locators.Android.MoreTabLocators.*;
 import static org.awaitility.Awaitility.await;
 
 public class Help {

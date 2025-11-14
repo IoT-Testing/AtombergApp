@@ -1,6 +1,6 @@
 package app.util;
 
-import app.resources.Locators.HomeLocators;
+import app.resources.Locators.Android.HomeLocators;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.appmanagement.ApplicationState;
 import org.apache.commons.io.FileUtils;
@@ -9,12 +9,11 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.io.*;
 import java.text.SimpleDateFormat;
-import java.time.Duration;
 import java.util.Date;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import static app.resources.Locators.FanLocators.ADD_BUTTON_XPATH;
+import static app.resources.Locators.Android.FanLocators.ADD_BUTTON_XPATH;
 import static app.util.ActionsUtil.sleep;
 
 /**
@@ -377,7 +376,7 @@ public class AppUtil {
 //        By moreTab = By.xpath("//android.view.View[@content-desc=\"Home\"]");
         By moreTab = HomeLocators.MORE_TAB;
 
-        //TODO : For Guest mode Use the above locator, While for Account Use app.resources.Locators.HomeLocators.MORE_TAB.
+        //TODO : For Guest mode Use the above locator, While for Account Use app.resources.Locators.Android.HomeLocators.MORE_TAB.
 
         long start = System.currentTimeMillis();
 

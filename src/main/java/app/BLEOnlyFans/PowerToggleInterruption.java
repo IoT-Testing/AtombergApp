@@ -2,7 +2,6 @@ package app.BLEOnlyFans;
 
 import app.resources.ArduinoRelayControllerModern;
 import app.util.ActionsUtil;
-import app.util.BluetoothUtils;
 import app.util.Navigation;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
@@ -11,7 +10,7 @@ import org.openqa.selenium.WebElement;
 import java.util.List;
 import java.util.Objects;
 
-import static app.resources.Locators.BLEFan.*;
+import static app.resources.Locators.Android.BLEFan.*;
 import static app.util.AppUtil.confirmOnHomeScreen;
 
 public class PowerToggleInterruption {

@@ -16,7 +16,7 @@ import org.testng.annotations.*;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.time.Duration;
-import static app.resources.Locators.HomeLocators.*;
+import static app.resources.Locators.Android.HomeLocators.*;
 
 
 /**

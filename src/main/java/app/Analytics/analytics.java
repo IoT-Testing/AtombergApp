@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static app.resources.Locators.AnalyticsLocators.*;
-import static app.resources.Locators.HomeLocators.*;
+import static app.resources.Locators.Android.AnalyticsLocators.*;
+import static app.resources.Locators.Android.HomeLocators.*;
 
 
 /**

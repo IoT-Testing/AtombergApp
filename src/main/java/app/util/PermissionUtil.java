@@ -5,8 +5,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
-import static app.resources.Locators.FanLocators.*;
-import static app.resources.Locators.HomeLocators.*;
+import static app.resources.Locators.Android.FanLocators.*;
+import static app.resources.Locators.Android.HomeLocators.*;
 
 /**
  * Utility class to handle Android runtime permissions and common startup popups.

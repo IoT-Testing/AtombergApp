@@ -7,7 +7,7 @@ import org.openqa.selenium.WebElement;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static app.resources.Locators.HomeLocators.*;
+import static app.resources.Locators.Android.HomeLocators.*;
 
 /**
  * ScreenCheck - Verifies presence and navigates to main app screens: Home, Analytics, More.
