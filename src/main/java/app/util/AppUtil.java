@@ -1,5 +1,6 @@
 package app.util;
 
+import app.resources.Locators.HomeLocators;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.appmanagement.ApplicationState;
 import org.apache.commons.io.FileUtils;
@@ -373,7 +374,9 @@ public class AppUtil {
      * Confirms that app has returned to Home Screen
      */
     public static void confirmOnHomeScreen(AndroidDriver driver) {
-        By moreTab = By.xpath("//android.view.View[@content-desc=\"Home\"]");
+//        By moreTab = By.xpath("//android.view.View[@content-desc=\"Home\"]");
+        By moreTab = HomeLocators.MORE_TAB;
+
         //TODO : For Guest mode Use the above locator, While for Account Use app.resources.Locators.HomeLocators.MORE_TAB.
 
         long start = System.currentTimeMillis();
@@ -383,7 +386,6 @@ public class AppUtil {
                 System.out.println("🏠 On Home Screen.");
                 return;
             }
-            else{driver.navigate().back();}
             sleep(500);
         }
         System.err.println("⚠️ Could not confirm return to Home Screen.");

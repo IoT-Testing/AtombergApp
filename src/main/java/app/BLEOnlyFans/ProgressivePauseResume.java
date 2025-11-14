@@ -74,7 +74,7 @@ public class ProgressivePauseResume {
             try {
                 // Step 1: Click Start (if not already started)
                 try {
-                    driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Start\"]")).click();
+                    driver.findElement(START_BUTTON).click();
                     System.out.println("▶️ Start button clicked.");
                 } catch (Exception e) {
                     System.out.println("⚠️ 'Start' button not found or already running.");

@@ -14,7 +14,6 @@ import java.time.format.DateTimeFormatter;
 
 public class OpenAndControl {
 
-
     /*
     * mvn clean package -DskipTests
     *

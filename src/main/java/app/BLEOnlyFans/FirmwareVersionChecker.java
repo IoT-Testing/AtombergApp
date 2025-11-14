@@ -113,15 +113,28 @@ public class FirmwareVersionChecker {
             sleep(2000);
 
             // Run validation: wait for success → click Done → verify
-            //1. Pause Resume
+
+
+//            1. Pause Resume
 //            ProgressivePauseResume validator = new ProgressivePauseResume(driver, this);
 //            validator.runProgressivePauseResume();
+
             previousExpectedVersion = expectedVersion;
+            //TODO: change according to the interruption you want to run.
 
-//            // 2. Uninterrupted upload.
-            UploadFirmware upload = new UploadFirmware(driver);
-            upload.runProgressiveFWUpload();
+//             2. Uninterrupted upload.
+//            UploadFirmware upload = new UploadFirmware(driver);
+//            upload.runProgressiveFWUpload();
 
+
+            //3. Bluetooth On-Off cycles
+//            BluetoothToggleInterruption ble  = new BluetoothToggleInterruption(driver,i,fileName);
+//            ble.runBluetoothOnOff();
+
+
+            //4. Power Toggle
+            PowerToggleInterruption toggle = new PowerToggleInterruption(driver,i, fileName);
+            toggle.runPowerToggle();
             // Execute firmware verification
             executeFirmwareVerification(currentAttempt, expectedVersion);
 
@@ -444,7 +457,7 @@ public class FirmwareVersionChecker {
         if (csvInitialized) return;
         try {
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-            csvWriter = new PrintWriter(new FileWriter("firmware_test_results_" + timestamp + ".csv", true));
+            csvWriter = new PrintWriter(new FileWriter("FirmwareTests/firmware_test_results_" + timestamp + ".csv", true));
             csvWriter.println("Attempt Number,Action ID,Iteration,Status,Updated Version");
             csvWriter.flush();
             csvInitialized = true;

@@ -1,27 +1,32 @@
 package app.BLEOnlyFans;
 
+import app.resources.ArduinoRelayControllerModern;
 import app.util.ActionsUtil;
 import app.util.BluetoothUtils;
 import app.util.Navigation;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+
 import java.util.List;
 import java.util.Objects;
+
 import static app.resources.Locators.BLEFan.*;
 import static app.util.AppUtil.confirmOnHomeScreen;
 
-public class BluetoothToggleInterruption{
+public class PowerToggleInterruption {
     private final AndroidDriver driver;
     private int iteration;
     private String fileName;
-    public BluetoothToggleInterruption(AndroidDriver driver, int iteration, String fileName) {
+    ArduinoRelayControllerModern controller = new ArduinoRelayControllerModern();
+
+    public PowerToggleInterruption(AndroidDriver driver, int iteration, String fileName) {
         this.driver = driver;
         this.iteration = iteration;
         this.fileName = fileName;
     }
 
-    public void runBluetoothOnOff() {
+    public void runPowerToggle() {
         System.out.println("⏱ Starting bluetooth on-off cycles");
 
         try {
@@ -33,16 +38,14 @@ public class BluetoothToggleInterruption{
                 System.out.println("⚠️ 'Start' button not found or already running.");
             }
 
-
+            controller.autoConnect();
             // Step 2: Perform 20 cycles of pause-resume via tap
             for (int i = 0; i < BLUETOOTH_ON_OFF_CYCLES; i++) {
                 sleep(HOLD_DURATION_MS);
-                BluetoothUtils.turnOffBluetooth(driver);
-                sleep(250);
+                controller.sendLEDCommand(true);
+                sleep(2000);
                 if (isElementPresent(DEVICE_DISCONNECTED))
                 {
-                    ActionsUtil.Tap.withCoordinates(driver, 100,100);
-                    BluetoothUtils.turnOnBluetooth(driver);
                     sleep(2000);
                     confirmOnHomeScreen(driver);
                     Navigation.openFanControl(driver);
@@ -79,6 +82,7 @@ public class BluetoothToggleInterruption{
             throw new RuntimeException("❌ Error during Bluetooth On-Off cycle: " + e.getMessage(), e);
         }
     }
+
     private boolean clickElementWithRetry(By locator, int maxRetries) {
         for (int i = 0; i < maxRetries; i++) {
             try {
@@ -93,6 +97,7 @@ public class BluetoothToggleInterruption{
         }
         return false;
     }
+
     private void selectFileWithScroll(String fileName) {
         System.out.println("🔍 Scrolling to find: " + fileName);
         By fileLocator = By.xpath("//android.widget.TextView[@resource-id='android:id/title' and @text='" + fileName + "']");
@@ -183,6 +188,7 @@ public class BluetoothToggleInterruption{
             return false;
         }
     }
+
     private WebElement findElementByContentDescStartsWith(String prefix) {
         List<WebElement> candidates = driver.findElements(By.className("android.view.View"));
         return candidates.stream()
@@ -195,6 +201,7 @@ public class BluetoothToggleInterruption{
                         .findFirst())
                 .orElse(null);
     }
+
     private String getAttribute(WebElement el, String attr) {
         try {
             return el.getDomAttribute(attr);
@@ -210,6 +217,7 @@ public class BluetoothToggleInterruption{
             Thread.currentThread().interrupt();
         }
     }
+
     private boolean clickIfExists(By locator) {
         try {
             WebElement el = driver.findElement(locator);
@@ -230,6 +238,7 @@ public class BluetoothToggleInterruption{
         System.out.println("✅ Menu opened");
         sleep(3000); // Allow load
     }
+
     private String getCurrentFirmwareVersionFromMenu() {
         try {
             List<WebElement> views = driver.findElements(By.className("android.view.View"));

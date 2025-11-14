@@ -9,15 +9,15 @@ import static app.util.AppUtil.isElementPresent;
 public class Navigation {
     private static final By bluetoothBtn = By.xpath("//android.view.View[@index=\"3\"]");
     private static final By bluetoothSuccess = By.xpath("//android.view.View[@content-desc=\"Device is connected via bluetooth\"]");
+    public static final By deviceOffline = By.xpath("//android.view.View[@content-desc=\"Device is offline. If it is nearby, please turn on bluetooth to connect.\"]");
 
 
     public static void openFanControl(AndroidDriver driver) {
         ActionsUtil.Tap.withCoordinates(driver, 800, 950);// for Narzo only
-
         ActionsUtil.sleep(5000);
         executeClickBluetooth(driver);
     }
-    private static boolean clickElementWithRetry(AndroidDriver driver, By locator) {
+    public static boolean clickElementWithRetry(AndroidDriver driver, By locator) {
         for (int i = 0; i < 5; i++) {
             try {
                 WebElement el = driver.findElement(locator);
@@ -38,26 +38,27 @@ public class Navigation {
 
         while (iteration <= 5) {
             String status = "Fail";
-
             if (clickElementWithRetry(driver,bluetoothBtn)) {
                 if (isElementPresent(driver,bluetoothSuccess)) {
                     status = "Success";
                     success = true;
                     driver.navigate().back();
                 }
+                else if(isElementPresent(driver, deviceOffline))
+                {
+                    driver.navigate().back();
+                    BluetoothUtils.turnOnBluetooth(driver);
+                    status = "Re-attempting bluetooth";
+                }
             }
-
             if (success) {
                 break;
             }
-
             if (iteration == 5) {
                 break;
             }
-
             iteration++;
         }
-
         return success;
     }
 

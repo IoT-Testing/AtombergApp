@@ -2,12 +2,12 @@ package app.Fan;
 
 import app.ScreenCheck.ScreenCheck;
 import app.SmartDevice;
+import app.resources.ArduinoRelayControllerModern;
 import app.resources.Locators.FanLocators;
-import app.resources.Locators.HomeLocators;
+import app.resources.PythonFileScript;
 import app.util.ActionsUtil;
 import app.util.AppUtil;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.android.SupportsSpecialEmulatorCommands;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -18,10 +18,7 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import static app.resources.Locators.HomeLocators.MORE_TAB;
-import static app.resources.Locators.MoreTabLocators.RETURN_TO_HOME_BUTTON;
-import static app.resources.Locators.MoreTabLocators.VIDEO_TUTORIALS_LINK;
+import static app.resources.Locators.HomeLocators.*;
 import static app.util.AppUtil.*;
 import static app.resources.Locators.FanLocators.*;
 
@@ -32,6 +29,7 @@ import static app.resources.Locators.FanLocators.*;
 
 public class  FanManagement implements SmartDevice {
     private static AndroidDriver atomberg;
+
     private final WebDriverWait wait; // For explicit waits
 
     public FanManagement(AndroidDriver driver) {
@@ -43,6 +41,7 @@ public class  FanManagement implements SmartDevice {
      * Adds a new fan by navigating to the add screen and attempting connection.
      * Retries scanning up to 10 times if no device is found.
      */
+    @Override
     public void addition() {
         System.out.println("Searching for available devices...");
         for (int attempt = 0; attempt < 5; attempt++) {
@@ -50,53 +49,141 @@ public class  FanManagement implements SmartDevice {
             sleep(15); // Wait for scan results
             int previousElementY = 0;
             List<WebElement> fanElements = atomberg.findElements(FAN_DISCOVERY_XPATH);
-            System.out.println(FAN_DISCOVERY_XPATH.toString());
+
             List<WebElement> connectButtons = atomberg.findElements(CONNECT_BUTTON);
             if(connectButtons.size() ==1 && !fanElements.isEmpty()){
                 atomberg.findElement(CONNECT_BUTTON).click();
+                ConnectionError error = handleConnectionErrors();
+                if(error != ConnectionError.NO_ERROR) {
+                    error.handle(atomberg);
+                    continue;
+                }
+                else if(error.equals(ConnectionError.DEVICE_ALREADY_PAIRED)){
+                    PythonFileScript run = new PythonFileScript();
+                    run.script();
+                }
                 break;
             }
             else if (fanElements.size()>1){
-                    for (WebElement fanElement : fanElements) {
-                        int deviceCenterY = getElementY(fanElement); // Y coordinates of "Atomberg Smart Fan"
-                        if (previousElementY == deviceCenterY) continue;
-                        if (fanElement != null) {
-                            System.out.println("Atomberg Smart Fan detected.");
-                            connectButtons = atomberg.findElements(CONNECT_BUTTON);
-                            for (WebElement connect : connectButtons) {
-                                int connectCenter = getElementY(connect); //Y coordinates of connect button
-                                if (deviceCenterY == connectCenter) {
-                                    connect.click();
-                                    sleep(2);
-                                    ConnectionError error = handleConnectionErrors();
-                                    if(error != ConnectionError.NO_ERROR) {
-//                                        PythonFileScript run = new PythonFileScript();
-//                                        run.script();
-                                        error.handle(atomberg);
-                                        continue;
-                                    }
-                                    By Model = By.xpath("//android.view.View[@content-desc=\"Model: Aris Gladius\"]");
-                                    System.out.println("Checking model");
-                                    if (isElementPresent(atomberg, Model))
-                                        break;
+                for (WebElement fanElement : fanElements) {
+                    int deviceCenterY = getElementY(fanElement); // Y coordinates of "Atomberg Smart Fan"
+                    if (previousElementY == deviceCenterY) continue;
+                    if (fanElement != null) {
+                        System.out.println("Atomberg Smart Fan detected.");
+                        connectButtons = atomberg.findElements(CONNECT_BUTTON);
+                        for (WebElement connect : connectButtons) {
+                            ArduinoRelayControllerModern controller = new ArduinoRelayControllerModern();
+                            int connectCenter = getElementY(connect); //Y coordinates of connect button
+                            if (deviceCenterY == connectCenter) {
+                                connect.click();
+                                sleep(2);
+                                ConnectionError error = handleConnectionErrors();
+                                if(error != ConnectionError.NO_ERROR) {
+                                    error.handle(atomberg);
+                                    continue;
                                 }
+                                else if(error.equals(ConnectionError.DEVICE_ALREADY_PAIRED)){
+                                    //TODO : Get nRF connect app process complete and add here.
+//                                  PythonFileScript run = new PythonFileScript();
+//                                  run.script();
+                                    controller.sendLEDCommand(true);
+                                    ActionsUtil.SSleep(15);
+                                }
+                                //TODO : Add Model selection.
+                                By Model = By.xpath("//android.view.View[@content-desc=\"Model: Aris Gladius\"]");
+                                System.out.println("Checking model");
+                                if (isElementPresent(atomberg, Model))
+                                    break;
                             }
                         }
-                        previousElementY = deviceCenterY;
-                        By Model = By.xpath("//android.view.View[@content-desc=\"Model: Aris Gladius\"]");
-                        if (isElementPresent(atomberg, Model))
-                            break;
                     }
+                    previousElementY = deviceCenterY;
+                    By Model = By.xpath("//android.view.View[@content-desc=\"Model: Aris Gladius\"]");
+                    if (isElementPresent(atomberg, Model)) break;
                 }
+            }
             else if(fanElements.isEmpty())atomberg.navigate().back();
-
-            //Specific for Arid Gladius model. later change to check if Mode
-
+            //Specific for Arid Gladius model. later change to check according to the models
             By Model = By.xpath("//android.view.View[@content-desc=\"Model: Aris Gladius\"]");
             if (isElementPresent(atomberg, Model)) break;
-
         }
     }
+    //    public void addition() {
+//        System.out.println("Searching for available devices...");
+//        WebDriverWait wait = new WebDriverWait(atomberg, Duration.ofSeconds(15));
+//
+//        for (int attempt = 0; attempt < 5; attempt++) {
+//            ActionsUtil.Tap.withCoordinates(atomberg, 540, 1940);
+//
+//            try {
+//                // Wait for fans or connect button to appear after tap
+//                wait.until(driver -> !atomberg.findElements(FAN_DISCOVERY_XPATH).isEmpty()
+//                        || !atomberg.findElements(CONNECT_BUTTON).isEmpty());
+//
+//                List<WebElement> fanElements = atomberg.findElements(FAN_DISCOVERY_XPATH);
+//
+//                List<WebElement> connectButtons = atomberg.findElements(CONNECT_BUTTON);
+//
+//                if (connectButtons.size() == 1 && !fanElements.isEmpty()) {
+//                    WebElement connectButton = atomberg.findElement(CONNECT_BUTTON);
+//                    wait.until(ExpectedConditions.elementToBeClickable(connectButton));
+//                    connectButton.click();
+//                    break;
+//                }
+//                else if (fanElements.size() > 1) {
+//                    int previousElementY = 0;
+//                    for (WebElement fanElement : fanElements) {
+//                        int deviceCenterY = getElementY(fanElement);
+//                        if (previousElementY == deviceCenterY) continue;
+//                        if (fanElement != null) {
+//                            System.out.println("Atomberg Smart Fan detected.");
+//                            connectButtons = atomberg.findElements(CONNECT_BUTTON);
+//                            for (WebElement connect : connectButtons) {
+//                                int connectCenter = getElementY(connect);
+//                                if (deviceCenterY == connectCenter) {
+//                                    wait.until(ExpectedConditions.elementToBeClickable(connect));
+//                                    connect.click();
+//
+//                                    // Instead of fixed sleep, wait dynamically if needed (e.g. wait for model element or error)
+//                                    if (handleConnectionErrors()) {
+//                                        // Connection error handled, continue to next fan
+//                                        continue;
+//                                    }
+//
+//                                    By model = By.xpath("//android.view.View[@content-desc=\"Model: Aris Gladius\"]");
+//                                    System.out.println("Checking model");
+//                                    if (isElementPresent(atomberg, model)) {
+//                                        break;
+//                                    }
+//                                }
+//                            }
+//                        }
+//                        previousElementY = deviceCenterY;
+//
+//                        By model = By.xpath("//android.view.View[@content-desc=\"Model: Aris Gladius\"]");
+//                        if (isElementPresent(atomberg, model)) {
+//                            break;
+//                        }
+//                    }
+//                }
+//                else if (fanElements.isEmpty()) {
+//                    atomberg.navigate().back();
+//                    // Optionally wait until back navigation completes or some known element appears
+//                    wait.until(ExpectedConditions.presenceOfElementLocated(MORE_TAB));
+//                }
+//
+//                // Specific for Aris Gladius model check
+//                By model = By.xpath("//android.view.View[@content-desc=\"Model: Aris Gladius\"]");
+//                if (isElementPresent(atomberg, model)) {
+//                    break;
+//                }
+//
+//            } catch (Exception e) {
+//                System.out.println("Exception during addition attempt: " + e.getMessage());
+//            }
+//        }
+//    }
+
 
     private Point getCenter(WebElement element) {
         Pattern pattern = Pattern.compile("\\d+");
@@ -188,7 +275,7 @@ public class  FanManagement implements SmartDevice {
      *
      * @return true if an error was handled (retry needed), false if successful
      */
-    private ConnectionError handleConnectionErrors() {
+    public static ConnectionError handleConnectionErrors() {
         try {
             for (ConnectionError error : ConnectionError.values()) {
                 if (isElementPresent(atomberg, error.getLocator())) {
@@ -206,7 +293,7 @@ public class  FanManagement implements SmartDevice {
     public enum ConnectionError {
         CONNECTING_TO_LOCK_MODAL(FanLocators.CONNECTING_TO_LOCK_MODAL) {
             @Override
-            boolean handle(AndroidDriver driver) {
+            public boolean handle(AndroidDriver driver) {
                 driver.navigate().back();
                 System.out.println("Back: Connecting to Lock modal appeared.");
                 return true;
@@ -214,7 +301,7 @@ public class  FanManagement implements SmartDevice {
         },
         COULD_NOT_ADD_LOCK(FanLocators.COULD_NOT_ADD_LOCK) {
             @Override
-            boolean handle(AndroidDriver driver) {
+            public boolean handle(AndroidDriver driver) {
                 driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]")).click();
                 System.out.println("Cancel clicked: Could not add lock.");
                 sleepStatic(1);
@@ -223,7 +310,7 @@ public class  FanManagement implements SmartDevice {
         },
         DEVICE_ALREADY_PAIRED(FanLocators.DEVICE_ALREADY_PAIRED) {
             @Override
-            boolean handle(AndroidDriver driver) {
+            public boolean handle(AndroidDriver driver) {
                 driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]")).click();
                 System.out.println("Cancel clicked: Device already paired.");
                 sleepStatic(1);
@@ -232,7 +319,7 @@ public class  FanManagement implements SmartDevice {
         },
         COULD_NOT_REACH_DEVICE(FanLocators.COULD_NOT_REACH_DEVICE) {
             @Override
-            boolean handle(AndroidDriver driver) {
+            public boolean handle(AndroidDriver driver) {
                 System.out.println("Out of reach.");
                 driver.navigate().back();
                 driver.navigate().back();
@@ -241,22 +328,22 @@ public class  FanManagement implements SmartDevice {
         },
         COULD_NOT_CONNECT_PROPERLY(FanLocators.COULD_NOT_CONNECT_PROPERLY) {
             @Override
-            boolean handle(AndroidDriver driver) {
+            public boolean handle(AndroidDriver driver) {
             backToHome();
             return true;
             }
         },
         OPERATION_FAILED(FanLocators.OPERATION_FAILED) {
             @Override
-            boolean handle(AndroidDriver driver) {
-                System.out.println(driver.findElement(FanLocators.OPERATION_FAILED).getDomAttribute("accessibility id"));
+            public boolean handle(AndroidDriver driver) {
                 backToHome();
                 return false; // or true if you want to treat this as handled
             }
         },
         NO_ERROR(FanLocators.NO_ERROR) {
             @Override
-            boolean handle(AndroidDriver driver) {
+            public boolean handle(AndroidDriver driver) {
+                backToHome();
                 return true;
             }
         };
@@ -268,14 +355,14 @@ public class  FanManagement implements SmartDevice {
         }
         private static void backToHome() {
             int attempts = 0;
-            while (!isElementPresent(atomberg,MORE_TAB) && attempts < 10) {
+            while (!isElementPresent(atomberg,MORE_TAB) && attempts < 5) {
                 System.out.println("Navigating back... attempt " + (++attempts));
                 atomberg.navigate().back();
                 ActionsUtil.sleep(1000);
             }
 
             if (!isElementPresent(atomberg, MORE_TAB)) {
-                System.err.println("Failed to return to 'Video tutorials' after 10 back presses.");
+                System.err.println("Failed to return to 'Home Screen' after 5 back presses.");
             }
         }
 
@@ -283,7 +370,7 @@ public class  FanManagement implements SmartDevice {
             return locator;
         }
 
-        abstract boolean handle(AndroidDriver driver);
+        public abstract boolean handle(AndroidDriver driver);
 
         // Static helper to sleep without instance
         static void sleepStatic(int seconds) {

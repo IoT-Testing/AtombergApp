@@ -1,5 +1,6 @@
 package app.BLEOnlyFans;
 
+import app.AppInitializer;
 import app.ServerInitializer;
 import app.util.AppUtil;
 import app.util.Navigation;
@@ -39,17 +40,14 @@ public class TestRunner {
     }
 
     public void runTestFlow() throws Exception {
-        startAppiumServer();
-        URL url = server.service.getUrl();
-        initializeDriverWithURL(url);
-
-        driver.activateApp("com.atomberg.app");
+        initializeDriver();
         sleep(3000);
+        driver.activateApp("com.atomberg.app");
+        sleep(5000);
 
         // Run test flow for specified number of attempts
         for (int i = 1; i <= 20; i++) {
             System.out.println("\n=== ATTEMPT #" + i + " ===");
-
             try {
                 // Ensure we're on home screen
                 confirmOnHomeScreen(driver);
@@ -59,7 +57,6 @@ public class TestRunner {
                 FirmwareVersionChecker checker = new FirmwareVersionChecker(driver);
                 checker.runSequentialFirmwareUpdates();
                 System.out.println("✅ Attempt #" + i + " completed successfully");
-
             } catch (Exception e) {
                 System.err.println("❌ Error during attempt #" + i + ": " + e.getMessage());
                 // Continue with next attempt even if current fails
@@ -105,6 +102,15 @@ public class TestRunner {
         options.setCapability("platformName", "Android");
         options.setCapability("udid","e5b51506054a"); //TODO : UDID for POCO phone
         createDriver(url, options);
+    }
+    private void initializeDriver() throws Exception {
+        AppInitializer initializer = new AppInitializer();
+        initializer.initializeDriver(); // Connects to device
+        this.driver = initializer.getDriver();
+
+        // Set implicit wait
+//        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
+        System.out.println("Driver initialized successfully.");
     }
 
     private UiAutomator2Options baseOptions() {

@@ -7,21 +7,28 @@ import app.resources.Locators.FanLocators;
 import app.resources.PythonFileScript;
 import app.util.ActionsUtil;
 import app.util.PermissionUtil;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
-
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import static app.resources.Locators.FanLocators.*;
+import static app.resources.Locators.HomeLocators.MORE_TAB;
+import static app.util.AppUtil.isElementPresent;
+
 public class Main {
     private static final By bof = By.xpath("//android.view.View[@content-desc=\"Atomberg_R3_fea1f937004b1200\"]");
-    private static PrintWriter csvWriter;
+    public static PrintWriter csvWriter;
     private static boolean csvInitialized = false;
-    private AndroidDriver driver;
-    private final ServerInitializer server = new ServerInitializer();
+    private static AndroidDriver driver;
+//    private final ServerInitializer server = new ServerInitializer();
 
     public static void main(String[] args) {
         Main main = new Main();
@@ -41,32 +48,47 @@ public class Main {
         boolean success = false;
         ArduinoRelayControllerModern controller = new ArduinoRelayControllerModern();
         controller.autoConnect();
-        for(int i = 0; i< 10;i++){
+        for(int i = 1; i<= 20;i++){
             try{
                 ActionsUtil.SSleep(5);
                 FanManagement.Select fan = new FanManagement.Select();
                 fan.manageFanDevice(driver);
-                ActionsUtil.SSleep(15);
-                System.out.println("Running Python File for 2 iterations");
-                PythonFileScript run = new PythonFileScript();
-                run.script();
-                System.out.println("Running Python File Complete");
-                ActionsUtil.SSleep(10);
-                FanManagement fanManagement = new FanManagement(driver);
-                fanManagement.deleteMultipleFans();
-                if(!controller.serialPort.isOpen()) controller.autoConnect();
-                controller.sendLEDCommand(true);
-                ActionsUtil.SSleep(5);
-                success = true;
+                if (isElementPresent(ADDING_THE_DEVICE)) {
+                    ActionsUtil.SSleep(30);
+                }
+                System.out.println("30 second wait complete");
+                FanManagement.ConnectionError error = FanManagement.handleConnectionErrors();
+                if(error != FanManagement.ConnectionError.NO_ERROR) {
+                    if(error.equals(FanManagement.ConnectionError.OPERATION_FAILED)){
+                        error.handle(driver);
+                        printRow(i, "Failed");
+                        controller.sendLEDCommand(true);
+                        continue;
+                    }
+                    else error.handle(driver);
+                }
+                else {
+                    success = true;
+                    System.out.println("Running Python File for 2 iterations");
+                    PythonFileScript run = new PythonFileScript();
+                    run.script();
+                    System.out.println("Running Python File Complete");
+                    ActionsUtil.SSleep(10);
+                    FanManagement fanManagement = new FanManagement(driver);
+                    fanManagement.deleteMultipleFans();
+                    if (!controller.serialPort.isOpen()) controller.autoConnect();
+                    controller.sendLEDCommand(true);
+                    ActionsUtil.SSleep(5);
+                }
             }catch (Exception e){
                 success = false;
+                System.out.println(e.getMessage());
             }
             if(success)printRow(i,"Successful");
-            else printRow(1,"Failed");
         }
         controller.disconnect();
     }
-    private boolean isElementPresent(By locator) {
+    private static boolean isElementPresent(By locator) {
         try {
             return driver.findElement(locator).isDisplayed();
         } catch (Exception e) {
@@ -99,7 +121,18 @@ public class Main {
 //        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
         System.out.println("Driver initialized successfully.");
     }
+    private static void backToHome() {
+        int attempts = 0;
+        while (!isElementPresent(MORE_TAB) && attempts < 5) {
+            System.out.println("Navigating back... attempt " + (++attempts));
+            driver.navigate().back();
+            ActionsUtil.sleep(1000);
+        }
 
+        if (!isElementPresent(MORE_TAB)) {
+            System.err.println("Failed to return to 'Home Screen' after 5 back presses.");
+        }
+    }
     private void launchApp() {
         ActionsUtil.SSleep(2);
         driver.activateApp("com.atomberg.app");
@@ -156,7 +189,7 @@ public class Main {
         if (csvInitialized) return;
         try {
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-            csvWriter = new PrintWriter(new FileWriter("DeviveProvisioning" + timestamp + ".csv", true));
+            csvWriter = new PrintWriter(new FileWriter("DeviceProvisioningTest/DeviveProvisioning" + timestamp + ".csv", true));
             csvWriter.println("Attempt Number,Action ID,Iteration,Status,Updated Version");
             csvWriter.flush();
             csvInitialized = true;
@@ -177,6 +210,11 @@ public class Main {
         // Print to console
         System.out.printf("%-15d | %-8s%n",
                 attemptNumber, status);
+    }
+    public static void waitForElementPresence(AndroidDriver driver, By locator, long timeoutInSeconds) {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeoutInSeconds));
+        WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(locator));
+        // Now 'element' is guaranteed to be present in the DOM
     }
 }
 

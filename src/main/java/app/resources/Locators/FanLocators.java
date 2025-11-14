@@ -17,6 +17,9 @@ public class FanLocators {
     public static final By REMOVE_DEVICE = By.xpath("//android.view.View[@content-desc=\"Remove Device?\"]");
     public static final By YES = By.xpath("//android.widget.Button[@content-desc=\"Yes\"]");
     public static final By DEVICE_REMOVED_SUCCESSFULLY = By.xpath("//android.view.View[@content-desc=\"Device Removed\nSuccessfully \uD83D\uDC4D\"]");
+    public static final By ADDING_THE_DEVICE = By.xpath("//android.view.View[@content-desc=\"Adding the device\n" +
+            "This process can take 1 minute\n" +
+            "Please don't press back button\"]");
     public static final By OPERATION_FAILED = By.xpath("//android.view.View[@content-desc=\"Operation Failed\n" +
             "\n" +
             "Diagnosis: The device is able to connect to the provided Wi-Fi network and access internet. However, communication with the Atomberg server failed. Please ensure that the internet speed is good, and then retry after some time.\"]");
