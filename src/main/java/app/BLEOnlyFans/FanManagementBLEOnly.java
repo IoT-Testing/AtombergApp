@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import static app.resources.Locators.Android.FanLocators.*;
+import static app.resources.Locators.Android.DeviceAdditionScreen.Phoenix.*;
 import static app.util.ActionsUtil.SSleep;
 import static app.util.AppUtil.findOptionalElement;
 

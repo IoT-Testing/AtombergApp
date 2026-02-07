@@ -3,7 +3,7 @@ package app;
 import app.Fan.FanManagement;
 import app.Login.Email;
 import app.resources.ArduinoRelayControllerModern;
-import app.resources.Locators.Android.FanLocators;
+import app.resources.Locators.Android.DeviceScreens.FanLocators;
 import app.resources.PythonFileScript;
 import app.util.ActionsUtil;
 import app.util.PermissionUtil;
@@ -18,9 +18,8 @@ import java.io.PrintWriter;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
-import static app.resources.Locators.Android.FanLocators.*;
-import static app.resources.Locators.Android.HomeLocators.MORE_TAB;
+import static app.resources.Locators.Android.DeviceAdditionScreen.Phoenix.*;
+import static app.resources.Locators.Android.HomeLocators.*;
 
 public class Main {
     private static final By bof = By.xpath("//android.view.View[@content-desc=\"Atomberg_R3_fea1f937004b1200\"]");
@@ -32,7 +31,7 @@ public class Main {
     public static void main(String[] args) {
         Main main = new Main();
         try {
-            main.runTestFlow();
+            main.runTestFlowTwo();
         } catch (Exception e) {
             System.err.println("Test failed with exception: " + e.getMessage());
         } finally {
@@ -40,27 +39,28 @@ public class Main {
         }
     }
 
-    public void runTestFlow() throws Exception {
+    public void runTestFlowOne() throws Exception {
         initializeDriver();
         driver.activateApp("com.atomberg.app");
         ActionsUtil.SSleep(5);
         boolean success = false;
         ArduinoRelayControllerModern controller = new ArduinoRelayControllerModern();
-        controller.autoConnect();
-        for(int i = 1; i<= 20;i++){
+        controller.connect("com21"); //Connect with Arduino: Parsing a value to avoid further errors
+        for(int i = 1; i<= 50;i++){
             try{
                 ActionsUtil.SSleep(5);
                 FanManagement.Select fan = new FanManagement.Select();
                 fan.manageFanDevice(driver);
-                if (isElementPresent(ADDING_THE_DEVICE)) {
-                    ActionsUtil.SSleep(30);
-                }
+                if (isElementPresent(ADDING_THE_DEVICE))  waitForElementPresence(driver, ADDED_SUCCESSFULLY,30);
+
                 System.out.println("30 second wait complete");
                 FanManagement.ConnectionError error = FanManagement.handleConnectionErrors();
                 if(error != FanManagement.ConnectionError.NO_ERROR) {
                     if(error.equals(FanManagement.ConnectionError.OPERATION_FAILED)){
                         error.handle(driver);
                         printRow(i, "Failed");
+                        controller.sendLEDCommand(false);
+                        ActionsUtil.sleep(10000);
                         controller.sendLEDCommand(true);
                         continue;
                     }
@@ -76,8 +76,9 @@ public class Main {
                     FanManagement fanManagement = new FanManagement(driver);
                     fanManagement.deleteMultipleFans();
                     if (!controller.serialPort.isOpen()) controller.autoConnect();
+                    controller.sendLEDCommand(false);
+                    ActionsUtil.SSleep(10);
                     controller.sendLEDCommand(true);
-                    ActionsUtil.SSleep(5);
                 }
             }catch (Exception e){
                 success = false;
@@ -87,6 +88,41 @@ public class Main {
         }
         controller.disconnect();
     }
+
+    public void runTestFlowTwo() throws Exception {
+//        PythonFileScript run = new PythonFileScript();
+//        run.script();
+        initializeDriver();
+        driver.activateApp("com.atomberg.app");
+        ActionsUtil.SSleep(5);
+
+        driver.findElement(By.xpath("//android.widget.Button[@index=\"1\"]")).click();
+
+        ActionsUtil.SSleep(5);
+
+        driver.findElement(By.xpath("//android.view.View[@index=\"11\"]")).click();
+        System.out.println("sleep");
+
+//        ActionsUtil.SSleep(20);
+//        System.out.println("20 sec delay");
+//
+//        driver.findElement(By.xpath("//android.view.View[@index=\"6\"]")).click();
+//        System.out.println("Boost");
+
+        ActionsUtil.SSleep(5);
+        driver.navigate().back();
+    }
+
+    void runTimerAndNavigate(Runnable timerMethod, AndroidDriver driver) {
+        timerMethod.run();
+        ActionsUtil.sleep(1500);
+        FanManagement fan = new FanManagement(driver);
+        fan.timerStop();
+        ActionsUtil.sleep(1500);
+        driver.navigate().back();
+        ActionsUtil.sleep(1500);
+    }
+
     private static boolean isElementPresent(By locator) {
         try {
             return driver.findElement(locator).isDisplayed();
@@ -114,12 +150,13 @@ public class Main {
     private void initializeDriver() throws Exception {
         AppInitializer initializer = new AppInitializer();
         initializer.initializeDriver(); // Connects to device
-        this.driver = initializer.getDriver();
+        driver = initializer.getDriver();
 
         // Set implicit wait
 //        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
         System.out.println("Driver initialized successfully.");
     }
+
     private static void backToHome() {
         int attempts = 0;
         while (!isElementPresent(MORE_TAB) && attempts < 5) {
@@ -132,6 +169,7 @@ public class Main {
             System.err.println("Failed to return to 'Home Screen' after 5 back presses.");
         }
     }
+
     private void launchApp() {
         ActionsUtil.SSleep(2);
         driver.activateApp("com.atomberg.app");
@@ -184,18 +222,20 @@ public class Main {
         String value = System.getenv(key);
         return value != null ? value : fallback;
     }
+
     private static void initCSV() {
         if (csvInitialized) return;
         try {
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
             csvWriter = new PrintWriter(new FileWriter("DeviceProvisioningTest/DeviveProvisioning" + timestamp + ".csv", true));
-            csvWriter.println("Attempt Number,Action ID,Iteration,Status,Updated Version");
+            csvWriter.println("Attempt Number,Status");
             csvWriter.flush();
             csvInitialized = true;
         } catch (IOException e) {
             System.err.println("Failed to create CSV file: " + e.getMessage());
         }
     }
+
     void printRow(int attemptNumber, String status) {
         // Format: clean, no extra spaces
         String row = String.format("%d,%s",
@@ -210,6 +250,7 @@ public class Main {
         System.out.printf("%-15d | %-8s%n",
                 attemptNumber, status);
     }
+
     public static void waitForElementPresence(AndroidDriver driver, By locator, long timeoutInSeconds) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeoutInSeconds));
         WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(locator));
@@ -217,17 +258,28 @@ public class Main {
     }
 }
 
-/**
+/*
  *         fan.addition(bof);
- * //        driver.openNotifications();
- * //        ActionsUtil.sleep(750);
- * //        ActionsUtil.Tap.withCoordinates(driver, 500, 500);
+ *         driver.openNotifications();
+ *         ActionsUtil.sleep(750);
+ *         ActionsUtil.Tap.withCoordinates(driver, 500, 500);
  *         By acceptBtn = By.id("android:id/button1");
  *         driver.findElement(acceptBtn).click();
  *         ActionsUtil.SSleep(6);
- * //        driver.openNotifications();
- * //        ActionsUtil.sleep(500);
- * //        ActionsUtil.Tap.withCoordinates(driver, 500, 500);
+ *         driver.openNotifications();
+ *         ActionsUtil.sleep(500);
+ *         ActionsUtil.Tap.withCoordinates(driver, 500, 500);
  *         driver.findElement(acceptBtn).click();
  *         bleFanAddition();
+ *
+ *
+ *
+ *         driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Aris Fan\n" +
+                "Living Room\"]")).click();
+        FanManagement fan = new FanManagement(driver);
+        fan.speedCommands();
+        runTimerAndNavigate(fan::timerOne, driver);
+        runTimerAndNavigate(fan::timerTwo, driver);
+        runTimerAndNavigate(fan::timerThree, driver);
+        runTimerAndNavigate(fan::timerSix, driver);
  */

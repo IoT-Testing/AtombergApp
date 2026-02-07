@@ -8,7 +8,7 @@ import org.openqa.selenium.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static app.resources.Locators.Android.MoreTabLocators.*;
+import static app.resources.Locators.Android.AppLocators.MoreTab.*;
 
 /**
  * Manage - Handles 'More' tab operations: logout, family, settings.
@@ -115,7 +115,6 @@ public class Manage {
                 System.out.println("Skipping family: " + name);
             }
         }
-
         atomberg.navigate().back(); // Back to More tab
     }
 

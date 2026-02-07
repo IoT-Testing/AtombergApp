@@ -7,7 +7,7 @@ import org.openqa.selenium.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static app.resources.Locators.Android.MoreTabLocators.*;
+import static app.resources.Locators.Android.AppLocators.MoreTab.*;
 
 /**
  * Play - Handles video tutorial playback in the 'Play' section.
@@ -27,7 +27,6 @@ public class Play {
     public Play(AndroidDriver driver) {
         this.driver = driver;
     }
-
     /**
      * Plays all major tutorial videos in sequence.
      */
@@ -43,7 +42,6 @@ public class Play {
             ActionsUtil.Swipe.Left(driver, SWIPE_START_X_RATIO, SWIPE_Y_RATIO);
             playVideo(SMART_LOCKS_INSTALLATION, "Smart Locks Installation");
         }
-
         // Navigate back to start of lock videos
         ActionsUtil.Swipe.Left(driver, SWIPE_START_X_RATIO, SWIPE_Y_RATIO);
         ActionsUtil.sleep(2000);
@@ -53,7 +51,6 @@ public class Play {
     }
 
     // === Internal Helpers ===
-
     /**
      * Attempts to play a video by clicking its thumbnail.
      *
@@ -97,6 +94,7 @@ public class Play {
      * @param label   Label for logs
      * @return true if clicked
      */
+    //TODO: Repeated - add in App Utils
     private boolean clickElementIfExists(By locator, String label) {
         try {
             WebElement el = driver.findElement(locator);
@@ -168,6 +166,7 @@ public class Play {
     /**
      * Safely checks if element is present.
      */
+    //TODO: Repeated - add in App Utils
     private boolean isElementPresent(By locator) {
         try {
             return driver.findElement(locator).isDisplayed();

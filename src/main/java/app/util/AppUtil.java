@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import static app.resources.Locators.Android.FanLocators.ADD_BUTTON_XPATH;
+import static app.resources.Locators.Android.DeviceAdditionScreen.Phoenix.*;
 import static app.util.ActionsUtil.sleep;
 
 /**

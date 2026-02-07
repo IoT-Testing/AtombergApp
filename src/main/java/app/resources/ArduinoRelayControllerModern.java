@@ -74,11 +74,9 @@ public class ArduinoRelayControllerModern {
      */
     public boolean autoConnect() {
         SerialPort[] ports = SerialPort.getCommPorts();
-
         for (SerialPort port : ports) {
             String portName = port.getSystemPortName();
             String description = port.getDescriptivePortName().toLowerCase();
-
             // Try to find Arduino-like ports
             if(description.contains("com18")){
                 if (description.contains("arduino") ||
@@ -96,7 +94,6 @@ public class ArduinoRelayControllerModern {
                 }
             }
         }
-
         return false;
     }
 
@@ -108,7 +105,7 @@ public class ArduinoRelayControllerModern {
             System.err.println("Error: Serial port not open");
             return;
         }
-
+        System.out.println(serialPort.isOpen());
         try {
             String jsonCommand = "{\"power_toggle\":" + ledState + "}\n";
             byte[] buffer = jsonCommand.getBytes();
@@ -161,10 +158,11 @@ public class ArduinoRelayControllerModern {
         }
     }
 
+
     /**
      * Main method - Interactive control
      */
-    public static void relayController(String[] args) {
+    public void relayController(String[] args) {
         ArduinoRelayControllerModern controller = new ArduinoRelayControllerModern();
         // List available ports
         listPorts();
@@ -190,8 +188,6 @@ public class ArduinoRelayControllerModern {
             System.err.println("Example: java ArduinoLEDControllerModern COM3");
             return;
         }
-
-
         // Interactive control loop
         controller.sendLEDCommand(true);
         controller.disconnect();

@@ -8,7 +8,7 @@ import org.openqa.selenium.*;
 import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
-import static app.resources.Locators.Android.MoreTabLocators.*;
+import static app.resources.Locators.Android.AppLocators.MoreTab.*;
 import static org.awaitility.Awaitility.await;
 
 public class Help {
@@ -94,7 +94,6 @@ public class Help {
     }
 
     // === Internal Helpers ===
-
     /**
      * Safely clicks element if present and visible.
      */

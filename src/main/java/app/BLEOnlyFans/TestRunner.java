@@ -2,6 +2,7 @@ package app.BLEOnlyFans;
 
 import app.AppInitializer;
 import app.ServerInitializer;
+import app.resources.ArduinoRelayControllerModern;
 import app.util.AppUtil;
 import app.util.Navigation;
 import io.appium.java_client.android.AndroidDriver;
@@ -15,6 +16,7 @@ import static app.util.AppUtil.confirmOnHomeScreen;
 
 public class TestRunner {
     private AndroidDriver driver;
+    ArduinoRelayControllerModern controller = new ArduinoRelayControllerModern();
     private final ServerInitializer server = new ServerInitializer();
     private static final int DEFAULT_ATTEMPTS = 20;
 
@@ -45,6 +47,8 @@ public class TestRunner {
         driver.activateApp("com.atomberg.app");
         sleep(5000);
 
+        controller.autoConnect();
+
         // Run test flow for specified number of attempts
         for (int i = 1; i <= 20; i++) {
             System.out.println("\n=== ATTEMPT #" + i + " ===");
@@ -52,10 +56,10 @@ public class TestRunner {
                 // Ensure we're on home screen
                 confirmOnHomeScreen(driver);
                 sleep(1000);
-                Navigation.openFanControl(driver);
+//                Navigation.openFanControl(driver);
                 // Execute the full firmware verification and pause-resume sequence
                 FirmwareVersionChecker checker = new FirmwareVersionChecker(driver);
-                checker.runSequentialFirmwareUpdates();
+                checker.runSequentialFirmwareUpdates(controller);
                 System.out.println("✅ Attempt #" + i + " completed successfully");
             } catch (Exception e) {
                 System.err.println("❌ Error during attempt #" + i + ": " + e.getMessage());

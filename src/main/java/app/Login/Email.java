@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import static app.resources.Credentials.*;
-import static app.resources.Locators.Android.LoginLocators.*;
+import static app.resources.Locators.Android.AppLocators.Login.*;
 import static app.util.AppUtil.*;
 
 /**

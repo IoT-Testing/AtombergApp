@@ -1,4 +1,4 @@
-package app.resources.Locators.iOS;
+package app.resources.Locators.Android.DeviceScreens;
 
 import org.openqa.selenium.By;
 
@@ -24,14 +24,16 @@ public class BLEFan {
                     "/android.view.View/android.view.View/android.view.View" +
                     "/android.view.View/android.view.View/android.view.View/android.view.View[4]");
     public static final String FIRMWARE_VERSION_PREFIX = "Firmware Version";
+    public static final By HUNDRED_PERCENT = By.xpath("//android.view.View[@content-desc=\"100%\"]");
     public static final By SELECT_FILE_OPTION = By.xpath("//android.widget.Button[@content-desc=\"Select File\"]");
     public static final By TITLE_ID = By.id("android:id/title"); // Most reliable for file items
     public static final By DONE_BUTTON = By.xpath("//android.widget.Button[@content-desc=\"Done\"]");
     public static final int BLUETOOTH_ON_OFF_CYCLES = 10;
-    public static final int POWER_ON_OFF_CYCLES = 10;
-    public static final long HOLD_DURATION_MS = 1500; // Matches your proven timing
+    public static final int POWER_ON_OFF_CYCLES = 5;
+    public static final long HOLD_DURATION_MS = 2000; // Matches your proven timing
     public static final long FIRMWARE_SUCCESS_TIMEOUT_MS = 20_000;
     public static final Pattern VERSION_PATTERN = Pattern.compile("Production_(\\d+\\.\\d+\\.\\d+)\\.bin", Pattern.CASE_INSENSITIVE);
     public static final By FAILED_CONNECTION = By.xpath("//android.view.View[@content-desc=\"Connection Failed\"]");
     public static final By DEVICE_IS_OFFLINE = By.xpath("//android.view.View[@content-desc=\"Device is offline. If it is nearby, please turn on bluetooth to connect.\"]");
+    public static final By WAITING_FOR_RESTART = By.xpath("//android.view.View[@content-desc=\"Waiting for the device to restart\"]");
 }

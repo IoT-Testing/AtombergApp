@@ -176,11 +176,11 @@ public class ActionsUtil {
         }
 
         // === Internal Helpers ===
-        private static void performSwipe(AndroidDriver driver, double startXRation, double yRatio, double endXRation, long durationMs) {
+        private static void performSwipe(AndroidDriver driver, double startXRation, double yRatio, double endXRatio, long durationMs) {
             Dimension size = driver.manage().window().getSize();
             int startX = (int) (size.getWidth() * startXRation);
             int y = (int) (size.getHeight() * yRatio);
-            int endX = (int) (size.getWidth() * endXRation);
+            int endX = (int) (size.getWidth() * endXRatio);
 
             PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
             Sequence swipe = new Sequence(finger, 1)

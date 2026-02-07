@@ -8,7 +8,7 @@ import org.openqa.selenium.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static app.resources.Locators.Android.MoreTabLocators.*;
+import static app.resources.Locators.Android.AppLocators.MoreTab.*;
 
 /**
  * Profile - Handles user profile editing: avatar, name, phone number.
@@ -16,8 +16,6 @@ import static app.resources.Locators.Android.MoreTabLocators.*;
 public class Profile {
     private final AndroidDriver atomberg;
     private final ScreenCheck screenCheck;
-
-    // === Locator Constants ===
 
     public Profile(AndroidDriver driver) {
         this.atomberg = driver;
@@ -34,9 +32,7 @@ public class Profile {
         saveChanges();
         navigateBackToHome();
     }
-
-    // === Internal Helpers ===
-
+    // === Internal Helpers ==
     /**
      * Navigates to More tab and opens profile via "Hi," greeting.
      */
@@ -51,7 +47,6 @@ public class Profile {
             System.err.println("No profile greeting found. Cannot open profile.");
             return;
         }
-
         WebElement profileLink = greetings.get(0);
         profileLink.click();
         System.out.println("Edit Profile");
@@ -70,7 +65,6 @@ public class Profile {
         List<WebElement> avatars = atomberg.findElements(AVATAR_OPTIONS).stream()
                 .filter(el -> isClickable(el) && !getAttribute(el, "content-desc").isEmpty())
                 .collect(Collectors.toList());
-
         for (WebElement avatar : avatars) {
             try {
                 avatar.click();
@@ -83,7 +77,6 @@ public class Profile {
 
         atomberg.navigate().back();
     }
-
     /**
      * Edits username and clicks phone section to trigger edit flow.
      */

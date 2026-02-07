@@ -11,17 +11,13 @@ class UDPHandler:
     def start_broadcast(self):
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-        i = 0
+        
         while self.running:
             # message = f"Broadcast message at {time.strftime('%H:%M:%S')}"
-            message = '{"hardFactoryReset":true}'
+            message = '{"power":false}'
             if time.time() % 10 < 1:  # Send message every 10 seconds
                 sock.sendto(message.encode(), ('<broadcast>', self.broadcast_port))
                 print(f"Broadcasting: {message}")
-                i += 1
-                if(i >=5):
-                    print(f"Exiting code")
-                    break
             time.sleep(1)
 
     def start_listening(self):
@@ -52,6 +48,5 @@ class UDPHandler:
             listen_thread.join()
 
 if __name__ == "__main__":
-    handler = UDPHandler(broadcast_port=8080, listen_port=5625)
+    handler = UDPHandler(broadcast_port=5600, listen_port=5625)
     handler.start()
-    exit

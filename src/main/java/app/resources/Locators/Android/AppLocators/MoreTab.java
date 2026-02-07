@@ -1,8 +1,8 @@
-package app.resources.Locators.Android;
+package app.resources.Locators.Android.AppLocators;
 
 import org.openqa.selenium.By;
 
-public class MoreTabLocators {
+public class MoreTab {
     // === Locator Constants ===
     public static final By NEW_COMPLAINT_BUTTON = By.xpath("//android.view.View[@content-desc=\"New complaint\"]");
     public static final By INSTALLATION_REQUEST_BUTTON = By.xpath("//android.view.View[@content-desc=\"Installation Request\"]");
@@ -66,5 +66,4 @@ public class MoreTabLocators {
     public static final By USERNAME_FIELD = By.id("signInFormUsername");
     public static final By PASSWORD_FIELD = By.id("signInFormPassword");
     public static final By SUBMIT_BUTTON = By.xpath("//android.widget.Button[@text=\"submit\"]");
-
 }

@@ -1,8 +1,8 @@
-package app.resources.Locators.iOS;
+package app.resources.Locators.iOS.AppLocators;
 
 import org.openqa.selenium.By;
 
-public class AnalyticsLocators {
+public class Analytics {
     // === Locator Constants ===
     public static final By NO_DEVICES_MESSAGE = By.xpath("//android.view.View[@content-desc=\"Please add a smart device to view analytics\"]");
     public static final By SCRIM = By.xpath("//android.view.View[@content-desc=\"Scrim\"]");

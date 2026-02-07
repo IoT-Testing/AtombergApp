@@ -2,8 +2,10 @@ package app.Fan;
 
 import app.ScreenCheck.ScreenCheck;
 import app.SmartDevice;
+import app.Supports.AtombergFanStatus;
 import app.resources.ArduinoRelayControllerModern;
-import app.resources.Locators.Android.FanLocators;
+import app.resources.Locators.Android.DeviceAdditionScreen.Phoenix;
+import app.resources.Locators.Android.DeviceAdditionScreen.SmartLock;
 import app.resources.PythonFileScript;
 import app.util.ActionsUtil;
 import app.util.AppUtil;
@@ -20,7 +22,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import static app.resources.Locators.Android.HomeLocators.*;
 import static app.util.AppUtil.*;
-import static app.resources.Locators.Android.FanLocators.*;
+import static app.resources.Locators.Android.DeviceAdditionScreen.Phoenix.*;
+import static app.resources.Locators.Android.DeviceScreens.FanLocators.*;
 
 /**
  * FanManagement - Manages fan-related operations in the Atomberg app.
@@ -33,7 +36,7 @@ public class  FanManagement implements SmartDevice {
     private final WebDriverWait wait; // For explicit waits
 
     public FanManagement(AndroidDriver driver) {
-        this.atomberg = driver;
+        atomberg = driver;
         // Initialize WebDriverWait with a 10-second timeout
         this.wait = new WebDriverWait(atomberg, Duration.ofSeconds(10));
     }
@@ -273,7 +276,6 @@ public class  FanManagement implements SmartDevice {
     /**
      * Handles known error states post-connection attempt.
      *
-     * @return true if an error was handled (retry needed), false if successful
      */
     public static ConnectionError handleConnectionErrors() {
         try {
@@ -291,7 +293,7 @@ public class  FanManagement implements SmartDevice {
     }
 
     public enum ConnectionError {
-        CONNECTING_TO_LOCK_MODAL(FanLocators.CONNECTING_TO_LOCK_MODAL) {
+        CONNECTING_TO_LOCK_MODAL(SmartLock.CONNECTING_TO_LOCK_MODAL) {
             @Override
             public boolean handle(AndroidDriver driver) {
                 driver.navigate().back();
@@ -299,7 +301,7 @@ public class  FanManagement implements SmartDevice {
                 return true;
             }
         },
-        COULD_NOT_ADD_LOCK(FanLocators.COULD_NOT_ADD_LOCK) {
+        COULD_NOT_ADD_LOCK(SmartLock.COULD_NOT_ADD_LOCK) {
             @Override
             public boolean handle(AndroidDriver driver) {
                 driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]")).click();
@@ -308,7 +310,7 @@ public class  FanManagement implements SmartDevice {
                 return true;
             }
         },
-        DEVICE_ALREADY_PAIRED(FanLocators.DEVICE_ALREADY_PAIRED) {
+        DEVICE_ALREADY_PAIRED(Phoenix.DEVICE_ALREADY_PAIRED) {
             @Override
             public boolean handle(AndroidDriver driver) {
                 driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]")).click();
@@ -317,7 +319,7 @@ public class  FanManagement implements SmartDevice {
                 return true;
             }
         },
-        COULD_NOT_REACH_DEVICE(FanLocators.COULD_NOT_REACH_DEVICE) {
+        COULD_NOT_REACH_DEVICE(Phoenix.COULD_NOT_REACH_DEVICE) {
             @Override
             public boolean handle(AndroidDriver driver) {
                 System.out.println("Out of reach.");
@@ -326,21 +328,21 @@ public class  FanManagement implements SmartDevice {
                 return true;
             }
         },
-        COULD_NOT_CONNECT_PROPERLY(FanLocators.COULD_NOT_CONNECT_PROPERLY) {
+        COULD_NOT_CONNECT_PROPERLY(Phoenix.COULD_NOT_CONNECT_PROPERLY) {
             @Override
             public boolean handle(AndroidDriver driver) {
             backToHome();
             return true;
             }
         },
-        OPERATION_FAILED(FanLocators.OPERATION_FAILED) {
+        OPERATION_FAILED(Phoenix.OPERATION_FAILED) {
             @Override
             public boolean handle(AndroidDriver driver) {
                 backToHome();
                 return false; // or true if you want to treat this as handled
             }
         },
-        NO_ERROR(FanLocators.NO_ERROR) {
+        NO_ERROR(Phoenix.NO_ERROR) {
             @Override
             public boolean handle(AndroidDriver driver) {
                 backToHome();
@@ -381,9 +383,6 @@ public class  FanManagement implements SmartDevice {
             }
         }
     }
-
-
-
     /**
      * Handles case when no device is found during scan.
      */
@@ -416,8 +415,81 @@ public class  FanManagement implements SmartDevice {
     /**
      * Performs basic fan control actions in sequence: Speeds 1–5 → Boost → Power.
      */
-    public void fanControl() {
+    public void speedCommands() {
         performBasicFanActions();
+    }
+    /**
+     * Pre-requisites: Fan control screen should be open.
+     * Timer One on-off
+     * Check for timer needs to be added.
+     */
+    public void timerOne(){
+        clickElement(TIMER_ON);
+        assert isElementPresent(atomberg,TIMER_SCREEN);
+        clickElement(START_TIMER);
+        AtombergFanStatus get = new AtombergFanStatus();
+        String timer = get.fanStatus("timer");
+        if(timer.equals("1")) System.out.println("Timer of "+timer+" hour successful");
+    }
+    /**
+     * Pre-requisites: Fan control screen should be open.
+     * Timer One on-off
+     * Check for timer needs to be added.
+     */
+    public void timerStop(){
+        if(isElementPresent(atomberg,START_TIMER)) clickElement(START_TIMER);
+        else clickElement(TIMER_ON);
+    }
+    /**
+     * Pre-requisites: Fan control screen should be open.
+     * Timer is on-off
+     * Check for timer needs to be added.
+     */
+    public void timerTwo(){
+        clickElement(TIMER_ON);
+        assert isElementPresent(atomberg,TIMER_SCREEN);
+        clickElement(TIMER_TWO);
+        assert Objects.equals(getElementBounds(atomberg, TIMER_TWO), "[403,1220][678,1495]");
+        clickElement(START_TIMER);
+        ActionsUtil.sleep(1000);
+        AtombergFanStatus get = new AtombergFanStatus();
+        String timer = get.fanStatus("timer");
+        if(timer.equals("2")) System.out.println("Timer of "+timer+" hour successful");
+    }
+    /**
+     * Pre-requisites: Fan control screen should be open.
+     * Timer is on-off
+     * Check for timer needs to be added.
+     */
+    public void timerThree(){
+        clickElement(TIMER_ON);
+        assert isElementPresent(atomberg,TIMER_SCREEN);
+        clickElement(TIMER_TWO);
+        clickElement(TIMER_THREE);
+        assert Objects.equals(getElementBounds(atomberg, TIMER_THREE), "[403,1220][678,1495]");
+        clickElement(START_TIMER);
+        ActionsUtil.sleep(1000);
+        AtombergFanStatus get = new AtombergFanStatus();
+        String timer = get.fanStatus("timer");
+        if(timer.equals("3")) System.out.println("Timer of "+timer+" hour successful");
+    }
+    /**
+     * Pre-requisites: Fan control screen should be open.
+     * Timer is on-off
+     * Check for timer needs to be added.
+     */
+    public void timerSix(){
+        clickElement(TIMER_ON);
+        assert isElementPresent(atomberg,TIMER_SCREEN);
+        clickElement(TIMER_TWO);
+        clickElement(TIMER_THREE);
+        clickElement(TIMER_SIX);
+        assert Objects.equals(getElementBounds(atomberg, TIMER_SIX), "[403,1220][678,1495]");
+        clickElement(START_TIMER);
+        ActionsUtil.sleep(1000);
+        AtombergFanStatus get = new AtombergFanStatus();
+        String timer = get.fanStatus("timer");
+        if(timer.equals("6")) System.out.println("Timer of "+timer+" hour successful");
     }
     /**
      * Executes random fan commands for a given number of iterations.
@@ -431,13 +503,13 @@ public class  FanManagement implements SmartDevice {
         for (int i = 0; i < iteration; i++) {
             int command = random.nextInt(7);
             switch (command) {
-                case 0 -> clickAndWait(SPEED_1, "Speed1");
-                case 1 -> clickAndWait(SPEED_2, "Speed2");
-                case 2 -> clickAndWait(SPEED_3, "Speed3");
-                case 3 -> clickAndWait(SPEED_4, "Speed4");
-                case 4 -> clickAndWait(SPEED_5, "Speed5");
-                case 5 -> clickAndWait(BOOST_BUTTON, "Boost");
-                case 6 -> clickAndWait(POWER_BUTTON, "Power");
+                case 0 -> clickAndWait(SPEED_1);
+                case 1 -> clickAndWait(SPEED_2);
+                case 2 -> clickAndWait(SPEED_3);
+                case 3 -> clickAndWait(SPEED_4);
+                case 4 -> clickAndWait(SPEED_5);
+                case 5 -> clickAndWait(BOOST_BUTTON);
+                case 6 -> clickAndWait(POWER_BUTTON);
             }
         }
 
@@ -494,6 +566,15 @@ public class  FanManagement implements SmartDevice {
         return false;
     }
 
+    private String getElementBounds(AndroidDriver driver, By by) {
+        WebElement element = driver.findElement(by);
+        try {
+            return element.getDomAttribute("bounds");
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     /**
      * Gets current list of fan buttons excluding non-fan elements.
      *
@@ -509,7 +590,6 @@ public class  FanManagement implements SmartDevice {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
-
     /**
      * Controls a list of fans by opening each and sending commands.
      *
@@ -520,7 +600,7 @@ public class  FanManagement implements SmartDevice {
             String name = fan.getDomAttribute("content-desc");
             System.out.println("Controlling fan: " + name);
             fan.click();
-            fanControl();
+            speedCommands();
             atomberg.navigate().back();
         }
     }
@@ -544,7 +624,6 @@ public class  FanManagement implements SmartDevice {
                 System.out.println("Device Reset complete, please Restart the device");
         }
     }
-
     /**
      * Scrolls up to find additional fans beyond initial view.
      *
@@ -679,11 +758,9 @@ public class  FanManagement implements SmartDevice {
      * Clicks element and logs action.
      *
      * @param locator By locator
-     * @param actionName Description of action
      */
-    private void clickAndWait(By locator, String actionName) {
+    private void clickAndWait(By locator) {
         clickElement(locator);
-        System.out.println(actionName);
     }
 
     /**
@@ -770,13 +847,27 @@ public class  FanManagement implements SmartDevice {
     // === Reusable Action ===
     private void performBasicFanActions() {
         By[] actions = {SPEED_1, SPEED_2, SPEED_3, SPEED_4, SPEED_5, BOOST_BUTTON, POWER_BUTTON};
-        String[] labels = {"Speed1", "Speed2", "Speed3", "Speed4", "Speed5", "Boost", "Power"};
-
+        String[] labels = {"1", "2", "3", "4", "5", "6", "Power"};
+        String[] command = {"speed", "speed", "speed", "speed", "speed", "speed", "power"};
+        AtombergFanStatus get = new AtombergFanStatus();
+        String power = get.fanStatus("power");
+        String speed = get.fanStatus("speed");
         for (int i = 0; i < actions.length; i++) {
-            clickAndWait(actions[i], labels[i]);
+            if(i<actions.length-1) {
+                clickAndWait(actions[i]);
+                ActionsUtil.sleep(1000);
+                String state = get.fanStatus(command[i]);
+                if(state.equals(labels[i])) System.out.println(command[i]+labels[i]+" verified");
+            }
+            else{
+                clickAndWait(actions[i]);
+                ActionsUtil.sleep(1000);
+                String state = get.fanStatus(command[i]);
+                if(!state.equals(power)) System.out.println(command[i]+labels[i]+" verified");
+                else System.out.println("power "+ state);
+            }
         }
     }
-
 
 
 //    private boolean handleConnectionErrors() {

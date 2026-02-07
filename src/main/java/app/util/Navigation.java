@@ -1,5 +1,6 @@
 package app.util;
 
+import app.resources.ArduinoRelayControllerModern;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -10,7 +11,6 @@ public class Navigation {
     private static final By bluetoothBtn = By.xpath("//android.view.View[@index=\"3\"]");
     private static final By bluetoothSuccess = By.xpath("//android.view.View[@content-desc=\"Device is connected via bluetooth\"]");
     public static final By deviceOffline = By.xpath("//android.view.View[@content-desc=\"Device is offline. If it is nearby, please turn on bluetooth to connect.\"]");
-
 
     public static void openFanControl(AndroidDriver driver) {
         ActionsUtil.Tap.withCoordinates(driver, 800, 950);// for Narzo only
@@ -43,12 +43,6 @@ public class Navigation {
                     status = "Success";
                     success = true;
                     driver.navigate().back();
-                }
-                else if(isElementPresent(driver, deviceOffline))
-                {
-                    driver.navigate().back();
-                    BluetoothUtils.turnOnBluetooth(driver);
-                    status = "Re-attempting bluetooth";
                 }
             }
             if (success) {

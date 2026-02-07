@@ -5,6 +5,7 @@ import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.*;
 import java.io.IOException;
 import java.net.URL;
+import static app.resources.AppInfo.*;
 
 /**
  * ScreenRecording - Records device screen using HBRecorderExample app.
@@ -13,7 +14,6 @@ public class ScreenRecording {
     private final AndroidDriver driver;
 
     // === App Info ===
-    private static final String RECORDER_APP_PACKAGE = "com.hbisoft.hbrecorderexample";
 
     // === Locators ===
     private static final By START_BUTTON = By.xpath("//android.widget.Button[@text='START']");

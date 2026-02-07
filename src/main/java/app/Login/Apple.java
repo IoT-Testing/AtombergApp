@@ -11,7 +11,7 @@ import org.openqa.selenium.WebElement;
 import java.util.concurrent.TimeUnit;
 
 import static app.resources.Locators.Android.HomeLocators.*;
-import static app.resources.Locators.Android.LoginLocators.*;
+import static app.resources.Locators.Android.AppLocators.Login.*;
 import static org.awaitility.Awaitility.await;
 
 /**

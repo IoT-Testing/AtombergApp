@@ -4,8 +4,7 @@ import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
-
-import static app.resources.Locators.Android.FanLocators.*;
+import static app.resources.Locators.Android.DeviceAdditionScreen.Phoenix.*;
 import static app.resources.Locators.Android.HomeLocators.*;
 
 /**

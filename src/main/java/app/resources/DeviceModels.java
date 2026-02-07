@@ -5,7 +5,7 @@ import java.util.List;
 
 public class DeviceModels {
     public static final List<String> FAN_MODELS = Arrays.asList(
-
+                "Atomberg Smart Fan"
     );
 
     public static final List<String> WATER_PURIFIER_MODELS = List.of(

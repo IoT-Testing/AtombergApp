@@ -2,7 +2,9 @@ package app.BLEOnlyFans;
 
 import app.resources.ArduinoRelayControllerModern;
 import app.util.ActionsUtil;
+import app.util.AppUtil;
 import app.util.Navigation;
+import com.fazecast.jSerialComm.SerialPort;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -10,23 +12,21 @@ import org.openqa.selenium.WebElement;
 import java.util.List;
 import java.util.Objects;
 
-import static app.resources.Locators.Android.BLEFan.*;
+import static app.resources.Locators.Android.DeviceScreens.BLEFan.*;
 import static app.util.AppUtil.confirmOnHomeScreen;
-
 public class PowerToggleInterruption {
     private final AndroidDriver driver;
     private int iteration;
+    public SerialPort serialPort;
     private String fileName;
-    ArduinoRelayControllerModern controller = new ArduinoRelayControllerModern();
-
     public PowerToggleInterruption(AndroidDriver driver, int iteration, String fileName) {
         this.driver = driver;
         this.iteration = iteration;
         this.fileName = fileName;
     }
 
-    public void runPowerToggle() {
-        System.out.println("⏱ Starting bluetooth on-off cycles");
+    public void runPowerToggle(ArduinoRelayControllerModern controller) {
+        System.out.println("⏱ Starting Power on-off cycles");
 
         try {
             // Step 1: Click Start (if not already started)
@@ -37,14 +37,43 @@ public class PowerToggleInterruption {
                 System.out.println("⚠️ 'Start' button not found or already running.");
             }
 
-            controller.autoConnect();
             // Step 2: Perform 20 cycles of pause-resume via tap
-            for (int i = 0; i < BLUETOOTH_ON_OFF_CYCLES; i++) {
+            for (int i = 0; i < POWER_ON_OFF_CYCLES; i++) {
                 sleep(HOLD_DURATION_MS);
                 controller.sendLEDCommand(true);
-                sleep(2000);
+                AppUtil.waitForElement(driver, DEVICE_DISCONNECTED, 15);
                 if (isElementPresent(DEVICE_DISCONNECTED))
                 {
+                    controller.sendLEDCommand(false);
+                    sleep(2000);
+                    confirmOnHomeScreen(driver);
+                    Navigation.openFanControl(driver);
+                    if (!clickElementWithRetry(MENU_BUTTON, 3)) {
+                        throw new RuntimeException("❌ Failed to click Menu button");
+                    }
+                    WebElement firmwareElement = findElementByContentDescStartsWith(FIRMWARE_VERSION_PREFIX);
+                    if (firmwareElement == null) {
+                        throw new RuntimeException("❌ 'Firmware Version' option not found");
+                    }
+                    firmwareElement.click();
+                    System.out.println("✅ Clicked on Firmware Version");
+                    sleep(2000);
+
+                    // Click 'Select File'
+                    if (!clickElementWithRetry(SELECT_FILE_OPTION, 1)) {
+                        throw new RuntimeException("❌ 'Select File' option not clickable");
+                    }
+                    System.out.println("📁 Select File clicked. Waiting for file picker...");
+                    sleep(3000);
+
+                    // ✅ Scroll and select correct file (handles bad sorting)
+                    selectFileWithScroll(fileName);
+                    sleep(2000);
+
+                    driver.findElement(START_BUTTON).click();
+                    sleep(1000);
+                } else if (isElementPresent(HUNDRED_PERCENT)||isElementPresent(WAITING_FOR_RESTART)) {
+                    controller.sendLEDCommand(false);
                     sleep(2000);
                     confirmOnHomeScreen(driver);
                     Navigation.openFanControl(driver);
@@ -78,7 +107,7 @@ public class PowerToggleInterruption {
             System.out.println("✅ All pause-resume cycles completed with high accuracy.");
 
         } catch (Exception e) {
-            throw new RuntimeException("❌ Error during Bluetooth On-Off cycle: " + e.getMessage(), e);
+            throw new RuntimeException("❌ Error during power On-Off cycle: " + e.getMessage(), e);
         }
     }
 

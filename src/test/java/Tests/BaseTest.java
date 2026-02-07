@@ -39,8 +39,8 @@ public class BaseTest {
     @BeforeClass
     @Parameters({"deviceSlot"})
     public void setup(@Optional("default") String deviceSlot) throws Exception {
-        this.deviceSlot = deviceSlot;
-        this.server = new ServerInitializer();
+        BaseTest.deviceSlot = deviceSlot;
+        server = new ServerInitializer();
 
         try {
             initializeReporter();
@@ -67,7 +67,7 @@ public class BaseTest {
      * Creates reporter instance.
      */
     private void initializeReporter() {
-        this.reporter = new ExtentReportAT(deviceSlot);
+        reporter = new ExtentReportAT(deviceSlot);
     }
 
     /**
@@ -126,7 +126,7 @@ public class BaseTest {
     /**
      * Starts screen recording.
      */
-    private void startScreenRecording() throws IOException, InterruptedException {
+    private void startScreenRecording() {
         this.screenRecording = new ScreenRecording(driver);
         this.screenRecording.start();
         System.out.println("Screen recording started.");

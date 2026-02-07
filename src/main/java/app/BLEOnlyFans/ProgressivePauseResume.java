@@ -7,7 +7,7 @@ import org.openqa.selenium.WebElement;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Objects;
-import static app.resources.Locators.Android.BLEFan.*;
+import static app.resources.Locators.Android.DeviceScreens.BLEFan.*;
 
 
 public class ProgressivePauseResume {

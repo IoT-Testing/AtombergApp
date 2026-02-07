@@ -1,6 +1,6 @@
 package app.BLEOnlyFans;
 
-import app.resources.Locators.Android.FanLocators;
+import app.resources.Locators.Android.DeviceScreens.FanLocators;
 import app.util.Navigation;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.appmanagement.ApplicationState;

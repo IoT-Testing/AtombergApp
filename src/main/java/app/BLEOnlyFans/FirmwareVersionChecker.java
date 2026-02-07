@@ -1,6 +1,7 @@
 package app.BLEOnlyFans;
 
 import app.Fan.FanManagement;
+import app.resources.ArduinoRelayControllerModern;
 import app.util.ActionsUtil;
 import app.util.Navigation;
 import io.appium.java_client.android.AndroidDriver;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-import static app.resources.Locators.Android.BLEFan.*;
+import static app.resources.Locators.Android.DeviceScreens.BLEFan.*;
 import static app.util.AppUtil.confirmOnHomeScreen;
 
 public class FirmwareVersionChecker {
@@ -45,7 +46,7 @@ public class FirmwareVersionChecker {
      * Skips if current version >= "i"
      * Scrolls if file not in view
      */
-    public void runSequentialFirmwareUpdates() {
+    public void runSequentialFirmwareUpdates(ArduinoRelayControllerModern controller) {
         System.out.println("🔁 Starting 20-iteration dynamic OTA update test...");
 
         // Initialize CSV
@@ -79,7 +80,7 @@ public class FirmwareVersionChecker {
 
         // Main Loop: i = 1 to 20
         //TODO : i is the file number to start from.
-        for (int i = 1; i <= 100; i++) {
+        for (int i = 1; i <= 20; i++) {
             if (i < startFrom) {
                 System.out.println("⏭️ Skipping iteration " + i + " (already at or above this version)");
                 continue;
@@ -134,7 +135,8 @@ public class FirmwareVersionChecker {
 
             //4. Power Toggle
             PowerToggleInterruption toggle = new PowerToggleInterruption(driver,i, fileName);
-            toggle.runPowerToggle();
+            toggle.runPowerToggle(controller);
+            ActionsUtil.sleep(5000);
             // Execute firmware verification
             executeFirmwareVerification(currentAttempt, expectedVersion);
 
@@ -149,7 +151,7 @@ public class FirmwareVersionChecker {
         driver.navigate().back();
         driver.navigate().back();
         FanManagement fan = new FanManagement(driver);
-        fan.fanControl();
+        fan.speedCommands();
     }
 
     /**
@@ -167,8 +169,8 @@ public class FirmwareVersionChecker {
 
             try {
                 // Wait for success message
-                boolean failedMessageFound = waitForElement(FILE_TRANSFER_ERROR_TOAST,5);
-                boolean successMessageFound = waitForElement(FIRMWARE_SUCCESS_TOAST, 5);
+                boolean failedMessageFound = waitForElement(FILE_TRANSFER_ERROR_TOAST,15);
+                boolean successMessageFound = waitForElement(FIRMWARE_SUCCESS_TOAST, 15);
 
                 if (successMessageFound) {
                     // Click Done button

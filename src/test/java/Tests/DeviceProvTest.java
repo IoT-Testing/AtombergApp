@@ -8,21 +8,15 @@ import app.ScreenCheck.ScreenCheck;
 import app.resources.ArduinoRelayControllerModern;
 import app.resources.PythonFileScript;
 import app.util.ActionsUtil;
-import app.util.ScreenRecording;
 import com.aventstack.extentreports.Status;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.appmanagement.ApplicationState;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
+import org.testng.Assert;
 import org.testng.annotations.*;
-
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
-import static io.appium.java_client.appmanagement.ApplicationState.RUNNING_IN_FOREGROUND;
 
 /**
  * DeviceProvTest - End-to-end test: login → fan control → logout.
@@ -78,7 +72,7 @@ public class DeviceProvTest extends BaseTest {
             ScreenCheck screen = new ScreenCheck(driver);
             screen.homeScreen();
 
-            boolean success = false;
+            boolean success;
             ArduinoRelayControllerModern controller = new ArduinoRelayControllerModern();
             controller.autoConnect();
             for(int i = 0; i< 50;i++){
@@ -126,6 +120,7 @@ public class DeviceProvTest extends BaseTest {
 
             // Verify logout success
             String currentActivity = driver.currentActivity();
+            Assert.assertNotNull(currentActivity);
             boolean isOnLoginScreen = currentActivity.contains("Login") || currentActivity.contains("Splash");
 
             if (isOnLoginScreen) {
@@ -183,6 +178,4 @@ public class DeviceProvTest extends BaseTest {
             System.err.println("Failed to create CSV file: " + e.getMessage());
         }
     }
-
-
 }

@@ -7,7 +7,7 @@ import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.*;
 import java.util.List;
 import java.util.stream.Collectors;
-import static app.resources.Locators.Android.LockLocators.*;
+import static app.resources.Locators.Android.DeviceScreens.LockLocators.*;
 import static app.resources.Messages.*;
 import static app.util.AppUtil.navigateToAddScreen;
 

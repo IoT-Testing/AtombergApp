@@ -13,11 +13,10 @@ import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 import org.testng.annotations.*;
 import org.testng.asserts.SoftAssert;
-import java.net.MalformedURLException;
-import static app.resources.Locators.Android.BLEFan.*;
-import static app.resources.Locators.Android.FanLocators.*;
+import static app.resources.Locators.Android.DeviceAdditionScreen.Phoenix.ADD_BUTTON_XPATH;
+import static app.resources.Locators.Android.DeviceScreens.BLEFan.*;
 import static app.resources.Locators.Android.HomeLocators.*;
-import static app.resources.Locators.Android.LoginLocators.*;
+import static app.resources.Locators.Android.AppLocators.Login.*;
 
 import static app.util.AppUtil.clickIfExists;
 import static app.util.AppUtil.waitForElement;
@@ -25,7 +24,6 @@ import static app.util.AppUtil.waitForElement;
 
 /**
  * FullAppFlowTest - End-to-end automation of Atomberg app flow as per provided document.
- *
  * Covers:
  * - App launch
  * - Login
@@ -40,10 +38,14 @@ import static app.util.AppUtil.waitForElement;
 public class SecondAppTest extends BaseTest {
 
     public AndroidDriver driver;
-    private SoftAssert softAssert;
+    private final SoftAssert softAssert;
 
     // === Locators ===
     private static final String APP_PACKAGE = "com.atomberg.app";
+
+    public SecondAppTest(SoftAssert softAssert) {
+        this.softAssert = softAssert;
+    }
 
     @BeforeSuite
     public void setupSuite() {
@@ -52,7 +54,7 @@ public class SecondAppTest extends BaseTest {
     }
 
     @BeforeTest
-    public void setUp() throws MalformedURLException {
+    public void setUp() {
         driver = getDriver();
         Assert.assertNotNull(driver, "Driver should not be null after setup");
     }
@@ -177,6 +179,7 @@ public class SecondAppTest extends BaseTest {
                     .getDomAttribute("content-desc");
             System.out.println("📄 Firmware: " + firmwareText);
 
+            Assert.assertNotNull(firmwareText);
             softAssert.assertTrue(firmwareText.contains("Firmware Version"), "Firmware info missing");
             reporter.log(Status.INFO, "📄 Firmware Info: " + firmwareText);
 

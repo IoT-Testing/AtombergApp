@@ -17,7 +17,7 @@ import org.openqa.selenium.*;
 import org.testng.Assert;
 import org.testng.annotations.*;
 import static app.resources.Locators.Android.HomeLocators.*;
-import static app.resources.Locators.Android.LoginLocators.*;
+import static app.resources.Locators.Android.AppLocators.Login.*;
 import static app.util.AppUtil.findOptionalElement;
 
 /**
@@ -231,6 +231,7 @@ public class AppTest extends BaseTest {
         } catch (Exception e) {
             reporter.log(Status.FAIL, "Logout failed: " + e.getMessage());
             throw e;
+            
         } finally {
             if (reporter.getCurrentStatus() == Status.FAIL) afterTestFailure(driver);
             reporter.endTest();
@@ -291,7 +292,6 @@ public class AppTest extends BaseTest {
                 // Catch-all for unexpected issues
                 System.err.println("Unexpected error waiting for element: " + e.getClass().getSimpleName());
             }
-
             ActionsUtil.sleep(POLLING_INTERVAL_MS); // Wait before retry
         }
 

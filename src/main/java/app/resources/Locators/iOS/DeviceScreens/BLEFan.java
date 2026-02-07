@@ -1,4 +1,4 @@
-package app.resources.Locators.Android;
+package app.resources.Locators.iOS.DeviceScreens;
 
 import org.openqa.selenium.By;
 
