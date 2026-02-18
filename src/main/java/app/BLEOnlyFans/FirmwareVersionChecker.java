@@ -86,7 +86,7 @@ public class FirmwareVersionChecker {
                 continue;
             }
 
-            String fileName = "Production_1.0." + i + ".bin";
+            String fileName = "4.1." + i + ".bin";
             String expectedVersion = "1.0." + i;
 
             System.out.println("\n🚀 Starting Iteration " + i + "/20");

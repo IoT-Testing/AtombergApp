@@ -19,12 +19,24 @@ public class ProgressivePauseResume {
     private int currentAttempt = 1; // Track current attempt number
 
     // === Configuration ===
-    private static final int PAUSE_RESUME_CYCLES = 16;
+    public static final int PAUSE_RESUME_CYCLES = 16;
     private static final long HOLD_DURATION_MS = 800;
 
     public ProgressivePauseResume(AndroidDriver driver,FirmwareVersionChecker csvLogger) {
         this.driver = driver;
         this.csvLogger = csvLogger;
+    }
+
+    public static boolean isCsvInitialized() {
+        return csvInitialized;
+    }
+
+    public static void setCsvInitialized(boolean csvInitialized) {
+        ProgressivePauseResume.csvInitialized = csvInitialized;
+    }
+
+    public static void setCsvWriter(PrintWriter csvWriter) {
+        ProgressivePauseResume.csvWriter = csvWriter;
     }
 
     /**
