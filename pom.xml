@@ -125,9 +125,9 @@
         </dependency>
         <dependency>
             <groupId>com.applitools</groupId>
-            <artifactId>eyes-appium-java5</artifactId>
-            <version>5.83.17</version>
-            <scope>runtime</scope>
+            <artifactId>eyes-selenium-java5</artifactId>
+            <version>5.83.18</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
     <build>
