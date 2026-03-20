@@ -1,9 +1,10 @@
-//package ZTests;
-//
-//import org.testng.annotations.Suite;
-//import org.testng.annotations.SuiteClasses;
-//
-//@Suite
-//@SuiteClasses({com.appTest.tests.AppTest.class})
-//public class Regression {
-//}
+package ZTests;
+
+import com.appTest.tests.AppTest;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
+
+@Suite
+@SelectClasses({AppTest.class})
+public class Regression {
+}

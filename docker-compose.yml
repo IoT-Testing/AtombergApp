@@ -1,0 +1,66 @@
+services:
+  # RethinkDB Database Service
+  rethinkdb:
+    image: rethinkdb:2.4.2
+    container_name: stf-rethinkdb
+    environment:
+      - RETHINKDB_HOST=0.0.0.0
+      - RETHINKDB_PORT=28015
+    ports:
+      - "28015:28015"    # Driver port
+      - "29015:29015"    # Cluster port
+      - "8080:8080"      # Web UI port
+    volumes:
+      - rethinkdb_data:/data/rethinkdb_data
+    networks:
+      - stf-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    command: rethinkdb --bind all --data-dir /data/rethinkdb_data
+    restart: unless-stopped
+
+  # STF Main Service (Official DeviceFarmer Image)
+  stf:
+    image: devicefarmer/stf:latest
+    container_name: stf
+    depends_on:
+      rethinkdb:
+        condition: service_healthy
+    environment:
+      - RETHINKDB_HOST=rethinkdb
+      - RETHINKDB_PORT=28015
+      - STF_ADMIN_NAME=administrator
+      - STF_ADMIN_EMAIL=administrator@fakedomain.com
+      - STF_ROOT_GROUP_NAME=Common
+    ports:
+      - "7100:7100"     # STF Web UI
+      - "7400-7500:7400-7500"  # Device ports range
+    volumes:
+      - stf_storage:/data
+      - /dev/bus/usb:/dev/bus/usb  # USB device access for Android devices
+    devices:
+      - /dev/bus/usb:/dev/bus/usb  # USB device passthrough
+    privileged: true  # Required for USB access
+    networks:
+      - stf-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7100"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: unless-stopped
+
+volumes:
+  rethinkdb_data:
+    driver: local
+  stf_storage:
+    driver: local
+
+networks:
+  stf-network:
+    driver: bridge
