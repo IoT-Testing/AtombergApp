@@ -177,7 +177,7 @@ public class Main {
         System.out.println("App launched.");
     }
 
-    private boolean isOnLoginScreen() {
+    private boolean isOnLoginScreen() throws Exception{
         AppInitializer appCheck = new AppInitializer();
         appCheck.setDriver(driver);
         boolean onLogin = appCheck.checkMainScreen();

@@ -168,7 +168,7 @@ public class LoginTest extends BaseTest {
     /**
      * Launches app and ensures we're on login screen.
      */
-    private void launchAppAndEnsureLoginScreen() {
+    private void launchAppAndEnsureLoginScreen() throws Exception {
         driver.activateApp("com.atomberg.app");
         ActionsUtil.SSleep(5);
 
@@ -203,7 +203,7 @@ public class LoginTest extends BaseTest {
     /**
      * Verifies user is successfully logged in.
      */
-    private boolean verifyLoginSuccess() {
+    private boolean verifyLoginSuccess() throws Exception {
         AppInitializer appInit = new AppInitializer();
         appInit.setDriver(driver);
         return appInit.checkMainScreen();

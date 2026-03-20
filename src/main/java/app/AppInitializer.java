@@ -1,58 +1,31 @@
 package app;
 
+import app.Login.Email;
 import app.util.ActionsUtil;
 import app.util.AppUtil;
 import app.util.PermissionUtil;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.options.UiAutomator2Options;
 import io.appium.java_client.appmanagement.ApplicationState;
+import io.appium.java_client.service.local.AppiumDriverLocalService;
+import io.appium.java_client.service.local.AppiumServiceBuilder;
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-/**
- * AppInitializer - Central class to set up the Android driver and launch/login to the Atomberg app.
- *
- * <p>Refactored to:
- * <ul>
- *   <li>Eliminate duplicated driver setup logic</li>
- *   <li>Separate concerns (driver init vs login vs ADB)</li>
- *   <li>Improve error visibility</li>
- *   <li>Externalize constants</li>
- *   <li>Follow clean coding practices</li>
- * </ul>
- */
+import static app.resources.Credentials.*;
+import static java.lang.Thread.sleep;
+
 public class AppInitializer {
-    private AndroidDriver atomberg;
-    private String osVersion;
+    public AndroidDriver atomberg;
+    public AppiumDriverLocalService service;
 
-    // === Constants ===
-    private static final String APP_PACKAGE = "com.atomberg.app";
-    private static final String APP_ACTIVITY = "com.atomberg.app.MainActivity";
-    private static final String APPIUM_SERVER_URL = "http://127.0.0.1:4723/wd/hub";
-    private static final Duration IMPLICIT_WAIT = Duration.ofSeconds(1);
-    private static final int ADB_TIMEOUT_SECONDS = 10;
-
-    // === Locators (could move to Page Object later) ===
-    private static final By LOGIN_SCREEN_INDICATOR = By.xpath(
-            "//android.view.View[@content-desc=\"Experience smart living \n" +
-                    " with Atomberg\"]"
-    );
-    private static final By EMAIL_LOGIN_BUTTON = By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[4]");
-    private static final By CONTINUE_BUTTON = By.xpath("//android.widget.Button[@content-desc='Continue']");
-    private static final By EDIT_TEXT_FIELD = By.xpath("//android.widget.EditText");
-
-    // === Getters & Setters ===
     public AndroidDriver getDriver() {
         return atomberg;
     }
@@ -61,318 +34,154 @@ public class AppInitializer {
         this.atomberg = driver;
     }
 
-    public String getOsVersion() {
-        return osVersion;
-    }
-
-    /**
-     * Launches the Atomberg app with default capabilities.
-     */
-    public void openApp() {
-        UiAutomator2Options options = baseOptions()
-                .setAppPackage(APP_PACKAGE)
-                .setAppActivity(APP_ACTIVITY);
-        createDriver(options);
-    }
-
-    /**
-     * Initializes driver connected to a device only (no app launched).
-     */
-    public void initializeDriver() {
-        UiAutomator2Options options = baseOptions();
-        options.setCapability("platformName", "Android");
-        options.setCapability("platformVersion", "15");
-        createDriver(options);
-    }
-
-    /**
-     * Initializes driver with dynamic platform version fetched via ADB.
-     *
-     * @param url  Appium server URL
-     * @param text Output containing device ID (e.g., 'adb devices' output line)
-     * @throws IOException          If ADB process fails
-     * @throws InterruptedException If thread is interrupted
-     */
-    public void initializeDriverWithURL(URL url, String text) throws IOException, InterruptedException {
-        String[] parts = text.trim().split("\\s+");
-        if (parts.length == 0) throw new IllegalArgumentException("Invalid device info string");
-
-        String deviceId = parts[parts.length - 1];
-        System.out.println("Target Device ID: " + deviceId);
-
-        // Execute ADB command to get OS version
-        Process process = Runtime.getRuntime().exec("adb -s " + deviceId + " shell getprop ro.system.build.version.release");
-        if (!process.waitFor(10L, TimeUnit.SECONDS)) {
-            process.destroy();
-            throw new IOException("ADB command timed out.");
-        }
-
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-            StringBuilder output = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                output.append(line);
-            }
-            osVersion = output.toString().trim();
-        }
-
-        System.out.println("Detected OS Version: " + osVersion);
-
-        UiAutomator2Options options = baseOptions();
-                options.setCapability("platformName", "Android");
-                options.setCapability("platformVersion", osVersion);
-                options.setCapability("appium:udid", deviceId);
-
-        createDriver(url, options);
-    }
-
-    /**
-     * Initializes driver without launching any specific app.
-     *
-     * @param url Appium server URL
-     */
-    public void initializeDriverWithURL(URL url) {
-        UiAutomator2Options options = baseOptions();
-        options.setCapability("platformName", "Android");
-        createDriver(url, options);
-    }
-
-    /**
-     * Opens the Atomberg app at a given Appium server URL.
-     *
-     * @param url Appium server endpoint
-     */
-    public void openAppWithURL(URL url) {
-        UiAutomator2Options options = baseOptions()
-                .setAppPackage(APP_PACKAGE)
-                .setAppActivity(APP_ACTIVITY);
-        createDriver(url, options);
-    }
-
-    // === Internal Helpers ===
-
-    /**
-     * Returns base UiAutomator2Options shared across all initializations.
-     */
-    private UiAutomator2Options baseOptions() {
+    public void openApp(){
+        UiAutomator2Options options = new UiAutomator2Options();
+        options.setAppPackage("com.atomberg.app");
+        options.setAppActivity("com.atomberg.app.MainActivity");
+        URL url = null;
         try {
-            return new UiAutomator2Options().merge(new UiAutomator2Options()
-                    .setAdbExecTimeout(Duration.ofMinutes(5)) // Prevent early timeout
-                    .setEnsureWebviewsHavePages(true));
-        } catch (Exception e) {
-            System.err.println("Failed to configure base options: " + e.getMessage());
-            return new UiAutomator2Options();
-        }
-    }
-
-    /**
-     * Creates driver with options and default Appium server.
-     *
-     * @param options Driver options
-     */
-    private void createDriver(UiAutomator2Options options) {
-        createDriver(parseUrl(APPIUM_SERVER_URL), options);
-    }
-
-    /**
-     * Creates driver with custom URL and options.
-     *
-     * @param url     Appium server URL
-     * @param options Driver options
-     */
-    private void createDriver(URL url, UiAutomator2Options options) {
-        if (url == null) throw new IllegalArgumentException("Appium server URL cannot be null");
-        if (options == null) throw new IllegalArgumentException("Driver options cannot be null");
-
-        try {
-            atomberg = new AndroidDriver(url, options);
-            atomberg.manage().timeouts().implicitlyWait(IMPLICIT_WAIT);
-            System.out.println("Driver created successfully.");
-        } catch (Exception e) {
-            System.err.println("Failed to create AndroidDriver: " + e.getMessage());
-            throw new RuntimeException("Driver initialization failed", e);
-        }
-    }
-
-    /**
-     * Parses a fixed or variable URL string safely.
-     *
-     * @param urlString URL as string
-     * @return Parsed URL object
-     */
-    private URL parseUrl(String urlString) {
-        try {
-            return new URL(urlString);
+            url = new URL("http://127.0.0.1:4723/wd/hub");
         } catch (MalformedURLException e) {
-            throw new IllegalArgumentException("Invalid URL: " + urlString, e);
+            System.out.println("Malformed URL exception " + e.getMessage());
         }
+        assert url != null;
+        atomberg = new AndroidDriver(url, options);
+        atomberg.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
     }
 
-    // === App State & Navigation ===
-
-    /**
-     * Checks if login screen is displayed.
-     *
-     * @return true if login screen is visible, false otherwise
-     */
-    public boolean checkMainScreen() {
-        ApplicationState appState = atomberg.queryAppState(APP_PACKAGE);
-
-        if (appState == ApplicationState.RUNNING_IN_FOREGROUND) {
-
-            ActionsUtil.SSleep(5); // Wait for UI to stabilize
-
-            WebElement mainScreenIndicator = findOptionalElement(LOGIN_SCREEN_INDICATOR);
-            if (mainScreenIndicator != null) {
+    public boolean checkMainScreen() throws Exception{
+        ApplicationState appState = atomberg.queryAppState("com.atomberg.app");
+        if (appState == ApplicationState.RUNNING_IN_FOREGROUND)
+        {
+            WebElement isMainScreenDisplayed = null;
+            try {
+                isMainScreenDisplayed = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Experience smart living \n" + " with Atomberg\"]"));
+            } catch (Exception ignored) {
+            }
+            if (isMainScreenDisplayed != null) {
                 System.out.println("Login Screen Displayed");
-                return true;
+                Email login = new Email(atomberg);
+                login.email(DEFAULT_EMAIL, DEFAULT_PASSWORD);
             } else {
                 System.out.println("Already logged in");
-                return false;
             }
-        } else {
-            // Try activating app
-            atomberg.activateApp(APP_PACKAGE);
+        }
+        else if(appState != ApplicationState.RUNNING_IN_FOREGROUND)
+        {
+            atomberg.activateApp("com.atomberg.app");
             ActionsUtil.SSleep(5);
-            WebElement indicator = findOptionalElement(LOGIN_SCREEN_INDICATOR);
-            System.out.println(indicator != null ? "Login Screen Displayed" : "Already logged in");
-            return indicator != null;
-        }
-    }
-
-    // === Login Methods ===
-
-    /**
-     * Performs full login flow with email and password.
-     *
-     * @param email User email
-     * @param pass  User password
-     */
-    public void login(String email, String pass) {
-        if (email == null || pass == null) {
-            throw new IllegalArgumentException("Email and password must not be null");
-        }
-
-        clickEmailLoginButton();
-        enterEmail(email);
-        clickContinue();
-
-        ActionsUtil.sleep(1000); // Allow transition
-
-        enterPassword(pass);
-        clickContinue();
-
-        ActionsUtil.sleep(5000); // Allow login processing
-
-        PermissionUtil.allow(atomberg); // Handle permissions
-
-        dismissAlexaPopupIfPresent(); // Optional popup
-    }
-
-    /**
-     * Hardcoded login for quick testing.
-     */
-    public void email() {
-        login("hiwitaw422@wuzak.com", "Atomberg@1234");
-    }
-
-    // === Login Helpers ===
-
-    private void clickEmailLoginButton() {
-        clickElement(EMAIL_LOGIN_BUTTON, "Email Login Button");
-        AppUtil.captureScreenshot(atomberg,"Email Login Button not found");
-    }
-
-    private void enterEmail(String email) {
-        WebElement field = waitForElement(EDIT_TEXT_FIELD, 10);
-        field.click();
-        field.sendKeys(email);
-        System.out.println("Email Entered: " + email);
-        AppUtil.captureScreenshot(atomberg, "Failed to enter email id");
-    }
-
-    private void enterPassword(String password) {
-        WebElement field = waitForElement(EDIT_TEXT_FIELD, 10);
-        field.click();
-        field.sendKeys(password);
-        System.out.println("Password entered...");
-        AppUtil.captureScreenshot(atomberg, "Failed to enter password");
-    }
-
-    private void clickContinue() {
-        clickElement(CONTINUE_BUTTON, "Continue Button");
-        AppUtil.captureScreenshot(atomberg, "Filed to click continue button");
-        System.out.println("Continue...");
-    }
-
-    private void dismissAlexaPopupIfPresent() {
-        List<WebElement> views = atomberg.findElements(By.className("android.view.View"));
-        List<WebElement> labeledElements = views.stream()
-                .filter(el -> el.getDomAttribute("content-desc") != null)
-                .collect(Collectors.toList());
-
-        for (WebElement el : labeledElements) {
-            if (Objects.equals(el.getDomAttribute("content-desc"),
-                    "Use Alexa to control your smart fan(s) with voice")) {
-                try {
-                    atomberg.findElement(By.xpath("//android.widget.Button[@content-desc='Cancel']")).click();
-                    System.out.println("Alexa popup dismissed.");
-                    break;
-                } catch (Exception e) {
-                    System.err.println("Failed to dismiss Alexa popup: " + e.getMessage());
-                }
-            }
-        }
-    }
-
-    // === Utility Methods ===
-
-    /**
-     * Safely finds element without throwing exception.
-     *
-     * @param locator Element locator
-     * @return Found element or null
-     */
-    private WebElement findOptionalElement(By locator) {
-        try {
-            return atomberg.findElement(locator);
-        } catch (NoSuchElementException e) {
-            return null;
-        }
-    }
-
-    /**
-     * Clicks element with logging.
-     *
-     * @param locator By strategy
-     * @param label   Action label
-     */
-    private void clickElement(By locator, String label) {
-        try {
-            atomberg.findElement(locator).click();
-            System.out.println(label + " clicked.");
-        } catch (Exception e) {
-            System.err.println("Failed to click " + label + ": " + e.getMessage());
-            throw new RuntimeException("Interaction failed: " + label, e);
-        }
-    }
-
-    /**
-     * Waits up to N seconds for element to be present.
-     *
-     * @param locator  Element locator
-     * @param timeoutSec Timeout in seconds
-     * @return WebElement if found
-     */
-    private WebElement waitForElement(By locator, long timeoutSec) {
-        long start = System.currentTimeMillis();
-        while (System.currentTimeMillis() - start < timeoutSec * 1000) {
+            WebElement isMainScreenDisplayed = null;
             try {
-                return atomberg.findElement(locator);
-            } catch (NoSuchElementException ignored) {
-                ActionsUtil.sleep(500);
+                isMainScreenDisplayed = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Experience smart living \n" + " with Atomberg\"]"));
+            } catch (Exception ignored) {
+            }
+            if (isMainScreenDisplayed != null) {
+                System.out.println("Login Screen Displayed");
+                Email login = new Email(atomberg);
+                login.email(DEFAULT_EMAIL, DEFAULT_PASSWORD);
+            } else {
+                System.out.println("Already logged in");
             }
         }
-        throw new RuntimeException("Element not found after " + timeoutSec + " seconds: " + locator);
+        return false;
     }
+
+    public void initializeDriver(){
+        //These caps only get the device, need to select Atomberg Home ap separately
+        UiAutomator2Options options = new UiAutomator2Options();
+        options.setCapability("platformName", "Android");
+        options.setCapability("platformVersion", "15");
+//        options.setCapability("appPackage", "com.atomberg.app");
+
+        URL url = null;
+        try {
+            url = new URL("http://127.0.0.1:4723/wd/hub");
+        } catch (MalformedURLException e) {
+            System.out.println("Malformed URL exception " + e.getMessage());
+        }
+        assert url != null;
+        atomberg = new AndroidDriver(url, options);
+        atomberg.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+    }
+
+    public void initializeDriverWithURL(){
+        //These caps only get the device, need to select Atomberg Home ap separately
+        UiAutomator2Options options = new UiAutomator2Options();
+        options.setCapability("platformName", "Android");
+        options.setCapability("platformVersion", "15");
+//        options.setCapability("appPackage", "com.atomberg.app");
+        URL url = service.getUrl();
+        System.out.println(url);
+        atomberg = new AndroidDriver(url, options);
+        atomberg.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+    }
+
+    public void login(String login, String pass) {
+        WebElement emailLoginButton = atomberg.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[4]"));
+        emailLoginButton.click();
+        AppUtil.captureScreenshot(atomberg, "emailLoginButton");
+        WebElement emailField = atomberg.findElement(By.xpath("//android.widget.EditText"));
+        emailField.click();
+        emailField.sendKeys(login); // Enter Email id
+        AppUtil.captureScreenshot(atomberg, "emailField");
+        System.out.println(" " + emailField.getText() + " ");
+        System.out.println("Email Entered...");
+        AppUtil.captureScreenshot(atomberg, "emailEntered");
+        WebElement continueButton = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Continue\"]"));
+        continueButton.click(); // Continue button
+        AppUtil.captureScreenshot(atomberg, "continueButton");
+        try {
+            sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        WebElement passwordField = atomberg.findElement(By.xpath("//android.widget.EditText"));
+        passwordField.click();
+        passwordField.sendKeys(pass);
+        AppUtil.captureScreenshot(atomberg, "passwordField");
+        System.out.println("Password entered..."); // Enter Password
+        WebElement continueButton1 = atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Continue\"]"));
+        continueButton1.click(); // Continue to Log in
+        System.out.println("Continue...");
+        ActionsUtil.sleep(5000);
+        PermissionUtil.allow(atomberg);
+        List<WebElement> dialogueBox = atomberg.findElements(By.className("android.view.View"));
+        List<WebElement> elementList = dialogueBox.stream().filter(element -> element.getDomAttribute("content-desc")!=null).collect(Collectors.toList());
+        for (WebElement element : elementList){
+            if (Objects.equals(element.getDomAttribute("content-desc"), "Use Alexa to control your smart fan(s) with voice"))
+            {
+                atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]")).click();
+                break;
+            }
+        }
+    }
+
+    public void openAppWithURL(){
+        UiAutomator2Options options = new UiAutomator2Options();
+        options.setAppPackage("com.atomberg.app");
+        options.setAppActivity("com.atomberg.app.MainActivity");
+        URL url = service.getUrl();
+        System.out.println(url);
+        System.out.println(options);
+        atomberg = new  AndroidDriver(url, options);
+//        atomberg.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+    }
+    public void startServer() {
+        AppiumServiceBuilder builder = new AppiumServiceBuilder()
+                .usingAnyFreePort() // Use a random free port or specify .usingPort(4723)
+                .withAppiumJS(new File("/usr/local/lib/node_modules/appium/build/lib/main.js"));// Path to Appium JS file
+
+        service = AppiumDriverLocalService.buildService(builder);
+        service.start();
+        System.out.println("Appium Server Started on URL: " + service.getUrl());
+    }
+
+    public void stopServer() {
+        if (service != null && service.isRunning()) {
+            service.stop();
+            System.out.println("Appium Server stopped.");
+        }
+    }
+
 }
+

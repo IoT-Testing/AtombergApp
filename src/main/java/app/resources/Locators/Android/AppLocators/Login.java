@@ -1,5 +1,6 @@
 package app.resources.Locators.Android.AppLocators;
 
+import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 
 public class Login {
@@ -19,4 +20,6 @@ public class Login {
     public static final By INCORRECT_PASSWORD_MESSAGE = By.xpath("//android.view.View[@content-desc=\"! Incorrect password\"]");
     public static final By SHOW_PASSWORD_BUTTON = By.xpath("//android.widget.ScrollView/android.widget.ImageView[2]"); //Show Password Button
     public static final By FORGOT_PASSWORD = By.xpath("//android.view.View[@content-desc=\"Forgot password?\"]");
+
+
 }
