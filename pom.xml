@@ -53,7 +53,7 @@
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-java</artifactId>
-            <version>7.27.2</version>
+            <version>7.34.3</version>
         </dependency>
         <dependency>
             <groupId>com.fazecast</groupId>
@@ -109,9 +109,9 @@
             <version>2.13.1</version>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
+            <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.20.0-rc1</version>
+            <version>3.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -126,7 +126,7 @@
         <dependency>
             <groupId>com.applitools</groupId>
             <artifactId>eyes-appium-java5</artifactId>
-            <version>5.75.2</version>
+            <version>5.83.17</version>
             <scope>runtime</scope>
         </dependency>
     </dependencies>
