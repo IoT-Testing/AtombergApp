@@ -17,6 +17,7 @@ public class Navigation {
         ActionsUtil.sleep(5000);
         executeClickBluetooth(driver);
     }
+
     public static boolean clickElementWithRetry(AndroidDriver driver, By locator) {
         for (int i = 0; i < 5; i++) {
             try {
@@ -55,7 +56,6 @@ public class Navigation {
         }
         return success;
     }
-
 
     private static boolean waitForVisible(AndroidDriver driver, By locator, long seconds) {
         for (int i = 0; i < seconds * 2; i++) {

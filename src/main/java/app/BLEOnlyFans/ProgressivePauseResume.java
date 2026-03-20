@@ -12,6 +12,11 @@ import static app.resources.Locators.Android.DeviceScreens.BLEFan.*;
 
 public class ProgressivePauseResume {
 
+    // Example locators - adjust selectors to match your app's UI
+    private static final By START_BUTTON = By.id("com.example:id/btn_start");
+    private static final By STOP_BUTTON  = By.id("com.example:id/btn_stop");    // Start transforms to this
+    private static final By PAUSE_BUTTON = By.id("com.example:id/btn_pause");   // Enabled after start
+    private static final By RESUME_BUTTON= By.id("com.example:id/btn_resume");  // Pause transforms to this
     private final AndroidDriver driver;
     private static PrintWriter csvWriter;
     private final FirmwareVersionChecker csvLogger;

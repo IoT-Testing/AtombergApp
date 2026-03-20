@@ -1,32 +1,99 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<!-- testng.xml -->
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="AtombergAppFullTestSuite" parallel="tests" thread-count="4">
 
-<suite name="AtombergApp" parallel="tests" thread-count="2" configfailurepolicy="continue" verbose="2">
+    <listeners>
+        <listener class-name="com.appTest.listeners.DashboardReporter"/>
+        <listener class-name="com.appTest.listeners.TestListeners"/>
+    </listeners>
 
-    <!-- Global parameters (optional) -->
-    <parameter name="appPackage" value="com.atomberg.app"/>
-    <parameter name="testEnvironment" value="staging"/>
-
-    <!-- Test Configuration for Device 1 -->
-    <test name="Device_1 - Pixel 6" group-by-instances="true">
-        <parameter name="deviceSlot" value="1"/>
+    <!-- ========== CORE TESTS ========== -->
+    <!-- App Initialization and Launch Tests -->
+    <test name="CoreAppTests">
+        <parameter name="platform" value="Android"/>
+        <parameter name="deviceSlot" value="device1"/>
         <classes>
-            <class name="Tests.LoginTest"/>
-            <!-- Add more classes as needed -->
-            <!-- <class name="Tests.AppTest"/> -->
+            <class name="com.appTest.tests.OpenAppTest"/>
         </classes>
     </test>
-    <test name="Device_2 - OnePlus 8" group-by-instances="true">
-        <parameter name="deviceSlot" value="2"/>
+
+    <!-- ========== AUTHENTICATION TESTS ========== -->
+    <!-- Login and Authentication Flow Tests -->
+    <test name="AuthenticationTests">
+        <parameter name="platform" value="Android"/>
+        <parameter name="deviceSlot" value="device2"/>
         <classes>
-            <class name="Tests.LoginTest"/>
+            <class name="com.appTest.tests.LoginTest"/>
         </classes>
     </test>
-<!--    <groups>-->
-<!--        <run>-->
-<!--            <include name="smoke"/>-->
-<!--            <exclude name="wip"/>-->
-<!--        </run>-->
-<!--    </groups>-->
+
+    <!-- ========== MAIN APP FUNCTIONALITY TESTS ========== -->
+    <!-- Comprehensive End-to-End App Tests -->
+    <test name="AppFunctionalityTests">
+        <parameter name="platform" value="Android"/>
+        <parameter name="deviceSlot" value="device1"/>
+        <classes>
+            <class name="com.appTest.tests.AppTest"/>
+        </classes>
+    </test>
+
+    <!-- ========== DEVICE MANAGEMENT TESTS ========== -->
+    <!-- Device Provisioning and Control Tests -->
+    <test name="DeviceManagementTests">
+        <parameter name="platform" value="Android"/>
+        <parameter name="deviceSlot" value="device2"/>
+        <classes>
+            <class name="com.appTest.tests.DeviceProvTest">
+                <methods>
+                    <include name="testDeviceProvisioning"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+
+    <!-- ========== USER PROFILE TESTS ========== -->
+    <!-- Profile and Account Management Tests -->
+    <test name="ProfileManagementTests">
+        <parameter name="platform" value="Android"/>
+        <parameter name="deviceSlot" value="device1"/>
+        <classes>
+            <class name="com.appTest.tests.ManageProfileTest"/>
+        </classes>
+    </test>
+
+    <!-- ========== FAMILY MANAGEMENT TESTS ========== -->
+    <!-- Family and Multiple User Tests -->
+    <test name="FamilyManagementTests">
+        <parameter name="platform" value="Android"/>
+        <parameter name="deviceSlot" value="device2"/>
+        <classes>
+            <class name="com.appTest.tests.ManageFamilyTest"/>
+        </classes>
+    </test>
+
+    <!-- ========== COMPREHENSIVE END-TO-END TESTS ========== -->
+    <!-- Full Application Flow Tests -->
+    <test name="EndToEndFlowTests">
+        <parameter name="platform" value="Android"/>
+        <parameter name="deviceSlot" value="device1"/>
+        <classes>
+            <class name="com.appTest.tests.SecondAppTest"/>
+        </classes>
+    </test>
+
+    <!-- ========== SMOKE TEST SUITE ========== -->
+    <!-- Quick smoke test with just critical tests -->
+    <test name="SmokeTests" enabled="true">
+        <parameter name="platform" value="Android"/>
+        <parameter name="deviceSlot" value="device1"/>
+        <classes>
+            <class name="com.appTest.tests.OpenAppTest"/>
+            <class name="com.appTest.tests.LoginTest">
+                <methods>
+                    <include name="correctCredentials_LoginSuccess"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+
 </suite>
-<!--123@ToMb^rg#2425-->

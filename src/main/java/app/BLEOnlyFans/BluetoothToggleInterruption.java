@@ -33,7 +33,6 @@ public class BluetoothToggleInterruption{
                 System.out.println("⚠️ 'Start' button not found or already running.");
             }
 
-
             // Step 2: Perform 20 cycles of pause-resume via tap
             for (int i = 0; i < BLUETOOTH_ON_OFF_CYCLES; i++) {
                 sleep(HOLD_DURATION_MS);

@@ -1,4 +1,4 @@
-package Tests;
+package com.appTest.tests;
 
 import app.AppInitializer;
 import app.Login.Email;

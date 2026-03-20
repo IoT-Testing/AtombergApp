@@ -1,4 +1,4 @@
-package Tests;
+package com.appTest.tests;
 
 import app.Analytics.analytics;
 import app.AppInitializer;
@@ -263,7 +263,6 @@ public class AppTest extends BaseTest {
             driver.quit();
         }
     }
-
     /**
      * Finds element with explicit wait.
      */
@@ -299,10 +298,5 @@ public class AppTest extends BaseTest {
         String message = "❌ Failed to find element after " + timeoutSec + " seconds: " + locator;
         System.err.println(message);
         throw new RuntimeException(message);
-
-
-    /**
-     * Recovery logic: navigate back to home if app is stuck
-     */
 }
 }

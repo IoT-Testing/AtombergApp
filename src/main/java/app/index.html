@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appium Test Results Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .status-badge { transition: all 0.2s; }
+        .status-badge:hover { transform: scale(1.05); }
+        .test-row { transition: background-color 0.15s; }
+        .test-row:hover { background-color: #f8fafc; }
+        .detail-modal { backdrop-filter: blur(4px); }
+        .fade-in { animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- Header -->
+<header class="bg-white border-b border-gray-200 sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="bg-indigo-600 p-2 rounded-lg">
+                    <i data-lucide="smartphone" class="w-6 h-6 text-white"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-gray-900">Appium Test Results</h1>
+                    <p class="text-sm text-gray-500">Mobile Automation Dashboard</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="hidden sm:flex items-center gap-2 text-sm text-gray-600 bg-gray-100 px-3 py-1.5 rounded-full">
+                    <i data-lucide="clock" class="w-4 h-4"></i>
+                    <span id="lastUpdated">Last run: Today at 10:30 AM</span>
+                </div>
+                <button onclick="refreshData()" class="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="Refresh Data">
+                    <i data-lucide="refresh-cw" class="w-5 h-5 text-gray-600"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <!-- Total Tests -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-600 mb-1">Total Tests</p>
+                    <p class="text-2xl font-bold text-gray-900" id="totalTests">0</p>
+                </div>
+                <div class="bg-blue-50 p-3 rounded-lg">
+                    <i data-lucide="layers" class="w-6 h-6 text-blue-600"></i>
+                </div>
+            </div>
+            <div class="mt-4 flex items-center text-sm text-gray-500">
+                <span class="text-gray-400">All test cases</span>
+            </div>
+        </div>
+
+        <!-- Passed -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-600 mb-1">Passed</p>
+                    <p class="text-2xl font-bold text-green-600" id="passedTests">0</p>
+                </div>
+                <div class="bg-green-50 p-3 rounded-lg">
+                    <i data-lucide="check-circle" class="w-6 h-6 text-green-600"></i>
+                </div>
+            </div>
+            <div class="mt-4 flex items-center text-sm">
+                <span class="text-green-600 font-medium" id="passRate">0%</span>
+                <span class="text-gray-400 ml-1">success rate</span>
+            </div>
+        </div>
+
+        <!-- Failed -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-600 mb-1">Failed</p>
+                    <p class="text-2xl font-bold text-red-600" id="failedTests">0</p>
+                </div>
+                <div class="bg-red-50 p-3 rounded-lg">
+                    <i data-lucide="x-circle" class="w-6 h-6 text-red-600"></i>
+                </div>
+            </div>
+            <div class="mt-4 flex items-center text-sm">
+                <span class="text-red-600 font-medium" id="failRate">0%</span>
+                <span class="text-gray-400 ml-1">failure rate</span>
+            </div>
+        </div>
+
+        <!-- Duration -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-600 mb-1">Duration</p>
+                    <p class="text-2xl font-bold text-gray-900" id="totalDuration">0m</p>
+                </div>
+                <div class="bg-purple-50 p-3 rounded-lg">
+                    <i data-lucide="timer" class="w-6 h-6 text-purple-600"></i>
+                </div>
+            </div>
+            <div class="mt-4 flex items-center text-sm text-gray-500">
+                <span id="avgDuration">0s</span>
+                <span class="text-gray-400 ml-1">avg per test</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <!-- Status Distribution Chart -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 lg:col-span-1">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Test Status Distribution</h3>
+            <div class="relative h-64">
+                <canvas id="statusChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Trend Chart -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 lg:col-span-2">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Execution Trend (Last 7 Runs)</h3>
+                <select id="trendFilter" class="text-sm border border-gray-300 rounded-lg px-3 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <option value="all">All Platforms</option>
+                    <option value="ios">iOS</option>
+                    <option value="android">Android</option>
+                </select>
+            </div>
+            <div class="relative h-64">
+                <canvas id="trendChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test Results Table -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="p-6 border-b border-gray-200">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <h3 class="text-lg font-semibold text-gray-900">Test Details</h3>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <!-- Search -->
+                    <div class="relative">
+                        <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                        <input type="text" id="searchInput" placeholder="Search tests..."
+                               class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full sm:w-64">
+                    </div>
+                    <!-- Filter -->
+                    <select id="statusFilter" class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+                        <option value="all">All Status</option>
+                        <option value="passed">Passed</option>
+                        <option value="failed">Failed</option>
+                        <option value="skipped">Skipped</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+                <thead class="bg-gray-50 border-b border-gray-200">
+                <tr>
+                    <th class="px-6 py-4 font-semibold text-gray-900">Test Name</th>
+                    <th class="px-6 py-4 font-semibold text-gray-900">Status</th>
+                    <th class="px-6 py-4 font-semibold text-gray-900">Platform</th>
+                    <th class="px-6 py-4 font-semibold text-gray-900">Device</th>
+                    <th class="px-6 py-4 font-semibold text-gray-900">Duration</th>
+                    <th class="px-6 py-4 font-semibold text-gray-900">Timestamp</th>
+                    <th class="px-6 py-4 font-semibold text-gray-900">Actions</th>
+                </tr>
+                </thead>
+                <tbody id="testTableBody" class="divide-y divide-gray-200">
+                <!-- Rows generated by JS -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+            <p class="text-sm text-gray-600" id="showingText">Showing 0 of 0 tests</p>
+            <div class="flex gap-2">
+                <button onclick="changePage(-1)" class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" id="prevBtn">
+                    Previous
+                </button>
+                <button onclick="changePage(1)" class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" id="nextBtn">
+                    Next
+                </button>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Detail Modal -->
+<div id="detailModal" class="hidden fixed inset-0 z-50 detail-modal bg-black bg-opacity-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto fade-in">
+        <div class="p-6 border-b border-gray-200 flex items-center justify-between">
+            <div>
+                <h3 class="text-lg font-bold text-gray-900" id="modalTestName">Test Details</h3>
+                <p class="text-sm text-gray-500 mt-1" id="modalTimestamp">Ran at: --</p>
+            </div>
+            <button onclick="closeModal()" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                <i data-lucide="x" class="w-5 h-5 text-gray-500"></i>
+            </button>
+        </div>
+
+        <div class="p-6 space-y-6">
+            <!-- Status Banner -->
+            <div id="modalStatusBanner" class="rounded-lg p-4 flex items-center gap-3">
+                <!-- Dynamic content -->
+            </div>
+
+            <!-- Info Grid -->
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-gray-50 p-3 rounded-lg">
+                    <p class="text-xs text-gray-500 uppercase font-semibold">Platform</p>
+                    <p class="text-sm font-medium text-gray-900 mt-1" id="modalPlatform">--</p>
+                </div>
+                <div class="bg-gray-50 p-3 rounded-lg">
+                    <p class="text-xs text-gray-500 uppercase font-semibold">Device</p>
+                    <p class="text-sm font-medium text-gray-900 mt-1" id="modalDevice">--</p>
+                </div>
+                <div class="bg-gray-50 p-3 rounded-lg">
+                    <p class="text-xs text-gray-500 uppercase font-semibold">Duration</p>
+                    <p class="text-sm font-medium text-gray-900 mt-1" id="modalDuration">--</p>
+                </div>
+                <div class="bg-gray-50 p-3 rounded-lg">
+                    <p class="text-xs text-gray-500 uppercase font-semibold">Test Class</p>
+                    <p class="text-sm font-medium text-gray-900 mt-1" id="modalClass">--</p>
+                </div>
+            </div>
+
+            <!-- Error Message (if failed) -->
+            <div id="errorSection" class="hidden">
+                <h4 class="text-sm font-semibold text-gray-900 mb-2">Error Details</h4>
+                <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <p class="text-sm text-red-800 font-mono whitespace-pre-wrap" id="modalError">--</p>
+                </div>
+            </div>
+
+            <!-- Stack Trace -->
+            <div id="stackTraceSection" class="hidden">
+                <h4 class="text-sm font-semibold text-gray-900 mb-2">Stack Trace</h4>
+                <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
+                    <pre class="text-xs text-gray-300 font-mono" id="modalStackTrace">--</pre>
+                </div>
+            </div>
+
+            <!-- Screenshot placeholder -->
+            <div id="screenshotSection">
+                <h4 class="text-sm font-semibold text-gray-900 mb-2">Screenshot</h4>
+                <div class="bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                    <i data-lucide="image" class="w-12 h-12 text-gray-400 mx-auto mb-2"></i>
+                    <p class="text-sm text-gray-500">Screenshot captured at failure</p>
+                    <button class="mt-2 text-sm text-indigo-600 hover:text-indigo-700 font-medium">View Full Size</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-6 border-t border-gray-200 flex justify-end gap-3">
+            <button onclick="closeModal()" class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+                Close
+            </button>
+            <button class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors flex items-center gap-2">
+                <i data-lucide="download" class="w-4 h-4"></i>
+                Download Logs
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Mock Data - Simulating Appium Test Results
+    const generateMockData = () => {
+        const testNames = [
+            "testLoginWithValidCredentials",
+            "testLoginWithInvalidPassword",
+            "testHomePageNavigation",
+            "testAddToCart",
+            "testCheckoutProcess",
+            "testUserProfileUpdate",
+            "testSearchFunctionality",
+            "testLogout",
+            "testPaymentGateway",
+            "testOrderHistory",
+            "testAddressManagement",
+            "testNotificationSettings"
+        ];
+
+        const devices = ["iPhone 14", "iPhone 13", "Samsung S23", "Pixel 7", "iPad Pro", "Samsung Tab S8"];
+        const platforms = ["iOS", "iOS", "Android", "Android", "iOS", "Android"];
+
+        const data = [];
+        const now = new Date();
+
+        for (let i = 0; i < 45; i++) {
+            const status = Math.random() > 0.7 ? "failed" : (Math.random() > 0.9 ? "skipped" : "passed");
+            const deviceIndex = Math.floor(Math.random() * devices.length);
+            const duration = Math.floor(Math.random() * 30) + 5; // 5-35 seconds
+
+            data.push({
+                id: i + 1,
+                name: testNames[Math.floor(Math.random() * testNames.length)] + "_" + (i + 1),
+                status: status,
+                platform: platforms[deviceIndex],
+                device: devices[deviceIndex],
+                duration: duration,
+                timestamp: new Date(now - Math.floor(Math.random() * 86400000)).toISOString(),
+                className: "com.appium.tests." + testNames[Math.floor(Math.random() * testNames.length)].replace("test", "Test"),
+                errorMessage: status === "failed" ? "Element not found: By.id('submit_button')\nExpected condition failed: waiting for visibility of element" : null,
+                stackTrace: status === "failed" ? `org.openqa.selenium.NoSuchElementException: Can't locate an element by this strategy
+at io.appium.java_client.pagefactory.AppiumElementLocator.findElement(AppiumElementLocator.java:126)
+at io.appium.java_client.pagefactory.interceptors.InterceptorOfASingleElement.intercept(InterceptorOfASingleElement.java:59)
+at org.openqa.selenium.remote.RemoteWebElement.click(RemoteWebElement.java:77)
+at com.appium.tests.CheckoutTest.testCheckoutProcess(CheckoutTest.java:45)
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+at java.lang.reflect.Method.invoke(Method.java:498)
+at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:124)` : null
+            });
+        }
+
+        // Sort by timestamp desc
+        return data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    };
+
+    let allTests = generateMockData();
+    let filteredTests = [...allTests];
+    let currentPage = 1;
+    const itemsPerPage = 10;
+    let statusChart, trendChart;
+
+    // Initialize Charts
+    function initCharts() {
+        // Status Doughnut Chart
+        const statusCtx = document.getElementById('statusChart').getContext('2d');
+        statusChart = new Chart(statusCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Passed', 'Failed', 'Skipped'],
+                datasets: [{
+                    data: [0, 0, 0],
+                    backgroundColor: ['#10b981', '#ef4444', '#f59e0b'],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { usePointStyle: true, padding: 20 }
+                    }
+                },
+                cutout: '70%'
+            }
+        });
+
+        // Trend Line Chart
+        const trendCtx = document.getElementById('trendChart').getContext('2d');
+        trendChart = new Chart(trendCtx, {
+            type: 'line',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [
+                    {
+                        label: 'Passed',
+                        data: [12, 15, 18, 14, 20, 22, 19],
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'Failed',
+                        data: [3, 2, 4, 1, 3, 2, 4],
+                        borderColor: '#ef4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { usePointStyle: true, padding: 20 }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { borderDash: [2, 4], color: '#e5e7eb' }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+    }
+
+    // Update Statistics
+    function updateStats() {
+        const total = filteredTests.length;
+        const passed = filteredTests.filter(t => t.status === 'passed').length;
+        const failed = filteredTests.filter(t => t.status === 'failed').length;
+        const skipped = filteredTests.filter(t => t.status === 'skipped').length;
+        const totalDuration = filteredTests.reduce((acc, t) => acc + t.duration, 0);
+
+        document.getElementById('totalTests').textContent = total;
+        document.getElementById('passedTests').textContent = passed;
+        document.getElementById('failedTests').textContent = failed;
+        document.getElementById('passRate').textContent = total > 0 ? Math.round((passed / total) * 100) + '%' : '0%';
+        document.getElementById('failRate').textContent = total > 0 ? Math.round((failed / total) * 100) + '%' : '0%';
+
+        const minutes = Math.floor(totalDuration / 60);
+        const seconds = totalDuration % 60;
+        document.getElementById('totalDuration').textContent = minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`;
+        document.getElementById('avgDuration').textContent = total > 0 ? Math.round(totalDuration / total) + 's' : '0s';
+
+        // Update Chart
+        if (statusChart) {
+            statusChart.data.datasets[0].data = [passed, failed, skipped];
+            statusChart.update();
+        }
+    }
+
+    // Render Table
+    function renderTable() {
+        const tbody = document.getElementById('testTableBody');
+        tbody.innerHTML = '';
+
+        const start = (currentPage - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const pageData = filteredTests.slice(start, end);
+
+        pageData.forEach(test => {
+            const row = document.createElement('tr');
+            row.className = 'test-row border-b border-gray-100';
+
+            const statusColors = {
+                passed: 'bg-green-100 text-green-800 border-green-200',
+                failed: 'bg-red-100 text-red-800 border-red-200',
+                skipped: 'bg-yellow-100 text-yellow-800 border-yellow-200'
+            };
+
+            const statusIcons = {
+                passed: 'check-circle',
+                failed: 'x-circle',
+                skipped: 'skip-forward'
+            };
+
+            row.innerHTML = `
+                <td class="px-6 py-4">
+                    <div class="flex flex-col">
+                        <span class="font-medium text-gray-900">${test.name}</span>
+                        <span class="text-xs text-gray-500">${test.className}</span>
+                    </div>
+                </td>
+                <td class="px-6 py-4">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${statusColors[test.status]} status-badge capitalize">
+                        <i data-lucide="${statusIcons[test.status]}" class="w-3.5 h-3.5"></i>
+                        ${test.status}
+                    </span>
+                </td>
+                <td class="px-6 py-4">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="${test.platform === 'iOS' ? 'apple' : 'smartphone'}" class="w-4 h-4 text-gray-400"></i>
+                        <span class="text-gray-700">${test.platform}</span>
+                    </div>
+                </td>
+                <td class="px-6 py-4 text-gray-700">${test.device}</td>
+                <td class="px-6 py-4 text-gray-700">${test.duration}s</td>
+                <td class="px-6 py-4 text-gray-500 text-xs">
+                    ${new Date(test.timestamp).toLocaleString()}
+                </td>
+                <td class="px-6 py-4">
+                    <button onclick="openModal(${test.id})" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center gap-1 transition-colors">
+                        <i data-lucide="eye" class="w-4 h-4"></i>
+                        Details
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+
+        // Update pagination
+        document.getElementById('showingText').textContent = `Showing ${start + 1}-${Math.min(end, filteredTests.length)} of ${filteredTests.length} tests`;
+        document.getElementById('prevBtn').disabled = currentPage === 1;
+        document.getElementById('nextBtn').disabled = end >= filteredTests.length;
+
+        lucide.createIcons();
+    }
+
+    // Filter and Search
+    function filterTests() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const statusFilter = document.getElementById('statusFilter').value;
+
+        filteredTests = allTests.filter(test => {
+            const matchesSearch = test.name.toLowerCase().includes(searchTerm) ||
+                                test.device.toLowerCase().includes(searchTerm) ||
+                                test.className.toLowerCase().includes(searchTerm);
+            const matchesStatus = statusFilter === 'all' || test.status === statusFilter;
+
+            return matchesSearch && matchesStatus;
+        });
+
+        currentPage = 1;
+        updateStats();
+        renderTable();
+    }
+
+    // Pagination
+    function changePage(direction) {
+        currentPage += direction;
+        renderTable();
+    }
+
+    // Modal Functions
+    function openModal(testId) {
+        const test = allTests.find(t => t.id === testId);
+        if (!test) return;
+
+        document.getElementById('modalTestName').textContent = test.name;
+        document.getElementById('modalTimestamp').textContent = 'Ran at: ' + new Date(test.timestamp).toLocaleString();
+        document.getElementById('modalPlatform').textContent = test.platform;
+        document.getElementById('modalDevice').textContent = test.device;
+        document.getElementById('modalDuration').textContent = test.duration + ' seconds';
+        document.getElementById('modalClass').textContent = test.className;
+
+        const banner = document.getElementById('modalStatusBanner');
+        if (test.status === 'passed') {
+            banner.className = 'rounded-lg p-4 flex items-center gap-3 bg-green-50 border border-green-200';
+            banner.innerHTML = `
+                <i data-lucide="check-circle" class="w-6 h-6 text-green-600"></i>
+                <div>
+                    <p class="font-semibold text-green-800">Test Passed</p>
+                    <p class="text-sm text-green-700">All assertions completed successfully</p>
+                </div>
+            `;
+        } else if (test.status === 'failed') {
+            banner.className = 'rounded-lg p-4 flex items-center gap-3 bg-red-50 border border-red-200';
+            banner.innerHTML = `
+                <i data-lucide="x-circle" class="w-6 h-6 text-red-600"></i>
+                <div>
+                    <p class="font-semibold text-red-800">Test Failed</p>
+                    <p class="text-sm text-red-700">Element interaction error occurred</p>
+                </div>
+            `;
+        } else {
+            banner.className = 'rounded-lg p-4 flex items-center gap-3 bg-yellow-50 border border-yellow-200';
+            banner.innerHTML = `
+                <i data-lucide="skip-forward" class="w-6 h-6 text-yellow-600"></i>
+                <div>
+                    <p class="font-semibold text-yellow-800">Test Skipped</p>
+                    <p class="text-sm text-yellow-700">Test was skipped due to dependencies</p>
+                </div>
+            `;
+        }
+
+        // Error details
+        const errorSection = document.getElementById('errorSection');
+        const stackTraceSection = document.getElementById('stackTraceSection');
+
+        if (test.status === 'failed' && test.errorMessage) {
+            errorSection.classList.remove('hidden');
+            stackTraceSection.classList.remove('hidden');
+            document.getElementById('modalError').textContent = test.errorMessage;
+            document.getElementById('modalStackTrace').textContent = test.stackTrace;
+        } else {
+            errorSection.classList.add('hidden');
+            stackTraceSection.classList.add('hidden');
+        }
+
+        document.getElementById('detailModal').classList.remove('hidden');
+        lucide.createIcons();
+    }
+
+    function closeModal() {
+        document.getElementById('detailModal').classList.add('hidden');
+    }
+
+    function refreshData() {
+        // Simulate refresh
+        const btn = document.querySelector('[title="Refresh Data"]');
+        btn.classList.add('animate-spin');
+        setTimeout(() => {
+            allTests = generateMockData();
+            filterTests();
+            btn.classList.remove('animate-spin');
+            document.getElementById('lastUpdated').textContent = 'Last run: Just now';
+        }, 800);
+    }
+
+    // Event Listeners
+    document.getElementById('searchInput').addEventListener('input', filterTests);
+    document.getElementById('statusFilter').addEventListener('change', filterTests);
+
+    // Close modal on outside click
+    document.getElementById('detailModal').addEventListener('click', function(e) {
+        if (e.target === this) closeModal();
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeModal();
+    });
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+        initCharts();
+        updateStats();
+        renderTable();
+        lucide.createIcons();
+    });
+</script>
+</body>
+</html>

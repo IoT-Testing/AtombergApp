@@ -1,4 +1,4 @@
-package Tests;
+package com.appTest.tests;
 
 import ExtentReports.ExtentReportAT;
 import app.AppInitializer;
@@ -19,7 +19,7 @@ import java.time.Duration;
 import static app.resources.Locators.Android.HomeLocators.*;
 
 
-/**
+    /**
  * BaseTest - Base class for all test classes.
  */
 public class BaseTest {

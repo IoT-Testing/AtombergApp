@@ -25,12 +25,7 @@ public class FirmwareVersionChecker {
     private int currentAttempt = 1;
 
     // === Locators ===
-    private static final By MENU_BUTTON = By.xpath(
-            "//android.widget.FrameLayout[@resource-id='android:id/content']" +
-                    "/android.widget.FrameLayout/android.widget.FrameLayout" +
-                    "/android.view.View/android.view.View/android.view.View" +
-                    "/android.view.View/android.view.View/android.view.View/android.view.View[4]"
-    );
+    private static final By FAN_MORE_BUTTON = By.xpath("//android.view.View[@content-desc=\"More\"]");
     private static final String FIRMWARE_VERSION_PREFIX = "Firmware Version";
     private static final By SELECT_FILE_OPTION = By.xpath("//android.widget.Button[@content-desc=\"Select File\"]");
     private static final By FIRMWARE_SUCCESS_TOAST = By.xpath("//android.view.View[@content-desc=\"Firmware upgrade successful\"]");
@@ -59,7 +54,7 @@ public class FirmwareVersionChecker {
         Navigation.openFanControl(driver);
         sleep(2000);
 
-        if (!clickElementWithRetry(MENU_BUTTON, 3)) {
+        if (!clickElementWithRetry(FAN_MORE_BUTTON, 3)) {
             throw new RuntimeException("❌ Failed to click Menu button");
         }
         sleep(2000);
@@ -186,7 +181,7 @@ public class FirmwareVersionChecker {
                         sleep(2000);
 
                         // Open menu and verify version
-                        if (clickElementWithRetry(MENU_BUTTON, 3)) {
+                        if (clickElementWithRetry(FAN_MORE_BUTTON, 3)) {
                             sleep(2000);
                             String actualVersion = getCurrentFirmwareVersionFromMenu();
 

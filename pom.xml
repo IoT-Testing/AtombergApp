@@ -58,7 +58,7 @@
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-junit</artifactId>
-            <version>7.29.0</version>
+            <version>7.34.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -71,6 +71,12 @@
             <artifactId>testng</artifactId>
             <version>7.11.0</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>5.3.2</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.aventstack</groupId>
@@ -136,11 +142,6 @@
             <version>5.75.2</version>
             <scope>runtime</scope>
         </dependency>
-        <dependency>
-            <groupId>com.atomberg.app</groupId>
-            <artifactId>atombergapp-test</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -189,24 +190,6 @@
                     </suiteXmlFiles>
                 </configuration>
             </plugin>
-            <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-shade-plugin</artifactId>
-            <version>3.5.0</version>
-            <executions>
-                <execution>
-                    <phase>package</phase>
-                    <goals><goal>shade</goal></goals>
-                    <configuration>
-                        <transformers>
-                            <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                <mainClass>app.BLEOnlyFans.TestRunner</mainClass>
-                            </transformer>
-                        </transformers>
-                    </configuration>
-                </execution>
-            </executions>
-        </plugin>
         </plugins>
     </build>
 </project>

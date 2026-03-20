@@ -2,7 +2,7 @@
 
 package steps;
 
-import Tests.BaseTest;
+import com.appTest.tests.BaseTest;
 import app.*;
 import app.Analytics.analytics;
 import app.Fan.FanManagement;

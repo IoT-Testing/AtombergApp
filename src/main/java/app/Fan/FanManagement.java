@@ -187,7 +187,6 @@ public class  FanManagement implements SmartDevice {
 //        }
 //    }
 
-
     private Point getCenter(WebElement element) {
         Pattern pattern = Pattern.compile("\\d+");
         Matcher matcher = pattern.matcher(Objects.requireNonNull(element.getDomAttribute("bounds")));

@@ -1,9 +1,5 @@
 package app;
 
-import app.BLEOnlyFans.FirmwareVersionChecker;
-import app.BLEOnlyFans.PowerToggleInterruption;
-import app.Fan.FanManagement;
-import app.resources.ArduinoRelayControllerModern;
 import app.util.ActionsUtil;
 import app.util.Navigation;
 import org.openqa.selenium.WebElement;
@@ -22,14 +18,22 @@ import java.util.Objects;
 import static app.BLEOnlyFans.ProgressivePauseResume.PAUSE_RESUME_CYCLES;
 import static app.resources.Locators.Android.DeviceScreens.BLEFan.*;
 import static app.util.ActionsUtil.sleep;
-import static app.util.AppUtil.confirmOnHomeScreen;
-import static app.util.Navigation.clickElementWithRetry;
+
 
 public class MainTwo {
+
+    // Example locators - adjust selectors to match your app's UI
+    private static final By START_BUTTON = By.xpath("//android.widget.Button[@content-desc=\"Start\"]");
+    private static final By STOP_BUTTON = By.xpath("//android.widget.Button[@content-desc=\"Stop\"]");
+    private static final By PAUSE_BUTTON = By.xpath("//android.widget.Button[@content-desc=\"Pause\"]");
+    private static final By RESUME_BUTTON = By.xpath("//android.widget.Button[@content-desc=\"Resume\"]");
+    private static final By OTA = By.xpath("//android.widget.Button[@content-desc=\"OTA Test\"]");
+
     public static PrintWriter csvWriter;
     private static boolean csvInitialized = false;
     private static AndroidDriver driver;
     private int currentAttempt = 1;
+    private static final String DEVICE_PREFIX = "atomberg_W2_";
 
 
 
@@ -46,14 +50,39 @@ public class MainTwo {
 
     public void runTestFlowOne() throws Throwable {
         initializeDriver();
-        driver.activateApp("com.example.flutter_ble_ota");
-        ActionsUtil.SSleep(5);
+        driver.activateApp("com.atomberg.app");
+        Navigation.openFanControl(driver);
+//        driver.activateApp("com.example.flutter_ble_ota");
+//        ActionsUtil.SSleep(5);
+//        OTATest();
+//        for (int i = 1; i <10; i++){
+//            startLog();
+//            selectFileWithScroll(i);
+//            scan();
+//            WebElement device = findElementByContentDescStartsWith(DEVICE_PREFIX);
+//            if(device != null){
+//                device.click();
+//            }
+//            startOTA();
+//        }
     }
 
-    public void OTATest(){
-        driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"OTA Test\"]")).click();
+    private void scan(){
+        driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Scan\"]")).click();
     }
 
+    private void startOTA(){
+        driver.findElement(START_BUTTON).click();
+    }
+
+    private void OTATest(){
+        driver.findElement(OTA).click();
+        System.out.println("OTA Test clicked");
+    }
+
+    private void startLog(){
+        driver.findElement(By.xpath("//android.widget.Button[@index=\"1\"]")).click();
+    }
 
     private boolean waitForElement(By locator, int timeoutSeconds) {
         long startTime = System.currentTimeMillis();
@@ -87,11 +116,12 @@ public class MainTwo {
                 .orElse(null);
     }
 
-
-    private void selectFileWithScroll(String fileName) {
-        System.out.println("🔍 Scrolling to find: " + fileName);
-        By fileLocator = By.xpath("//android.widget.TextView[@resource-id='android:id/title' and @text='" + fileName + "']");
-
+    private void selectFileWithScroll(int i) {
+        driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"File\"]")).click();
+        sleep(5000);
+        System.out.println("🔍 Scrolling to find: " + i);
+        By fileLocator = By.xpath("//android.widget.TextView[@resource-id='android:id/title' and @text='4.1." + i + ".bin']");
+                                                 //android.widget.TextView[@resource-id="android:id/title" and @text="4.1.1.bin"]
         boolean found = false;
         int scrolls = 0;
         final int MAX_SCROLLS = 10; // Prevent infinite loop
@@ -101,7 +131,7 @@ public class MainTwo {
                 WebElement fileEl = driver.findElement(fileLocator);
                 if (fileEl.isDisplayed()) {
                     fileEl.click();
-                    System.out.println("✅ File selected: " + fileName);
+                    System.out.println("✅ File selected: 4.1." + i +".bin");
                     return;
                 }
             } catch (Exception ignored) {}
@@ -110,8 +140,8 @@ public class MainTwo {
             scrolls++;
         }
 
-        throw new RuntimeException("❌ Could not find or click file: " + fileName +
-                " | Total scrolls attempted: " + scrolls);
+        throw new RuntimeException("❌ Could not find or click file: 4.1. " + i +
+                ".bin | Total scrolls attempted: " + scrolls);
     }
 
     public void runProgressivePauseResume() {

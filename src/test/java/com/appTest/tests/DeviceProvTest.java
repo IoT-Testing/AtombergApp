@@ -1,4 +1,4 @@
-package Tests;
+package com.appTest.tests;
 
 import app.AppInitializer;
 import app.Fan.FanManagement;
@@ -31,18 +31,18 @@ public class DeviceProvTest extends BaseTest {
     private static boolean csvInitialized = false;
 
     @BeforeClass
-    public void setup() {
+    public void setUp() {
         this.driver = getDriver();
-        reporter.startTest("Device Provisioning Suite", deviceSlot);
-        System.out.println("Starting test suite for slot: " + deviceSlot);
+        System.out.println("DeviceProvTest setup completed for device: " + deviceSlot);
     }
 
-    @Test(priority = 1)
-    public void openAppAndLogin() throws Exception {
+    @Test(priority = 1, description = "Open app and login")
+    public void testDeviceProvisioning() throws Exception {
         try {
-            reporter.startTest("Open App & Login", deviceSlot);
-            System.out.println("Opening app...");
+            reporter.startTest("Device Provisioning", deviceSlot);
+            System.out.println("Device Provisioning test start");
 
+            // Step 1: Open App & Login
             driver.activateApp("com.atomberg.app");
             ActionsUtil.SSleep(5);
 
@@ -54,28 +54,16 @@ public class DeviceProvTest extends BaseTest {
             } else {
                 System.out.println("Already logged in.");
             }
-
             reporter.log(Status.PASS, "App launched and user logged in successfully");
-        } catch (Exception e) {
-            reporter.log(Status.FAIL, "Failed to open app or login: " + e.getMessage());
-            afterTestFailure(driver); // Recovery
-            throw e; // Fail fast
-        } finally {
-            reporter.endTest();
-        }
-    }
 
-    @Test(priority = 2)
-    public void verifyHomeScreenAndControlFan() {
-        try {
-            reporter.startTest("Verify Home Screen & Control Fan", deviceSlot);
+            // Step 2: Verify Home Screen & Control Fan
             ScreenCheck screen = new ScreenCheck(driver);
             screen.homeScreen();
 
             boolean success;
             ArduinoRelayControllerModern controller = new ArduinoRelayControllerModern();
             controller.autoConnect();
-            for(int i = 0; i< 50;i++){
+            for(int i = 0; i < 50; i++){
                 try{
                     ActionsUtil.SSleep(5);
                     FanManagement.Select fan = new FanManagement.Select();
@@ -94,31 +82,16 @@ public class DeviceProvTest extends BaseTest {
                 }catch (Exception e){
                     success = false;
                 }
-                if(success)printRow(i,"Successful");
+                if(success) printRow(i,"Successful");
             }
             controller.disconnect();
-
             reporter.log(Status.PASS, "Fan control verified successfully");
-        } catch (Exception e) {
-            reporter.log(Status.FAIL, "Fan control failed: " + e.getMessage());
-            afterTestFailure(driver);
-            throw e;
-        } finally {
-            reporter.endTest();
-        }
-    }
 
-    @Test(priority = 3)
-    public void logoutFromApp() {
-        try {
-            reporter.startTest("Logout", deviceSlot);
-            System.out.println("Logging out...");
-
+            // Step 3: Logout from App
             Manage manage = new Manage(driver);
             manage.logout();
             ActionsUtil.SSleep(5);
 
-            // Verify logout success
             String currentActivity = driver.currentActivity();
             Assert.assertNotNull(currentActivity);
             boolean isOnLoginScreen = currentActivity.contains("Login") || currentActivity.contains("Splash");
@@ -128,11 +101,14 @@ public class DeviceProvTest extends BaseTest {
             } else {
                 reporter.log(Status.WARNING, "Logout completed but still on main screen");
             }
+            
+            reporter.log(Status.PASS, "Device provisioning test completed successfully");
         } catch (Exception e) {
-            reporter.log(Status.FAIL, "Logout failed: " + e.getMessage());
+            reporter.log(Status.FAIL, "Device provisioning failed: " + e.getMessage());
             afterTestFailure(driver);
             throw e;
         } finally {
+            System.out.println("Device Provisioning test end");
             reporter.endTest();
         }
     }
