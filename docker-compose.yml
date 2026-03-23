@@ -14,13 +14,7 @@ services:
       - rethinkdb_data:/data/rethinkdb_data
     networks:
       - stf-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-    command: rethinkdb --bind all --data-dir /data/rethinkdb_data
+    command: rethinkdb --bind all --directory /data/rethinkdb_data
     restart: unless-stopped
 
   # STF Main Service (Official DeviceFarmer Image)
@@ -28,8 +22,7 @@ services:
     image: devicefarmer/stf:latest
     container_name: stf
     depends_on:
-      rethinkdb:
-        condition: service_healthy
+      - rethinkdb
     environment:
       - RETHINKDB_HOST=rethinkdb
       - RETHINKDB_PORT=28015
@@ -53,6 +46,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 60s
+    command: stf local --public-ip 192.168.8.205 --allow-remote --no-cleanup --adb-host 192.168.8.205 --adb-port 5037
     restart: unless-stopped
 
 volumes:
