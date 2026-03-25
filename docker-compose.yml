@@ -1,7 +1,6 @@
-version: "3.8"
 services:
   rethinkdb:
-    image: rethinkdb:2.4
+    image: rethinkdb:2.4.3
     hostname: rethinkdb
     networks:
       - stf-net
