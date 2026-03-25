@@ -1,60 +1,28 @@
+version: "3.8"
 services:
-  # RethinkDB Database Service
   rethinkdb:
-    image: rethinkdb:2.4.2
-    container_name: stf-rethinkdb
-    environment:
-      - RETHINKDB_HOST=0.0.0.0
-      - RETHINKDB_PORT=28015
-    ports:
-      - "28015:28015"    # Driver port
-      - "29015:29015"    # Cluster port
-      - "8080:8080"      # Web UI port
-    volumes:
-      - rethinkdb_data:/data/rethinkdb_data
+    image: rethinkdb:2.4
+    hostname: rethinkdb
     networks:
-      - stf-network
-    command: rethinkdb --bind all --directory /data/rethinkdb_data
-    restart: unless-stopped
+      - stf-net
 
-  # STF Main Service (Official DeviceFarmer Image)
   stf:
     image: devicefarmer/stf:latest
-    container_name: stf
+    hostname: stf
     depends_on:
       - rethinkdb
-    environment:
-      - RETHINKDB_HOST=rethinkdb
-      - RETHINKDB_PORT=28015
-      - STF_ADMIN_NAME=administrator
-      - STF_ADMIN_EMAIL=administrator@fakedomain.com
-      - STF_ROOT_GROUP_NAME=Common
+    command: >
+      stf local
+        --public-ip stf
+        --adb-host host.docker.internal
+        --adb-port 5037
     ports:
-      - "7100:7100"     # STF Web UI
-      - "7400-7500:7400-7500"  # Device ports range
-    volumes:
-      - stf_storage:/data
-      - /dev/bus/usb:/dev/bus/usb  # USB device access for Android devices
-    devices:
-      - /dev/bus/usb:/dev/bus/usb  # USB device passthrough
-    privileged: true  # Required for USB access
+      - "7100:7100"
+    environment:
+      - RETHINKDB_PORT_28015_TCP=tcp://rethinkdb:28015
     networks:
-      - stf-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:7100"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
-    command: stf local --public-ip 192.168.8.205 --allow-remote --no-cleanup --adb-host 192.168.8.205 --adb-port 5037
-    restart: unless-stopped
-
-volumes:
-  rethinkdb_data:
-    driver: local
-  stf_storage:
-    driver: local
+      - stf-net
 
 networks:
-  stf-network:
+  stf-net:
     driver: bridge
