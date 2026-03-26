@@ -25,7 +25,7 @@ public class ManageFamilyTest extends BaseTest {
     }
 
     @Test(priority = 1, description = "Manage family members")
-    void testManageFamily() {
+    void testManageFamily() throws Exception {
         try {
             reporter.startTest("Manage Family", deviceSlot);
             System.out.println("Manage Family test start");

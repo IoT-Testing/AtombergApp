@@ -7,41 +7,53 @@
         <listener class-name="com.appTest.listeners.TestListeners"/>
     </listeners>
 
+    <!-- ========================================================
+         DEVICE CONFIGURATION NOTE:
+         - deviceSlot  : Logical name for the device (used in reports)
+         - deviceIp    : STF device IP address (from STF dashboard)
+         - devicePort  : STF ADB port (default: 5555, check STF dashboard)
+         Update deviceIp and devicePort for each device before running.
+    ========================================================= -->
+
     <!-- ========== CORE TESTS ========== -->
-    <!-- App Initialization and Launch Tests -->
     <test name="CoreAppTests">
-        <parameter name="platform" value="Android"/>
-        <parameter name="deviceSlot" value="device1"/>
+        <parameter name="platform"    value="Android"/>
+        <parameter name="deviceSlot"  value="device1"/>
+        <parameter name="deviceIp"    value="192.168.1.101"/>
+        <parameter name="devicePort"  value="5555"/>
         <classes>
             <class name="com.appTest.tests.OpenAppTest"/>
         </classes>
     </test>
 
     <!-- ========== AUTHENTICATION TESTS ========== -->
-    <!-- Login and Authentication Flow Tests -->
     <test name="AuthenticationTests">
-        <parameter name="platform" value="Android"/>
-        <parameter name="deviceSlot" value="device2"/>
+        <parameter name="platform"    value="Android"/>
+        <parameter name="deviceSlot"  value="device2"/>
+        <parameter name="deviceIp"    value="192.168.1.102"/>
+        <parameter name="devicePort"  value="5555"/>
         <classes>
             <class name="com.appTest.tests.LoginTest"/>
         </classes>
     </test>
 
     <!-- ========== MAIN APP FUNCTIONALITY TESTS ========== -->
-    <!-- Comprehensive End-to-End App Tests -->
     <test name="AppFunctionalityTests">
-        <parameter name="platform" value="Android"/>
-        <parameter name="deviceSlot" value="device1"/>
+        <parameter name="platform"    value="Android"/>
+        <parameter name="deviceSlot"  value="device1"/>
+        <parameter name="deviceIp"    value="192.168.1.101"/>
+        <parameter name="devicePort"  value="5555"/>
         <classes>
             <class name="com.appTest.tests.AppTest"/>
         </classes>
     </test>
 
     <!-- ========== DEVICE MANAGEMENT TESTS ========== -->
-    <!-- Device Provisioning and Control Tests -->
     <test name="DeviceManagementTests">
-        <parameter name="platform" value="Android"/>
-        <parameter name="deviceSlot" value="device2"/>
+        <parameter name="platform"    value="Android"/>
+        <parameter name="deviceSlot"  value="device2"/>
+        <parameter name="deviceIp"    value="192.168.1.102"/>
+        <parameter name="devicePort"  value="5555"/>
         <classes>
             <class name="com.appTest.tests.DeviceProvTest">
                 <methods>
@@ -52,40 +64,44 @@
     </test>
 
     <!-- ========== USER PROFILE TESTS ========== -->
-    <!-- Profile and Account Management Tests -->
     <test name="ProfileManagementTests">
-        <parameter name="platform" value="Android"/>
-        <parameter name="deviceSlot" value="device1"/>
+        <parameter name="platform"    value="Android"/>
+        <parameter name="deviceSlot"  value="device1"/>
+        <parameter name="deviceIp"    value="192.168.1.101"/>
+        <parameter name="devicePort"  value="5555"/>
         <classes>
             <class name="com.appTest.tests.ManageProfileTest"/>
         </classes>
     </test>
 
     <!-- ========== FAMILY MANAGEMENT TESTS ========== -->
-    <!-- Family and Multiple User Tests -->
     <test name="FamilyManagementTests">
-        <parameter name="platform" value="Android"/>
-        <parameter name="deviceSlot" value="device2"/>
+        <parameter name="platform"    value="Android"/>
+        <parameter name="deviceSlot"  value="device2"/>
+        <parameter name="deviceIp"    value="192.168.1.102"/>
+        <parameter name="devicePort"  value="5555"/>
         <classes>
             <class name="com.appTest.tests.ManageFamilyTest"/>
         </classes>
     </test>
 
-    <!-- ========== COMPREHENSIVE END-TO-END TESTS ========== -->
-    <!-- Full Application Flow Tests -->
+    <!-- ========== END-TO-END TESTS ========== -->
     <test name="EndToEndFlowTests">
-        <parameter name="platform" value="Android"/>
-        <parameter name="deviceSlot" value="device1"/>
+        <parameter name="platform"    value="Android"/>
+        <parameter name="deviceSlot"  value="device1"/>
+        <parameter name="deviceIp"    value="192.168.1.101"/>
+        <parameter name="devicePort"  value="5555"/>
         <classes>
             <class name="com.appTest.tests.SecondAppTest"/>
         </classes>
     </test>
 
-    <!-- ========== SMOKE TEST SUITE ========== -->
-    <!-- Quick smoke test with just critical tests -->
+    <!-- ========== SMOKE TESTS ========== -->
     <test name="SmokeTests" enabled="true">
-        <parameter name="platform" value="Android"/>
-        <parameter name="deviceSlot" value="device1"/>
+        <parameter name="platform"    value="Android"/>
+        <parameter name="deviceSlot"  value="device1"/>
+        <parameter name="deviceIp"    value="192.168.1.101"/>
+        <parameter name="devicePort"  value="5555"/>
         <classes>
             <class name="com.appTest.tests.OpenAppTest"/>
             <class name="com.appTest.tests.LoginTest">

@@ -31,7 +31,7 @@ public class ScreenRecording {
 
     public ScreenRecording(URL url) throws IOException, InterruptedException {
         AppInitializer initializer = new AppInitializer();
-        initializer.initializeDriverWithURL(url);
+        initializer.initializeDriverWithURL();
         this.driver = initializer.getDriver();
     }
 

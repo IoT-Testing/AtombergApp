@@ -182,6 +182,5 @@ public class AppInitializer {
             System.out.println("Appium Server stopped.");
         }
     }
-
 }
 

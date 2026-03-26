@@ -12,4 +12,9 @@
     </annotationProcessing>
     <bytecodeTargetLevel target="23" />
   </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="atombergapp-test" options="--add-opens jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED" />
+    </option>
+  </component>
 </project>

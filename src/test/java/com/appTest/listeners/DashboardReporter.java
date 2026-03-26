@@ -1,12 +1,8 @@
 package com.appTest.listeners;
 
-import com.fasterxml.jackson.*;
 import com.appTest.models.AppiumTestResult;
-import com.google.common.net.MediaType;
-import org.junit.runner.Request;
 import org.testng.*;
-import tools.jackson.databind.ObjectMapper;
-
+import com.fasterxml.jackson.databind.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
