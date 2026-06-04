@@ -1,233 +1,202 @@
 package com.appTest.tests;
 
-import app.AppInitializer;
-import app.Login.Apple;
 import app.Login.Email;
-import app.Login.Google;
 import app.MoreTab.Manage;
 import app.util.ActionsUtil;
-import app.util.PermissionUtil;
+import app.util.AppUtil;
 import com.aventstack.extentreports.Status;
-import io.appium.java_client.android.AndroidDriver;
-import org.openqa.selenium.By;
+import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import static app.resources.Credentials.*;
+import static app.resources.Locators.Android.AppLocators.Login.*;
+import static app.resources.Locators.Android.HomeLocators.MORE_TAB;
 
 /**
- * LoginTest - Validates various login flows: email, social, error handling.
+ * LoginTest – validates email login, invalid credential handling, and logout.
  *
- * <p>This version eliminates duplication, improves error handling,
- * and follows clean testing practices.
+ * NOTE: @Listeners is intentionally omitted here.
+ * It is declared on BaseTest and is inherited by all subclasses.
+ * Re-declaring it here would register each listener twice.
+ *
+ * Test order:
+ *   1. Valid login                  → asserts MORE_TAB visible (home screen reached)
+ *   2. Logout                       → asserts LOGIN_SCREEN_INDICATOR visible
+ *   3. Invalid password             → asserts INCORRECT_PASSWORD_MESSAGE visible
+ *   4. Invalid email format         → asserts exception thrown (Continue blocked)
+ *   5. Re-login (state restore)     → asserts MORE_TAB visible again
  */
 public class LoginTest extends BaseTest {
 
-    private AndroidDriver driver;
+    private Email  emailLogin;
+    private Manage manage;
 
-    @BeforeClass
-    public void setup() {
-        this.driver = getDriver();
-        System.out.println("Starting LoginTest suite for device slot: " + deviceSlot);
+    @BeforeClass(dependsOnMethods = "setup")
+    public void initActions() {
+        emailLogin = new Email(driver);
+        manage     = new Manage(driver);
+        Assert.assertNotNull(driver, "Driver must be initialised before LoginTest");
+        System.out.println("LoginTest ready on device: " + deviceSlot);
     }
 
-    @Test(priority = 1)
-    public void correctCredentials_LoginSuccess() {
+    // ── 1. Valid login ────────────────────────────────────────────────────────
+
+    @Test(priority = 1, description = "Login with valid credentials and verify home screen")
+    public void testValidLogin() throws Exception {
+        reporter.startTest("Valid Login", deviceSlot);
         try {
-            reporter.startTest("Correct Credentials - Login Success", deviceSlot);
-
-            launchAppAndEnsureLoginScreen();
-            performEmailLogin("hiwitaw422@wuzak.com", "Atomberg@1234");
-            verifyLoginSuccess();
-
-            // Logout for next test
-            new Manage(driver).logout();
-            driver.terminateApp("com.atomberg.app");
-
-            reporter.log(Status.PASS, "User logged in successfully with valid credentials");
-        } catch (Exception e) {
-            handleTestFailure("Login with correct credentials failed", e);
-        } finally {
-            reporter.endTest();
-        }
-    }
-
-    @Test(priority = 2)
-    public void invalidEmail_FormatError() {
-        try {
-            reporter.startTest("Invalid Email Format", deviceSlot);
-
-            launchAppAndEnsureLoginScreen();
-            performEmailLogin("hiwitaw422wuzak.com", "Atomberg@1234"); // Missing @
-
-            // Expect error message or stay on screen
-            if (isOnLoginScreen()) {
-                reporter.log(Status.PASS, "App rejected invalid email format correctly");
-            } else {
-                reporter.log(Status.WARNING, "Invalid email may have been accepted");
-            }
-
-            driver.terminateApp("com.atomberg.app");
-            ActionsUtil.SSleep(10);
-        } catch (Exception e) {
-            handleTestFailure("Invalid email test failed", e);
-        } finally {
-            reporter.endTest();
-        }
-    }
-
-    @Test(priority = 3)
-    public void incorrectPassword_LoginFails() {
-        try {
-            reporter.startTest("Incorrect Password", deviceSlot);
-
-            launchAppAndEnsureLoginScreen();
-            performEmailLogin("hiwitaw422@wuzak.com", "Atomberg@12345"); // Wrong password
-
-            // Should remain on login screen or show error
-            if (isOnLoginScreen()) {
-                reporter.log(Status.PASS, "Login blocked due to incorrect password");
-            } else {
-                reporter.log(Status.WARNING, "Incorrect password may have been accepted");
-            }
-        } catch (Exception e) {
-            handleTestFailure("Incorrect password test failed", e);
-        } finally {
-            reporter.endTest();
-        }
-    }
-
-    @Test(priority = 4)
-    public void appKillAfterLogin_SessionRestored() {
-        try {
-            reporter.startTest("App Kill After Login - Session Restore", deviceSlot);
-
-            launchAppAndEnsureLoginScreen();
-            performEmailLogin("hiwitaw422@wuzak.com", "Atomberg@1234");
-
-            // Kill and relaunch app
-            driver.terminateApp("com.atomberg.app");
+            ActionsUtil.SSleep(3);
+            emailLogin.email(DEFAULT_EMAIL, DEFAULT_PASSWORD);
             ActionsUtil.SSleep(5);
-            driver.activateApp("com.atomberg.app");
 
-            // Verify session restored
-            if (!new AppInitializer().checkMainScreen()) {
-                reporter.log(Status.FAIL, "Session not restored after app kill");
-            } else {
-                reporter.log(Status.PASS, "User session restored after app termination");
+            Assert.assertTrue(
+                    AppUtil.isElementPresent(driver, MORE_TAB),
+                    "More tab must be visible after a successful login — confirms home screen reached");
+
+            AppUtil.captureScreenshot(driver, "valid_login_success");
+            reporter.log(Status.PASS, "Logged in as " + DEFAULT_EMAIL + " — home screen confirmed");
+        } catch (Exception e) {
+            AppUtil.captureScreenshot(driver, "valid_login_fail");
+            reporter.log(Status.FAIL, "Valid login failed: " + e.getMessage());
+            afterTestFailure();
+            throw e;
+        } finally {
+            reporter.endTest();
+        }
+    }
+
+    // ── 2. Logout ─────────────────────────────────────────────────────────────
+
+    @Test(priority = 2, description = "Logout and verify return to login screen",
+            dependsOnMethods = "testValidLogin")
+    public void testLogout() {
+        reporter.startTest("Logout", deviceSlot);
+        try {
+            manage.logout();
+            ActionsUtil.SSleep(3);
+
+            Assert.assertTrue(
+                    AppUtil.isElementPresent(driver, LOGIN_SCREEN_INDICATOR),
+                    "Login screen indicator must be visible after logout");
+
+            AppUtil.captureScreenshot(driver, "logout_success");
+            reporter.log(Status.PASS, "Logout succeeded — login screen visible");
+        } catch (Exception e) {
+            AppUtil.captureScreenshot(driver, "logout_fail");
+            reporter.log(Status.FAIL, "Logout failed: " + e.getMessage());
+            afterTestFailure();
+            throw new RuntimeException(e);
+        } finally {
+            reporter.endTest();
+        }
+    }
+
+    // ── 3. Invalid password ───────────────────────────────────────────────────
+
+    @Test(priority = 3, description = "Wrong password shows incorrect-password error message",
+            dependsOnMethods = "testLogout")
+    public void testInvalidPasswordLogin() {
+        reporter.startTest("Invalid Password Login", deviceSlot);
+        try {
+            // Attempt login with a known-wrong password.
+            // Email.email() throws Exception("Invalid Password: …") after the app displays the error.
+            // We catch only that expected exception; anything else (driver crash, network error,
+            // IllegalArgumentException) propagates so the test correctly fails.
+            try {
+                emailLogin.email(DEFAULT_EMAIL, "WrongPass@999");
+            } catch (Exception e) {
+                // Re-throw if it is NOT the expected "incorrect password" error
+                if (!e.getMessage().contains("Invalid Password") &&
+                        !e.getMessage().contains("Incorrect password")) {
+                    throw e;
+                }
+                // Otherwise it is the expected exception — continue to assertion below
+                System.out.println("Expected exception caught: " + e.getMessage());
             }
 
-            new Manage(driver).logout();
+            ActionsUtil.SSleep(2);
+
+            Assert.assertTrue(
+                    AppUtil.isElementPresent(driver, INCORRECT_PASSWORD_MESSAGE),
+                    "\"! Incorrect password\" error message must be displayed on screen");
+
+            AppUtil.captureScreenshot(driver, "invalid_password_error");
+            reporter.log(Status.PASS, "Incorrect-password message displayed as expected");
         } catch (Exception e) {
-            handleTestFailure("App kill after login test failed", e);
+            AppUtil.captureScreenshot(driver, "invalid_password_fail");
+            reporter.log(Status.FAIL, "Invalid password test failed unexpectedly: " + e.getMessage());
+            afterTestFailure();
+            throw new RuntimeException(e);
         } finally {
             reporter.endTest();
         }
     }
 
-    @Test(priority = 5)
-    public void appleLogin_Success() {
+    // ── 4. Invalid email format ───────────────────────────────────────────────
+
+    @Test(priority = 4, description = "Invalid email format — Continue button must be blocked",
+            dependsOnMethods = "testInvalidPasswordLogin")
+    public void testInvalidEmailLogin() {
+        reporter.startTest("Invalid Email Login", deviceSlot);
         try {
-            reporter.startTest("Apple Login", deviceSlot);
-            launchAppAndEnsureLoginScreen();
-
-            Apple.Login(driver);
-            verifyLoginSuccess();
-
-            new Manage(driver).logout();
-            driver.terminateApp("com.atomberg.app");
-
-            reporter.log(Status.PASS, "Successfully logged in via Apple ID");
-        } catch (Exception e) {
-            handleTestFailure("Apple login failed", e);
-        } finally {
-            reporter.endTest();
-        }
-    }
-
-    @Test(priority = 6)
-    public void googleLogin_Success() {
-        try {
-            reporter.startTest("Google Login", deviceSlot);
-            launchAppAndEnsureLoginScreen();
-
-            Google.Login(driver);
-            verifyLoginSuccess();
-
-            new Manage(driver).logout();
-            driver.terminateApp("com.atomberg.app");
-
-            reporter.log(Status.PASS, "Successfully logged in via Google");
-        } catch (Exception e) {
-            handleTestFailure("Google login failed", e);
-        } finally {
-            reporter.endTest();
-        }
-    }
-
-    // === Internal Helpers ===
-
-    /**
-     * Launches app and ensures we're on login screen.
-     */
-    private void launchAppAndEnsureLoginScreen() throws Exception {
-        driver.activateApp("com.atomberg.app");
-        ActionsUtil.SSleep(5);
-
-        AppInitializer appInit = new AppInitializer();
-        appInit.setDriver(driver);
-
-        if (!appInit.checkMainScreen()) {
-            System.out.println("Not on home screen. Assuming login required.");
-        } else {
-            System.out.println("Already logged in. Logging out...");
-            new Manage(driver).logout();
-            ActionsUtil.SSleep(3);
-            driver.activateApp("com.atomberg.app");
-            ActionsUtil.SSleep(3);
-        }
-    }
-
-    /**
-     * Performs email login with given credentials.
-     */
-    private void performEmailLogin(String email, String password) {
-        try {
-            Email login = new Email(driver);
-            login.email(email, password);
-            ActionsUtil.sleep(5000);
-            PermissionUtil.allow(driver);
-        } catch (Exception e) {
-            System.err.println("Login failed: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Verifies user is successfully logged in.
-     */
-    private boolean verifyLoginSuccess() throws Exception {
-        AppInitializer appInit = new AppInitializer();
-        appInit.setDriver(driver);
-        return appInit.checkMainScreen();
-    }
-
-    /**
-     * Checks if currently on login/home screen.
-     */
-    private boolean isOnLoginScreen() {
-        try {
-            if (driver.findElement(By.xpath("//android.view.View[@content-desc='My Home']")) == null) {
-                driver.findElement(By.id("com.atomberg.app:id/bt_power"));
+            Exception caught = null;
+            try {
+                emailLogin.email("not-an-email", DEFAULT_PASSWORD);
+            } catch (Exception e) {
+                caught = e;
             }
-            return true;
+
+            Assert.assertNotNull(caught,
+                    "An exception must be thrown when an invalid email is entered — " +
+                            "Email.email() should detect that Continue is not clickable");
+
+            Assert.assertTrue(
+                    caught.getMessage() != null &&
+                            (caught.getMessage().contains("invalid") ||
+                                    caught.getMessage().contains("Invalid") ||
+                                    caught.getMessage().contains("Continue")),
+                    "Exception message must indicate the invalid-email / Continue-blocked condition; got: "
+                            + caught.getMessage());
+
+            AppUtil.captureScreenshot(driver, "invalid_email_blocked");
+            reporter.log(Status.PASS, "Invalid email correctly blocked: " + caught.getMessage());
         } catch (Exception e) {
-            return false;
+            AppUtil.captureScreenshot(driver, "invalid_email_test_fail");
+            reporter.log(Status.FAIL, "Invalid email test failed: " + e.getMessage());
+            afterTestFailure();
+            throw new RuntimeException(e);
+        } finally {
+            reporter.endTest();
         }
     }
 
-    /**
-     * Handles test failure with logging and recovery.
-     */
-    private void handleTestFailure(String message, Exception e) {
-        reporter.log(Status.FAIL, message + ": " + e.getMessage());
-        afterTestFailure(driver); // From BaseTest
+    // ── 5. Re-login (state restore) ───────────────────────────────────────────
+
+    @Test(priority = 5, description = "Re-login with valid credentials to restore clean state",
+            dependsOnMethods = "testInvalidEmailLogin")
+    public void testReLogin() throws Exception {
+        reporter.startTest("Re-Login (state restore)", deviceSlot);
+        try {
+            // Navigate back to the login screen if still in the email-entry flow
+            driver.navigate().back();
+            ActionsUtil.SSleep(2);
+
+            emailLogin.email(DEFAULT_EMAIL, DEFAULT_PASSWORD);
+            ActionsUtil.SSleep(5);
+
+            Assert.assertTrue(
+                    AppUtil.isElementPresent(driver, MORE_TAB),
+                    "More tab must be visible after re-login — confirms home screen reached");
+
+            AppUtil.captureScreenshot(driver, "relogin_success");
+            reporter.log(Status.PASS, "Re-login successful — home screen confirmed");
+        } catch (Exception e) {
+            AppUtil.captureScreenshot(driver, "relogin_fail");
+            reporter.log(Status.FAIL, "Re-login failed: " + e.getMessage());
+            afterTestFailure();
+            throw e;
+        } finally {
+            reporter.endTest();
+        }
     }
 }

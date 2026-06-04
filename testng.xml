@@ -1,115 +1,93 @@
-<!-- testng.xml -->
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-<suite name="AtombergAppFullTestSuite" parallel="tests" thread-count="4">
+<!--
+  Atomberg Home App – TestNG Suite
+  ─────────────────────────────────────────────────────────────────
+  Parallel execution: one <test> per physical/STF device slot.
+  Each <test> passes deviceSlot, deviceIp, and devicePort to BaseTest.
 
+  For local single-device runs, only the first <test> block is needed.
+  For STF parallel runs, add one <test> block per device with its
+  real IP and ADB port (default 5555).
+
+  Optional test classes (ManageFamilyTest, ManageProfileTest,
+  QuickSmokeTest, DeviceProvTest) are in commented blocks below.
+  ─────────────────────────────────────────────────────────────────
+-->
+<suite name="Atomberg Home App – Test Suite"
+       parallel="tests"
+       thread-count="2"
+       verbose="2">
+
+    <!-- ── Suite-wide listeners ────────────────────────────────────────────── -->
     <listeners>
-        <listener class-name="com.appTest.listeners.DashboardReporter"/>
         <listener class-name="com.appTest.listeners.TestListeners"/>
+        <listener class-name="com.appTest.listeners.DashboardReporter"/>
     </listeners>
 
-    <!-- ========================================================
-         DEVICE CONFIGURATION NOTE:
-         - deviceSlot  : Logical name for the device (used in reports)
-         - deviceIp    : STF device IP address (from STF dashboard)
-         - devicePort  : STF ADB port (default: 5555, check STF dashboard)
-         Update deviceIp and devicePort for each device before running.
-    ========================================================= -->
-
-    <!-- ========== CORE TESTS ========== -->
-    <test name="CoreAppTests">
-        <parameter name="platform"    value="Android"/>
-        <parameter name="deviceSlot"  value="device1"/>
-        <parameter name="deviceIp"    value="192.168.1.101"/>
-        <parameter name="devicePort"  value="5555"/>
+    <!-- ══════════════════════════════════════════════════════════════════════
+         DEVICE SLOT 1 — local / default device
+         Core regression: open app → login → app tabs → fan control
+         ══════════════════════════════════════════════════════════════════════ -->
+    <test name="Slot1 – Core Regression">
+        <parameter name="deviceSlot" value="Local_Device_Slot1"/>
+        <parameter name="deviceIp"   value="127.0.0.1"/>
+        <parameter name="devicePort" value="5555"/>
         <classes>
             <class name="com.appTest.tests.OpenAppTest"/>
-        </classes>
-    </test>
-
-    <!-- ========== AUTHENTICATION TESTS ========== -->
-    <test name="AuthenticationTests">
-        <parameter name="platform"    value="Android"/>
-        <parameter name="deviceSlot"  value="device2"/>
-        <parameter name="deviceIp"    value="192.168.1.102"/>
-        <parameter name="devicePort"  value="5555"/>
-        <classes>
             <class name="com.appTest.tests.LoginTest"/>
-        </classes>
-    </test>
-
-    <!-- ========== MAIN APP FUNCTIONALITY TESTS ========== -->
-    <test name="AppFunctionalityTests">
-        <parameter name="platform"    value="Android"/>
-        <parameter name="deviceSlot"  value="device1"/>
-        <parameter name="deviceIp"    value="192.168.1.101"/>
-        <parameter name="devicePort"  value="5555"/>
-        <classes>
             <class name="com.appTest.tests.AppTest"/>
+            <class name="com.appTest.tests.FanTest"/>
         </classes>
     </test>
 
-    <!-- ========== DEVICE MANAGEMENT TESTS ========== -->
-    <test name="DeviceManagementTests">
-        <parameter name="platform"    value="Android"/>
-        <parameter name="deviceSlot"  value="device2"/>
-        <parameter name="deviceIp"    value="192.168.1.102"/>
-        <parameter name="devicePort"  value="5555"/>
+    <!-- ══════════════════════════════════════════════════════════════════════
+         DEVICE SLOT 1 — Profile & Family management (opt-in)
+         Uncomment to run profile/family tests after the core regression.
+         ══════════════════════════════════════════════════════════════════════ -->
+    <!--
+    <test name="Slot1 – Profile and Family">
+        <parameter name="deviceSlot" value="Local_Device_Slot1"/>
+        <parameter name="deviceIp"   value="127.0.0.1"/>
+        <parameter name="devicePort" value="5555"/>
         <classes>
-            <class name="com.appTest.tests.DeviceProvTest">
-                <methods>
-                    <include name="testDeviceProvisioning"/>
-                </methods>
-            </class>
-        </classes>
-    </test>
-
-    <!-- ========== USER PROFILE TESTS ========== -->
-    <test name="ProfileManagementTests">
-        <parameter name="platform"    value="Android"/>
-        <parameter name="deviceSlot"  value="device1"/>
-        <parameter name="deviceIp"    value="192.168.1.101"/>
-        <parameter name="devicePort"  value="5555"/>
-        <classes>
+            <class name="com.appTest.tests.ManageFamilyTest"/>
             <class name="com.appTest.tests.ManageProfileTest"/>
         </classes>
     </test>
+    -->
 
-    <!-- ========== FAMILY MANAGEMENT TESTS ========== -->
-    <test name="FamilyManagementTests">
-        <parameter name="platform"    value="Android"/>
-        <parameter name="deviceSlot"  value="device2"/>
-        <parameter name="deviceIp"    value="192.168.1.102"/>
-        <parameter name="devicePort"  value="5555"/>
+    <!-- ══════════════════════════════════════════════════════════════════════
+         DEVICE SLOT 1 — Quick smoke / provisioning (opt-in)
+         Enable for device-farm sessions or hardware provisioning rigs.
+         Set -DDEVICE_PROV_HARDWARE_ENABLED=true for the full hardware loop.
+         ══════════════════════════════════════════════════════════════════════ -->
+    <!--
+    <test name="Slot1 – Smoke and Provisioning">
+        <parameter name="deviceSlot" value="Local_Device_Slot1"/>
+        <parameter name="deviceIp"   value="127.0.0.1"/>
+        <parameter name="devicePort" value="5555"/>
         <classes>
-            <class name="com.appTest.tests.ManageFamilyTest"/>
+            <class name="com.appTest.tests.QuickSmokeTest"/>
+            <class name="com.appTest.tests.DeviceProvTest"/>
         </classes>
     </test>
+    -->
 
-    <!-- ========== END-TO-END TESTS ========== -->
-    <test name="EndToEndFlowTests">
-        <parameter name="platform"    value="Android"/>
-        <parameter name="deviceSlot"  value="device1"/>
-        <parameter name="deviceIp"    value="192.168.1.101"/>
-        <parameter name="devicePort"  value="5555"/>
-        <classes>
-            <class name="com.appTest.tests.SecondAppTest"/>
-        </classes>
-    </test>
-
-    <!-- ========== SMOKE TESTS ========== -->
-    <test name="SmokeTests" enabled="true">
-        <parameter name="platform"    value="Android"/>
-        <parameter name="deviceSlot"  value="device1"/>
-        <parameter name="deviceIp"    value="192.168.1.101"/>
-        <parameter name="devicePort"  value="5555"/>
+    <!-- ══════════════════════════════════════════════════════════════════════
+         DEVICE SLOT 2 — second STF device (uncomment + fill in IP/port)
+         ══════════════════════════════════════════════════════════════════════ -->
+    <!--
+    <test name="Slot2 – Core Regression">
+        <parameter name="deviceSlot" value="STF_Device_Slot2"/>
+        <parameter name="deviceIp"   value="192.168.1.101"/>
+        <parameter name="devicePort" value="5555"/>
         <classes>
             <class name="com.appTest.tests.OpenAppTest"/>
-            <class name="com.appTest.tests.LoginTest">
-                <methods>
-                    <include name="correctCredentials_LoginSuccess"/>
-                </methods>
-            </class>
+            <class name="com.appTest.tests.LoginTest"/>
+            <class name="com.appTest.tests.AppTest"/>
+            <class name="com.appTest.tests.FanTest"/>
         </classes>
     </test>
+    -->
 
 </suite>

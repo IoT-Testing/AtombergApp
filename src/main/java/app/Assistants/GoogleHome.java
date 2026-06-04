@@ -1,5 +1,6 @@
 package app.Assistants;
 
+import app.resources.Credentials;
 import app.ScreenCheck.ScreenCheck;
 import app.util.ActionsUtil;
 import io.appium.java_client.android.AndroidDriver;
@@ -36,9 +37,9 @@ public class GoogleHome {
     private static final By CREATE_HOME_BUTTON = By.xpath("//android.widget.Button[@content-desc='Create home']");
     private static final By SELECT_AND_LINK_DEVICE_HEADER = By.xpath("//android.view.View[@content-desc='Select and link device']");
 
-    // Test credentials (should be externalized in production)
-    private static final String TEST_EMAIL = "Teboham827@agaseo.com";
-    private static final String TEST_PASSWORD = "Atomberg@123";
+    // Credentials loaded from environment — see test.env.example
+    private static final String TEST_EMAIL    = Credentials.GOOGLE_TEST_EMAIL;
+    private static final String TEST_PASSWORD = Credentials.GOOGLE_TEST_PASSWORD;
 
     public GoogleHome(AndroidDriver driver) {
         this.driver = driver;

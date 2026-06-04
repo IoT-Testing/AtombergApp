@@ -25,7 +25,7 @@ import java.util.List;
 @Listeners(DashboardReporter.class)
 public class userworkflowregression {
 
-    private AndroidDriver atomberg;
+    private AndroidDriver driver;
     private AppInitializer appInitializer;
     private FanManagement fanManagement;
     private Help help;
@@ -36,16 +36,16 @@ public class userworkflowregression {
 
     @BeforeClass(alwaysRun = true)
     public void setup() throws MalformedURLException {
-        appInitializer = new AppInitializer();
-//        atomberg = appInitializer.appInitialize();
+        appInitializer = new AppInitializer(driver);
+//        driver = appInitializer.appInitialize();
 
         // Initialize all page objects
-        fanManagement = new FanManagement(atomberg);
-        help = new Help(atomberg);
-        play = new Play(atomberg);
-        manage = new Manage(atomberg);
-        profile = new Profile(atomberg);
-        screenCheck = new ScreenCheck(atomberg);
+        fanManagement = new FanManagement(driver);
+        help = new Help(driver);
+        play = new Play(driver);
+        manage = new Manage(driver);
+        profile = new Profile(driver);
+        screenCheck = new ScreenCheck(driver);
 
         System.out.println("=== Setup Complete: App Initialized ===");
     }
@@ -56,11 +56,11 @@ public class userworkflowregression {
             System.out.println(" >>> TEST 1: App Opened Successfully");
 
             // Verify app is in focus
-            String currentPackage = atomberg.getCurrentPackage();
+            String currentPackage = driver.getCurrentPackage();
             Assert.assertTrue(currentPackage.contains("atomberg"),
                     "App package should contain 'atomberg', but found: " + currentPackage);
 
-            AppUtil.captureScreenshot(atomberg, "App Opened");
+            AppUtil.captureScreenshot(driver, "App Opened");
             System.out.println("✓ App opened successfully with package: " + currentPackage);
         } catch (Exception e) {
             System.err.println("✗ Test failed: " + e.getMessage());
@@ -79,7 +79,7 @@ public class userworkflowregression {
 
             // Verify home screen is displayed
             screenCheck.homeScreen();
-            AppUtil.captureScreenshot(atomberg, "Login Success");
+            AppUtil.captureScreenshot(driver, "Login Success");
             System.out.println("✓ User logged in successfully");
         } catch (Exception e) {
             System.err.println("✗ Login test failed: " + e.getMessage());
@@ -97,11 +97,11 @@ public class userworkflowregression {
             ActionsUtil.sleep(2000);
 
             // Check if devices section exists
-            WebElement devicesSection = atomberg.findElement(By.xpath(
+            WebElement devicesSection = driver.findElement(By.xpath(
                     "//android.widget.FrameLayout[@resource-id='android:id/content']"));
             Assert.assertNotNull(devicesSection, "Devices section should be visible");
 
-            AppUtil.captureScreenshot(atomberg, "Available Devices Screen");
+            AppUtil.captureScreenshot(driver, "Available Devices Screen");
             System.out.println("✓ Available devices displayed");
         } catch (Exception e) {
             System.err.println("✗ Device check failed: " + e.getMessage());
@@ -120,7 +120,7 @@ public class userworkflowregression {
 
 //            fanManagement.addFan();
 
-            AppUtil.captureScreenshot(atomberg, "Fan Addition Initiated");
+            AppUtil.captureScreenshot(driver, "Fan Addition Initiated");
             System.out.println("✓ Fan addition process initiated");
         } catch (Exception e) {
             System.err.println("✗ Fan addition failed: " + e.getMessage());
@@ -140,7 +140,7 @@ public class userworkflowregression {
             // Try to find and control a fan
             WebElement fanTab = null;
             try {
-                fanTab = atomberg.findElement(By.xpath("//android.widget.ImageView[@content-desc='Fan']"));
+                fanTab = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc='Fan']"));
             } catch (Exception ignored) {}
 
             if (fanTab != null) {
@@ -148,14 +148,14 @@ public class userworkflowregression {
                 ActionsUtil.sleep(2000);
 
                 // Try to find fan control elements
-                List<WebElement> controls = atomberg.findElements(By.className("android.widget.ImageView"));
+                List<WebElement> controls = driver.findElements(By.className("android.widget.ImageView"));
                 Assert.assertFalse(controls.isEmpty(), "Fan controls should be available");
 
-                AppUtil.captureScreenshot(atomberg, "Fan Control Screen");
+                AppUtil.captureScreenshot(driver, "Fan Control Screen");
                 System.out.println("✓ Fan controls displayed");
 
                 // Navigate back
-                atomberg.navigate().back();
+                driver.navigate().back();
             } else {
                 System.out.println("⚠ No fan available for control test");
             }
@@ -175,7 +175,7 @@ public class userworkflowregression {
             // Look for analytics button/section
             WebElement analyticsElement = null;
             try {
-                analyticsElement = atomberg.findElement(By.xpath(
+                analyticsElement = driver.findElement(By.xpath(
                         "//android.widget.ImageView[@content-desc='Analytics'] | //android.view.View[@content-desc='Analytics']"));
             } catch (Exception ignored) {}
 
@@ -183,10 +183,10 @@ public class userworkflowregression {
                 analyticsElement.click();
                 ActionsUtil.sleep(2000);
 
-                AppUtil.captureScreenshot(atomberg, "Analytics Screen");
+                AppUtil.captureScreenshot(driver, "Analytics Screen");
                 System.out.println("✓ Analytics screen displayed");
 
-                atomberg.navigate().back();
+                driver.navigate().back();
             } else {
                 System.out.println("⚠ Analytics section not found on home screen");
                 // Analytics might be accessed from MoreTab
@@ -208,7 +208,7 @@ public class userworkflowregression {
             // Navigate to MoreTab
             screenCheck.moreTab();
             ActionsUtil.sleep(2000);
-            AppUtil.captureScreenshot(atomberg, "MoreTab Screen");
+            AppUtil.captureScreenshot(driver, "MoreTab Screen");
 
             System.out.println(" --- Testing MoreTab Sections ---");
 
@@ -236,16 +236,16 @@ public class userworkflowregression {
             System.out.println(" > Testing Profile Section");
 
                     // Navigate to profile
-                    WebElement profileElement = atomberg.findElement(By.xpath(
+                    WebElement profileElement = driver.findElement(By.xpath(
                             "//android.widget.ImageView[contains(@content-desc, 'Hi,')] | //android.view.View[@content-desc='Profile']"));
             profileElement.click();
             ActionsUtil.sleep(2000);
 
-            AppUtil.captureScreenshot(atomberg, "MoreTab Profile");
+            AppUtil.captureScreenshot(driver, "MoreTab Profile");
             System.out.println("  ✓ Profile section accessible");
 
             // Navigate back to MoreTab
-            atomberg.navigate().back();
+            driver.navigate().back();
             ActionsUtil.sleep(1000);
         } catch (Exception e) {
             System.out.println("  ⚠ Profile section test skipped: " + e.getMessage());
@@ -257,16 +257,16 @@ public class userworkflowregression {
             System.out.println(" > Testing Manage Section");
 
                     // Navigate to manage
-                    WebElement manageElement = atomberg.findElement(By.xpath(
+                    WebElement manageElement = driver.findElement(By.xpath(
                             "//android.widget.ImageView[@content-desc='Manage'] | //android.view.View[@content-desc='Manage Family']"));
             manageElement.click();
             ActionsUtil.sleep(2000);
 
-            AppUtil.captureScreenshot(atomberg, "MoreTab Manage");
+            AppUtil.captureScreenshot(driver, "MoreTab Manage");
             System.out.println("  ✓ Manage section accessible");
 
             // Navigate back to MoreTab
-            atomberg.navigate().back();
+            driver.navigate().back();
             ActionsUtil.sleep(1000);
         } catch (Exception e) {
             System.out.println("  ⚠ Manage section test skipped: " + e.getMessage());
@@ -278,12 +278,12 @@ public class userworkflowregression {
             System.out.println(" > Testing Help Section");
 
                     // Navigate to Help
-                    WebElement helpElement = atomberg.findElement(By.xpath(
+                    WebElement helpElement = driver.findElement(By.xpath(
                             "//android.widget.ImageView[@content-desc='Help'] | //android.view.View[@content-desc='Help']"));
             helpElement.click();
             ActionsUtil.sleep(2000);
 
-            AppUtil.captureScreenshot(atomberg, "MoreTab Help");
+            AppUtil.captureScreenshot(driver, "MoreTab Help");
 
             // Test Help sub-buttons
             System.out.println("    - Testing Help sub-buttons:");
@@ -295,10 +295,10 @@ public class userworkflowregression {
             int attempts = 0;
             while (attempts < 5) {
                 try {
-                    WebElement moreTabCheck = atomberg.findElement(By.xpath("//android.view.View[@content-desc='More']"));
+                    WebElement moreTabCheck = driver.findElement(By.xpath("//android.view.View[@content-desc='More']"));
                     if (moreTabCheck != null) break;
                 } catch (Exception ignored) {}
-                atomberg.navigate().back();
+                driver.navigate().back();
                 attempts++;
             }
         } catch (Exception e) {
@@ -350,16 +350,16 @@ public class userworkflowregression {
             System.out.println(" > Testing Play Section");
 
                     // Navigate to Play
-                    WebElement playElement = atomberg.findElement(By.xpath(
+                    WebElement playElement = driver.findElement(By.xpath(
                             "//android.widget.ImageView[@content-desc='Play'] | //android.view.View[@content-desc='Play']"));
             playElement.click();
             ActionsUtil.sleep(2000);
 
-            AppUtil.captureScreenshot(atomberg, "MoreTab Play");
+            AppUtil.captureScreenshot(driver, "MoreTab Play");
             System.out.println("  ✓ Play section accessible");
 
             // Navigate back
-            atomberg.navigate().back();
+            driver.navigate().back();
             ActionsUtil.sleep(1000);
         } catch (Exception e) {
             System.out.println("  ⚠ Play section test skipped: " + e.getMessage());
@@ -370,15 +370,15 @@ public class userworkflowregression {
         try {
             System.out.println("> Testing Analytics from MoreTab");
 
-                    WebElement analyticsElement = atomberg.findElement(By.xpath(
+                    WebElement analyticsElement = driver.findElement(By.xpath(
                             "//android.widget.ImageView[@content-desc='Analytics'] | //android.view.View[@content-desc='Analytics']"));
             analyticsElement.click();
             ActionsUtil.sleep(2000);
 
-            AppUtil.captureScreenshot(atomberg, "MoreTab Analytics");
+            AppUtil.captureScreenshot(driver, "MoreTab Analytics");
             System.out.println("  ✓ Analytics section accessible from MoreTab");
 
-            atomberg.navigate().back();
+            driver.navigate().back();
         } catch (Exception e) {
             System.out.println("  ⚠ Analytics in MoreTab not found: " + e.getMessage());
         }
@@ -387,10 +387,10 @@ public class userworkflowregression {
     @AfterClass(alwaysRun = true)
     public void tearDown() {
         try {
-            if (atomberg != null) {
+            if (driver != null) {
                 System.out.println("=== Test Suite Completed ===");
                         System.out.println("Closing application...");
-                atomberg.quit();
+                driver.quit();
                 System.out.println("✓ App closed successfully");
             }
         } catch (Exception e) {

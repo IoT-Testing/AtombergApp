@@ -7,26 +7,26 @@ import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import static app.resources.Credentials.*;
+
+import static app.resources.Credentials.DEFAULT_EMAIL;
+import static app.resources.Credentials.DEFAULT_PASSWORD;
 import static app.resources.Locators.Android.AppLocators.Login.*;
-import static app.util.AppUtil.*;
+import static app.util.AppUtil.waitForElement;
 
 /**
- * Email - Handles login using email/password credentials.
+ * Email – Handles login using email + password credentials.
  *
- * <p>Refactored to:
- * <ul>
- *   <li>Eliminate duplication</li>
- *   <li>Externalize constants</li>
- *   <li>Improve error handling</li>
- *   <li>Use safe interaction patterns</li>
- *   <li>Follow single responsibility principle</li>
- * </ul>
+ * The Atomberg Home App uses a two-step login flow:
+ *   1. Tap the Email login button (4th option, ImageView index="5")
+ *   2. Enter email in the EditText → tap Continue
+ *   3. Enter password in the same EditText → tap Continue
  */
 public class Email {
+
     private final AndroidDriver atomberg;
 
     public Email(AndroidDriver driver) {
@@ -34,172 +34,133 @@ public class Email {
     }
 
     /**
-     * Main login method with default credentials.
+     * Login with default credentials from {@link app.resources.Credentials}.
+     * <p>
+     * FIX H7: added null guard — throws a clear IllegalStateException instead of an
+     * NPE deep inside performLogin() if setDriver() was never called.
      */
     public void Login() {
+        if (atomberg == null)
+            throw new IllegalStateException(
+                    "Email.Login(): driver is null — call setDriver() or use Email(driver) constructor before login.");
         performLogin(DEFAULT_EMAIL, DEFAULT_PASSWORD);
         handlePostLoginFlow();
     }
 
     /**
-     * Legacy method with alternate hardcoded credentials.
-     */
-//    public void email() {
-//        performLogin(ALT_EMAIL, ALT_PASSWORD);
-//        handlePostLoginFlow();
-//    }
-
-    /**
-     * Parameterized login with validation.
+     * Login with explicit credentials and validation.
+     * <p>
+     * FIX H7: added null guard for atomberg, email, and password.
      *
      * @param email    User email
      * @param password User password
-     * @throws Exception if invalid email or incorrect password detected
+     * @throws Exception if email is invalid or password is incorrect
      */
     public void email(String email, String password) throws Exception {
-        if (email == null || email.trim().isEmpty()) {
+        if (atomberg == null)
+            throw new IllegalStateException(
+                    "Email.email(): driver is null — pass a live AndroidDriver to the Email constructor.");
+        if (email == null || email.trim().isEmpty())
             throw new IllegalArgumentException("Email cannot be null or empty");
-        }
-        if (password == null || password.isEmpty()) {
+        if (password == null || password.isEmpty())
             throw new IllegalArgumentException("Password cannot be null or empty");
+
+        boolean continueClickable = performLogin(email, password);
+        if (!continueClickable) {
+            ActionsUtil.SSleep(1);
+            throw new Exception("Invalid Email: Continue button was not clickable after entering email");
         }
 
-        boolean canClickContinue = performLogin(email, password);
-
-        if (!canClickContinue) {
-            ActionsUtil.SSleep(1); // Allow UI update
-            throw new Exception("Invalid Email: Continue button not clickable");
-        }
-
-        ActionsUtil.SSleep(2); // Wait for possible error
-
+        ActionsUtil.SSleep(2);
         if (isElementPresent(INCORRECT_PASSWORD_MESSAGE)) {
-            throw new Exception("Invalid Password: Login failed due to incorrect password");
+            throw new Exception("Invalid Password: Incorrect password error shown");
         }
-
-        // Navigate back only if explicitly called from test (assumption)
-//        atomberg.navigate().back();
     }
 
-    // === Internal Helpers ===
+    // ── Internal helpers ──────────────────────────────────────────────────────
 
     /**
-     * Performs shared login steps: enter email → continue → enter password → continue.
-     *
-     * @param email    Email address
-     * @param password Password
-     * @return true if 'Continue' button was clickable after email entry
+     * Executes the core two-step login flow.
+     * Returns true if the Continue button was clickable after email entry.
      */
     private boolean performLogin(String email, String password) {
         clickEmailLoginButton();
-        AppUtil.captureScreenshot(atomberg,"email-password");
+        AppUtil.captureScreenshot(atomberg, "01_email_option_selected");
 
-        enterEmail(email);
-        AppUtil.captureScreenshot(atomberg,"email entered");
+        enterText(email);
+        AppUtil.captureScreenshot(atomberg, "02_email_entered");
 
-        boolean isClickable = isContinueButtonClickable();
-        if (!isClickable) return false;
+        boolean clickable = isContinueClickable();
+        if (!clickable) return false;
 
         clickContinue();
-        AppUtil.captureScreenshot(atomberg,  "Continue");
+        AppUtil.captureScreenshot(atomberg, "03_after_email_continue");
 
-        enterPassword(password);
-        AppUtil.captureScreenshot(atomberg, "Password");
+        enterText(password);
+        AppUtil.captureScreenshot(atomberg, "04_password_entered");
 
         clickContinue();
         System.out.println("Login submitted.");
         return true;
     }
 
-    /**
-     * Clicks the initial 'Email Login' button.
-     */
     private void clickEmailLoginButton() {
-        WebElement button = waitForElement(atomberg, EMAIL_LOGIN_BUTTON, 10);
-        button.click();
-        System.out.println("Email login option selected.");
+        WebElement btn = waitForElement(atomberg, EMAIL_LOGIN_BUTTON, 10);
+        btn.click();
+        System.out.println("Email login option (4th option) selected.");
     }
 
-    /**
-     * Enters email into the input field.
-     *
-     * @param email Email to enter
-     */
-    private void enterEmail(String email) {
-        WebElement field = waitForElement(atomberg, EDIT_TEXT_FIELD, 10);
-        field.click();
-        field.clear(); // Ensure no pre-filled text
-        field.sendKeys(email);
-        System.out.println("Email Entered: " + email);
-    }
-
-    /**
-     * Enters password into the input field.
-     *
-     * @param password Password to enter
-     */
-    private void enterPassword(String password) {
+    private void enterText(String text) {
         WebElement field = waitForElement(atomberg, EDIT_TEXT_FIELD, 10);
         field.click();
         field.clear();
-        field.sendKeys(password);
-        System.out.println("Password entered.");
+        field.sendKeys(text);
     }
 
-    /**
-     * Checks if Continue button is enabled/clickable.
-     *
-     * @return true if clickable
-     */
-    private boolean isContinueButtonClickable() {
+    private boolean isContinueClickable() {
         try {
-            WebElement continueBtn = atomberg.findElement(LOGIN_CONTINUE_BUTTON);
-            String clickable = continueBtn.getDomAttribute("clickable");
-            return "true".equals(clickable);
+            WebElement btn = atomberg.findElement(LOGIN_CONTINUE_BUTTON);
+            return "true".equals(btn.getDomAttribute("clickable"));
         } catch (NoSuchElementException e) {
             return false;
         }
     }
 
-    /**
-     * Clicks Continue button.
-     */
     private void clickContinue() {
-        clickElement(LOGIN_CONTINUE_BUTTON, "Continue Button");
+        try {
+            atomberg.findElement(LOGIN_CONTINUE_BUTTON).click();
+            System.out.println("Continue tapped.");
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to tap Continue button", e);
+        }
     }
 
     /**
-     * Handles post-login flows: permissions, Alexa popup.
+     * Post-login: handle OS permissions + optional Alexa popup.
      */
     private void handlePostLoginFlow() {
         PermissionUtil.allow(atomberg);
 
         List<WebElement> views = atomberg.findElements(By.className("android.view.View"));
-        List<WebElement> labeledElements = views.stream()
+        List<WebElement> labeled = views.stream()
                 .filter(el -> el.getDomAttribute("content-desc") != null)
                 .collect(Collectors.toList());
 
-        for (WebElement el : labeledElements) {
-            if (Objects.equals(el.getDomAttribute("content-desc"), "Use Alexa to control your smart fan(s) with voice")) {
+        for (WebElement el : labeled) {
+            if (Objects.equals(el.getDomAttribute("content-desc"),
+                    "Use Alexa to control your smart fan(s) with voice")) {
                 try {
-                    atomberg.findElement(CANCEL_BUTTON).click();
+                    atomberg.findElement(
+                            By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]")).click();
                     System.out.println("Alexa popup dismissed.");
-                    break;
                 } catch (Exception e) {
-                    System.err.println("Failed to dismiss Alexa popup: " + e.getMessage());
+                    System.err.println("Could not dismiss Alexa popup: " + e.getMessage());
                 }
+                break;
             }
         }
     }
 
-    // === Utility Methods ===
-
-    /**
-     * Safely checks if element is present.
-     *
-     * @param locator Locator to check
-     * @return true if present
-     */
     private boolean isElementPresent(By locator) {
         try {
             return atomberg.findElement(locator).isDisplayed();
@@ -207,24 +168,4 @@ public class Email {
             return false;
         }
     }
-
-    /**
-     * Clicks element with logging.
-     *
-     * @param locator By strategy
-     * @param label   Action label
-     */
-    private void clickElement(By locator, String label) {
-        try {
-            atomberg.findElement(locator).click();
-            System.out.println(label + " clicked.");
-        } catch (Exception e) {
-            System.err.println("Failed to click " + label + ": " + e.getMessage());
-            throw new RuntimeException("Interaction failed: " + label, e);
-        }
-    }
-
-    // --- Removed Custom Sleep Wrapper ---
-    // Note: The original used Awaitility just to sleep — unnecessary complexity.
-    // We now use ActionsUtil.sleep() or explicit waits instead.
 }

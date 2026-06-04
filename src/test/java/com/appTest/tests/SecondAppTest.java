@@ -37,7 +37,7 @@ import static app.util.AppUtil.waitForElement;
 
 public class SecondAppTest extends BaseTest {
 
-    public AndroidDriver driver;
+    // No local driver field — uses BaseTest.driver directly via inheritance.
     private final SoftAssert softAssert;
 
     // === Locators ===
@@ -55,7 +55,6 @@ public class SecondAppTest extends BaseTest {
 
     @BeforeTest
     public void setUp() {
-        driver = getDriver();
         Assert.assertNotNull(driver, "Driver should not be null after setup");
     }
 
@@ -69,8 +68,7 @@ public class SecondAppTest extends BaseTest {
             driver.activateApp(APP_PACKAGE);
             ActionsUtil.SSleep(5);
 
-            AppInitializer appInitializer = new AppInitializer();
-            appInitializer.setDriver(driver);
+            AppInitializer appInitializer = new AppInitializer(driver);
 
             boolean onLoginScreen = appInitializer.checkMainScreen();
             System.out.println("On login screen: " + onLoginScreen);
@@ -109,7 +107,7 @@ public class SecondAppTest extends BaseTest {
             et.sendKeys("hiwitaw422@wuzak.com");
             driver.findElement(LOGIN_CONTINUE_BUTTON).click();
             WebElement pw = driver.findElement(EDIT_TEXT_FIELD);
-                    pw.sendKeys("Atomberg@1234");
+            pw.sendKeys("Atomberg@1234");
             driver.findElement(By.xpath("//android.widget.Button[@content-desc='Continue']")).click();
 
             sleep(5000); // Wait for home screen

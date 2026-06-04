@@ -148,9 +148,8 @@ public class Main {
     // === Setup Methods ===
 
     private void initializeDriver() throws Exception {
-        AppInitializer initializer = new AppInitializer();
+        AppInitializer initializer = new AppInitializer(driver);
         initializer.initializeDriver(); // Connects to device
-        driver = initializer.getDriver();
 
         // Set implicit wait
 //        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
@@ -178,8 +177,7 @@ public class Main {
     }
 
     private boolean isOnLoginScreen() throws Exception{
-        AppInitializer appCheck = new AppInitializer();
-        appCheck.setDriver(driver);
+        AppInitializer appCheck = new AppInitializer(driver);
         boolean onLogin = appCheck.checkMainScreen();
         System.out.println("On login screen: " + onLogin);
         return onLogin;

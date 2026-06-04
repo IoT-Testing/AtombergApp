@@ -1,329 +1,127 @@
 package com.appTest.tests;
 
 import ExtentReports.ExtentReportAT;
-import app.AppInitializer;
 import app.ServerInitializer;
-import app.util.ActionsUtil;
-import app.util.ScreenRecording;
-import com.applitools.eyes.appium.Eyes;
-import com.aventstack.extentreports.Status;
+import app.util.AppUtil;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.appmanagement.ApplicationState;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebElement;
+import io.appium.java_client.android.options.UiAutomator2Options;
+import org.testng.Assert;
 import org.testng.annotations.*;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.Duration;
-
-import static app.resources.Locators.Android.HomeLocators.*;
+import static app.resources.AppInfo.ATOMBERG_ACTIVITY;
+import static app.resources.AppInfo.ATOMBERG_HOME;
 
 /**
- * BaseTest - Base class for all test classes.
- * STF connection via ADB over TCP (adb connect <ip>:<port>)
- * Supports multiple devices running in parallel via TestNG parameters.
+ * BaseTest – driver lifecycle, Appium server management, and Extent reporting.
+ * ── Listener registration ────────────────────────────────────────────────────
+ * Listeners are declared ONLY here on BaseTest. Subclasses must NOT redeclare
+ * @Listeners — doing so causes TestNG to register each listener twice, which
+ * produces duplicate log entries and inflated pass/fail counts in the report.
+ * ── TestNG parameter bindings (from testng.xml) ──────────────────────────────
+ *   deviceSlot – human-readable label, e.g. "Pixel_7_Slot1"
+ *   deviceIp   – ADB-over-TCP IP for STF devices (127.0.0.1 for local)
+ *   devicePort – ADB-over-TCP port (default 5555)
  */
+@Listeners({com.appTest.listeners.TestListeners.class, com.appTest.listeners.DashboardReporter.class})
 public class BaseTest {
 
-    // ── STF Configuration ─────────────────────────────────────
-    // Update these values to match your STF setup
-    private static final String STF_TOKEN   = "YOUR_STF_TOKEN_HERE";   // STF Bearer token
-    private static final String STF_URL     = "http://YOUR_STF_HOST";  // STF server URL
-    private static final int    STF_PORT    = 7100;                     // Default STF ADB port
+    protected AndroidDriver  driver;
+    protected ExtentReportAT reporter;
+    protected String         deviceSlot;
 
-    // ── App Configuration ──────────────────────────────────────
-    private static final String APP_PACKAGE = "com.atomberg.app";
+    private final ServerInitializer serverInit = new ServerInitializer();
 
-    // ── Instance Variables ─────────────────────────────────────
-    public static String        deviceSlot;
-    public static ExtentReportAT reporter;
-    public static ServerInitializer server;
-    public Eyes                 eyes;
-    public AndroidDriver        driver;
-    private ScreenRecording     screenRecording;
-    private boolean             setupSuccessful = false;
-    private String              deviceIp;
-    private String              devicePort;
+    // ── Suite hooks ───────────────────────────────────────────────────────────
 
-    // ══════════════════════════════════════════════════════════
-    // SETUP
-    // ══════════════════════════════════════════════════════════
+    @BeforeSuite(alwaysRun = true)
+    public void beforeSuite() {
+        serverInit.startServer();
+    }
 
-    @BeforeClass
+    @AfterSuite(alwaysRun = true)
+    public void afterSuite() {
+        serverInit.stopServer();
+        if (reporter != null) reporter.close();
+    }
+
+    // ── Class hooks ───────────────────────────────────────────────────────────
+
+    @BeforeClass(alwaysRun = true)
     @Parameters({"deviceSlot", "deviceIp", "devicePort"})
     public void setup(
-            @Optional("default")  String deviceSlot,
-            @Optional("0.0.0.0")  String deviceIp,
-            @Optional("5555")     String devicePort
-    ) throws Exception {
+            @Optional("Device_Default") String deviceSlot,
+            @Optional("127.0.0.1")     String deviceIp,
+            @Optional("5555")          String devicePort) {
 
-        BaseTest.deviceSlot = deviceSlot;
-        this.deviceIp       = deviceIp;
-        this.devicePort     = devicePort;
-        server              = new ServerInitializer();
+        this.deviceSlot = deviceSlot;
+        this.reporter   = new ExtentReportAT(deviceSlot);
 
-        try {
-            initializeReporter();
-            reporter.startTest("Device Setup", deviceSlot);
+        System.out.printf("Setting up: slot=%s  ip=%s  port=%s%n", deviceSlot, deviceIp, devicePort);
 
-            connectDeviceViaAdb();
-            startAppiumServer();
-            initializeDriver();
-            startScreenRecording();
+        UiAutomator2Options options = buildOptions(deviceIp, devicePort);
+        URL serverUrl               = resolveServerUrl();
 
-            setupSuccessful = true;
-            reporter.log(Status.PASS, "Setup completed successfully for device: " + deviceIp + ":" + devicePort);
-
-        } catch (Exception e) {
-            reporter.log(Status.FAIL, "Setup failed: " + e.getMessage());
-            throw e;
-        } finally {
-            reporter.endTest();
-        }
-    }
-
-    // ══════════════════════════════════════════════════════════
-    // STF — ADB OVER TCP CONNECTION
-    // ══════════════════════════════════════════════════════════
-
-    /**
-     * Connects to the STF device via ADB over TCP.
-     * Runs: adb connect <deviceIp>:<devicePort>
-     */
-    private void connectDeviceViaAdb() throws IOException {
-        String adbConnectCommand = "adb connect " + deviceIp + ":" + devicePort;
-        System.out.println("Connecting to STF device: " + adbConnectCommand);
-
-        Process process = Runtime.getRuntime().exec(adbConnectCommand);
-        String output   = readProcessOutput(process);
-        int exitCode    = waitForProcess(process);
-
-        System.out.println("ADB connect output: " + output);
-
-        // Validate connection succeeded
-        if (!output.contains("connected to") && !output.contains("already connected")) {
-            throw new RuntimeException(
-                    "ADB connect failed for " + deviceIp + ":" + devicePort +
-                            " | Output: " + output
-            );
-        }
-
-        System.out.println("✅ Device connected via ADB TCP: " + deviceIp + ":" + devicePort);
-        ActionsUtil.SSleep(2); // Allow ADB to stabilize
-    }
-
-    /**
-     * Disconnects the STF device after test run.
-     * Runs: adb disconnect <deviceIp>:<devicePort>
-     */
-    private void disconnectDeviceViaAdb() {
-        try {
-            String adbDisconnectCommand = "adb disconnect " + deviceIp + ":" + devicePort;
-            System.out.println("Disconnecting STF device: " + adbDisconnectCommand);
-            Process process = Runtime.getRuntime().exec(adbDisconnectCommand);
-            waitForProcess(process);
-            System.out.println("✅ Device disconnected: " + deviceIp + ":" + devicePort);
-        } catch (IOException e) {
-            System.err.println("Error disconnecting device: " + e.getMessage());
-        }
-    }
-
-    // ══════════════════════════════════════════════════════════
-    // APPIUM SERVER & DRIVER
-    // ══════════════════════════════════════════════════════════
-
-    /**
-     * Starts Appium server.
-     */
-    private void startAppiumServer() {
-        server.startServer();
-        System.out.println("✅ Appium server started.");
-    }
-
-    /**
-     * Initializes Android driver using device IP:Port.
-     */
-    private void initializeDriver() throws Exception {
-        String adbCommand = "adb connect " + deviceIp + ":" + devicePort;
-
-        AppInitializer appInitializer = new AppInitializer();
-        appInitializer.initializeDriverWithURL();
-        this.driver = appInitializer.getDriver();
-
-        if (driver == null) {
-            throw new IllegalStateException("Driver initialization returned null for device: " + deviceIp);
-        }
-
+        driver = new AndroidDriver(serverUrl, options);
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
-        System.out.println("✅ Driver initialized for device: " + deviceIp + ":" + devicePort);
-    }
 
-    /**
-     * Starts screen recording.
-     */
-    private void startScreenRecording() {
-        this.screenRecording = new ScreenRecording(driver);
-        this.screenRecording.start();
-        System.out.println("✅ Screen recording started.");
+        Assert.assertNotNull(driver, "AndroidDriver must be created before tests run");
+        System.out.println("Driver initialised for: " + deviceSlot);
     }
-
-    // ══════════════════════════════════════════════════════════
-    // TEARDOWN
-    // ══════════════════════════════════════════════════════════
 
     @AfterClass(alwaysRun = true)
-    public void tearDown() {
-        System.out.println("Starting teardown for device: " + deviceIp + ":" + devicePort);
-
-        // Close Applitools Eyes session
-        if (eyes != null) {
-            try {
-                eyes.abortIfNotClosed();
-                System.out.println("✅ Applitools Eyes session closed.");
-            } catch (Exception e) {
-                System.err.println("Error closing Eyes session: " + e.getMessage());
-            }
-        }
-
-        // Stop screen recording
-        if (screenRecording != null) {
-            try {
-                screenRecording.stop();
-                System.out.println("✅ Screen recording stopped.");
-            } catch (Exception e) {
-                System.err.println("Error stopping screen recording: " + e.getMessage());
-            }
-        }
-
-        // Stop Appium server
-        if (server != null && server.service.isRunning()) {
-            try {
-                server.stopServer();
-                System.out.println("✅ Appium server stopped.");
-            } catch (Exception e) {
-                System.err.println("Error stopping Appium server: " + e.getMessage());
-            }
-        }
-
-        // Quit driver
+    public void teardown() {
         if (driver != null) {
-            try {
-                driver.quit();
-                System.out.println("✅ Driver session ended.");
-            } catch (Exception e) {
-                System.err.println("Error quitting driver: " + e.getMessage());
+            try { driver.quit(); } catch (Exception e) {
+                System.err.println("Driver quit error: " + e.getMessage());
             }
         }
-
-        // Disconnect ADB device
-        disconnectDeviceViaAdb();
-
-        // Flush report
-        if (setupSuccessful && reporter != null) {
-            try {
-                reporter.close();
-            } catch (Exception e) {
-                System.err.println("Error flushing report: " + e.getMessage());
-            }
-        }
+        if (reporter != null) reporter.endTest();
+        System.out.println("Driver quit for: " + deviceSlot);
     }
 
-    // ══════════════════════════════════════════════════════════
-    // HELPERS
-    // ══════════════════════════════════════════════════════════
+    // ── Shared helpers ────────────────────────────────────────────────────────
 
     /**
-     * Initializes the reporter.
+     * Called from a test's catch block to attempt navigation back to the home screen.
+     * Uses the inherited {@code driver} field directly — no parameter needed.
+     * Prevents cascading failures when one test leaves the app in an unexpected state.
      */
-    private void initializeReporter() {
-        reporter = new ExtentReportAT(deviceSlot);
-    }
-
-    /**
-     * Reads stdout from a process.
-     */
-    private String readProcessOutput(Process process) throws IOException {
-        StringBuilder output = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(process.getInputStream()))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                output.append(line).append("\n");
-            }
-        }
-        return output.toString().trim();
-    }
-
-    /**
-     * Waits for a process to complete (max 10 seconds).
-     */
-    private int waitForProcess(Process process) {
+    protected void afterTestFailure() {
         try {
-            if (process.waitFor(10, java.util.concurrent.TimeUnit.SECONDS)) {
-                return process.exitValue();
-            } else {
-                process.destroyForcibly();
-                return -1;
-            }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            process.destroyForcibly();
-            return -1;
-        }
-    }
-
-    /**
-     * Returns the current driver instance.
-     */
-    public AndroidDriver getDriver() {
-        return driver;
-    }
-
-    /**
-     * Recovery logic: navigate back to home screen after test failure.
-     */
-    public void afterTestFailure(AndroidDriver driver) {
-        if (driver == null) return;
-
-        ApplicationState state = driver.queryAppState(APP_PACKAGE);
-        int backPressCount     = 0;
-        final int MAX_BACK     = 10;
-
-        try {
-            if (state.equals(ApplicationState.RUNNING_IN_FOREGROUND)) {
-                while (isOnHomeScreen(driver) && backPressCount < MAX_BACK) {
-                    System.out.println("Navigating back... (" + (backPressCount + 1) + "/" + MAX_BACK + ")");
-                    driver.navigate().back();
-                    ActionsUtil.SSleep(2);
-                    backPressCount++;
-                }
-
-                if (isOnHomeScreen(driver)) {
-                    System.err.println("Failed to recover to home screen after " + MAX_BACK + " back presses.");
-                } else {
-                    System.out.println("✅ Recovered to home screen.");
-                }
-            } else {
-                System.out.println("App not in foreground. Activating...");
-                driver.activateApp(APP_PACKAGE);
-                ActionsUtil.SSleep(3);
-            }
+            AppUtil.confirmOnHomeScreen(driver);
         } catch (Exception e) {
-            System.err.println("Error during failure recovery: " + e.getMessage());
+            System.err.println("Recovery failed: " + e.getMessage());
         }
     }
 
-    /**
-     * Checks if currently on home screen.
-     */
-    boolean isOnHomeScreen(AndroidDriver driver) {
-        try {
-            WebElement element = driver.findElement(DEVICES);
-            return !element.isDisplayed();
-        } catch (NoSuchElementException e) {
-            return true;
+    // ── Private builders ──────────────────────────────────────────────────────
+
+    private UiAutomator2Options buildOptions(String deviceIp, String devicePort) {
+        UiAutomator2Options options = new UiAutomator2Options();
+        options.setAppPackage(ATOMBERG_HOME);
+        options.setAppActivity(ATOMBERG_ACTIVITY);
+        options.setPlatformName("Android");
+
+        boolean isRemote = !"127.0.0.1".equals(deviceIp);
+        if (isRemote) {
+            String udid = deviceIp + ":" + devicePort;
+            options.setUdid(udid);
+            System.out.println("STF UDID: " + udid);
         }
+        return options;
+    }
+
+    private URL resolveServerUrl() {
+//        if (serverInit.isRunning()) {
+//            return serverInit.service.getUrl();
+//        }
+//        try {
+//            return new URL(APPIUM_URL);
+//        } catch (MalformedURLException e) {
+//            throw new RuntimeException("Invalid Appium URL: " + APPIUM_URL, e);
+//        }
+        return resolveServerUrl();
     }
 }

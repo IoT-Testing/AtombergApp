@@ -17,6 +17,9 @@ import io.cucumber.java.en.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
+
+import java.util.Objects;
+
 import static app.resources.Locators.Android.AppLocators.Login.*;
 import static app.resources.Locators.Android.HomeLocators.*;
 import static org.testng.Assert.*;
@@ -41,8 +44,7 @@ public class StepDefinitions {
             driver.activateApp(APP_PACKAGE);
             ActionsUtil.SSleep(5);
 
-            AppInitializer initializer = new AppInitializer();
-            initializer.setDriver(driver);
+            AppInitializer initializer = new AppInitializer(driver);
 
             boolean onLogin = initializer.checkMainScreen();
             System.out.println("On login screen: " + onLogin);
@@ -241,9 +243,8 @@ public class StepDefinitions {
     public void closeDriverAndServer() {
         BaseTest.reporter.startTest("Driver Close", BaseTest.deviceSlot);
         try {
-            ScreenRecording recording = new ScreenRecording(driver);
+            ScreenRecording recording = new ScreenRecording();
             recording.stop();
-            BaseTest.server.stopServer();
             BaseTest.reporter.log(Status.PASS, "Driver closed and server stopped");
         } catch (Exception e) {
             BaseTest.reporter.log(Status.FAIL, "Cleanup failed: " + e.getMessage());
@@ -291,7 +292,7 @@ public class StepDefinitions {
     private boolean isOnHomeScreen(AndroidDriver driver) {
         try {
             return findOptionalElement(driver, MORE_TAB) != null &&
-                    findOptionalElement(driver, MORE_TAB).isDisplayed();
+                    Objects.requireNonNull(findOptionalElement(driver, MORE_TAB)).isDisplayed();
         } catch (Exception e) {
             return false;
         }

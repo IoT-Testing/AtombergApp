@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
  */
 public class Automation {
     private final AndroidDriver driver;
-    private WebElement automationsTab ;
 
     // === Constants ===
     private static final By AUTOMATIONS_TAB = By.xpath("//android.view.View[@content-desc='Automations']");
@@ -82,7 +81,7 @@ public class Automation {
      * Navigates to Automations tab.
      */
     private void navigateToAutomations() {
-        automationsTab = driver.findElement(AUTOMATIONS_TAB);
+        WebElement automationsTab = driver.findElement(AUTOMATIONS_TAB);
         if (automationsTab != null && automationsTab.isDisplayed()) {
             automationsTab.click();
             System.out.println("Navigated to Automations");

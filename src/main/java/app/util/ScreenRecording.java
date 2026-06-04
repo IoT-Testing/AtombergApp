@@ -11,30 +11,24 @@ import static app.resources.AppInfo.*;
  * ScreenRecording - Records device screen using HBRecorderExample app.
  */
 public class ScreenRecording {
-    private final AndroidDriver driver;
+    private AndroidDriver driver;
 
     // === App Info ===
 
     // === Locators ===
-    private static final By START_BUTTON = By.xpath("//android.widget.Button[@text='START']");
-    private static final By FINAL_START_BUTTON = By.id("android:id/button1");
-    private static final By START_NOW_BUTTON = By.xpath("//android.widget.Button[@text='START NOW']");
+    private static final By START_BUTTON = By.xpath("//android.widget.Button[@resource-id=\"com.hbisoft.hbrecorderexample:id/button_start\"]");
+    private static final By FINAL_START_BUTTON = By.xpath("//android.widget.Button[@resource-id=\"android:id/button1\"]");
     private static final By STOP_BUTTON = By.xpath("//android.widget.Button[@text='STOP']");
 
     // Dialog Options
     private static final By SINGLE_APP_OPTION = By.xpath("//android.widget.TextView[@text=\"A single app\"]");
     private static final By ENTIRE_SCREEN_OPTION = By.xpath("//android.widget.TextView[@text=\"Entire screen\"]");
 
-    public ScreenRecording(AndroidDriver driver) {
-        this.driver = driver;
-    }
-
-    public ScreenRecording(URL url) throws IOException, InterruptedException {
+    public ScreenRecording() throws IOException, InterruptedException {
         AppInitializer initializer = new AppInitializer();
-        initializer.initializeDriverWithURL();
-        this.driver = initializer.getDriver();
-    }
+        initializer.initializeDriver();
 
+    }
     /**
      * Starts screen recording via HBRecorder app.
      */
@@ -43,7 +37,7 @@ public class ScreenRecording {
         ActionsUtil.SSleep(3); // Allow UI load
 
         // Step 1: Click initial START/START NOW
-        if (!clickElementIfExists(START_BUTTON) && !clickElementIfExists(START_NOW_BUTTON)) {
+        if (!clickElementIfExists(START_BUTTON)) {
             throw new RuntimeException("Failed to find any start button in recorder app.");
         }
 
@@ -97,7 +91,7 @@ public class ScreenRecording {
         if (!clickElementIfExists(ENTIRE_SCREEN_OPTION)) {
             throw new RuntimeException("Failed to select 'Entire screen'");
         }
-        ActionsUtil.sleep(1000);
+        ActionsUtil.sleep(2000);
 
         // 3. Click final "Start" (lowercase 'S') — NOT "START"
         if (!clickElementIfExists(FINAL_START_BUTTON)) {

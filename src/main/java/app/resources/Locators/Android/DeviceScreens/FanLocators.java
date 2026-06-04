@@ -34,6 +34,8 @@ public class FanLocators {
                                                                                                                 //[442,2096][638,2293]
     public static final By START_TIMER = By.xpath("//android.view.View[@bounds=\"[442,2096][638,2293]\"]");
     public static final By POWER_BUTTON = By.xpath("//android.widget.Button[@index=\"8\"]");
+    public static final By SLEEP_BUTTON = By.xpath("//android.widget.Button[@index=\"8\"]");
+    public static final By FAN_CARD = By.xpath("//android.widget.Button[@index=\"8\"]");
 
     //Fan Menu
 

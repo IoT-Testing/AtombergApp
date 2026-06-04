@@ -1,5 +1,6 @@
 package app.Assistants;
 
+import app.resources.Credentials;
 import app.ScreenCheck.ScreenCheck;
 import app.util.ActionsUtil;
 import io.appium.java_client.android.AndroidDriver;
@@ -15,9 +16,9 @@ public class Alexa {
     private final AndroidDriver driver;
     private final ScreenCheck screenCheck;
 
-    // Test credentials (should be externalized in production)
-    private static final String TEST_EMAIL = "iot.alpha@protonmail.com";
-    private static final String TEST_PASSWORD = "Atomberg@123";
+    // Credentials loaded from environment — see test.env.example
+    private static final String TEST_EMAIL    = Credentials.ALEXA_TEST_EMAIL;
+    private static final String TEST_PASSWORD = Credentials.ALEXA_TEST_PASSWORD;
 
     public Alexa(AndroidDriver driver) {
         this.driver = driver;

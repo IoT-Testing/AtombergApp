@@ -16,3 +16,8 @@ Atomberg_Home_App_Test_Cases
 DeviceProvisioningTest/
 FirmwareTests/
 appium/
+
+# Secrets — NEVER commit these
+test.env
+*.env
+!test.env.example

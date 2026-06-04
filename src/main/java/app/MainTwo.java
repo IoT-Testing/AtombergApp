@@ -2,6 +2,7 @@ package app;
 
 import app.util.ActionsUtil;
 import app.util.Navigation;
+import io.appium.java_client.service.local.AppiumDriverLocalService;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -34,8 +35,8 @@ public class MainTwo {
     private static AndroidDriver driver;
     private int currentAttempt = 1;
     private static final String DEVICE_PREFIX = "atomberg_W2_";
-
-
+    public AppiumDriverLocalService service;
+    private static final String APPIUM_GUI_URL = "http://127.0.0.1:4723";
 
     public static void main(String[] args) {
         MainTwo main = new MainTwo();
@@ -48,10 +49,14 @@ public class MainTwo {
         }
     }
 
+
     public void runTestFlowOne() throws Throwable {
-        initializeDriver();
-        driver.activateApp("com.atomberg.app");
-        Navigation.openFanControl(driver);
+
+        ServerInitializer serverInitializer = new ServerInitializer();
+        serverInitializer.startServer();
+//        initializeDriver();
+//        driver.activateApp("com.atomberg.app");
+//        Navigation.openFanControl(driver);
 //        driver.activateApp("com.example.flutter_ble_ota");
 //        ActionsUtil.SSleep(5);
 //        OTATest();
@@ -244,9 +249,8 @@ public class MainTwo {
     }
 
     private void initializeDriver() throws Throwable {
-        AppInitializer initializer = new AppInitializer();
+        AppInitializer initializer = new AppInitializer(driver);
         initializer.initializeDriver(); // Connects to device
-        driver = initializer.getDriver();
 
         // Set implicit wait
 //        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));

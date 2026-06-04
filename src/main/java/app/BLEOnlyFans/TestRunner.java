@@ -108,10 +108,8 @@ public class TestRunner {
         createDriver(url, options);
     }
     private void initializeDriver() throws Exception {
-        AppInitializer initializer = new AppInitializer();
+        AppInitializer initializer = new AppInitializer(driver);
         initializer.initializeDriver(); // Connects to device
-        this.driver = initializer.getDriver();
-
         // Set implicit wait
 //        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
         System.out.println("Driver initialized successfully.");
