@@ -12,6 +12,7 @@ import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import static app.resources.Locators.Android.DeviceScreens.FanLocators.*;
+import static app.resources.Locators.Android.HomeLocators.APP_LOGO;
 import static app.resources.Locators.Android.HomeLocators.MORE_TAB;
 
 /**
@@ -230,8 +231,8 @@ public class FanTest extends BaseTest {
     public void testReturnToHome() {
         reporter.startTest("Return to Home Screen", deviceSlot);
         try {
-            if (AppUtil.isElementPresent(driver, BACK_BUTTON)) {
-                AppUtil.clickElement(driver, BACK_BUTTON, "Back Button");
+            if (AppUtil.isElementPresent(driver, APP_LOGO)) {
+                    driver.navigate().back();
             } else {
                 driver.navigate().back();
             }
@@ -307,7 +308,7 @@ public class FanTest extends BaseTest {
      */
     private String getDisplayedSpeed() {
         try {
-            WebElement label = driver.findElement(CURRENT_SPEED_LABEL);
+            WebElement label = driver.findElement(BOOST_BUTTON);
             return label.getDomAttribute("content-desc");
         } catch (NoSuchElementException e) {
             return null;

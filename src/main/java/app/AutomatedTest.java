@@ -11,7 +11,7 @@ public class AutomatedTest {
     public AndroidDriver driver;
 
     public void run() throws MalformedURLException {
-        AppInitializer app = new AppInitializer();
+        AppInitializer app = new AppInitializer(driver);
         System.out.println("Appium Server Started on URL: " + app.service.getUrl());
         app.initializeDriver();
         app.stopServer();

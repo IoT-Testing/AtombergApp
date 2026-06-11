@@ -10,8 +10,7 @@ import org.testng.annotations.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
-import static app.resources.AppInfo.ATOMBERG_ACTIVITY;
-import static app.resources.AppInfo.ATOMBERG_HOME;
+import static app.resources.AppInfo.*;
 
 /**
  * BaseTest – driver lifecycle, Appium server management, and Extent reporting.
@@ -68,6 +67,9 @@ public class BaseTest {
 
         Assert.assertNotNull(driver, "AndroidDriver must be created before tests run");
         System.out.println("Driver initialised for: " + deviceSlot);
+        if(driver == null){
+            throw new RuntimeException("Driver initialization failed for: " + deviceSlot);
+        }
     }
 
     @AfterClass(alwaysRun = true)
@@ -114,14 +116,13 @@ public class BaseTest {
     }
 
     private URL resolveServerUrl() {
-//        if (serverInit.isRunning()) {
-//            return serverInit.service.getUrl();
-//        }
-//        try {
-//            return new URL(APPIUM_URL);
-//        } catch (MalformedURLException e) {
-//            throw new RuntimeException("Invalid Appium URL: " + APPIUM_URL, e);
-//        }
-        return resolveServerUrl();
+        if (serverInit != null && serverInit.isServerRunning()) {
+            return serverInit.service.getUrl();
+        }
+        try {
+            return new URL("http://127.0.0.1:4723/wd/hub");
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Invalid Appium URL", e);
+        }
     }
 }

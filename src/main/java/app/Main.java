@@ -7,6 +7,8 @@ import app.resources.Locators.Android.DeviceScreens.FanLocators;
 import app.resources.PythonFileScript;
 import app.util.ActionsUtil;
 import app.util.PermissionUtil;
+import app.util.ScreenRecording;
+import io.appium.java_client.android.options.UiAutomator2Options;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -15,6 +17,7 @@ import org.openqa.selenium.By;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URL;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -90,27 +93,43 @@ public class Main {
     }
 
     public void runTestFlowTwo() throws Exception {
-//        PythonFileScript run = new PythonFileScript();
-//        run.script();
+        // Main.initializeDriver should set 'driver' to recorder driver
         initializeDriver();
-        driver.activateApp("com.atomberg.app");
-        ActionsUtil.SSleep(5);
+        launchApp("recorder");
+        ScreenRecording recorder = new ScreenRecording(driver);
+        recorder.start();
+        // Now initialize driver for Atomberg app, but keep the recorder session active
+        launchApp("atomberg");
+        if (isOnLoginScreen()) performLogin();
+        handlePermissions();
+        // Ensure we're on the home screen before proceeding
+        FanManagement fan = new FanManagement(driver);
+        fan.addition(bof);
+        driver.openNotifications();
+        ActionsUtil.sleep(750);
+        ActionsUtil.Tap.withCoordinates(driver, 500, 500);
+        By acceptBtn = By.id("android:id/button1");
+        driver.findElement(acceptBtn).click();
+        ActionsUtil.SSleep(6);
+        driver.openNotifications();
+        ActionsUtil.sleep(500);
+        ActionsUtil.Tap.withCoordinates(driver, 500, 500);
+        driver.findElement(acceptBtn).click();
+        bleFanAddition();
 
-        driver.findElement(By.xpath("//android.widget.Button[@index=\"1\"]")).click();
+         driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Aris Fan\n" +
+                "Living Room\"]")).click();
+         fan.speedCommands();
+         runTimerAndNavigate(fan::timerOne, driver);
+         runTimerAndNavigate(fan::timerTwo, driver);
+         runTimerAndNavigate(fan::timerThree, driver);
+         runTimerAndNavigate(fan::timerSix, driver);
 
-        ActionsUtil.SSleep(5);
+//         bleFanDeletion();
 
-        driver.findElement(By.xpath("//android.view.View[@index=\"11\"]")).click();
-        System.out.println("sleep");
-
-//        ActionsUtil.SSleep(20);
-//        System.out.println("20 sec delay");
-//
-//        driver.findElement(By.xpath("//android.view.View[@index=\"6\"]")).click();
-//        System.out.println("Boost");
-
-        ActionsUtil.SSleep(5);
-        driver.navigate().back();
+        launchApp("recorder");
+        recorder = new ScreenRecording(driver);
+        recorder.stop();
     }
 
     void runTimerAndNavigate(Runnable timerMethod, AndroidDriver driver) {
@@ -148,12 +167,18 @@ public class Main {
     // === Setup Methods ===
 
     private void initializeDriver() throws Exception {
-        AppInitializer initializer = new AppInitializer(driver);
-        initializer.initializeDriver(); // Connects to device
-
-        // Set implicit wait
-//        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
-        System.out.println("Driver initialized successfully.");
+        UiAutomator2Options options = new UiAutomator2Options();
+        options.setPlatformName("Android");
+        options.setPlatformVersion("15");
+        try {
+            URL url = new URL("http://127.0.0.1:4723/wd/hub");
+            driver = new AndroidDriver(url, options);
+            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+            System.out.println("Driver initialized successfully for the device");
+        } catch (Exception e) {
+            System.err.println("Failed to initialize driver: " + e.getMessage());
+            throw e;
+        }
     }
 
     private static void backToHome() {
@@ -169,11 +194,17 @@ public class Main {
         }
     }
 
-    private void launchApp() {
+    private void launchApp(String appType) {
         ActionsUtil.SSleep(2);
-        driver.activateApp("com.atomberg.app");
-        ActionsUtil.SSleep(3);
-        System.out.println("App launched.");
+        if ("recorder".equals(appType)) {
+            driver.activateApp("com.hbisoft.hbrecorderexample");
+            ActionsUtil.SSleep(3);
+        }
+        else if ("atomberg".equals(appType)) {
+            driver.activateApp("com.atomberg.app");
+            ActionsUtil.SSleep(6);
+            System.out.println("Atomberg Home App launched.");
+        }
     }
 
     private boolean isOnLoginScreen() throws Exception{

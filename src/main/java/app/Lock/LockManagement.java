@@ -77,7 +77,7 @@ public class LockManagement implements SmartDevice {
         for (int i = 1; i <= 6; i++) {
             By pinField = By.xpath("(//android.widget.EditText)[" + i + "]");
             WebElement field = waitForElement(pinField, 10);
-            field.sendKeys(String.valueOf(AppUtil.Array()));
+            field.sendKeys(String.valueOf((int) (Math.random() * 9)));
         }
 
         clickWhenReady(atomberg, By.xpath("//android.widget.Button[@content-desc='Save']"));

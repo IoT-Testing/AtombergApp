@@ -15,6 +15,7 @@ import java.net.URL;
 import java.time.Duration;
 import static app.resources.AppInfo.*;
 import static app.resources.Credentials.*;
+import static app.resources.Endpoints.*;
 
 /**
  * AppInitializer – initialises the AndroidDriver and handles app launch.
@@ -57,10 +58,10 @@ public class AppInitializer {
                     "setDriver: driver must not be null. " +
                             "Ensure BaseTest.setup() completed successfully before calling setDriver().");
         }
-        this.atomberg = driver;
+        atomberg = driver;
         // Apply a consistent implicit-wait so all element lookups through this
         // initializer respect the same timeout as the rest of the test suite.
-        this.atomberg.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+        atomberg.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
         System.out.println("AppInitializer: driver set — session id: "
                 + atomberg.getSessionId());
     }

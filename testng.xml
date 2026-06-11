@@ -28,7 +28,7 @@
          DEVICE SLOT 1 — local / default device
          Core regression: open app → login → app tabs → fan control
          ══════════════════════════════════════════════════════════════════════ -->
-    <test name="Slot1 – Core Regression">
+    <test name="Slot1 – All Testa">
         <parameter name="deviceSlot" value="Local_Device_Slot1"/>
         <parameter name="deviceIp"   value="127.0.0.1"/>
         <parameter name="devicePort" value="5555"/>
@@ -37,6 +37,11 @@
             <class name="com.appTest.tests.LoginTest"/>
             <class name="com.appTest.tests.AppTest"/>
             <class name="com.appTest.tests.FanTest"/>
+            <class name="com.appTest.tests.ManageProfileTest"/>
+            <class name="com.appTest.tests.ManageFamilyTest"/>
+            <class name="com.appTest.tests.QuickSmokeTest"/>
+            <class name="com.appTest.tests.DeviceProvTest"/>
+            <class name="com.appTest.tests.SecondAppTest"/>
         </classes>
     </test>
 

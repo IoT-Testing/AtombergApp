@@ -13,7 +13,11 @@
 
             @Override
             public void onTestStart(ITestResult result) {
-                System.out.println("▶️ Test Started: " + result.getMethod().getMethodName());
+                try{
+                    System.out.println("▶️ Test Started: " + result.getMethod().getMethodName());
+                } catch (Exception e) {
+                    System.out.println("⚠️ Error in onTestStart(): " + e.getMessage());
+                }
             }
 
             @Override

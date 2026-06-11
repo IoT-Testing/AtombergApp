@@ -36,8 +36,10 @@ public class AppTest extends BaseTest {
 
     @BeforeClass(dependsOnMethods = "setup")
     public void initHelpers() {
-        appInit    = new AppInitializer();
-        appInit.setDriver(driver);
+        if(driver == null) {
+            throw new IllegalStateException("Driver not initialized. Check AppInitializer.");
+        }
+        appInit    = new AppInitializer(driver);
         emailLogin = new Email(driver);
         manage     = new Manage(driver);
     }
