@@ -22,7 +22,7 @@ public class PermissionUtil {
     private static final By PERMISSION_ICON = By.id("com.android.permissioncontroller:id/permission_icon");
     private static final By ALLOW_BUTTON = By.id("com.android.permissioncontroller:id/permission_allow_button");
     private static final By ALLOW_FOREGROUND_ONLY_BUTTON = By.id("com.android.permissioncontroller:id/permission_allow_foreground_only_button");
-
+    private static final By EMPTY_FAMILY_ADD_BUTTON = By.xpath("//android.widget.ImageView[@content-desc=\"Add your first smart device\"]");
     // Coordinate tap for Add button (fallback when no ID/XPath available)
     private static final int ADD_BUTTON_X = 540;
     private static final int ADD_BUTTON_Y = 1900;
@@ -49,6 +49,9 @@ public class PermissionUtil {
         private final AndroidDriver driver;
 
         public PermissionHandler(AndroidDriver driver) {
+            if (driver == null) {
+                throw new IllegalArgumentException("AndroidDriver must not be null. Initialize driver before calling PermissionUtil.");
+            }
             this.driver = driver;
         }
 
@@ -65,8 +68,12 @@ public class PermissionUtil {
                 System.out.println("All Permissions Granted");
                 alexaPopUp();                 // Optional cancel
                 clickEnableIfPresent();       // Handle Enable button
-            } else if (isAddDeviceButtonPresent(ADD_BUTTON_XPATH)) {
+            } else if (isAddDeviceButtonPresent(EMPTY_FAMILY_ADD_BUTTON)) {
                 handleEmptyFamilyFlow();
+            } else {
+                System.out.println("No permissions dialog detected, and Add Device button not found. Assuming permissions already granted.");
+                alexaPopUp();
+                clickEnableIfPresent();
             }
         }
 
@@ -120,6 +127,7 @@ public class PermissionUtil {
          * Navigates through empty family state: taps Add button and re-checks permissions.
          */
         private void handleEmptyFamilyFlow() {
+
             System.out.println("No device present – navigating to Add Device.");
             ActionsUtil.Tap.withCoordinates(driver, ADD_BUTTON_X, ADD_BUTTON_Y);
 

@@ -187,32 +187,6 @@ public class  FanManagement implements SmartDevice {
 //        }
 //    }
 
-    private Point getCenter(WebElement element) {
-        Pattern pattern = Pattern.compile("\\d+");
-        Matcher matcher = pattern.matcher(Objects.requireNonNull(element.getDomAttribute("bounds")));
-
-        // Use a loop to find each number and store it.
-        int[] coords = new int[4];
-        int i = 0;
-        while (matcher.find()) {
-            coords[i] = Integer.parseInt(matcher.group());
-            i++;
-        }
-
-        // Assign the extracted values to more readable variables
-        int x1 = coords[0];
-        int y1 = coords[1];
-        int x2 = coords[2];
-        int y2 = coords[3];
-
-        // Calculate the center
-        int centerX = (x1 + x2) / 2;
-        int centerY = (y1 + y2) / 2;
-        Point center = new Point(centerX, centerY);
-        System.out.println("Center coordinates: (" + centerX + ", " + centerY + ")");
-        return center;
-    }
-
     /**
      * Handles step to add new device, in this case Smart Fan.
      * Searches for "Atomberg Smart Fan", then clicks on "Connect" button besides it
@@ -270,7 +244,11 @@ public class  FanManagement implements SmartDevice {
 
     }
 
-    public void control(){}
+    public void control(){
+        if (isElementPresent(atomberg, DEVICES)) {
+            checkFanOnline();
+        }
+    }
 
     /**
      * Handles known error states post-connection attempt.

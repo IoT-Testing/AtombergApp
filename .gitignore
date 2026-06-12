@@ -5,6 +5,7 @@ logs/
 /target/
 /target/surefire-reports/
 /target
+AGENTS.md
 accounts.csv
 products.json
 category_products.json

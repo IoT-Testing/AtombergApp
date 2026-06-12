@@ -104,21 +104,7 @@ public class Main {
         handlePermissions();
         // Ensure we're on the home screen before proceeding
         FanManagement fan = new FanManagement(driver);
-        fan.addition(bof);
-        driver.openNotifications();
-        ActionsUtil.sleep(750);
-        ActionsUtil.Tap.withCoordinates(driver, 500, 500);
-        By acceptBtn = By.id("android:id/button1");
-        driver.findElement(acceptBtn).click();
-        ActionsUtil.SSleep(6);
-        driver.openNotifications();
-        ActionsUtil.sleep(500);
-        ActionsUtil.Tap.withCoordinates(driver, 500, 500);
-        driver.findElement(acceptBtn).click();
-        bleFanAddition();
 
-         driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Aris Fan\n" +
-                "Living Room\"]")).click();
          fan.speedCommands();
          runTimerAndNavigate(fan::timerOne, driver);
          runTimerAndNavigate(fan::timerTwo, driver);
