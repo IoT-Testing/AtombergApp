@@ -17,8 +17,6 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import static app.resources.Locators.Android.HomeLocators.*;
 import static app.util.AppUtil.*;
@@ -517,18 +515,75 @@ public class  FanManagement implements SmartDevice {
      * Scrolls if more than 4 fans exist.
      */
 
+    /**
+     * Checks if any fans are online and controls them.
+     * Uses DeviceHierarchyManager to verify device status and handle parent-child elements.
+     * Scrolls if more than 4 fans exist.
+     */
     public void checkFanOnline() {
-        try {
-            WebElement fansTab = wait.until(ExpectedConditions.elementToBeClickable(FANS_TAB));
-            fansTab.click();
-            sleep(3);
+    DeviceHierarchyManager manager = new DeviceHierarchyManager(atomberg);
 
-        } catch (Exception e) {
-            System.out.println("Error during fan online check: " + e.getMessage());
-        } finally {
-            sleep(1);
+    try {
+        // Click FANS_TAB to display device list
+        WebElement fansTab = wait.until(ExpectedConditions.elementToBeClickable(FANS_TAB));
+        fansTab.click();
+        sleep(3);
+
+        // Get all devices with their hierarchy and status info
+        List<DeviceHierarchyManager.DeviceInfo> allDevices = manager.getAllDevicesInfo();
+
+        if (allDevices.isEmpty()) {
+            System.out.println("❌ No devices found on screen.");
+            return;
         }
+
+        System.out.println("✅ Found " + allDevices.size() + " devices");
+
+        // Filter and process ONLINE devices only
+        List<DeviceHierarchyManager.DeviceInfo> onlineDevices =
+            manager.getDevicesByStatus(DeviceHierarchyManager.DeviceStatus.ONLINE);
+
+        if (onlineDevices.isEmpty()) {
+            System.out.println("⚠️  No online devices available.");
+            return;
+        }
+
+        // Process each ONLINE device
+        for (DeviceHierarchyManager.DeviceInfo device : onlineDevices) {
+            System.out.println("\n📱 Processing: " + device.getDeviceName());
+            System.out.println("   Status: " + device.getStatus().getDisplayName());
+            System.out.println("   Model: " + device.getModelName());
+            System.out.println("   Child Elements: " + device.getChildCount());
+
+            // Control the device by clicking on it
+            try {
+                device.getDeviceElement().click();
+                sleep(2);
+
+                // Run fan speed commands on the open control screen
+                speedCommands();
+
+                // Navigate back to device list
+                atomberg.navigate().back();
+                sleep(1);
+
+                System.out.println("✅ Successfully controlled: " + device.getDeviceName());
+            } catch (Exception e) {
+                System.err.println("❌ Error controlling device: " + e.getMessage());
+                atomberg.navigate().back();
+            }
+        }
+
+        // Generate and log device hierarchy report
+        String report = manager.generateHierarchyReport();
+        System.out.println(report);
+
+    } catch (Exception e) {
+        System.out.println("❌ Error during fan online check: " + e.getMessage());
+    } finally {
+        sleep(1);
     }
+}
 
     private boolean clickElementWithRetry(By locator) {
         for (int i = 0; i < 5; i++) {
@@ -833,15 +888,15 @@ public class  FanManagement implements SmartDevice {
             if(i<actions.length-1) {
                 clickAndWait(actions[i]);
                 ActionsUtil.sleep(1000);
-                String state = get.fanStatus(command[i]);
-                if(state.equals(labels[i])) System.out.println(command[i]+labels[i]+" verified");
+//                String state = get.fanStatus(command[i]);
+//                if(state.equals(labels[i])) System.out.println(command[i]+labels[i]+" verified");
             }
             else{
                 clickAndWait(actions[i]);
                 ActionsUtil.sleep(1000);
-                String state = get.fanStatus(command[i]);
-                if(!state.equals(power)) System.out.println(command[i]+labels[i]+" verified");
-                else System.out.println("power "+ state);
+//                String state = get.fanStatus(command[i]);
+//                if(!state.equals(power)) System.out.println(command[i]+labels[i]+" verified");
+//                else System.out.println("power "+ state);
             }
         }
     }

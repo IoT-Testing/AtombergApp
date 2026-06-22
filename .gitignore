@@ -1,24 +1,49 @@
-reports/
-/src/test/java/screenshots/
-/screenshots/
-logs/
-/target/
-/target/surefire-reports/
-/target
-AGENTS.md
-accounts.csv
-products.json
-category_products.json
-categories.json
-product flow.xlsx
-Product_Categories.xlsx
-Element Id.xlsx
-Atomberg_Home_App_Test_Cases
-DeviceProvisioningTest/
-FirmwareTests/
-appium/
+# ── Java / Maven ──────────────────────────────────────────────────────────────
+target/
+*.class
+*.jar
+*.war
 
-# Secrets — NEVER commit these
+# ── IDE ────────────────────────────────────────────────────────────────────────
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+
+# ── macOS ──────────────────────────────────────────────────────────────────────
+.DS_Store
+**/.DS_Store
+
+# ── Credentials & secrets (FIX C8 / M6) ──────────────────────────────────────
+# NEVER commit real credentials — use test.env.example as a template
 test.env
 *.env
 !test.env.example
+
+# ── Appium / Node (FIX C6: dist/ was committed — ~500 MB) ─────────────────────
+# The dist/ folder contains a full Node.js Windows binary and appium node_modules.
+# These must NEVER be committed. Install Appium globally: npm install -g appium
+dist/
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ── Test output ────────────────────────────────────────────────────────────────
+screenshots/
+logs/
+test-results/
+test-output/
+ExtentReports/
+coverage/
+*.png
+*.mp4
+
+# ── APKs / IPAs (store in release management, not git) ───────────────────────
+*.apk
+*.ipa
+src/test/resources/apps/
+
+# ── Surefire (generated, not source) ─────────────────────────────────────────
+target/surefire-reports/

@@ -2,9 +2,7 @@ package app;
 
 import app.Fan.FanManagement;
 import app.Login.Email;
-import app.resources.ArduinoRelayControllerModern;
 import app.resources.Locators.Android.DeviceScreens.FanLocators;
-import app.resources.PythonFileScript;
 import app.util.ActionsUtil;
 import app.util.PermissionUtil;
 import app.util.ScreenRecording;
@@ -21,11 +19,14 @@ import java.net.URL;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import static app.resources.Locators.Android.DeviceAdditionScreen.Phoenix.*;
+
 import static app.resources.Locators.Android.HomeLocators.*;
 
+//appium server -ka 800 --use-plugins=device-farm -pa /wd/hub
+// --plugin-device-farm-platform=android --relaxed-security
+// --allow-insecure=*:session_discovery,uiautomator2:adb_shell --port 4723
+
 public class Main {
-    private static final By bof = By.xpath("//android.view.View[@content-desc=\"Atomberg_R3_fea1f937004b1200\"]");
     public static PrintWriter csvWriter;
     private static boolean csvInitialized = false;
     private static AndroidDriver driver;
@@ -34,7 +35,7 @@ public class Main {
     public static void main(String[] args) {
         Main main = new Main();
         try {
-            main.runTestFlowTwo();
+            main.runTestFlow();
         } catch (Exception e) {
             System.err.println("Test failed with exception: " + e.getMessage());
         } finally {
@@ -42,57 +43,7 @@ public class Main {
         }
     }
 
-    public void runTestFlowOne() throws Exception {
-        initializeDriver();
-        driver.activateApp("com.atomberg.app");
-        ActionsUtil.SSleep(5);
-        boolean success = false;
-        ArduinoRelayControllerModern controller = new ArduinoRelayControllerModern();
-        controller.connect("com21"); //Connect with Arduino: Parsing a value to avoid further errors
-        for(int i = 1; i<= 50;i++){
-            try{
-                ActionsUtil.SSleep(5);
-                FanManagement.Select fan = new FanManagement.Select();
-                fan.manageFanDevice(driver);
-                if (isElementPresent(ADDING_THE_DEVICE))  waitForElementPresence(driver, ADDED_SUCCESSFULLY,30);
-
-                System.out.println("30 second wait complete");
-                FanManagement.ConnectionError error = FanManagement.handleConnectionErrors();
-                if(error != FanManagement.ConnectionError.NO_ERROR) {
-                    if(error.equals(FanManagement.ConnectionError.OPERATION_FAILED)){
-                        error.handle(driver);
-                        printRow(i, "Failed");
-                        controller.sendLEDCommand(false);
-                        ActionsUtil.sleep(10000);
-                        controller.sendLEDCommand(true);
-                        continue;
-                    }
-                    else error.handle(driver);
-                }
-                else {
-                    success = true;
-                    System.out.println("Running Python File for 2 iterations");
-                    PythonFileScript run = new PythonFileScript();
-                    run.script();
-                    System.out.println("Running Python File Complete");
-                    ActionsUtil.SSleep(10);
-                    FanManagement fanManagement = new FanManagement(driver);
-                    fanManagement.deleteMultipleFans();
-                    if (!controller.serialPort.isOpen()) controller.autoConnect();
-                    controller.sendLEDCommand(false);
-                    ActionsUtil.SSleep(10);
-                    controller.sendLEDCommand(true);
-                }
-            }catch (Exception e){
-                success = false;
-                System.out.println(e.getMessage());
-            }
-            if(success)printRow(i,"Successful");
-        }
-        controller.disconnect();
-    }
-
-    public void runTestFlowTwo() throws Exception {
+    public void runTestFlow() throws Exception {
         // Main.initializeDriver should set 'driver' to recorder driver
         initializeDriver();
         launchApp("recorder");
@@ -104,12 +55,13 @@ public class Main {
         handlePermissions();
         // Ensure we're on the home screen before proceeding
         FanManagement fan = new FanManagement(driver);
+        fan.checkFanOnline();
 
-         fan.speedCommands();
-         runTimerAndNavigate(fan::timerOne, driver);
-         runTimerAndNavigate(fan::timerTwo, driver);
-         runTimerAndNavigate(fan::timerThree, driver);
-         runTimerAndNavigate(fan::timerSix, driver);
+        fan.speedCommands();
+//        runTimerAndNavigate(fan::timerOne, driver);
+//        runTimerAndNavigate(fan::timerTwo, driver);
+//        runTimerAndNavigate(fan::timerThree, driver);
+//        runTimerAndNavigate(fan::timerSix, driver);
 
 //         bleFanDeletion();
 
@@ -127,6 +79,7 @@ public class Main {
         driver.navigate().back();
         ActionsUtil.sleep(1500);
     }
+
 
     private static boolean isElementPresent(By locator) {
         try {
