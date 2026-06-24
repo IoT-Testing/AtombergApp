@@ -1,0 +1,238 @@
+{
+    "data": {
+        "categories": {
+            "total_count": 1,
+            "page_info": {
+                "current_page": 1,
+                "page_size": 10,
+                "total_pages": 1
+            },
+            "items": [
+                {
+                    "name": "Default Category",
+                    "children": [
+                        {
+                            "id": 3,
+                            "name": "Ceiling Fans",
+                            "image": "https://media.atomberg.com/media/catalog/category/CB_Fan_2309_Desktop_02.jpg",
+                            "url_key": "atomberg-ceiling-fans",
+                            "children": [
+                                {
+                                    "id": 51,
+                                    "name": "Renesa Series Ceiling Fans",
+                                    "image": "https://media.atomberg.com/media/catalog/category/RenesaSeriesDesktop_1_.jpg",
+                                    "url_key": "renesa-series-ceiling-fans"
+                                },
+                                {
+                                    "id": 29,
+                                    "name": "Studio Series Ceiling Fans",
+                                    "image": "https://media.atomberg.com/media/catalog/category/StudioSeriesDesktop_4.jpg",
+                                    "url_key": "studio-series"
+                                },
+                                {
+                                    "id": 30,
+                                    "name": "Efficio Series Ceiling Fans",
+                                    "image": "https://media.atomberg.com/media/catalog/category/EfficioSeriesDesktop_1_.jpg",
+                                    "url_key": "efficio-series"
+                                },
+                                {
+                                    "id": 31,
+                                    "name": "Ozeo Series Ceiling Fans",
+                                    "image": "https://media.atomberg.com/media/catalog/category/OzeoSeriesDesktop_2.jpg",
+                                    "url_key": "ozeo-series-ceiling-fans"
+                                },
+                                {
+                                    "id": 52,
+                                    "name": "Erica series Ceiling Fans",
+                                    "image": "https://media.atomberg.com/media/catalog/category/EricaSeriesDesktop_2.jpg",
+                                    "url_key": "erica-series"
+                                },
+                                {
+                                    "id": 61,
+                                    "name": "Ikano Series Ceiling Fans",
+                                    "image": null,
+                                    "url_key": "ikano-series-ceiling-fans"
+                                },
+                                {
+                                    "id": 62,
+                                    "name": "Ameza Series Ceiling Fans",
+                                    "image": null,
+                                    "url_key": "ameza-series-ceiling-fans"
+                                },
+                                {
+                                    "id": 67,
+                                    "name": "Studio Smart +",
+                                    "image": null,
+                                    "url_key": "studio-smart"
+                                },
+                                {
+                                    "id": 86,
+                                    "name": "Smart Fans",
+                                    "image": "https://media.atomberg.com/media/catalog/category/Buttons_Smart_Fans_0705.png",
+                                    "url_key": "smart-fans"
+                                },
+                                {
+                                    "id": 70,
+                                    "name": "Aris Ceiling Fan Series",
+                                    "image": "https://media.atomberg.com/media/catalog/category/Smart_Fan_Aris_Banner_1_1.jpg",
+                                    "url_key": "aris-ceiling-fan-series"
+                                },
+                                {
+                                    "id": 87,
+                                    "name": "Underlight Fans",
+                                    "image": "https://media.atomberg.com/media/catalog/category/Buttons_Underlight_Fans_0705.png",
+                                    "url_key": "underlight-fans"
+                                },
+                                {
+                                    "id": 88,
+                                    "name": "Sleek Fans",
+                                    "image": "https://media.atomberg.com/media/catalog/category/Buttons_Sleek_Fans_0705.png",
+                                    "url_key": "sleek-fans"
+                                },
+                                {
+                                    "id": 89,
+                                    "name": "Designer Fans",
+                                    "image": "https://media.atomberg.com/media/catalog/category/Buttons_Designer_Fans_0705.png",
+                                    "url_key": "designer-fans"
+                                },
+                                {
+                                    "id": 90,
+                                    "name": "Premium Fans",
+                                    "image": "https://media.atomberg.com/media/catalog/category/Premium_Fans_Renesa_Smart_Banner_1.jpg",
+                                    "url_key": "premium-fans"
+                                },
+                                {
+                                    "id": 91,
+                                    "name": "Large Fans",
+                                    "image": "https://media.atomberg.com/media/catalog/category/Large_Fans_Renesa_1400_Banner_1.jpg",
+                                    "url_key": "large-fans"
+                                },
+                                {
+                                    "id": 92,
+                                    "name": "Small Fans",
+                                    "image": "https://media.atomberg.com/media/catalog/category/Small_Fans_Renesa_600_Banner_1.jpg",
+                                    "url_key": "small-fans"
+                                },
+                                {
+                                    "id": 93,
+                                    "name": "Classic Fans",
+                                    "image": "https://media.atomberg.com/media/catalog/category/Buttons_Classic_Fans_0705.png",
+                                    "url_key": "classic-fans"
+                                },
+                                {
+                                    "id": 94,
+                                    "name": "Regulator Based Fans",
+                                    "image": "https://media.atomberg.com/media/catalog/category/Buttons_Regulator_Fans_0705.png",
+                                    "url_key": "regulator-based-fans"
+                                },
+                                {
+                                    "id": 95,
+                                    "name": "All Fans",
+                                    "image": "https://media.atomberg.com/media/catalog/category/Buttons_All_Fans_0705.png",
+                                    "url_key": "all-fans"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 7,
+                            "name": "Exhaust Fans",
+                            "image": "https://media.atomberg.com/media/catalog/category/1-Exhaust-CB.jpg",
+                            "url_key": "exhaust-fans",
+                            "children": [
+                                {
+                                    "id": 34,
+                                    "name": "Studio Series Exhaust Fan",
+                                    "image": "https://media.atomberg.com/media/catalog/category/StudioDesktop.jpg",
+                                    "url_key": "studio-series-exhaust-fans"
+                                },
+                                {
+                                    "id": 53,
+                                    "name": "Efficio Series Exhaust Fans",
+                                    "image": "https://media.atomberg.com/media/catalog/category/EfficioDesktop.jpg",
+                                    "url_key": "efficio-exhaust-fan-series"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 5,
+                            "name": "Wall Fans",
+                            "image": "https://media.atomberg.com/media/catalog/category/Wall_PC_Banner.jpg",
+                            "url_key": "wall-fans",
+                            "children": [
+                                {
+                                    "id": 63,
+                                    "name": "Renesa Series",
+                                    "image": "https://media.atomberg.com/media/catalog/category/WallFansDesktop_2_1.jpg",
+                                    "url_key": "renesa-series"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 10,
+                            "name": "Mixer Grinder",
+                            "image": "https://media.atomberg.com/media/catalog/category/CB_DESKTOP_MG_1308.jpg",
+                            "url_key": "mixer-grinder",
+                            "children": []
+                        },
+                        {
+                            "id": 4,
+                            "name": "Pedestal Fans",
+                            "image": "https://media.atomberg.com/media/catalog/category/PED_PC_Banner.jpg",
+                            "url_key": "pedestal-fans",
+                            "children": [
+                                {
+                                    "id": 58,
+                                    "name": "Renesa series Pedestal Fans",
+                                    "image": "https://media.atomberg.com/media/catalog/category/RenesaSeriesPedestalFansDesktop_1_1.jpg",
+                                    "url_key": "renesa-series"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 68,
+                            "name": "Smart Locks",
+                            "image": "https://media.atomberg.com/media/catalog/category/CB_DESK_SL_1308.jpg",
+                            "url_key": "smart-lock-sl-1",
+                            "children": []
+                        },
+                        {
+                            "id": 96,
+                            "name": "Table Fans",
+                            "image": null,
+                            "url_key": "table-fans",
+                            "children": []
+                        },
+                        {
+                            "id": 8,
+                            "name": "Accessories",
+                            "image": "https://media.atomberg.com/media/catalog/category/pc-landing-new_2.jpg",
+                            "url_key": "accessories",
+                            "children": []
+                        },
+                        {
+                            "id": 97,
+                            "name": "Water Purifier",
+                            "image": null,
+                            "url_key": "water-purifiers",
+                            "children": []
+                        },
+                        {
+                            "id": 98,
+                            "name": "BLDC Ceiling Fans",
+                            "image": null,
+                            "url_key": "bldc-ceiling-fans",
+                            "children": []
+                        },
+                        {
+                            "id": 99,
+                            "name": "Cold Press Juicer",
+                            "image": null,
+                            "url_key": "juicer",
+                            "children": []
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}

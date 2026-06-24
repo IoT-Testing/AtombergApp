@@ -1,13 +1,21 @@
 package app.util;
 
+<<<<<<< HEAD
 import app.resources.Locators.Android.HomeLocators;
+=======
+
+>>>>>>> ce4adeb5b38bb8676c5b5d4a5069097e4c04594a
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.appmanagement.ApplicationState;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+<<<<<<< HEAD
 
+=======
+import java.io.BufferedReader;
+>>>>>>> ce4adeb5b38bb8676c5b5d4a5069097e4c04594a
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;

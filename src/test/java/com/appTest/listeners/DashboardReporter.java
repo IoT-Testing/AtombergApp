@@ -1,148 +1,119 @@
 package com.appTest.listeners;
 
 import com.appTest.models.AppiumTestResult;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.testng.*;
-import com.fasterxml.jackson.databind.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 
+/**
+ * DashboardReporter – writes test results to a JSON file for dashboard consumption.
+ * FIX H5: The original {@code results} field was a plain static {@code ArrayList}.
+ * In parallel runs ({@code parallel="tests"}) multiple threads call onTestSuccess /
+ * onTestFailure / onTestSkipped concurrently → {@code ConcurrentModificationException}.
+ * Fix: replaced with {@link CopyOnWriteArrayList} which is thread-safe for concurrent
+ * writes without needing explicit synchronization. For write-heavy scenarios a
+ * {@code ConcurrentLinkedQueue} would be preferable, but test suites produce at most
+ * hundreds of results so CopyOnWriteArrayList's copy-on-write cost is negligible.
+ */
 public class DashboardReporter implements ITestListener {
 
-    private static final AtomicLong ID_GENERATOR = new AtomicLong(1);
-    private static final String OUTPUT_FILE = "test-results/dashboard-data.json";
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final AtomicLong ID_GEN      = new AtomicLong(1);
+    private static final String     OUTPUT_DIR   = "test-results";
+    private static final String     OUTPUT_FILE  = OUTPUT_DIR + "/dashboard-data.json";
 
-    // Store results in memory for batch write
-    private static final List<AppiumTestResult> results = new ArrayList<>();
+    private static final ObjectMapper MAPPER = new ObjectMapper()
+            .enable(SerializationFeature.INDENT_OUTPUT);
 
-    @Override
-    public void onTestStart(ITestResult result) {
-        // Optional: log test start
-    }
+    /*
+     * FIX H5: CopyOnWriteArrayList replaces ArrayList for concurrent safety.
+     * Static field so all listener instances (one per parallel thread) share the
+     * same result accumulator — matches the intended "one file per suite" design.
+     */
+    private static final List<AppiumTestResult> RESULTS = new CopyOnWriteArrayList<>();
+
+    // ── ITestListener callbacks ──────────────────────────────────────────────
 
     @Override
     public void onTestSuccess(ITestResult result) {
-        saveResult(result, "passed", null);
+        record(result, "passed", null, null);
     }
 
     @Override
     public void onTestFailure(ITestResult result) {
-        String errorMsg = result.getThrowable() != null ?
-                result.getThrowable().getMessage() : "Unknown error";
-        String stackTrace = result.getThrowable() != null ?
-                getStackTraceAsString(result.getThrowable()) : null;
-        saveResult(result, "failed", errorMsg, stackTrace);
+        Throwable t = result.getThrowable();
+        record(result, "failed",
+                t != null ? t.getMessage() : "Unknown error",
+                t != null ? stackTraceString(t) : null);
     }
 
     @Override
     public void onTestSkipped(ITestResult result) {
-        saveResult(result, "skipped", result.getThrowable() != null ?
-                result.getThrowable().getMessage() : "Test skipped");
+        Throwable t = result.getThrowable();
+        record(result, "skipped",
+                t != null ? t.getMessage() : "Skipped",
+                null);
     }
 
     @Override
     public void onFinish(ITestContext context) {
-        // Write all results to file when suite completes
         writeResultsToFile();
-
-        // Optional: Send to API endpoint
-        // sendToDashboardAPI();
     }
 
-    private void saveResult(ITestResult result, String status, String errorMessage) {
-        saveResult(result, status, errorMessage, null);
-    }
+    // ── Helpers ──────────────────────────────────────────────────────────────
 
-    private void saveResult(ITestResult result, String status, String errorMessage, String stackTrace) {
-        // Extract platform/device from TestNG parameters or capabilities
-        String platform = extractParameter(result, "platform",
-                System.getProperty("appium.platformName", "Android"));
-        String device = extractParameter(result, "deviceName",
-                System.getProperty("appium.deviceName", "Unknown"));
+    private void record(ITestResult result, String status, String error, String stackTrace) {
+        String platform = param(result, "platform",    System.getProperty("appium.platformName", "Android"));
+        String device   = param(result, "deviceSlot",  System.getProperty("appium.deviceName",   "Unknown"));
+        long   duration = (result.getEndMillis() - result.getStartMillis()) / 1_000;
 
-        // Calculate duration in seconds
-        long duration = (result.getEndMillis() - result.getStartMillis()) / 1000;
-
-        AppiumTestResult testResult = new AppiumTestResult.Builder()
-                .id(ID_GENERATOR.getAndIncrement())
+        AppiumTestResult r = new AppiumTestResult.Builder()
+                .id(ID_GEN.getAndIncrement())
                 .name(result.getMethod().getMethodName())
                 .status(status)
                 .platform(platform)
                 .device(device)
                 .duration(duration)
                 .timestamp(Instant.now().toString())
-                .className(result.getTestClass().getName())
-                .errorMessage(errorMessage)
+                .errorMessage(error)
                 .stackTrace(stackTrace)
                 .build();
 
-        results.add(testResult);
-    }
-
-    private String extractParameter(ITestResult result, String paramName, String defaultValue) {
-        // Try TestNG parameters first
-        if (result.getTestContext().getCurrentXmlTest().getParameter(paramName) != null) {
-            return result.getTestContext().getCurrentXmlTest().getParameter(paramName);
-        }
-        // Fallback to system property
-        return System.getProperty("appium." + paramName, defaultValue);
-    }
-
-    private String getStackTraceAsString(Throwable throwable) {
-        java.io.StringWriter sw = new java.io.StringWriter();
-        throwable.printStackTrace(new java.io.PrintWriter(sw));
-        return sw.toString();
+        RESULTS.add(r);  // Thread-safe add
     }
 
     private void writeResultsToFile() {
         try {
-            // Ensure directory exists
-            new File("test-results").mkdirs();
-
-            // Write as JSON array (append mode for multiple runs)
-            String json = MAPPER.writeValueAsString(results);
-            Files.write(
-                    Paths.get(OUTPUT_FILE),
-                    json.getBytes(),
-                    StandardOpenOption.CREATE,
-                    StandardOpenOption.TRUNCATE_EXISTING
-            );
-            System.out.println("✓ Dashboard results written to: " + OUTPUT_FILE);
-
+            Files.createDirectories(Paths.get(OUTPUT_DIR));
+            MAPPER.writeValue(new File(OUTPUT_FILE), RESULTS);
+            System.out.println("[DashboardReporter] Results written to: " + OUTPUT_FILE);
         } catch (IOException e) {
-            System.err.println("✗ Failed to write dashboard results: " + e.getMessage());
+            System.err.println("[DashboardReporter] Failed to write results file: " + e.getMessage());
         }
     }
 
-//   //  Optional: Send directly to a backend API
-//    private void sendToDashboardAPI() {
-//        // Uncomment and configure if using REST API approach
-//
-//        try {
-//            OkHttpClient client = new OkHttpClient();
-//            String json = MAPPER.writeValueAsString(results);
-//
-//            RequestBody body = RequestBody.create(
-//                json,
-//                MediaType.parse("application/json; charset=utf-8")
-//            );
-//
-//            Request request = new Request.Builder()
-//                .url("http://localhost:3000/api/test-results") // Your API endpoint
-//                .post(body)
-//                .build();
-//
-//            client.newCall(request).execute();
-//        } catch (Exception e) {
-//            System.err.println("Failed to send to API: " + e.getMessage());
-//        }
-//
-//    }
+    private String param(ITestResult result, String paramName, String fallback) {
+        // Try TestNG parameters first
+        Object[] params = result.getParameters();
+        // Parameters are positional, not named — use system properties as fallback
+        String v = result.getTestContext().getCurrentXmlTest().getParameter(paramName);
+        return (v != null && !v.isBlank()) ? v : fallback;
+    }
+
+    private String stackTraceString(Throwable t) {
+        StringBuilder sb = new StringBuilder();
+        for (StackTraceElement e : t.getStackTrace()) {
+            sb.append("  at ").append(e).append("\n");
+            if (sb.length() > 2_000) { sb.append("  ... truncated"); break; }
+        }
+        return sb.toString();
+    }
 }

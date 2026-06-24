@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # ── Java / Maven ──────────────────────────────────────────────────────────────
 target/
 *.class
@@ -47,3 +48,6 @@ src/test/resources/apps/
 
 # ── Surefire (generated, not source) ─────────────────────────────────────────
 target/surefire-reports/
+=======
+reports/
+>>>>>>> ce4adeb5b38bb8676c5b5d4a5069097e4c04594a

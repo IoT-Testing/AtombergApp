@@ -3,245 +3,230 @@ package app;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 
-
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
+import java.util.List;
 
 /**
- * ServerInitializer - Manages the lifecycle of the Appium server.
+ * ServerInitializer – manages the Appium server lifecycle.
  *
- * <p>Refactored to:
- * <ul>
- *   <li>Remove hardcoded paths</li>
- *   <li>Add cross-platform support</li>
- *   <li>Improve error handling</li>
- *   <li>Support flexible configuration</li>
- * </ul>
+ * <p>Supports three execution modes:
+ * <ol>
+ *   <li><b>External server already running</b> (Appium GUI / Device Farm started separately) –
+ *       detected automatically; programmatic start is skipped.</li>
+ *   <li><b>Programmatic start with Device Farm plugin</b> – starts Appium + ATD plugin in-process.</li>
+ *   <li><b>CI/CD with APPIUM_URL set</b> – remote hub; no local server needed.</li>
+ * </ol>
+ *
+ * FIX C7: All hardcoded absolute paths ("C:/Users/Rohitbhagat/...") removed.
+ *         Appium is located via APPIUM_JS_PATH env var → PATH resolution → OS-specific heuristics.
+ * FIX H3: withAppiumJS() is now called when main.js is found so Appium starts reliably.
+ * FIX H4: ATD readiness check uses correct endpoint /device-farm/api/device (not /devices).
  */
 public class ServerInitializer {
 
     public AppiumDriverLocalService service;
-    private static final int DEFAULT_PORT = 4723;
+
+    private static final String APPIUM_URL      = System.getenv().getOrDefault("APPIUM_URL", "http://127.0.0.1:4723");
+    private static final String ATD_DEVICE_API  = APPIUM_URL + "/device-farm/api/device"; // FIX H4
+    private static final String STATUS_ENDPOINT = APPIUM_URL + "/status";
+    private static final int    DEFAULT_PORT    = 4723;
+
+    // ── Public API ─────────────────────────────────────────────────────────────
 
     /**
-     * Starts the Appium server using a free port.
-     * Tries to auto-detect Appium installation path.
+     * Starts the Appium server (or skips if already running externally).
      */
-    private static final String DEVICE_FARM_URL  = "http://localhost:4723";
-    private static final String DEVICE_FARM_HUB = DEVICE_FARM_URL + "/wd/hub";
-
     public void startServer() {
-
-        // Mode 1: Check if Device Farm is already running (external/GUI)
         if (isExternalServerRunning()) {
-            System.out.println("Appium + Device Farm already running at: " + DEVICE_FARM_URL);
-            System.out.println("Skipping programmatic server start.");
+            System.out.println("[ServerInitializer] External Appium server detected at " + APPIUM_URL + " — skipping local start.");
             return;
         }
-
-        // Mode 2: Start programmatically with Device Farm plugin
         if (isServerRunning()) {
-            System.out.println("Appium server already running at: " + service.getUrl());
+            System.out.println("[ServerInitializer] Programmatic server already running at: " + service.getUrl());
             return;
         }
 
         try {
-            AppiumServiceBuilder builder = configureServiceBuilder();
+            AppiumServiceBuilder builder = buildServiceBuilder();
             service = builder.build();
             service.start();
 
             if (!service.isRunning()) {
-                throw new RuntimeException("Appium service started but not detected as running.");
+                throw new RuntimeException("Appium service started but isRunning() returned false — check Appium installation.");
             }
 
-            // Device Farm needs a few seconds to initialize device pool
             waitForDeviceFarmReady();
-
-            System.out.println("Appium + Device Farm started at: " + service.getUrl());
-            System.out.println("Device Farm dashboard: " + DEVICE_FARM_URL + "/device-farm");
+            System.out.println("[ServerInitializer] Appium + Device Farm started at: " + service.getUrl());
 
         } catch (Exception e) {
-            System.err.println("Failed to start Appium server: " + e.getMessage());
+            System.err.println("[ServerInitializer] FATAL: Failed to start Appium server: " + e.getMessage());
             throw new RuntimeException("Appium server failed to start", e);
         }
     }
 
-
-
     /**
-     * Checks if an external Appium server (e.g. Appium GUI) is running
-     * by hitting the /status endpoint.
+     * Stops the locally started service. Never touches an external (GUI-managed) server.
      */
-    private boolean isExternalServerRunning() {
-        try {
-            HttpURLConnection conn = (HttpURLConnection)
-                    new URL(DEVICE_FARM_URL + "/status").openConnection();
-            conn.setConnectTimeout(3000);
-            conn.setRequestMethod("GET");
-            conn.connect();
-            return conn.getResponseCode() == 200;
-        } catch (Exception e) {
-            return false; // No external server reachable
+    public void stopServer() {
+        if (isExternalServerRunning() && !isServerRunning()) {
+            System.out.println("[ServerInitializer] External Appium server — skipping stop.");
+            return;
+        }
+        if (isServerRunning()) {
+            service.stop();
+            service = null;
+            System.out.println("[ServerInitializer] Appium server stopped.");
         }
     }
 
-    private void waitForDeviceFarmReady() {
-        System.out.println("Waiting for Device Farm to initialize device pool...");
-        int maxWaitSeconds = 30;
-        int waited = 0;
-
-        while (waited < maxWaitSeconds) {
-            try {
-                Thread.sleep(2000);
-                waited += 2;
-
-                // Poll Device Farm device list endpoint
-                java.net.URL url = new java.net.URL(
-                        DEVICE_FARM_URL + "/device-farm/api/devices");
-                java.net.HttpURLConnection conn =
-                        (java.net.HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("GET");
-                conn.setConnectTimeout(2000);
-                conn.setReadTimeout(2000);
-
-                int status = conn.getResponseCode();
-                if (status == 200) {
-                    System.out.println("Device Farm ready. (" + waited + "s)");
-                    return;
-                }
-            } catch (Exception e) {
-                System.out.println("Device Farm not ready yet... (" + waited + "s)");
-            }
-        }
-
-        // Non-fatal — server may still work even if endpoint isn't up
-        System.err.println("Warning: Device Farm readiness check timed out after "
-                + maxWaitSeconds + "s. Proceeding anyway.");
-    }
-
-    /**
-     * Checks if the programmatically started service is running.
-     */
     public boolean isServerRunning() {
         return service != null && service.isRunning();
     }
 
-    /**
-     * Stops the Appium server gracefully.
-     */
-    public void stopServer() {
-        if (isExternalServerRunning() && !isServerRunning()) {
-            // Server was GUI-managed — don't touch it
-            System.out.println("External Appium server detected. Skipping stop.");
-            return;
-        }
+    // ── Private helpers ────────────────────────────────────────────────────────
 
-        if (isServerRunning()) {
-            service.stop();
-            service = null;
-            System.out.println("Appium server stopped.");
+    /**
+     * Pings the /status endpoint to detect an already-running server.
+     */
+    private boolean isExternalServerRunning() {
+        try {
+            HttpURLConnection conn = (HttpURLConnection) new URL(STATUS_ENDPOINT).openConnection();
+            conn.setConnectTimeout(3_000);
+            conn.setReadTimeout(3_000);
+            conn.setRequestMethod("GET");
+            conn.connect();
+            return conn.getResponseCode() == 200;
+        } catch (Exception e) {
+            return false;
         }
     }
 
+    /**
+     * FIX H4: Polls the correct ATD endpoint /device-farm/api/device (singular).
+     * Previous code polled /device-farm/api/devices which does not exist → 404 always.
+     */
+    private void waitForDeviceFarmReady() {
+        System.out.println("[ServerInitializer] Waiting for Appium Device Farm to initialise device pool...");
+        final int maxWaitSeconds = 30;
+        int waited = 0;
 
-    // === Internal Helpers ===
+        while (waited < maxWaitSeconds) {
+            try {
+                Thread.sleep(2_000);
+                waited += 2;
+
+                HttpURLConnection conn = (HttpURLConnection) new URL(ATD_DEVICE_API).openConnection();
+                conn.setRequestMethod("GET");
+                conn.setConnectTimeout(2_000);
+                conn.setReadTimeout(2_000);
+
+                if (conn.getResponseCode() == 200) {
+                    System.out.println("[ServerInitializer] Device Farm ready after " + waited + "s.");
+                    return;
+                }
+            } catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
+                return;
+            } catch (Exception e) {
+                System.out.printf("[ServerInitializer] Waiting for Device Farm... (%ds)%n", waited);
+            }
+        }
+        System.err.println("[ServerInitializer] WARNING: Device Farm readiness check timed out after "
+                + maxWaitSeconds + "s. Proceeding anyway.");
+    }
 
     /**
-     * Configures the Appium service builder with platform-aware settings.
+     * Builds the AppiumServiceBuilder.
+     *
+     * FIX C7 / H3: detectAppiumJsPath() uses environment variables and OS-aware
+     * heuristics — no hardcoded personal paths.
      */
-    private AppiumServiceBuilder configureServiceBuilder() {
-        return new AppiumServiceBuilder()
+    private AppiumServiceBuilder buildServiceBuilder() {
+        AppiumServiceBuilder builder = new AppiumServiceBuilder()
                 .withIPAddress("127.0.0.1")
-                .usingPort(4723)
-
-                // Base path required for Device Farm
-                .withArgument(() -> "--base-path", "/wd/hub")
-
-                // Activate Device Farm plugin
+                .usingPort(DEFAULT_PORT)
+                .withArgument(() -> "--base-path", "/")            // Appium 3 default
                 .withArgument(() -> "--use-plugins", "device-farm")
-
-                // Target platform
                 .withArgument(() -> "--plugin-device-farm-platform", "android")
-
-                // Keep alive timeout
                 .withArgument(() -> "--keep-alive-timeout", "800")
-
-                // Security — scoped flags required by Appium 3
                 .withArgument(() -> "--allow-insecure",
                         "*:session_discovery,uiautomator2:adb_shell")
+                .withArgument(() -> "--log-level", "info")
+                .withLogFile(getLogFile());
 
-                // Optional: more verbose logs during migration
-                .withArgument(() -> "--log-level", "info");
+        // FIX H3: Attempt to locate main.js; if found, pass to withAppiumJS() so
+        // AppiumServiceBuilder does not have to rely on PATH resolution (fragile on CI).
+        File mainJs = detectAppiumJsPath();
+        if (mainJs != null) {
+            builder.withAppiumJS(mainJs);
+            System.out.println("[ServerInitializer] Using Appium main.js: " + mainJs.getAbsolutePath());
+        } else {
+            System.out.println("[ServerInitializer] Appium main.js not found via heuristics; relying on PATH.");
+        }
+
+        return builder;
     }
+
     /**
-     * Attempts to detect the Appium main.js path based on OS.
+     * Locates Appium's main.js using environment variables and OS-specific conventions.
      *
-     * @return Detected File or null
+     * FIX C7: Removed hardcoded "C:/Users/Rohitbhagat/..." path entirely.
+     * Priority:
+     *   1. APPIUM_JS_PATH env var (highest priority — set this in CI secrets)
+     *   2. Windows global npm: %APPDATA%/npm/node_modules/appium/build/lib/main.js
+     *   3. macOS/Linux: $(npm root -g)/appium/build/lib/main.js resolved via common prefixes
+     *   4. Returns null → relying on PATH (still works if appium is on PATH)
      */
     private File detectAppiumJsPath() {
-        // 🔥 Priority 1: Override via env var or system property
-        String override = System.getProperty("appium.js.path");
-        if (override == null) override = System.getenv("APPIUM_JS_PATH");
-        if (override != null && Files.exists(Paths.get(override))) {
-            return new File(override);
+        // Priority 1: explicit override
+        String envOverride = System.getenv("APPIUM_JS_PATH");
+        if (envOverride != null && !envOverride.isBlank() && Files.exists(Paths.get(envOverride))) {
+            return new File(envOverride);
         }
 
-        // 🔥 Priority 2: Your confirmed working path (Rohit's machine)
-        String knownPath = "C:/Users/Rohitbhagat/AppData/Roaming/npm/node_modules/appium/build/lib/main.js";
-        if (Files.exists(Paths.get(knownPath))) {
-            System.out.println("✓ Using known Appium path: " + knownPath);
-            return new File(knownPath);
-        }
+        String os = System.getProperty("os.name", "").toLowerCase();
+        String relativeMainJs = String.join(File.separator, "appium", "build", "lib", "main.js");
 
-        // 🔥 Priority 3: Windows fallback paths (NO npm command calls)
-        if (System.getProperty("os.name").toLowerCase().contains("win")) {
-            String userHome = System.getProperty("user.home");
+        if (os.contains("win")) {
+            // Priority 2a: %APPDATA%\npm\node_modules\...
             String appData = System.getenv("APPDATA");
+            if (appData != null) {
+                Path candidate = Paths.get(appData, "npm", "node_modules", relativeMainJs);
+                if (Files.exists(candidate)) return candidate.toFile();
+            }
+            // Priority 2b: user.home\AppData\Roaming\npm\node_modules\...
+            Path candidate = Paths.get(System.getProperty("user.home"),
+                    "AppData", "Roaming", "npm", "node_modules", relativeMainJs);
+            if (Files.exists(candidate)) return candidate.toFile();
 
-            Path[] candidates = {
-                    // Standard global npm install location
-                    Paths.get(appData, "npm", "node_modules", "appium", "build", "lib", "main.js"),
-                    // User home variant
-                    Paths.get(userHome, "AppData", "Roaming", "npm", "node_modules", "appium", "build", "lib", "main.js"),
-                    // NVM-Windows pattern (if used)
-                    Paths.get(userHome, "nvm", "node_modules", "appium", "build", "lib", "main.js")
-            };
-
-            for (Path candidate : candidates) {
-                if (candidate != null && Files.exists(candidate)) {
-                    System.out.println("✓ Found Appium at: " + candidate);
-                    return candidate.toFile();
-                }
+        } else {
+            // Priority 3: Unix — check common global npm roots
+            for (String prefix : List.of(
+                    "/usr/local/lib",
+                    "/usr/lib",
+                    System.getProperty("user.home") + "/.nvm/versions/node"
+            )) {
+                Path candidate = Paths.get(prefix, "node_modules", relativeMainJs);
+                if (Files.exists(candidate)) return candidate.toFile();
             }
         }
 
-        // 🔥 Priority 4: Unix paths (unchanged)
-        // ... your existing Unix logic ...
-
-        System.err.println("✗ Appium main.js not found.");
-        System.err.println("  → Set APPIUM_JS_PATH env var to the full path of main.js");
-        System.err.println("  → Or ensure Appium is installed: npm install -g appium");
-        return null;
+        return null; // main.js not found — caller will rely on PATH
     }
+
     /**
-     * Returns log file for Appium server output (optional).
-     *
-     * @return Log file
+     * Returns a time-stamped log file under logs/appium/.
      */
     private File getLogFile() {
-        String reportDir = System.getProperty("user.dir") + "/logs/appium/";
-        File dir = new File(reportDir);
-        if (!dir.exists()) dir.mkdirs();
-
-        String timestamp = java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-        return new File(dir, "appium_log_" + timestamp + ".log");
+        File dir = new File(System.getProperty("user.dir") + File.separator + "logs" + File.separator + "appium");
+        dir.mkdirs();
+        String ts = java.time.LocalDateTime.now().format(
+                java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+        return new File(dir, "appium_" + ts + ".log");
     }
 }
