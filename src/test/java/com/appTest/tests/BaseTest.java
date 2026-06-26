@@ -63,9 +63,9 @@ public class BaseTest {
      * traditional sense, so subclasses must go through the accessors. If
      * migrating gradually, rename usages in subclasses to getDriver() etc.
      */
-    protected AndroidDriver  driver;
+    public AndroidDriver  driver;
     protected ExtentReportAT reporter;
-    protected String         deviceSlot;
+    public String         deviceSlot;
 
     private final ServerInitializer serverInit = new ServerInitializer();
 
