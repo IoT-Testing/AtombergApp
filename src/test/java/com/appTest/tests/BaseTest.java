@@ -90,11 +90,10 @@ public class BaseTest {
      * Parameters are injected from testng.xml.
      */
     @BeforeClass(alwaysRun = true)
-    @Parameters({"deviceSlot", "deviceIp", "devicePort"})
+    @Parameters({"deviceSlot", "deviceUdid"})
     public void setup(
             @Optional("Device_Default") String slot,
-            @Optional("127.0.0.1")      String deviceIp,
-            @Optional("5555")           String devicePort) {
+            @Optional("")               String deviceUdid) {
 
         // Populate ThreadLocal AND backward-compat fields
         TL_DEVICE_SLOT.set(slot);
@@ -104,9 +103,10 @@ public class BaseTest {
         TL_REPORTER.set(rep);
         this.reporter = rep;
 
-        System.out.printf("[BaseTest] Setup – slot=%s  ip=%s  port=%s%n", slot, deviceIp, devicePort);
+        System.out.printf("[BaseTest] Setup – slot=%s  udid=%s%n",
+                slot, (deviceUdid == null || deviceUdid.isBlank()) ? "<device-farm auto-allocate>" : deviceUdid);
 
-        UiAutomator2Options options = buildOptions(deviceIp, devicePort);
+        UiAutomator2Options options = buildOptions(deviceUdid);
         URL serverUrl               = resolveServerUrl();
 
         AndroidDriver d = new AndroidDriver(serverUrl, options);
@@ -158,17 +158,21 @@ public class BaseTest {
 
     // ── Private builders ─────────────────────────────────────────────────────
 
-    private UiAutomator2Options buildOptions(String deviceIp, String devicePort) {
+    private UiAutomator2Options buildOptions(String deviceUdid) {
         UiAutomator2Options options = new UiAutomator2Options();
         options.setAppPackage(ATOMBERG_HOME);
         options.setAppActivity(ATOMBERG_ACTIVITY);
         options.setPlatformName("Android");
 
-        boolean isRemote = !"127.0.0.1".equals(deviceIp);
-        if (isRemote) {
-            String udid = deviceIp + ":" + devicePort;
-            options.setUdid(udid);
-            System.out.println("[BaseTest] Using STF UDID: " + udid);
+        // The Appium Device Farm plugin auto-allocates a free connected device for
+        // each new session when no UDID is supplied — this is how parallel <test>
+        // blocks each get a distinct device. Supply deviceUdid in testng.xml only
+        // to pin a specific <test> block to a specific device.
+        if (deviceUdid != null && !deviceUdid.isBlank()) {
+            options.setUdid(deviceUdid);
+            System.out.println("[BaseTest] Pinning session to device UDID: " + deviceUdid);
+        } else {
+            System.out.println("[BaseTest] No UDID set — Appium Device Farm will auto-allocate a device.");
         }
         return options;
     }

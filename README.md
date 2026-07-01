@@ -501,9 +501,34 @@ cat TEST_EXECUTION_GUIDE.md
 ---
 4. Dependencies for the project to be mentioned in pom.xml file.
 5. NPM installed in the HOST PC. https://nodejs.org/en
-6. cmd : `npm install appium` 
+6. cmd : `npm install -g appium` 
 7. Linux : `./appium.AppImage --no-sandbox`
 8. Android Studio and related paths in Environment Variables
+
+**Device management — Appium Device Farm plugin (Appium 3)**
+
+Device allocation is handled by the [appium-device-farm](https://github.com/AppiumTestDistribution/appium-device-farm)
+plugin. There is no separate STF/RethinkDB service to run — the plugin discovers
+connected devices and auto-allocates a free one to each new session, which is what
+enables the parallel `<test>` blocks in `testng.xml`.
+
+```bash
+# Install the device-farm plugin (one-time)
+appium plugin install --source=npm appium-device-farm
+
+# Start Appium with the plugin (base path "/" is the Appium 3 default)
+appium server -ka 800 --use-plugins=device-farm --plugin-device-farm-platform=android --base-path /
+
+# ...or start it from the bundled config
+appium --config server-config.json
+```
+
+`ServerInitializer` also starts this exact configuration programmatically, so
+`mvn test` works without a manually-started server. The device-farm dashboard is
+available at `http://127.0.0.1:4723/device-farm`.
+
+To pin a `<test>` block to a specific device, set its `deviceUdid` parameter in
+`testng.xml` (get the UDID from `adb devices`); leave it empty for auto-allocation.
 
 
 **Communication**
@@ -529,7 +554,7 @@ MutableCapabilities capabilities = new UiAutomator2Options();
  capabilities.setCapability("appPackage", "com.appPackage.app");
  capabilities.setCapability("appActivity", "com.appPackage.app.MainActivity");
 
- driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"),capabilities);
+ driver = new AndroidDriver(new URL("http://127.0.0.1:4723"),capabilities);
  //this will initialize the driver.
  
  driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));

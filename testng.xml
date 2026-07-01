@@ -2,12 +2,20 @@
 <!--
   Atomberg Home App – TestNG Suite
   ─────────────────────────────────────────────────────────────────
-  Parallel execution: one <test> per physical/STF device slot.
-  Each <test> passes deviceSlot, deviceIp, and devicePort to BaseTest.
+  Parallel execution: one <test> block per device slot.
+
+  Device allocation is handled by the Appium Device Farm plugin
+  (appium-device-farm). Each <test> block opens a new session and the
+  plugin auto-allocates a free connected device — no IP/port needed.
+
+  Each <test> passes:
+    • deviceSlot – label used in the Extent report (required)
+    • deviceUdid – OPTIONAL; set only to pin a slot to a specific
+                   device UDID. Leave empty for auto-allocation.
 
   For local single-device runs, only the first <test> block is needed.
-  For STF parallel runs, add one <test> block per device with its
-  real IP and ADB port (default 5555).
+  For parallel runs, raise thread-count above and add one <test> block
+  per device (optionally pinning each with deviceUdid).
 
   Optional test classes (ManageFamilyTest, ManageProfileTest,
   QuickSmokeTest, DeviceProvTest) are in commented blocks below.
@@ -30,8 +38,7 @@
          ══════════════════════════════════════════════════════════════════════ -->
     <test name="Slot1 – All Testa">
         <parameter name="deviceSlot" value="Local_Device_Slot1"/>
-        <parameter name="deviceIp"   value="127.0.0.1"/>
-        <parameter name="devicePort" value="5555"/>
+        <!-- deviceUdid omitted → Appium Device Farm auto-allocates a device -->
         <classes>
             <class name="com.appTest.tests.OpenAppTest"/>
             <class name="com.appTest.tests.LoginTest"/>
@@ -52,8 +59,6 @@
     <!--
     <test name="Slot1 – Profile and Family">
         <parameter name="deviceSlot" value="Local_Device_Slot1"/>
-        <parameter name="deviceIp"   value="127.0.0.1"/>
-        <parameter name="devicePort" value="5555"/>
         <classes>
             <class name="com.appTest.tests.ManageFamilyTest"/>
             <class name="com.appTest.tests.ManageProfileTest"/>
@@ -69,8 +74,6 @@
     <!--
     <test name="Slot1 – Smoke and Provisioning">
         <parameter name="deviceSlot" value="Local_Device_Slot1"/>
-        <parameter name="deviceIp"   value="127.0.0.1"/>
-        <parameter name="devicePort" value="5555"/>
         <classes>
             <class name="com.appTest.tests.QuickSmokeTest"/>
             <class name="com.appTest.tests.DeviceProvTest"/>
@@ -79,13 +82,15 @@
     -->
 
     <!-- ══════════════════════════════════════════════════════════════════════
-         DEVICE SLOT 2 — second STF device (uncomment + fill in IP/port)
+         DEVICE SLOT 2 — second device (uncomment to run in parallel).
+         Leave deviceUdid empty to let Device Farm auto-allocate, or set it
+         to a specific UDID (from `adb devices`) to pin this slot.
+         Remember to raise thread-count on <suite> above.
          ══════════════════════════════════════════════════════════════════════ -->
     <!--
     <test name="Slot2 – Core Regression">
-        <parameter name="deviceSlot" value="STF_Device_Slot2"/>
-        <parameter name="deviceIp"   value="192.168.1.101"/>
-        <parameter name="devicePort" value="5555"/>
+        <parameter name="deviceSlot" value="Device_Slot2"/>
+        <parameter name="deviceUdid" value=""/>
         <classes>
             <class name="com.appTest.tests.OpenAppTest"/>
             <class name="com.appTest.tests.LoginTest"/>

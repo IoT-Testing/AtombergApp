@@ -13,7 +13,7 @@
       "*:session_discovery",
       "uiautomator2:adb_shell"
     ],
-    "base-path": "/wd/hub",
+    "base-path": "/",
     "keep-alive-timeout": 800
   }
 }
