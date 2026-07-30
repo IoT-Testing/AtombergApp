@@ -26,17 +26,15 @@
        thread-count="2"
        verbose="2">
 
-    <!-- ── Suite-wide listeners ────────────────────────────────────────────── -->
-    <listeners>
-        <listener class-name="com.appTest.listeners.TestListeners"/>
-        <listener class-name="com.appTest.listeners.DashboardReporter"/>
-    </listeners>
+    <!-- Listeners (TestListeners, DashboardReporter) are registered once via
+         @Listeners on BaseTest. Do NOT also declare them here — double
+         registration duplicates dashboard rows and log output. -->
 
     <!-- ══════════════════════════════════════════════════════════════════════
          DEVICE SLOT 1 — local / default device
          Core regression: open app → login → app tabs → fan control
          ══════════════════════════════════════════════════════════════════════ -->
-    <test name="Slot1 – All Testa">
+    <test name="Slot1 – All Tests">
         <parameter name="deviceSlot" value="Local_Device_Slot1"/>
         <!-- deviceUdid omitted → Appium Device Farm auto-allocates a device -->
         <classes>
@@ -48,7 +46,10 @@
             <class name="com.appTest.tests.ManageFamilyTest"/>
             <class name="com.appTest.tests.QuickSmokeTest"/>
             <class name="com.appTest.tests.DeviceProvTest"/>
-            <class name="com.appTest.tests.SecondAppTest"/>
+            <!-- SecondAppTest removed: constructor takes SoftAssert (not TestNG-
+                 injectable) so TestNG cannot instantiate it, and it redeclares
+                 @BeforeSuite/@AfterSuite that conflict with BaseTest. Quarantined
+                 pending a rewrite. -->
         </classes>
     </test>
 

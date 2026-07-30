@@ -2,6 +2,7 @@ package app;
 
 import app.Fan.FanManagement;
 import app.Login.Email;
+import app.resources.Env;
 import app.resources.Locators.Android.DeviceScreens.FanLocators;
 import app.util.ActionsUtil;
 import app.util.PermissionUtil;
@@ -154,8 +155,9 @@ public class Main {
     }
 
     private void performLogin() throws Exception {
-        String email = getEnvOrFallback("TEST_EMAIL", "iot.alpha@protonmail.com");
-        String password = getEnvOrFallback("TEST_PASSWORD", "Atomberg@123");
+        // Credentials come from the environment (set TEST_EMAIL / TEST_PASSWORD, see test.env.example).
+        String email = Env.required("TEST_EMAIL");
+        String password = Env.required("TEST_PASSWORD");
 
         Email login = new Email(driver);
         try {
@@ -183,11 +185,6 @@ public class Main {
                 System.err.println("Error during driver quit: " + e.getMessage());
             }
         }
-    }
-
-    private String getEnvOrFallback(String key, String fallback) {
-        String value = System.getenv(key);
-        return value != null ? value : fallback;
     }
 
     private static void initCSV() {

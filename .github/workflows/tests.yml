@@ -1,113 +1,86 @@
-name: Run Atomberg Tests
+name: Build & Static Analysis
+
+# NOTE ON SCOPE:
+# GitHub-hosted runners have no Android device/emulator, so the Appium suite
+# CANNOT execute here. This workflow therefore does BUILD + STATIC ANALYSIS only
+# and does not pretend to run the device tests. Run the actual TestNG suite on a
+# self-hosted runner attached to the device host (see the commented job below).
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ master, rb/BoF ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ master, rb/BoF ]
   schedule:
-    - cron: '0 2 * * *'  # Daily at 2 AM
+    - cron: '0 2 * * *'  # Nightly at 02:00 UTC
 
 jobs:
-  test:
+  build:
+    name: Compile (Java ${{ matrix.java-version }})
     runs-on: ubuntu-latest
-    
     strategy:
       matrix:
-        java-version: ['17', '21']
-    
+        java-version: [ '17', '21' ]
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-    
-    - name: Set up Java ${{ matrix.java-version }}
-      uses: actions/setup-java@v3
-      with:
-        java-version: ${{ matrix.java-version }}
-        distribution: 'temurin'
-        cache: maven
-    
-    - name: Display Java version
-      run: java -version
-    
-    - name: Display Maven version
-      run: mvn --version
-    
-    - name: Build project
-      run: mvn clean compile -DskipTests
-    
-    - name: Run tests
-      run: mvn test
-      continue-on-error: true
-    
-    - name: Generate Surefire Report
-      if: always()
-      run: mvn surefire-report:report
-    
-    - name: Upload test results
-      if: always()
-      uses: actions/upload-artifact@v3
-      with:
-        name: test-results-java${{ matrix.java-version }}
-        path: |
-          target/surefire-reports/
-          test-output/ExtentReports/
-    
-    - name: Upload coverage reports
-      if: always()
-      uses: codecov/codecov-action@v3
-      with:
-        files: ./target/surefire-reports/
-        flags: unittests
-        name: codecov-umbrella
-    
-    - name: Publish test results
-      if: always()
-      uses: EnricoMi/publish-unit-test-result-action@v2
-      with:
-        files: target/surefire-reports/**/*.xml
-        check_name: Test Results (Java ${{ matrix.java-version }})
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java ${{ matrix.java-version }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java-version }}
+          distribution: 'temurin'
+          cache: maven
+
+      # Compiles BOTH main and test sources. This is the real signal from CI:
+      # the project builds. It does not (and cannot) run the device tests here.
+      - name: Compile (main + test)
+        run: mvn -B clean test-compile
 
   code-quality:
+    name: Static Analysis
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-    
-    - name: Set up Java
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        cache: maven
-    
-    - name: Check code style
-      run: mvn clean checkstyle:check
-      continue-on-error: true
-    
-    - name: Run SpotBugs
-      run: mvn spotbugs:check
-      continue-on-error: true
-    
-    - name: SonarCloud Scan
-      uses: SonarSource/sonarcloud-github-action@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      continue-on-error: true
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-  notify:
-    runs-on: ubuntu-latest
-    needs: [test]
-    if: always()
-    
-    steps:
-    - name: Send Slack notification
-      uses: 8398a7/action-slack@v3
-      with:
-        status: ${{ job.status }}
-        text: 'Atomberg Test Suite - ${{ job.status }}'
-        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
-      if: always()
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
 
+      # Advisory only — failOnViolation/failOnError are false in the pom.
+      - name: Checkstyle
+        run: mvn -B checkstyle:check
+        continue-on-error: true
+
+      - name: SpotBugs
+        run: mvn -B compile spotbugs:check
+        continue-on-error: true
+
+# ─────────────────────────────────────────────────────────────────────────────
+# DEVICE TESTS (run on a self-hosted runner on the laptop/Mac that has the phones
+# connected + Appium installed). Uncomment and register a self-hosted runner
+# labelled `device-host` to enable. Provide credentials via repo/organization
+# secrets mapped to the env vars in test.env.example.
+#
+#  device-tests:
+#    runs-on: [ self-hosted, device-host ]
+#    steps:
+#      - uses: actions/checkout@v4
+#      - name: Run TestNG suite
+#        env:
+#          DEFAULT_EMAIL: ${{ secrets.DEFAULT_EMAIL }}
+#          DEFAULT_PASSWORD: ${{ secrets.DEFAULT_PASSWORD }}
+#          ATOMBERG_API_KEY: ${{ secrets.ATOMBERG_API_KEY }}
+#          ATOMBERG_REFRESH_TOKEN: ${{ secrets.ATOMBERG_REFRESH_TOKEN }}
+#          ATOMBERG_TEST_DEVICE_ID: ${{ secrets.ATOMBERG_TEST_DEVICE_ID }}
+#        run: mvn -B test
+#      - uses: actions/upload-artifact@v4
+#        if: always()
+#        with:
+#          name: extent-reports
+#          path: reports/
+# ─────────────────────────────────────────────────────────────────────────────

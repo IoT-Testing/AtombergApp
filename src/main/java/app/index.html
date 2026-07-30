@@ -335,8 +335,32 @@ at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelpe
         return data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
     };
 
-    let allTests = generateMockData();
-    let filteredTests = [...allTests];
+    // Real results are written by DashboardReporter to test-results/dashboard-data.json.
+    // Try to load them; fall back to sample data (clearly labelled) if unavailable.
+    // NOTE: browsers block fetch() over file:// — serve this folder (e.g. `python -m http.server`)
+    // or copy dashboard-data.json next to this file for live data to load.
+    const DATA_CANDIDATES = [
+        'dashboard-data.json',
+        'test-results/dashboard-data.json',
+        '../../../../test-results/dashboard-data.json'
+    ];
+
+    async function loadTestData() {
+        for (const path of DATA_CANDIDATES) {
+            try {
+                const resp = await fetch(path, { cache: 'no-store' });
+                if (!resp.ok) continue;
+                const data = await resp.json();
+                if (Array.isArray(data) && data.length) {
+                    return { data: data.slice().sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)), live: true };
+                }
+            } catch (e) { /* try next candidate */ }
+        }
+        return { data: generateMockData(), live: false };
+    }
+
+    let allTests = [];
+    let filteredTests = [];
     let currentPage = 1;
     const itemsPerPage = 10;
     let statusChart, trendChart;
@@ -598,16 +622,15 @@ at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelpe
         document.getElementById('detailModal').classList.add('hidden');
     }
 
-    function refreshData() {
-        // Simulate refresh
+    async function refreshData() {
         const btn = document.querySelector('[title="Refresh Data"]');
         btn.classList.add('animate-spin');
-        setTimeout(() => {
-            allTests = generateMockData();
-            filterTests();
-            btn.classList.remove('animate-spin');
-            document.getElementById('lastUpdated').textContent = 'Last run: Just now';
-        }, 800);
+        const { data, live } = await loadTestData();
+        allTests = data;
+        filterTests();
+        btn.classList.remove('animate-spin');
+        document.getElementById('lastUpdated').textContent =
+            live ? 'Live results · updated just now' : 'SAMPLE DATA (no results file found)';
     }
 
     // Event Listeners
@@ -625,10 +648,15 @@ at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelpe
     });
 
     // Initialize
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
+        const { data, live } = await loadTestData();
+        allTests = data;
+        filteredTests = [...allTests];
         initCharts();
         updateStats();
         renderTable();
+        document.getElementById('lastUpdated').textContent =
+            live ? 'Live results' : 'SAMPLE DATA (no results file found)';
         lucide.createIcons();
     });
 </script>

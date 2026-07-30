@@ -1,5 +1,6 @@
 package app.util;
 
+import app.resources.Env;
 import app.resources.Locators.Android.HomeLocators;
 
 import io.appium.java_client.android.AndroidDriver;
@@ -25,8 +26,10 @@ public class AppUtil {
     private static final String SCREENSHOT_DIR =
             System.getProperty("user.dir") + File.separator + "screenshots" + File.separator;
 
-    private static final String DEFAULT_WIFI_SSID     = "Better_Together";
-    private static final String DEFAULT_WIFI_PASSWORD = "123@ToMb^rg#2425";
+    // Wi-Fi provisioning credentials — read from the environment, never committed.
+    // Set WIFI_SSID / WIFI_PASSWORD (see test.env.example) before running provisioning flows.
+    private static final String DEFAULT_WIFI_SSID     = Env.optional("WIFI_SSID", "");
+    private static final String DEFAULT_WIFI_PASSWORD = Env.optional("WIFI_PASSWORD", "");
 
     private static final By WIFI_INPUT_FIELD    = By.xpath("//android.widget.EditText[1]");
     private static final By PASSWORD_INPUT_FIELD = By.xpath("//android.widget.EditText[2]");

@@ -75,7 +75,8 @@ public class SecondAppTest extends BaseTest {
 
             if (onLoginScreen) {
                 Email login = new Email(driver);
-                login.email("hiwitaw422@wuzak.com", "Atomberg@1234");
+                login.email(app.resources.Env.required("SECOND_APP_EMAIL"),
+                        app.resources.Env.required("SECOND_APP_PASSWORD"));
             }
 
             // ✅ Assertion: Verify we are past login
@@ -104,10 +105,10 @@ public class SecondAppTest extends BaseTest {
 
             WebElement et = driver.findElement(EDIT_TEXT_FIELD);
             et.click();
-            et.sendKeys("hiwitaw422@wuzak.com");
+            et.sendKeys(app.resources.Env.required("SECOND_APP_EMAIL"));
             driver.findElement(LOGIN_CONTINUE_BUTTON).click();
             WebElement pw = driver.findElement(EDIT_TEXT_FIELD);
-            pw.sendKeys("Atomberg@1234");
+            pw.sendKeys(app.resources.Env.required("SECOND_APP_PASSWORD"));
             driver.findElement(By.xpath("//android.widget.Button[@content-desc='Continue']")).click();
 
             sleep(5000); // Wait for home screen

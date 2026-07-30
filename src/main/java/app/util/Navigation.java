@@ -22,12 +22,16 @@ public class Navigation {
         for (int i = 0; i < 5; i++) {
             try {
                 WebElement el = driver.findElement(locator);
-                if (el.isDisplayed() && Boolean.parseBoolean(el.getDomAttribute("clickable"))) {
+                // Flutter elements do not expose a "clickable" DOM attribute, so
+                // Boolean.parseBoolean(getDomAttribute("clickable")) is always false
+                // and the click never fires. Gate on displayed + enabled instead.
+                if (el.isDisplayed() && el.isEnabled()) {
                     el.click();
                     return true;
                 }
             } catch (Exception ignored) {
             }
+            ActionsUtil.sleep(500);
         }
         return false;
     }

@@ -404,7 +404,7 @@ public class  FanManagement implements SmartDevice {
         clickElement(START_TIMER);
         AtombergFanStatus get = new AtombergFanStatus();
         String timer = get.fanStatus("timer");
-        if(timer.equals("1")) System.out.println("Timer of "+timer+" hour successful");
+        if("1".equals(timer)) System.out.println("Timer of "+timer+" hour successful");
     }
     /**
      * Pre-requisites: Fan control screen should be open.
@@ -429,7 +429,7 @@ public class  FanManagement implements SmartDevice {
         ActionsUtil.sleep(1000);
         AtombergFanStatus get = new AtombergFanStatus();
         String timer = get.fanStatus("timer");
-        if(timer.equals("2")) System.out.println("Timer of "+timer+" hour successful");
+        if("2".equals(timer)) System.out.println("Timer of "+timer+" hour successful");
     }
     /**
      * Pre-requisites: Fan control screen should be open.
@@ -446,7 +446,7 @@ public class  FanManagement implements SmartDevice {
         ActionsUtil.sleep(1000);
         AtombergFanStatus get = new AtombergFanStatus();
         String timer = get.fanStatus("timer");
-        if(timer.equals("3")) System.out.println("Timer of "+timer+" hour successful");
+        if("3".equals(timer)) System.out.println("Timer of "+timer+" hour successful");
     }
     /**
      * Pre-requisites: Fan control screen should be open.
@@ -464,7 +464,7 @@ public class  FanManagement implements SmartDevice {
         ActionsUtil.sleep(1000);
         AtombergFanStatus get = new AtombergFanStatus();
         String timer = get.fanStatus("timer");
-        if(timer.equals("6")) System.out.println("Timer of "+timer+" hour successful");
+        if("6".equals(timer)) System.out.println("Timer of "+timer+" hour successful");
     }
     /**
      * Executes random fan commands for a given number of iterations.

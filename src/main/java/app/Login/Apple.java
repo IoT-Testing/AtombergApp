@@ -1,5 +1,6 @@
 package app.Login;
 
+import app.resources.Env;
 import app.util.ActionsUtil;
 import app.util.AppUtil;
 import app.util.PermissionUtil;
@@ -94,7 +95,7 @@ public class Apple {
 	private static void performFallbackLogin(AndroidDriver driver) {
 		System.out.println("Apple redirect failed. Falling back to email/password login...");
 
-		if (enterTextSafely(driver, TEXT_INPUT_FIELD, "bhagatrb4174@gmail.com", "Email")) {
+		if (enterTextSafely(driver, TEXT_INPUT_FIELD, Env.required("APPLE_TEST_EMAIL"), "Email")) {
 			System.err.println("Failed to enter email. Aborting login.");
 			return;
 		}
@@ -109,7 +110,7 @@ public class Apple {
 		ActionsUtil.sleep(2000);
 		AppUtil.captureScreenshot(driver, "Password Entering");
 
-		if (enterTextSafely(driver, TEXT_INPUT_FIELD, "SumitaBH@133", "Password")) {
+		if (enterTextSafely(driver, TEXT_INPUT_FIELD, Env.required("APPLE_TEST_PASSWORD"), "Password")) {
 			System.err.println("Failed to enter password. Aborting login.");
 			return;
 		}
