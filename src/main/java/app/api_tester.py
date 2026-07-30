@@ -1,3 +1,4 @@
+import os
 import requests
 import time
 import urllib3
@@ -7,9 +8,9 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # Configuration
 BASE_URL = "https://api.developer.atomberg-iot.com"
-X_API_KEY = "s2x20JMUSbioLyVC9vO85SvWSg4F5J6HE2qFLzpS"  # Replace with actual API key
-REFRESH_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImY4ZmMyY2VhLWMzYWItNDRmNi1hZWQ2LWFiODcxOTllNDAxZiIsInR5cGUiOiJyZWZyZXNoIiwiaXNzIjoiZGV2ZWxvcGVyLmF0b21iZXJnLWlvdC5jb20iLCJkZXZlbG9wZXJfaWQiOiJCelpvRkFiSjNXIiwianRpIjoiOTM2MGNiZDktM2M4Yi00OTY5LThmNTEtZTgwMjY4ZjM5MGM2IiwiaWF0IjoxNzY4MjgxMjkxLCJleHAiOjIwODM2NDEyOTF9.J3TATQFMW-3EVW8PZEG0wHAttdBO_GTkd7W5SsZBZxQ"  # Replace with actual refresh token
-TARGET_MAC_ID = "dc1ed5c30148"  # Replace with actual MAC ID
+X_API_KEY = os.environ["ATOMBERG_API_KEY_TESTER"]
+REFRESH_TOKEN = os.environ["ATOMBERG_REFRESH_TOKEN_TESTER"]
+TARGET_MAC_ID = os.environ.get("ATOMBERG_TARGET_MAC_ID", "")
 
 def get_access_token():
     """Generate access token using refresh token."""

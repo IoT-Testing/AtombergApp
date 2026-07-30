@@ -1,66 +1,57 @@
 package app.Supports;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import app.api.DeviceStateVerifier;
 
+/**
+ * @deprecated Legacy shim. Prefer {@link app.api.DeviceStateVerifier} directly —
+ * it takes an explicit device id and supports polling ({@code awaitState}) instead
+ * of a single blind read.
+ *
+ * <p>Retained so existing {@code FanManagement} callers keep compiling. The old
+ * implementation shelled out to {@code api_tester.py} via {@link ProcessBuilder}
+ * with a hardcoded {@code d:/AtombergAppBoF/...} path and re-authenticated on every
+ * call; this version delegates to the native {@link DeviceStateVerifier}.</p>
+ *
+ * <p>The device id is read once from the {@code ATOMBERG_TEST_DEVICE_ID}
+ * environment variable, since the legacy {@code fanStatus(String)} signature has
+ * no device parameter.</p>
+ */
+@Deprecated
 public class AtombergFanStatus {
 
+    private DeviceStateVerifier verifier;
+
+    /**
+     * Returns the current value of a fan state field, or {@code null} on error.
+     *
+     * @param command one of {@code power, speed, timer, led, sleep}
+     */
     public String fanStatus(String command) {
-        try {
-            // Command to run your python script (adjust path accordingly)
-            JSONObject message = getJsonObject();
-            JSONArray deviceStateArray = message.getJSONArray("device_state");
-            JSONObject deviceState = deviceStateArray.getJSONObject(0);
-            switch (command) {
-                case "power" -> {
-                    boolean powerState = deviceState.getBoolean("power");
-                    return String.valueOf(powerState);
-                }
-                case "speed" -> {
-                    int lastRecordedSpeed = deviceState.getInt("last_recorded_speed");
-                    return String.valueOf(lastRecordedSpeed);
-                }
-                case "timer" -> {
-                    int timerHours = deviceState.getInt("timer_hours");
-                    return String.valueOf(timerHours);
-                }
-                case "led" ->{
-                    boolean ledState = deviceState.getBoolean("led");
-                    return String.valueOf(ledState);
-                }
-                case "sleep" -> {
-                    boolean sleepState =  deviceState.getBoolean("sleep_mode");
-                    return String.valueOf(sleepState);                }
-            }
-        } catch (Exception e) {
-            e.fillInStackTrace();
+        String deviceId = System.getenv("ATOMBERG_TEST_DEVICE_ID");
+        if (deviceId == null || deviceId.isBlank()) {
+            System.err.println("[AtombergFanStatus] ATOMBERG_TEST_DEVICE_ID is not set; "
+                    + "cannot verify fan state via the API.");
+            return null;
         }
-        return null;
+        return fanStatus(deviceId, command);
     }
 
-    private static JSONObject getJsonObject() throws IOException {
-        ProcessBuilder pb = new ProcessBuilder("python", "d:/AtombergAppBoF/src/main/java/app/api_tester.py");
-        Process process = pb.start();
-
-        // Read the python script output
-        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        StringBuilder output = new StringBuilder();
-        String line;
-
-        while ((line = reader.readLine()) != null) {
-            output.append(line);
+    /** Preferred overload: verify a specific device by id. */
+    public String fanStatus(String deviceId, String command) {
+        try {
+            return verifier().readField(deviceId, command);
+        } catch (Exception e) {
+            System.err.println("[AtombergFanStatus] failed to read '" + command
+                    + "' for " + deviceId + ": " + e.getMessage());
+            return null;
         }
-        reader.close();
+    }
 
-        // Assume output now contains the JSON response string
-        String jsonResponse = output.toString();
-
-        // Parse JSON and extract values
-        JSONObject obj = new JSONObject(jsonResponse);
-        JSONObject message = obj.getJSONObject("message");
-        return message;
+    /** Lazily built so constructing this class never fails when creds are absent. */
+    private DeviceStateVerifier verifier() {
+        if (verifier == null) {
+            verifier = new DeviceStateVerifier();
+        }
+        return verifier;
     }
 }

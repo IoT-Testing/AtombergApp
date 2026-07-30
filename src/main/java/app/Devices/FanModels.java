@@ -1,24 +1,26 @@
 package app.Devices;
 
-import Actions.Swipe;
+import app.util.ActionsUtil.Swipe;
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 public class FanModels {
 
-
     // to select whether the selected model(at random) is renesa, renesa+. studio+
-    public static void SixLEDColorSelect(AppiumDriver driver) {
+    public static void SixLEDColorSelect(AndroidDriver driver) {
         WebElement RPlus = null;
         WebElement SPlus = null;
         try {
             RPlus = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Golden Oakwood\"]"));
         } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
         try {
             SPlus = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Earth Brown\"]"));
         } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
         if (RPlus != null) {
             RenesaPlus(driver);
@@ -31,7 +33,7 @@ public class FanModels {
     }
 
     // below are the SKU according to the model selected
-    public static void Renesa(AppiumDriver driver) {
+    public static void Renesa(AndroidDriver driver) {
         try {
             int randomNumber = (int) (Math.random() * 5); // generate a random number between 0 and 5
             switch (randomNumber) {
@@ -39,27 +41,23 @@ public class FanModels {
                     WebElement color1 = driver
                             .findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Brown and Black\"]"));
                     color1.click();
-                    System.out.println("White & Black");
                     break;
                 case 1:
                     WebElement color2 = driver
                             .findElement(By.xpath("//android.widget.ImageView[@content-desc=\"White and Black\"]"));
                     color2.click();
-                    System.out.println("Brown & Black");
                     break;
                 case 2:
                     Swipe.Right(driver, 0.9, 0.67);
                     WebElement color3 = driver
                             .findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Midnight Black\"]"));
                     color3.click();
-                    System.out.println("Midnight Black");
                     break;
                 case 3:
                     Swipe.Right(driver, 0.9, 0.67);
                     WebElement color4 = driver
                             .findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Pebble Grey\"]"));
                     color4.click();
-                    System.out.println("Pebble Grey");
                     break;
                 case 4:
                     Swipe.Right(driver, 0.9, 0.67);
@@ -68,17 +66,15 @@ public class FanModels {
                     WebElement color5 = driver
                             .findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Misty Teal\"]"));
                     color5.click();
-                    System.out.println("Misty Teal");
                     break;
 
             }
         } catch (Exception exp) {
             System.out.println(exp.getMessage());
-            exp.printStackTrace();
         }
     }
 
-    public static void RenesaPlus(AppiumDriver driver) {
+    public static void RenesaPlus(AndroidDriver driver) {
         try {
             int randomNumber = (int) (Math.random() * 4); // generate a random number between 0 and 4
             switch (randomNumber) {
@@ -107,7 +103,6 @@ public class FanModels {
             }
         } catch (Exception exp) {
             System.out.println(exp.getMessage());
-            exp.printStackTrace();
         }
     }
 
@@ -128,7 +123,6 @@ public class FanModels {
             }
         } catch (Exception exp) {
             System.out.println(exp.getMessage());
-            exp.printStackTrace();
         }
     }
 
@@ -149,11 +143,10 @@ public class FanModels {
             }
         } catch (Exception exp) {
             System.out.println(exp.getMessage());
-            exp.printStackTrace();
         }
     }
 
-    public static void Jaguar(AppiumDriver driver) {
+    public static void Jaguar(AndroidDriver driver) {
         try {
             int randomNumber = (int) (Math.random() * 3); // generate a random number between 0 and 5
             switch (randomNumber) {
@@ -176,7 +169,6 @@ public class FanModels {
             }
         } catch (Exception exp) {
             System.out.println(exp.getMessage());
-            exp.printStackTrace();
         }
     }
 
@@ -197,7 +189,6 @@ public class FanModels {
             }
         } catch (Exception exp) {
             System.out.println(exp.getMessage());
-            exp.printStackTrace();
         }
     }
 
@@ -219,7 +210,6 @@ public class FanModels {
             }
         } catch (Exception exp) {
             System.out.println(exp.getMessage());
-            exp.printStackTrace();
         }
     }
 
@@ -228,7 +218,7 @@ public class FanModels {
         try {
             Thread.sleep(millis);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 

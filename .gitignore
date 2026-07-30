@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # ── Java / Maven ──────────────────────────────────────────────────────────────
 target/
 *.class
@@ -37,6 +36,7 @@ logs/
 test-results/
 test-output/
 ExtentReports/
+reports/
 coverage/
 *.png
 *.mp4
@@ -48,6 +48,8 @@ src/test/resources/apps/
 
 # ── Surefire (generated, not source) ─────────────────────────────────────────
 target/surefire-reports/
-=======
-reports/
->>>>>>> ce4adeb5b38bb8676c5b5d4a5069097e4c04594a
+
+# ── Python ─────────────────────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo

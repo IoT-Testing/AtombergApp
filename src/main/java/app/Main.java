@@ -7,6 +7,7 @@ import app.util.ActionsUtil;
 import app.util.PermissionUtil;
 import app.util.ScreenRecording;
 import io.appium.java_client.android.options.UiAutomator2Options;
+import lombok.extern.log4j.Log4j2;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -22,10 +23,9 @@ import java.time.format.DateTimeFormatter;
 
 import static app.resources.Locators.Android.HomeLocators.*;
 
-//appium server -ka 800 --use-plugins=device-farm -pa /wd/hub
-// --plugin-device-farm-platform=android --relaxed-security
-// --allow-insecure=*:session_discovery,uiautomator2:adb_shell --port 4723
-
+/*appium server -ka 800 --use-plugins=device-farm -pa /wd/hub --plugin-device-farm-platform=android --relaxed-security --allow-insecure=*:session_discovery,uiautomator2:adb_shell --port 4723
+*/
+@Log4j2
 public class Main {
     public static PrintWriter csvWriter;
     private static boolean csvInitialized = false;
@@ -109,13 +109,14 @@ public class Main {
         UiAutomator2Options options = new UiAutomator2Options();
         options.setPlatformName("Android");
         options.setPlatformVersion("15");
+        options.setAutomationName("uiautomator2");
         try {
-            URL url = new URL("http://127.0.0.1:4723/wd/hub");
+            URL url = new URL("http://127.0.0.1:4723/");
             driver = new AndroidDriver(url, options);
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
             System.out.println("Driver initialized successfully for the device");
-        } catch (Exception e) {
-            System.err.println("Failed to initialize driver: " + e.getMessage());
+        }catch (Exception e) {
+            e.printStackTrace();
             throw e;
         }
     }
@@ -123,7 +124,7 @@ public class Main {
     private static void backToHome() {
         int attempts = 0;
         while (!isElementPresent(MORE_TAB) && attempts < 5) {
-            System.out.println("Navigating back... attempt " + (++attempts));
+            log.info("Navigating back... attempt {}", ++attempts);
             driver.navigate().back();
             ActionsUtil.sleep(1000);
         }
@@ -146,10 +147,9 @@ public class Main {
         }
     }
 
-    private boolean isOnLoginScreen() throws Exception{
+    private boolean isOnLoginScreen() throws Exception {
         AppInitializer appCheck = new AppInitializer(driver);
         boolean onLogin = appCheck.checkMainScreen();
-        System.out.println("On login screen: " + onLogin);
         return onLogin;
     }
 
@@ -169,7 +169,6 @@ public class Main {
 
     private void handlePermissions() {
         PermissionUtil.allow(driver);
-        System.out.println("Permissions handled.");
     }
 
 

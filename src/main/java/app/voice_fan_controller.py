@@ -10,13 +10,15 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Query
 # CONFIG
 # ===============================
 
-SERVER_API_KEY = "fan-ui-dev-key"
+import os
+
+SERVER_API_KEY = os.environ["SERVER_API_KEY"]
 
 OLLAMA_URL = "http://127.0.0.1:11434/api/generate"
 OLLAMA_MODEL = "phi"
 
-ATOMBERG_API_KEY = "dH4I3OyCAENYmPkUja7MwHCncyiSuBCpdbB4HVmy"
-ATOMBERG_REFRESH_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6Imdvb2dsZV8xMDE5MDk5MTY0OTU5OTg5NjM1MzciLCJ0eXBlIjoicmVmcmVzaCIsImlzcyI6ImRldmVsb3Blci5hdG9tYmVyZy1pb3QuY29tIiwiZGV2ZWxvcGVyX2lkIjoiaVRPZndSYWxveiIsImp0aSI6IjI3ZDEwY2ViLTM1MzEtNGZjZS1iNzgzLTdhOWRhMmQ0Yzg0MSIsImlhdCI6MTc3MTQwMzg3MSwiZXhwIjoyMDg2NzYzODcxfQ.8swqkFmZa3LwQBhof5IveaTwH22MgKARrPeygYd2mYs"
+ATOMBERG_API_KEY = os.environ["ATOMBERG_API_KEY"]
+ATOMBERG_REFRESH_TOKEN = os.environ["ATOMBERG_REFRESH_TOKEN"]
 
 ATOMBERG_TOKEN_URL = "https://api.developer.atomberg-iot.com/v1/get_access_token"
 ATOMBERG_CONTROL_URL = "https://api.developer.atomberg-iot.com/v1/send_command"
