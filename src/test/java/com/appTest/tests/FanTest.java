@@ -1,4 +1,4 @@
-package com.appTest.tests;
+﻿package com.appTest.tests;
 
 import app.resources.Locators.Android.DeviceScreens.FanLocators;
 import app.util.ActionsUtil;
@@ -16,7 +16,7 @@ import static app.resources.Locators.Android.HomeLocators.APP_LOGO;
 import static app.resources.Locators.Android.HomeLocators.MORE_TAB;
 
 /**
- * FanTest – validates all fan device controls on the Atomberg Home App.
+ * FanTest â€“ validates all fan device controls on the Atomberg Home App.
  *
  * NOTE: @Listeners is intentionally omitted here.
  * It is declared on BaseTest and is inherited by all subclasses.
@@ -24,26 +24,26 @@ import static app.resources.Locators.Android.HomeLocators.MORE_TAB;
  *
  * Prerequisites:
  *   - At least one Atomberg fan must already be paired and visible on the home screen.
- *   - The user must be logged in (ensured by BaseTest.setup() → AppInitializer).
+ *   - The user must be logged in (ensured by BaseTest.setup() â†’ AppInitializer).
  *
  * Test order:
- *    1. Open fan control panel          → asserts POWER_BUTTON visible
- *    2. Power OFF                       → asserts panel still open; speed buttons not tappable
- *    3. Power ON                        → asserts speed buttons are now present and ready
- *    4–9. Speed 1 → 6                   → asserts correct speed button tapped successfully
- *   10. Sleep mode ON                   → asserts panel stays responsive (or skips if absent)
- *   11. Timer screen visible            → asserts TIMER_SCREEN element (or skips if absent)
- *   12. Return to home screen           → asserts MORE_TAB visible
+ *    1. Open fan control panel          â†’ asserts POWER_BUTTON visible
+ *    2. Power OFF                       â†’ asserts panel still open; speed buttons not tappable
+ *    3. Power ON                        â†’ asserts speed buttons are now present and ready
+ *    4â€“9. Speed 1 â†’ 6                   â†’ asserts correct speed button tapped successfully
+ *   10. Sleep mode ON                   â†’ asserts panel stays responsive (or skips if absent)
+ *   11. Timer screen visible            â†’ asserts TIMER_SCREEN element (or skips if absent)
+ *   12. Return to home screen           â†’ asserts MORE_TAB visible
  */
 public class FanTest extends BaseTest {
 
     @BeforeClass(dependsOnMethods = "setup")
     public void initFanTest() {
         Assert.assertNotNull(driver, "Driver must not be null before FanTest");
-        System.out.println("FanTest ready on device: " + deviceSlot);
+        logpoint("FanTest ready on device: " + deviceSlot);
     }
 
-    // ── 1. Open fan control panel ─────────────────────────────────────────────
+    // â”€â”€ 1. Open fan control panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     @Test(priority = 1, description = "Open the fan device control panel from the home screen")
     public void testOpenFanControlPanel() {
@@ -63,7 +63,7 @@ public class FanTest extends BaseTest {
                     "Power button must be visible once the fan control panel opens");
 
             AppUtil.captureScreenshot(driver, "fan_panel_opened");
-            reporter.log(Status.PASS, "Fan control panel opened — power button visible");
+            reporter.log(Status.PASS, "Fan control panel opened â€” power button visible");
         } catch (Exception e) {
             AppUtil.captureScreenshot(driver, "fan_panel_fail");
             reporter.log(Status.FAIL, "Failed to open fan panel: " + e.getMessage());
@@ -74,7 +74,7 @@ public class FanTest extends BaseTest {
         }
     }
 
-    // ── 2. Power OFF ─────────────────────────────────────────────────────────
+    // â”€â”€ 2. Power OFF â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     @Test(priority = 2, description = "Power the fan OFF and assert the panel stays open",
             dependsOnMethods = "testOpenFanControlPanel")
@@ -87,7 +87,7 @@ public class FanTest extends BaseTest {
             // Panel must remain open after power toggle
             Assert.assertTrue(
                     AppUtil.isElementPresent(driver, POWER_BUTTON),
-                    "Power button must still be visible after tapping OFF — panel should not close");
+                    "Power button must still be visible after tapping OFF â€” panel should not close");
 
             // Speed buttons should be absent or unresponsive when fan is off
             Assert.assertFalse(
@@ -95,7 +95,7 @@ public class FanTest extends BaseTest {
                     "Speed 1 button must NOT be present when the fan is powered OFF");
 
             AppUtil.captureScreenshot(driver, "fan_power_off");
-            reporter.log(Status.PASS, "Fan powered OFF — speed buttons absent, panel still open");
+            reporter.log(Status.PASS, "Fan powered OFF â€” speed buttons absent, panel still open");
         } catch (Exception e) {
             AppUtil.captureScreenshot(driver, "fan_power_off_fail");
             reporter.log(Status.FAIL, "Power OFF failed: " + e.getMessage());
@@ -106,7 +106,7 @@ public class FanTest extends BaseTest {
         }
     }
 
-    // ── 3. Power ON ──────────────────────────────────────────────────────────
+    // â”€â”€ 3. Power ON â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     @Test(priority = 3, description = "Power the fan ON and assert speed buttons appear",
             dependsOnMethods = "testPowerOff")
@@ -127,7 +127,7 @@ public class FanTest extends BaseTest {
                     "Speed 1 button must be visible and accessible when the fan is powered ON");
 
             AppUtil.captureScreenshot(driver, "fan_power_on");
-            reporter.log(Status.PASS, "Fan powered ON — speed buttons visible and ready");
+            reporter.log(Status.PASS, "Fan powered ON â€” speed buttons visible and ready");
         } catch (Exception e) {
             AppUtil.captureScreenshot(driver, "fan_power_on_fail");
             reporter.log(Status.FAIL, "Power ON failed: " + e.getMessage());
@@ -138,7 +138,7 @@ public class FanTest extends BaseTest {
         }
     }
 
-    // ── 4–9. Speed 1 through Speed 6 ─────────────────────────────────────────
+    // â”€â”€ 4â€“9. Speed 1 through Speed 6 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     @Test(priority = 4, description = "Set fan to Speed 1",  dependsOnMethods = "testPowerOn")
     public void testSpeed1() { setAndVerifySpeed(1, SPEED_1); }
@@ -158,7 +158,7 @@ public class FanTest extends BaseTest {
     @Test(priority = 9, description = "Set fan to Speed 6 (maximum)", dependsOnMethods = "testSpeed5")
     public void testSpeed6() { setAndVerifySpeed(6, BOOST_BUTTON); }
 
-    // ── 10. Sleep mode ────────────────────────────────────────────────────────
+    // â”€â”€ 10. Sleep mode â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     @Test(priority = 10, description = "Activate Sleep mode; skip gracefully if unavailable on this firmware",
             dependsOnMethods = "testSpeed6")
@@ -167,8 +167,8 @@ public class FanTest extends BaseTest {
         try {
             if (!AppUtil.isElementPresent(driver, SLEEP_BUTTON)) {
                 reporter.log(Status.PASS,
-                        "Sleep button not present on this firmware/model — test skipped");
-                throw new SkipException("Sleep button absent — skipping for this device/firmware");
+                        "Sleep button not present on this firmware/model â€” test skipped");
+                throw new SkipException("Sleep button absent â€” skipping for this device/firmware");
             }
 
             AppUtil.clickElement(driver, SLEEP_BUTTON, "Sleep Button");
@@ -177,10 +177,10 @@ public class FanTest extends BaseTest {
             // Panel must remain responsive after sleep toggle
             Assert.assertTrue(
                     AppUtil.isElementPresent(driver, POWER_BUTTON),
-                    "Power button must still be visible after activating Sleep mode — panel should not close");
+                    "Power button must still be visible after activating Sleep mode â€” panel should not close");
 
             AppUtil.captureScreenshot(driver, "sleep_mode_on");
-            reporter.log(Status.PASS, "Sleep mode activated — panel still responsive");
+            reporter.log(Status.PASS, "Sleep mode activated â€” panel still responsive");
         } catch (SkipException se) {
             throw se; // propagate so TestNG marks as SKIP, not FAIL
         } catch (Exception e) {
@@ -193,7 +193,7 @@ public class FanTest extends BaseTest {
         }
     }
 
-    // ── 11. Timer screen ─────────────────────────────────────────────────────
+    // â”€â”€ 11. Timer screen â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     @Test(priority = 11, description = "Assert Timer element is visible on the fan panel; skip if absent",
             dependsOnMethods = "testSleepModeOn")
@@ -202,8 +202,8 @@ public class FanTest extends BaseTest {
         try {
             if (!AppUtil.isElementPresent(driver, TIMER_SCREEN)) {
                 reporter.log(Status.PASS,
-                        "Timer element not present on this model/firmware — test skipped");
-                throw new SkipException("Timer element absent — skipping for this device/firmware");
+                        "Timer element not present on this model/firmware â€” test skipped");
+                throw new SkipException("Timer element absent â€” skipping for this device/firmware");
             }
 
             Assert.assertTrue(
@@ -224,7 +224,7 @@ public class FanTest extends BaseTest {
         }
     }
 
-    // ── 12. Return to home screen ─────────────────────────────────────────────
+    // â”€â”€ 12. Return to home screen â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     @Test(priority = 12, description = "Return to home screen from the fan control panel",
             dependsOnMethods = "testTimerScreen")
@@ -243,7 +243,7 @@ public class FanTest extends BaseTest {
                     "More tab must be visible after returning to the home screen");
 
             AppUtil.captureScreenshot(driver, "returned_to_home");
-            reporter.log(Status.PASS, "Returned to home screen — More tab confirmed visible");
+            reporter.log(Status.PASS, "Returned to home screen â€” More tab confirmed visible");
         } catch (Exception e) {
             AppUtil.captureScreenshot(driver, "return_to_home_fail");
             reporter.log(Status.FAIL, "Return to home failed: " + e.getMessage());
@@ -254,14 +254,14 @@ public class FanTest extends BaseTest {
         }
     }
 
-    // ── Internal helper ───────────────────────────────────────────────────────
+    // â”€â”€ Internal helper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /**
      * Taps the speed button for {@code speedNumber}, waits for the UI to settle,
      * then asserts the tapped button is still present (confirms we are still on the
      * panel and the app did not crash).
      *
-     * @param speedNumber 1–6
+     * @param speedNumber 1â€“6
      * @param locator     Matching {@code By} locator from {@link FanLocators}
      */
     private void setAndVerifySpeed(int speedNumber, By locator) {
@@ -280,16 +280,16 @@ public class FanTest extends BaseTest {
             // Assert the panel is still open and the speed button is still visible
             Assert.assertTrue(
                     AppUtil.isElementPresent(driver, locator),
-                    label + " button must still be visible after tapping — panel must remain open");
+                    label + " button must still be visible after tapping â€” panel must remain open");
 
             // Optional: read content-desc for a best-effort label confirmation
             String displayed = getDisplayedSpeed();
             if (displayed != null && displayed.contains(String.valueOf(speedNumber))) {
                 reporter.log(Status.PASS,
-                        label + " set — UI speed label confirms " + speedNumber);
+                        label + " set â€” UI speed label confirms " + speedNumber);
             } else {
                 reporter.log(Status.PASS,
-                        label + " button tapped — panel still open (speed label not directly readable)");
+                        label + " button tapped â€” panel still open (speed label not directly readable)");
             }
         } catch (Exception e) {
             AppUtil.captureScreenshot(driver, "fan_speed_" + speedNumber + "_fail");
@@ -304,7 +304,7 @@ public class FanTest extends BaseTest {
     /**
      * Attempts to read the speed label from the fan panel's {@code CURRENT_SPEED_LABEL}.
      * Returns {@code null} if the element is absent or has no readable content-desc.
-     * Uses the inherited {@code driver} field directly — no parameter needed.
+     * Uses the inherited {@code driver} field directly â€” no parameter needed.
      */
     private String getDisplayedSpeed() {
         try {
@@ -315,3 +315,4 @@ public class FanTest extends BaseTest {
         }
     }
 }
+

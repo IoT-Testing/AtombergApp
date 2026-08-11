@@ -1,4 +1,4 @@
-package app.Fan;
+﻿package app.Fan;
 
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
@@ -127,9 +127,9 @@ public class DeviceHierarchyManager {
         this.driver = driver;
     }
 
-    // ═══════════════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     // PRIMARY METHODS: Device Status Verification
-    // ═══════════════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
     /**
      * Verifies if a device is ONLINE or OFFLINE
@@ -141,10 +141,10 @@ public class DeviceHierarchyManager {
             int childCount = getChildElementCount(deviceElement);
 
             if (childCount > 1) {
-                System.out.println("✅ Device Status: ONLINE (child elements: " + childCount + ")");
+                logpoint("âœ… Device Status: ONLINE (child elements: " + childCount + ")");
                 return DeviceStatus.ONLINE;
             } else {
-                System.out.println("❌ Device Status: OFFLINE (child elements: " + childCount + ")");
+                logpoint("âŒ Device Status: OFFLINE (child elements: " + childCount + ")");
                 return DeviceStatus.OFFLINE;
             }
         } catch (Exception e) {
@@ -170,7 +170,7 @@ public class DeviceHierarchyManager {
             for (String pattern : indicatorPatterns) {
                 List<WebElement> indicators = deviceElement.findElements(By.xpath(pattern));
                 if (!indicators.isEmpty()) {
-                    System.out.println("Found online indicator: " + pattern);
+                    logpoint("Found online indicator: " + pattern);
                     return true;
                 }
             }
@@ -197,10 +197,10 @@ public class DeviceHierarchyManager {
             DeviceStatus actualStatus = verifyDeviceStatus(device);
 
             boolean matches = actualStatus == expectedStatus;
-            System.out.println(String.format(
+            logpoint(String.format(
                 "Device '%s' - Expected: %s, Actual: %s - %s",
                 deviceName, expectedStatus.getDisplayName(), actualStatus.getDisplayName(),
-                matches ? "✅ PASS" : "❌ FAIL"
+                matches ? "âœ… PASS" : "âŒ FAIL"
             ));
 
             return matches;
@@ -210,9 +210,9 @@ public class DeviceHierarchyManager {
         }
     }
 
-    // ═══════════════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     // SECONDARY METHODS: Child Element Management
-    // ═══════════════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
     /**
      * Retrieves all child elements of a device
@@ -228,7 +228,7 @@ public class DeviceHierarchyManager {
                 By.xpath(".//*[@clickable='true']")
             );
 
-            System.out.println("Found " + childElements.size() + " child elements");
+            logpoint("Found " + childElements.size() + " child elements");
 
             for (int i = 0; i < childElements.size(); i++) {
                 WebElement child = childElements.get(i);
@@ -241,7 +241,7 @@ public class DeviceHierarchyManager {
 
                 ChildElement childElement = new ChildElement(childId, childName, child, i);
                 children.add(childElement);
-                System.out.println("Child " + i + ": " + childElement);
+                logpoint("Child " + i + ": " + childElement);
             }
 
         } catch (Exception e) {
@@ -273,10 +273,10 @@ public class DeviceHierarchyManager {
             if (childIndex >= 0 && childIndex < children.size()) {
                 ChildElement child = children.get(childIndex);
                 child.getWebElement().click();
-                System.out.println("✅ Clicked child element: " + child.getElementName());
+                logpoint("âœ… Clicked child element: " + child.getElementName());
                 return true;
             } else {
-                System.err.println("❌ Child index " + childIndex + " out of bounds. Max: " + (children.size() - 1));
+                System.err.println("âŒ Child index " + childIndex + " out of bounds. Max: " + (children.size() - 1));
                 return false;
             }
         } catch (Exception e) {
@@ -298,12 +298,12 @@ public class DeviceHierarchyManager {
             for (ChildElement child : children) {
                 if (child.getElementName().equalsIgnoreCase(childName)) {
                     child.getWebElement().click();
-                    System.out.println("✅ Clicked child element: " + childName);
+                    logpoint("âœ… Clicked child element: " + childName);
                     return true;
                 }
             }
 
-            System.err.println("❌ Child element '" + childName + "' not found");
+            System.err.println("âŒ Child element '" + childName + "' not found");
             return false;
         } catch (Exception e) {
             System.err.println("Error clicking child element by name: " + e.getMessage());
@@ -311,9 +311,9 @@ public class DeviceHierarchyManager {
         }
     }
 
-    // ═══════════════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     // COMPREHENSIVE DEVICE INFO RETRIEVAL
-    // ═══════════════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
     /**
      * Creates complete DeviceInfo object with all hierarchy and status info
@@ -334,7 +334,7 @@ public class DeviceHierarchyManager {
                 deviceInfo.addChild(child);
             }
 
-            System.out.println("Built device info: " + deviceInfo);
+            logpoint("Built device info: " + deviceInfo);
             return deviceInfo;
         } catch (Exception e) {
             System.err.println("Error building device info: " + e.getMessage());
@@ -371,9 +371,9 @@ public class DeviceHierarchyManager {
         }
     }
 
-    // ═══════════════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     // BULK OPERATIONS
-    // ═══════════════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
     /**
      * Retrieves all devices with their complete information
@@ -388,7 +388,7 @@ public class DeviceHierarchyManager {
                 By.xpath("//android.widget.Button[contains(@content-desc, 'Fan') and not(contains(@content-desc, 'Add'))]")
             );
 
-            System.out.println("Total devices found: " + deviceElements.size());
+            logpoint("Total devices found: " + deviceElements.size());
 
             for (WebElement device : deviceElements) {
                 DeviceInfo info = buildDeviceInfo(device);
@@ -418,7 +418,7 @@ public class DeviceHierarchyManager {
             }
         }
 
-        System.out.println(String.format("Found %d %s devices", filtered.size(), status.getDisplayName()));
+        logpoint(String.format("Found %d %s devices", filtered.size(), status.getDisplayName()));
         return filtered;
     }
 
@@ -428,25 +428,26 @@ public class DeviceHierarchyManager {
      */
     public String generateHierarchyReport() {
         StringBuilder report = new StringBuilder();
-        report.append("\n═══════════════════════════════════════════════════════════════\n");
+        report.append("\nâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•\n");
         report.append("DEVICE HIERARCHY REPORT\n");
-        report.append("═══════════════════════════════════════════════════════════════\n");
+        report.append("â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•\n");
 
         List<DeviceInfo> devices = getAllDevicesInfo();
 
         for (DeviceInfo device : devices) {
-            report.append(String.format("\n📱 %s\n", device.getDeviceName()));
+            report.append(String.format("\nðŸ“± %s\n", device.getDeviceName()));
             report.append(String.format("   Model: %s\n", device.getModelName()));
             report.append(String.format("   Status: %s\n", device.getStatus().getDisplayName()));
             report.append(String.format("   Child Elements: %d\n", device.getChildCount()));
 
             for (ChildElement child : device.getChildElements()) {
-                report.append(String.format("      └─ %d. %s\n", child.getIndex(), child.getElementName()));
+                report.append(String.format("      â””â”€ %d. %s\n", child.getIndex(), child.getElementName()));
             }
         }
 
-        report.append("\n═══════════════════════════════════════════════════════════════\n");
-        System.out.println(report.toString());
+        report.append("\nâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•\n");
+        logpoint(report.toString());
         return report.toString();
     }
 }
+

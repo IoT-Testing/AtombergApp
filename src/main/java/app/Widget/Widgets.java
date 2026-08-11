@@ -1,7 +1,8 @@
-package app.Widget;
+﻿package app.Widget;
 
 import app.util.ActionsUtil;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
@@ -16,7 +17,7 @@ import static app.util.AppUtil.*;
 public class Widgets {
 
     // === Locator Constants ===
-    private static final By WIDGET_CONTAINER = By.className("android.widget.RelativeLayout");
+    private static final By WIDGET_CONTAINER = AppiumBy.className("android.widget.RelativeLayout");
     private static final By BUTTON_SPEED_UP = By.id("com.atomberg.app:id/bt_up");
     private static final By BUTTON_SPEED_DOWN = By.id("com.atomberg.app:id/bt_down");
     private static final By BUTTON_PREV_FAN = By.id("com.atomberg.app:id/bt_prev");
@@ -42,7 +43,7 @@ public class Widgets {
             WebElement powerBt = atomberg.findElement(BUTTON_POWER);
 
             // Simulate interactions
-            System.out.println("Interacting with widget...");
+            logpoint("Interacting with widget...");
 
             prevFan.click();
             sleep(1000);
@@ -57,7 +58,7 @@ public class Widgets {
             sleep(1000);
 
             nextFan.click();
-            System.out.println("Widget interaction completed.");
+            logpoint("Widget interaction completed.");
 
         } catch (NoSuchElementException e) {
             System.err.println("One or more widget buttons not found: " + e.getMessage());
@@ -77,13 +78,13 @@ public class Widgets {
             return true;
         }
 
-        System.out.println("Widget not found. Swiping right...");
+        logpoint("Widget not found. Swiping right...");
         for (int i = 0; i < 5; i++) {
             ActionsUtil.Swipe.Right(driver, 0.50, 0.80);
             ActionsUtil.sleep(800);
 
             if (isElementPresent(driver, WIDGET_CONTAINER)) {
-                System.out.println("Widget found after swipe #" + (i + 1));
+                logpoint("Widget found after swipe #" + (i + 1));
                 return true;
             }
         }

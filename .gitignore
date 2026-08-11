@@ -56,3 +56,9 @@ target/surefire-reports/
 __pycache__/
 *.pyc
 *.pyo
+
+# Local device-sharing test credentials (never commit)
+run-sharing-tests.ps1
+
+# Local device-sharing test config (never commit)
+sharing-test.properties

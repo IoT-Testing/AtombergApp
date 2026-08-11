@@ -1,4 +1,4 @@
-package app.Assistants;
+﻿package app.Assistants;
 
 import io.appium.java_client.android.AndroidDriver;
 import io.cucumber.core.logging.Logger;
@@ -20,7 +20,7 @@ public class Assistants {
              Logger logger = LoggerFactory.getLogger(Assistants.class);
              logger.info(()->msg);
         } else {
-            System.out.println("[Assistants] " + msg);
+            logpoint("[Assistants] " + msg);
         }
     }
 
@@ -29,7 +29,7 @@ public class Assistants {
     }
 
     /**
-     * Tests full lifecycle of Alexa integration: connect → disconnect.
+     * Tests full lifecycle of Alexa integration: connect â†’ disconnect.
      */
     public void testAlexaIntegration() {
         logInfo("Testing Alexa integration...");
@@ -46,7 +46,7 @@ public class Assistants {
     }
 
     /**
-     * Tests full lifecycle of Google Home integration: connect → disconnect.
+     * Tests full lifecycle of Google Home integration: connect â†’ disconnect.
      */
     public void testGoogleHomeIntegration() {
         logInfo("Testing Google Home integration...");

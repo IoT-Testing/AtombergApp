@@ -1,4 +1,4 @@
-package app.BLEOnlyFans;
+﻿package app.BLEOnlyFans;
 
 import app.resources.ArduinoRelayControllerModern;
 import app.util.ActionsUtil;
@@ -6,6 +6,7 @@ import app.util.AppUtil;
 import app.util.Navigation;
 import com.fazecast.jSerialComm.SerialPort;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -26,15 +27,15 @@ public class PowerToggleInterruption {
     }
 
     public void runPowerToggle(ArduinoRelayControllerModern controller) {
-        System.out.println("⏱ Starting Power on-off cycles");
+        logpoint("â± Starting Power on-off cycles");
 
         try {
             // Step 1: Click Start (if not already started)
             try {
                 driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Start\"]")).click();
-                System.out.println("▶️ Start button clicked.");
+                logpoint("â–¶ï¸ Start button clicked.");
             } catch (Exception e) {
-                System.out.println("⚠️ 'Start' button not found or already running.");
+                logpoint("âš ï¸ 'Start' button not found or already running.");
             }
 
             // Step 2: Perform 20 cycles of pause-resume via tap
@@ -49,24 +50,24 @@ public class PowerToggleInterruption {
                     confirmOnHomeScreen(driver);
                     Navigation.openFanControl(driver);
                     if (!clickElementWithRetry(MENU_BUTTON, 3)) {
-                        throw new RuntimeException("❌ Failed to click Menu button");
+                        throw new RuntimeException("âŒ Failed to click Menu button");
                     }
                     WebElement firmwareElement = findElementByContentDescStartsWith(FIRMWARE_VERSION_PREFIX);
                     if (firmwareElement == null) {
-                        throw new RuntimeException("❌ 'Firmware Version' option not found");
+                        throw new RuntimeException("âŒ 'Firmware Version' option not found");
                     }
                     firmwareElement.click();
-                    System.out.println("✅ Clicked on Firmware Version");
+                    logpoint("âœ… Clicked on Firmware Version");
                     sleep(2000);
 
                     // Click 'Select File'
                     if (!clickElementWithRetry(SELECT_FILE_OPTION, 1)) {
-                        throw new RuntimeException("❌ 'Select File' option not clickable");
+                        throw new RuntimeException("âŒ 'Select File' option not clickable");
                     }
-                    System.out.println("📁 Select File clicked. Waiting for file picker...");
+                    logpoint("ðŸ“ Select File clicked. Waiting for file picker...");
                     sleep(3000);
 
-                    // ✅ Scroll and select correct file (handles bad sorting)
+                    // âœ… Scroll and select correct file (handles bad sorting)
                     selectFileWithScroll(fileName);
                     sleep(2000);
 
@@ -78,24 +79,24 @@ public class PowerToggleInterruption {
                     confirmOnHomeScreen(driver);
                     Navigation.openFanControl(driver);
                     if (!clickElementWithRetry(MENU_BUTTON, 3)) {
-                        throw new RuntimeException("❌ Failed to click Menu button");
+                        throw new RuntimeException("âŒ Failed to click Menu button");
                     }
                     WebElement firmwareElement = findElementByContentDescStartsWith(FIRMWARE_VERSION_PREFIX);
                     if (firmwareElement == null) {
-                        throw new RuntimeException("❌ 'Firmware Version' option not found");
+                        throw new RuntimeException("âŒ 'Firmware Version' option not found");
                     }
                     firmwareElement.click();
-                    System.out.println("✅ Clicked on Firmware Version");
+                    logpoint("âœ… Clicked on Firmware Version");
                     sleep(2000);
 
                     // Click 'Select File'
                     if (!clickElementWithRetry(SELECT_FILE_OPTION, 1)) {
-                        throw new RuntimeException("❌ 'Select File' option not clickable");
+                        throw new RuntimeException("âŒ 'Select File' option not clickable");
                     }
-                    System.out.println("📁 Select File clicked. Waiting for file picker...");
+                    logpoint("ðŸ“ Select File clicked. Waiting for file picker...");
                     sleep(3000);
 
-                    // ✅ Scroll and select correct file (handles bad sorting)
+                    // âœ… Scroll and select correct file (handles bad sorting)
                     selectFileWithScroll(fileName);
                     sleep(2000);
 
@@ -104,10 +105,10 @@ public class PowerToggleInterruption {
                 }
             }
 
-            System.out.println("✅ All pause-resume cycles completed with high accuracy.");
+            logpoint("âœ… All pause-resume cycles completed with high accuracy.");
 
         } catch (Exception e) {
-            throw new RuntimeException("❌ Error during power On-Off cycle: " + e.getMessage(), e);
+            throw new RuntimeException("âŒ Error during power On-Off cycle: " + e.getMessage(), e);
         }
     }
 
@@ -127,7 +128,7 @@ public class PowerToggleInterruption {
     }
 
     private void selectFileWithScroll(String fileName) {
-        System.out.println("🔍 Scrolling to find: " + fileName);
+        logpoint("ðŸ” Scrolling to find: " + fileName);
         By fileLocator = By.xpath("//android.widget.TextView[@resource-id='android:id/title' and @text='" + fileName + "']");
 
         boolean found = false;
@@ -139,7 +140,7 @@ public class PowerToggleInterruption {
                 WebElement fileEl = driver.findElement(fileLocator);
                 if (fileEl.isDisplayed()) {
                     fileEl.click();
-                    System.out.println("✅ File selected: " + fileName);
+                    logpoint("âœ… File selected: " + fileName);
                     sleep(2000);
                     return;
                 }
@@ -150,34 +151,34 @@ public class PowerToggleInterruption {
             sleep(800); // Let UI stabilize
         }
 
-        throw new RuntimeException("❌ Could not find or click file: " + fileName +
+        throw new RuntimeException("âŒ Could not find or click file: " + fileName +
                 " | Total scrolls attempted: " + scrolls);
     }
 
     public void verifyFirmwareUpgradeAndClickDone(String expectedVersion) {
-        System.out.println("🔍 Waiting for firmware upgrade success message...");
+        logpoint("ðŸ” Waiting for firmware upgrade success message...");
 
         long start = System.currentTimeMillis();
 
         // Wait for success message
         while ((System.currentTimeMillis() - start) < FIRMWARE_SUCCESS_TIMEOUT_MS) {
             if (isElementPresent(FIRMWARE_SUCCESS_TOAST)) {
-                System.out.println("✅ Firmware upgrade successful message displayed.");
-                System.out.println(expectedVersion);
+                logpoint("âœ… Firmware upgrade successful message displayed.");
+                logpoint(expectedVersion);
                 break;
             }
             sleep(500);
         }
 
         if (!isElementPresent(FIRMWARE_SUCCESS_TOAST)) {
-            throw new RuntimeException("❌ Timeout: 'Firmware upgrade successful' not shown.");
+            throw new RuntimeException("âŒ Timeout: 'Firmware upgrade successful' not shown.");
         }
 
         // Click Done
         if (clickIfExists(DONE_BUTTON)) {
-            System.out.println("✅ Clicked 'Done' button.");
+            logpoint("âœ… Clicked 'Done' button.");
         } else {
-            throw new RuntimeException("❌ 'Done' button not found.");
+            throw new RuntimeException("âŒ 'Done' button not found.");
         }
 
         // Confirm on Home Screen
@@ -192,19 +193,19 @@ public class PowerToggleInterruption {
         // Verify Version
         String actualVersion = getCurrentFirmwareVersionFromMenu();
         if (actualVersion == null) {
-            throw new RuntimeException("❌ Could not read firmware version from device.");
+            throw new RuntimeException("âŒ Could not read firmware version from device.");
         }
 
         if (actualVersion.equals(expectedVersion)) {
-            System.out.println("✅ Firmware version verified: " + actualVersion);
+            logpoint("âœ… Firmware version verified: " + actualVersion);
         } else {
             throw new RuntimeException(
-                    "❌ Version mismatch! Expected: " + expectedVersion + ", Got: " + actualVersion);
+                    "âŒ Version mismatch! Expected: " + expectedVersion + ", Got: " + actualVersion);
         }
 
         // Close menu
         driver.navigate().back();
-        System.out.println("📁 Menu closed. Ready for next update.");
+        logpoint("ðŸ“ Menu closed. Ready for next update.");
         clickIfExists(MENU_BUTTON);
 
     }
@@ -218,13 +219,13 @@ public class PowerToggleInterruption {
     }
 
     private WebElement findElementByContentDescStartsWith(String prefix) {
-        List<WebElement> candidates = driver.findElements(By.className("android.view.View"));
+        List<WebElement> candidates = driver.findElements(AppiumBy.className("android.view.View"));
         return candidates.stream()
                 .map(el -> getAttribute(el, "content-desc"))
                 .filter(Objects::nonNull)
                 .filter(desc -> desc.startsWith(prefix))
                 .findFirst()
-                .flatMap(desc -> driver.findElements(By.className("android.view.View")).stream()
+                .flatMap(desc -> driver.findElements(AppiumBy.className("android.view.View")).stream()
                         .filter(el -> Objects.equals(getAttribute(el, "content-desc"), desc))
                         .findFirst())
                 .orElse(null);
@@ -261,15 +262,15 @@ public class PowerToggleInterruption {
 
     private void openMenuAndWait() {
         if (!clickIfExists(MENU_BUTTON)) {
-            throw new RuntimeException("❌ Menu button not found after returning to device control");
+            throw new RuntimeException("âŒ Menu button not found after returning to device control");
         }
-        System.out.println("✅ Menu opened");
+        logpoint("âœ… Menu opened");
         sleep(3000); // Allow load
     }
 
     private String getCurrentFirmwareVersionFromMenu() {
         try {
-            List<WebElement> views = driver.findElements(By.className("android.view.View"));
+            List<WebElement> views = driver.findElements(AppiumBy.className("android.view.View"));
             return views.stream()
                     .map(el -> {
                         try {

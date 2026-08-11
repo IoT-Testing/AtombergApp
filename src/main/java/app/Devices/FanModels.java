@@ -1,4 +1,4 @@
-package app.Devices;
+﻿package app.Devices;
 
 import app.util.ActionsUtil.Swipe;
 import io.appium.java_client.AppiumDriver;
@@ -15,12 +15,12 @@ public class FanModels {
         try {
             RPlus = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Golden Oakwood\"]"));
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            logpoint(e.getMessage());
         }
         try {
             SPlus = driver.findElement(By.xpath("//android.widget.ImageView[@content-desc=\"Earth Brown\"]"));
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            logpoint(e.getMessage());
         }
         if (RPlus != null) {
             RenesaPlus(driver);
@@ -70,7 +70,7 @@ public class FanModels {
 
             }
         } catch (Exception exp) {
-            System.out.println(exp.getMessage());
+            logpoint(exp.getMessage());
         }
     }
 
@@ -102,7 +102,7 @@ public class FanModels {
                     break;
             }
         } catch (Exception exp) {
-            System.out.println(exp.getMessage());
+            logpoint(exp.getMessage());
         }
     }
 
@@ -122,7 +122,7 @@ public class FanModels {
                     break;
             }
         } catch (Exception exp) {
-            System.out.println(exp.getMessage());
+            logpoint(exp.getMessage());
         }
     }
 
@@ -142,7 +142,7 @@ public class FanModels {
                     break;
             }
         } catch (Exception exp) {
-            System.out.println(exp.getMessage());
+            logpoint(exp.getMessage());
         }
     }
 
@@ -168,7 +168,7 @@ public class FanModels {
                     break;
             }
         } catch (Exception exp) {
-            System.out.println(exp.getMessage());
+            logpoint(exp.getMessage());
         }
     }
 
@@ -188,7 +188,7 @@ public class FanModels {
                     break;
             }
         } catch (Exception exp) {
-            System.out.println(exp.getMessage());
+            logpoint(exp.getMessage());
         }
     }
 
@@ -209,7 +209,7 @@ public class FanModels {
                     break;
             }
         } catch (Exception exp) {
-            System.out.println(exp.getMessage());
+            logpoint(exp.getMessage());
         }
     }
 
@@ -218,8 +218,9 @@ public class FanModels {
         try {
             Thread.sleep(millis);
         } catch (InterruptedException e) {
-            System.out.println(e.getMessage());
+            logpoint(e.getMessage());
         }
     }
 
 }
+

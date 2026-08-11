@@ -1,7 +1,8 @@
-package app.Automations;
+﻿package app.Automations;
 
 import app.util.ActionsUtil;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.*;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.interactions.*;
@@ -71,7 +72,7 @@ public class Automation {
         clickElementIfExists(ADD_BUTTON, "Add");
 
         if (isSuccessMessageDisplayed("Quick Access Automation Added Successfully")) {
-            System.out.println("Quick Access automation created successfully.");
+            logpoint("Quick Access automation created successfully.");
         } else {
             System.err.println("Failed to confirm Quick Access creation.");
         }
@@ -84,7 +85,7 @@ public class Automation {
         WebElement automationsTab = driver.findElement(AUTOMATIONS_TAB);
         if (automationsTab != null && automationsTab.isDisplayed()) {
             automationsTab.click();
-            System.out.println("Navigated to Automations");
+            logpoint("Navigated to Automations");
         } else {
             System.err.println("Automations tab not available.");
         }
@@ -137,7 +138,7 @@ public class Automation {
         clickElementIfExists(ADD_BUTTON, "Add");
 
         if (isSuccessMessageDisplayed(SUCCESS_ADD_MESSAGE)) {
-            System.out.println("New automation created successfully.");
+            logpoint("New automation created successfully.");
         } else {
             System.err.println("Failed to confirm automation creation.");
         }
@@ -149,7 +150,7 @@ public class Automation {
     private void selectRandomFan() {
         clickElementIfExists(By.xpath("//android.view.View[@content-desc='Select fans']"), "Select Fans");
 
-        List<WebElement> checkboxes = driver.findElements(By.className("android.widget.CheckBox"));
+        List<WebElement> checkboxes = driver.findElements(AppiumBy.className("android.widget.CheckBox"));
         if (checkboxes.isEmpty()) {
             System.err.println("No fan checkboxes found.");
             return;
@@ -184,7 +185,7 @@ public class Automation {
                 .addAction(finger.createPointerMove(Duration.ofMillis(250), PointerInput.Origin.viewport(), endX, startY))
                 .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
         driver.perform(Collections.singletonList(sequence));
-        System.out.println("Adjusted seek bar");
+        logpoint("Adjusted seek bar");
     }
 
     /**
@@ -192,7 +193,7 @@ public class Automation {
      */
     private void selectRandomAction() {
         clickElementIfExists(By.xpath("//android.widget.Button[@content-desc='Power ON']"), "Power ON");
-        List<WebElement> actions = driver.findElements(By.className("android.view.View"));
+        List<WebElement> actions = driver.findElements(AppiumBy.className("android.view.View"));
         if (!actions.isEmpty()) {
             int index = random.nextInt(actions.size());
             try {
@@ -230,7 +231,7 @@ public class Automation {
             confirmDelete();
             ActionsUtil.sleep(1000);
         }
-        System.out.println("All Time-of-Day automations deleted.");
+        logpoint("All Time-of-Day automations deleted.");
     }
 
     /**
@@ -248,14 +249,14 @@ public class Automation {
             confirmDelete();
             ActionsUtil.sleep(1000);
         }
-        System.out.println("All Quick Access automations deleted.");
+        logpoint("All Quick Access automations deleted.");
     }
 
     /**
      * Gets list of automation items starting with given prefix.
      */
     private List<WebElement> getAutomationListStartingWith(String prefix) {
-        return driver.findElements(By.className("android.widget.ImageView")).stream()
+        return driver.findElements(AppiumBy.className("android.widget.ImageView")).stream()
                 .filter(el -> {
                     String desc = getAttribute(el, "content-desc");
                     return desc != null && desc.startsWith(prefix);
@@ -271,7 +272,7 @@ public class Automation {
         clickElementIfExists(DELETE_CONFIRM_BUTTON, "Yes (Confirm Delete)");
 
         if (isSuccessMessageDisplayed(SUCCESS_DELETE_MESSAGE)) {
-            System.out.println("Automation deleted successfully.");
+            logpoint("Automation deleted successfully.");
         } else {
             System.err.println("Deletion may have failed.");
         }
@@ -287,14 +288,14 @@ public class Automation {
             WebElement el = driver.findElement(locator);
             if (el.isDisplayed()) {
                 el.click();
-                System.out.println("Clicked: " + label);
+                logpoint("Clicked: " + label);
                 return true;
             } else {
-                System.out.println(label + " found but not displayed.");
+                logpoint(label + " found but not displayed.");
                 return false;
             }
         } catch (NoSuchElementException e) {
-            System.out.println(label + " not found.");
+            logpoint(label + " not found.");
             return false;
         } catch (Exception e) {
             System.err.println("Error clicking " + label + ": " + e.getMessage());

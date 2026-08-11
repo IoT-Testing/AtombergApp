@@ -1,4 +1,4 @@
-package app.Fan;
+﻿package app.Fan;
 
 import app.ScreenCheck.ScreenCheck;
 import app.SmartDevice;
@@ -10,6 +10,7 @@ import app.resources.PythonFileScript;
 import app.util.ActionsUtil;
 import app.util.AppUtil;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -44,7 +45,7 @@ public class  FanManagement implements SmartDevice {
      */
     @Override
     public void addition() {
-        System.out.println("Searching for available devices...");
+        logpoint("Searching for available devices...");
         for (int attempt = 0; attempt < 5; attempt++) {
             ActionsUtil.Tap.withCoordinates(atomberg, 540, 1940);
             sleep(15); // Wait for scan results
@@ -70,7 +71,7 @@ public class  FanManagement implements SmartDevice {
                     int deviceCenterY = getElementY(fanElement); // Y coordinates of "Atomberg Smart Fan"
                     if (previousElementY == deviceCenterY) continue;
                     if (fanElement != null) {
-                        System.out.println("Atomberg Smart Fan detected.");
+                        logpoint("Atomberg Smart Fan detected.");
                         connectButtons = atomberg.findElements(CONNECT_BUTTON);
                         for (WebElement connect : connectButtons) {
                             ArduinoRelayControllerModern controller = new ArduinoRelayControllerModern();
@@ -92,7 +93,7 @@ public class  FanManagement implements SmartDevice {
                                 }
                                 //TODO : Add Model selection.
                                 By Model = By.xpath("//android.view.View[@content-desc=\"Model: Aris Gladius\"]");
-                                System.out.println("Checking model");
+                                logpoint("Checking model");
                                 if (isElementPresent(atomberg, Model))
                                     break;
                             }
@@ -110,7 +111,7 @@ public class  FanManagement implements SmartDevice {
         }
     }
     //    public void addition() {
-//        System.out.println("Searching for available devices...");
+//        logpoint("Searching for available devices...");
 //        WebDriverWait wait = new WebDriverWait(atomberg, Duration.ofSeconds(15));
 //
 //        for (int attempt = 0; attempt < 5; attempt++) {
@@ -137,7 +138,7 @@ public class  FanManagement implements SmartDevice {
 //                        int deviceCenterY = getElementY(fanElement);
 //                        if (previousElementY == deviceCenterY) continue;
 //                        if (fanElement != null) {
-//                            System.out.println("Atomberg Smart Fan detected.");
+//                            logpoint("Atomberg Smart Fan detected.");
 //                            connectButtons = atomberg.findElements(CONNECT_BUTTON);
 //                            for (WebElement connect : connectButtons) {
 //                                int connectCenter = getElementY(connect);
@@ -152,7 +153,7 @@ public class  FanManagement implements SmartDevice {
 //                                    }
 //
 //                                    By model = By.xpath("//android.view.View[@content-desc=\"Model: Aris Gladius\"]");
-//                                    System.out.println("Checking model");
+//                                    logpoint("Checking model");
 //                                    if (isElementPresent(atomberg, model)) {
 //                                        break;
 //                                    }
@@ -180,7 +181,7 @@ public class  FanManagement implements SmartDevice {
 //                }
 //
 //            } catch (Exception e) {
-//                System.out.println("Exception during addition attempt: " + e.getMessage());
+//                logpoint("Exception during addition attempt: " + e.getMessage());
 //            }
 //        }
 //    }
@@ -197,7 +198,7 @@ public class  FanManagement implements SmartDevice {
         final int SCAN_INTERVAL_MS = 3000; // 3 seconds between scans
 
         for (int attempt = 1; attempt <= MAX_SCAN_ATTEMPTS; attempt++) {
-            System.out.println("🔄 Scan attempt #" + attempt + " of " + MAX_SCAN_ATTEMPTS);
+            logpoint("ðŸ”„ Scan attempt #" + attempt + " of " + MAX_SCAN_ATTEMPTS);
 
             // Wait for scan results to populate
             sleep(SCAN_INTERVAL_MS);
@@ -205,28 +206,28 @@ public class  FanManagement implements SmartDevice {
             try {
                 // Check if fan device is visible in scan results
                 WebElement fanElement = atomberg.findElement(deviceLocator);
-                System.out.println("✅ Atomberg Smart Fan detected");
+                logpoint("âœ… Atomberg Smart Fan detected");
                 int deviceCenter = getElementY(fanElement);
                 // Click the connect button directly (more reliable than coordinates)
                 WebElement connectButton = atomberg.findElement(CONNECT_BUTTON);
 
-                System.out.println("🖱️ Tapped Connect button");
+                logpoint("ðŸ–±ï¸ Tapped Connect button");
 
                 // Wait for connection process to start
                 sleep(2000);
                 return; // Successfully initiated connection
 
             } catch (NoSuchElementException e) {
-                System.out.println("⚠️ Fan not found in scan results (attempt " + attempt + ")");
+                logpoint("âš ï¸ Fan not found in scan results (attempt " + attempt + ")");
 
                 // Only attempt to handle no device on final attempt
                 if (attempt == MAX_SCAN_ATTEMPTS) {
-                    System.out.println("❌ No devices found after " + MAX_SCAN_ATTEMPTS + " attempts");
+                    logpoint("âŒ No devices found after " + MAX_SCAN_ATTEMPTS + " attempts");
                     handleNoDeviceFound();
                     throw new DeviceNotFoundException("No Atomberg devices detected during BLE scan");
                 }
             } catch (Exception e) {
-                System.out.println("⚠️ Unexpected error during scan: " + e.getMessage());
+                logpoint("âš ï¸ Unexpected error during scan: " + e.getMessage());
                 // Consider adding specific error handling for different exception types
             }
         }
@@ -261,10 +262,10 @@ public class  FanManagement implements SmartDevice {
             }
             return ConnectionError.NO_ERROR;
         } catch (Exception e) {
-            System.out.println("Error checking connection status: " + e.getMessage());
+            logpoint("Error checking connection status: " + e.getMessage());
             return ConnectionError.NO_ERROR;
         }
-         // No errors found — assume success
+         // No errors found â€” assume success
     }
 
     public enum ConnectionError {
@@ -272,7 +273,7 @@ public class  FanManagement implements SmartDevice {
             @Override
             public boolean handle(AndroidDriver driver) {
                 driver.navigate().back();
-                System.out.println("Back: Connecting to Lock modal appeared.");
+                logpoint("Back: Connecting to Lock modal appeared.");
                 return true;
             }
         },
@@ -280,7 +281,7 @@ public class  FanManagement implements SmartDevice {
             @Override
             public boolean handle(AndroidDriver driver) {
                 driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]")).click();
-                System.out.println("Cancel clicked: Could not add lock.");
+                logpoint("Cancel clicked: Could not add lock.");
                 sleepStatic(1);
                 return true;
             }
@@ -289,7 +290,7 @@ public class  FanManagement implements SmartDevice {
             @Override
             public boolean handle(AndroidDriver driver) {
                 driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]")).click();
-                System.out.println("Cancel clicked: Device already paired.");
+                logpoint("Cancel clicked: Device already paired.");
                 sleepStatic(1);
                 return true;
             }
@@ -297,7 +298,7 @@ public class  FanManagement implements SmartDevice {
         COULD_NOT_REACH_DEVICE(Phoenix.COULD_NOT_REACH_DEVICE) {
             @Override
             public boolean handle(AndroidDriver driver) {
-                System.out.println("Out of reach.");
+                logpoint("Out of reach.");
                 driver.navigate().back();
                 driver.navigate().back();
                 return true;
@@ -333,7 +334,7 @@ public class  FanManagement implements SmartDevice {
         private static void backToHome() {
             int attempts = 0;
             while (!isElementPresent(atomberg,MORE_TAB) && attempts < 5) {
-                System.out.println("Navigating back... attempt " + (++attempts));
+                logpoint("Navigating back... attempt " + (++attempts));
                 atomberg.navigate().back();
                 ActionsUtil.sleep(1000);
             }
@@ -370,10 +371,10 @@ public class  FanManagement implements SmartDevice {
             } else {
                 WebElement tryAgain = atomberg.findElement(By.xpath("//android.view.View[@content-desc=\"Try Again\"]"));
                 tryAgain.click();
-                System.out.println("Trying again...");
+                logpoint("Trying again...");
             }
         } catch (NoSuchElementException e) {
-            System.out.println("Neither 'Connect' nor 'Try Again' found: " + e.getMessage());
+            logpoint("Neither 'Connect' nor 'Try Again' found: " + e.getMessage());
         }
     }
     /**
@@ -385,10 +386,10 @@ public class  FanManagement implements SmartDevice {
         captureScreenshot(atomberg, "Addition Process");
         AppUtil.additionProcess(atomberg);
         sleep(10);
-//        if (isElementPresent(atomberg, SUCCESS_MESSAGE)) System.out.println("Device added successfully");
+//        if (isElementPresent(atomberg, SUCCESS_MESSAGE)) logpoint("Device added successfully");
     }
     /**
-     * Performs basic fan control actions in sequence: Speeds 1–5 → Boost → Power.
+     * Performs basic fan control actions in sequence: Speeds 1â€“5 â†’ Boost â†’ Power.
      */
     public void speedCommands() {
         performBasicFanActions();
@@ -404,7 +405,7 @@ public class  FanManagement implements SmartDevice {
         clickElement(START_TIMER);
         AtombergFanStatus get = new AtombergFanStatus();
         String timer = get.fanStatus("timer");
-        if("1".equals(timer)) System.out.println("Timer of "+timer+" hour successful");
+        if("1".equals(timer)) logpoint("Timer of "+timer+" hour successful");
     }
     /**
      * Pre-requisites: Fan control screen should be open.
@@ -429,7 +430,7 @@ public class  FanManagement implements SmartDevice {
         ActionsUtil.sleep(1000);
         AtombergFanStatus get = new AtombergFanStatus();
         String timer = get.fanStatus("timer");
-        if("2".equals(timer)) System.out.println("Timer of "+timer+" hour successful");
+        if("2".equals(timer)) logpoint("Timer of "+timer+" hour successful");
     }
     /**
      * Pre-requisites: Fan control screen should be open.
@@ -446,7 +447,7 @@ public class  FanManagement implements SmartDevice {
         ActionsUtil.sleep(1000);
         AtombergFanStatus get = new AtombergFanStatus();
         String timer = get.fanStatus("timer");
-        if("3".equals(timer)) System.out.println("Timer of "+timer+" hour successful");
+        if("3".equals(timer)) logpoint("Timer of "+timer+" hour successful");
     }
     /**
      * Pre-requisites: Fan control screen should be open.
@@ -464,7 +465,7 @@ public class  FanManagement implements SmartDevice {
         ActionsUtil.sleep(1000);
         AtombergFanStatus get = new AtombergFanStatus();
         String timer = get.fanStatus("timer");
-        if("6".equals(timer)) System.out.println("Timer of "+timer+" hour successful");
+        if("6".equals(timer)) logpoint("Timer of "+timer+" hour successful");
     }
     /**
      * Executes random fan commands for a given number of iterations.
@@ -491,7 +492,7 @@ public class  FanManagement implements SmartDevice {
         setImplicitWait(Duration.ofSeconds(5)); // Restore default
     }
     /**
-     * Repeats full command cycle (1→5, Boost, Power) multiple times.
+     * Repeats full command cycle (1â†’5, Boost, Power) multiple times.
      *
      * @param iteration Number of full cycles
      */
@@ -533,27 +534,27 @@ public class  FanManagement implements SmartDevice {
         List<DeviceHierarchyManager.DeviceInfo> allDevices = manager.getAllDevicesInfo();
 
         if (allDevices.isEmpty()) {
-            System.out.println("❌ No devices found on screen.");
+            logpoint("âŒ No devices found on screen.");
             return;
         }
 
-        System.out.println("✅ Found " + allDevices.size() + " devices");
+        logpoint("âœ… Found " + allDevices.size() + " devices");
 
         // Filter and process ONLINE devices only
         List<DeviceHierarchyManager.DeviceInfo> onlineDevices =
             manager.getDevicesByStatus(DeviceHierarchyManager.DeviceStatus.ONLINE);
 
         if (onlineDevices.isEmpty()) {
-            System.out.println("⚠️  No online devices available.");
+            logpoint("âš ï¸  No online devices available.");
             return;
         }
 
         // Process each ONLINE device
         for (DeviceHierarchyManager.DeviceInfo device : onlineDevices) {
-            System.out.println("\n📱 Processing: " + device.getDeviceName());
-            System.out.println("   Status: " + device.getStatus().getDisplayName());
-            System.out.println("   Model: " + device.getModelName());
-            System.out.println("   Child Elements: " + device.getChildCount());
+            logpoint("\nðŸ“± Processing: " + device.getDeviceName());
+            logpoint("   Status: " + device.getStatus().getDisplayName());
+            logpoint("   Model: " + device.getModelName());
+            logpoint("   Child Elements: " + device.getChildCount());
 
             // Control the device by clicking on it
             try {
@@ -567,19 +568,19 @@ public class  FanManagement implements SmartDevice {
                 atomberg.navigate().back();
                 sleep(1);
 
-                System.out.println("✅ Successfully controlled: " + device.getDeviceName());
+                logpoint("âœ… Successfully controlled: " + device.getDeviceName());
             } catch (Exception e) {
-                System.err.println("❌ Error controlling device: " + e.getMessage());
+                System.err.println("âŒ Error controlling device: " + e.getMessage());
                 atomberg.navigate().back();
             }
         }
 
         // Generate and log device hierarchy report
         String report = manager.generateHierarchyReport();
-        System.out.println(report);
+        logpoint(report);
 
     } catch (Exception e) {
-        System.out.println("❌ Error during fan online check: " + e.getMessage());
+        logpoint("âŒ Error during fan online check: " + e.getMessage());
     } finally {
         sleep(1);
     }
@@ -613,7 +614,7 @@ public class  FanManagement implements SmartDevice {
      * @return List of valid fan web elements
      */
     private List<WebElement> getVisibleFanList() {
-        List<WebElement> allButtons = atomberg.findElements(By.className("android.widget.Button"));
+        List<WebElement> allButtons = atomberg.findElements(AppiumBy.className("android.widget.Button"));
         return allButtons.stream()
                 .map(el -> {
                     String desc = el.getDomAttribute("content-desc");
@@ -630,7 +631,7 @@ public class  FanManagement implements SmartDevice {
     private void controlMultipleFans(List<WebElement> fans) {
         for (WebElement fan : fans) {
             String name = fan.getDomAttribute("content-desc");
-            System.out.println("Controlling fan: " + name);
+            logpoint("Controlling fan: " + name);
             fan.click();
             speedCommands();
             atomberg.navigate().back();
@@ -643,17 +644,16 @@ public class  FanManagement implements SmartDevice {
             for (WebElement fan : fans) {
                 //android.widget.Button[@index="0"] xPath of error triangle
                 String name = fan.getDomAttribute("content-desc");
-                System.out.println("Controlling fan: " + name);
                 fan.click();
                 if (isElementPresent(atomberg, REMOVE_DEVICE)) clickIfExists(atomberg, YES);
                 if (isElementPresent(atomberg, DEVICE_REMOVED_SUCCESSFULLY))
-                    System.out.println("Device Reset complete, please Restart the device");
+                    logpoint("Device Reset complete, please Restart the device");
             }
         }else {
             ActionsUtil.Tap.withCoordinates(atomberg, 730, 950);
             if (isElementPresent(atomberg, REMOVE_DEVICE)) clickIfExists(atomberg, YES);
             if (isElementPresent(atomberg, DEVICE_REMOVED_SUCCESSFULLY))
-                System.out.println("Device Reset complete, please Restart the device");
+                logpoint("Device Reset complete, please Restart the device");
         }
     }
     /**
@@ -670,13 +670,13 @@ public class  FanManagement implements SmartDevice {
         List<WebElement> newFans = getVisibleFanList();
 
         if (newFans.isEmpty()) {
-            System.out.println("No additional fans after scroll.");
+            logpoint("No additional fans after scroll.");
             return;
         }
 
         String newLastFan = newFans.get(newFans.size() - 1).getDomAttribute("content-desc");
         if (Objects.equals(newLastFan, lastFanName)) {
-            System.out.println("No more devices beyond current list.");
+            logpoint("No more devices beyond current list.");
             return;
         }
 
@@ -690,7 +690,7 @@ public class  FanManagement implements SmartDevice {
 
         if (overlapCount > 0) {
             newFans.subList(0, overlapCount).clear();
-            System.out.println("Removed overlapping fans. Remaining: " + newFans.size());
+            logpoint("Removed overlapping fans. Remaining: " + newFans.size());
         }
 
         controlMultipleFans(newFans);
@@ -710,13 +710,13 @@ public class  FanManagement implements SmartDevice {
     public void deviceChildElements() {
         List<WebElement> devices = getVisibleFanList();
         if (devices.isEmpty()) {
-            System.out.println("No devices found.");
+            logpoint("No devices found.");
             return;
         }
 
         // Remove last element assumed to be non-device (e.g., Add button)
         devices.remove(devices.size() - 1);
-        System.out.println("Processing " + devices.size() + " devices.");
+        logpoint("Processing " + devices.size() + " devices.");
 
         for (int i = 0; i < devices.size(); i++) {
             if (i == 5) {
@@ -726,17 +726,17 @@ public class  FanManagement implements SmartDevice {
 
             WebElement device = devices.get(i);
             String name = device.getDomAttribute("content-desc");
-            System.out.println("Inspecting children of: " + name);
+            logpoint("Inspecting children of: " + name);
 
             List<WebElement> children = device.findElements(By.xpath(".//*"));
             List<WebElement> clickableChildren = children.stream()
                     .filter(el -> "true".equals(el.getDomAttribute("clickable")))
                     .collect(Collectors.toList());
 
-            System.out.println("Clickable children: " + clickableChildren.size());
+            logpoint("Clickable children: " + clickableChildren.size());
             for (WebElement child : clickableChildren) {
                 String childDesc = child.getDomAttribute("content-desc");
-                System.out.println("Clicking child: " + childDesc);
+                logpoint("Clicking child: " + childDesc);
                 child.click();
                 ActionsUtil.SSleep(3);
                 atomberg.navigate().back();
@@ -755,7 +755,7 @@ public class  FanManagement implements SmartDevice {
         if (emptyFamily == null) {
             checkFanOnline();
         } else {
-            System.out.println("No smart devices added yet.");
+            logpoint("No smart devices added yet.");
         }
     }
 
@@ -782,7 +782,7 @@ public class  FanManagement implements SmartDevice {
         try {
             atomberg.findElement(locator).click();
         } catch (Exception e) {
-            System.out.println("Failed to click element: " + locator.toString());
+            logpoint("Failed to click element: " + locator.toString());
         }
     }
 
@@ -832,7 +832,7 @@ public class  FanManagement implements SmartDevice {
 //            fan.checkFan();
             ScreenCheck check = new ScreenCheck(atomberg);
             check.rateUsPopup();
-            System.out.println("Fan operations completed.");
+            logpoint("Fan operations completed.");
         }
 
 
@@ -860,10 +860,10 @@ public class  FanManagement implements SmartDevice {
             try {
                 WebElement model = atomberg.findElement(options[choice]);
                 model.click();
-                System.out.println(labels[choice] + " Selected");
+                logpoint(labels[choice] + " Selected");
                 captureScreenshot(atomberg, labels[choice]);
             } catch (Exception e) {
-                System.out.println("Model selection failed: " + e.getMessage());
+                logpoint("Model selection failed: " + e.getMessage());
             }
 
             clickWhenReady(atomberg, CONTINUE_BUTTON);
@@ -889,14 +889,14 @@ public class  FanManagement implements SmartDevice {
                 clickAndWait(actions[i]);
                 ActionsUtil.sleep(1000);
 //                String state = get.fanStatus(command[i]);
-//                if(state.equals(labels[i])) System.out.println(command[i]+labels[i]+" verified");
+//                if(state.equals(labels[i])) logpoint(command[i]+labels[i]+" verified");
             }
             else{
                 clickAndWait(actions[i]);
                 ActionsUtil.sleep(1000);
 //                String state = get.fanStatus(command[i]);
-//                if(!state.equals(power)) System.out.println(command[i]+labels[i]+" verified");
-//                else System.out.println("power "+ state);
+//                if(!state.equals(power)) logpoint(command[i]+labels[i]+" verified");
+//                else logpoint("power "+ state);
             }
         }
     }
@@ -906,23 +906,23 @@ public class  FanManagement implements SmartDevice {
 //        try {
 //            if (isElementPresent(atomberg, CONNECTING_TO_LOCK_MODAL)) {
 //                atomberg.navigate().back();
-//                System.out.println("Back: Connecting to Lock modal appeared.");
+//                logpoint("Back: Connecting to Lock modal appeared.");
 //                return true;
 //            }
 //            if (isElementPresent(atomberg, COULD_NOT_ADD_LOCK)) {
 //                atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]")).click();
-//                System.out.println("Cancel clicked: Could not add lock.");
+//                logpoint("Cancel clicked: Could not add lock.");
 //                sleep(1);
 //                return true;
 //            }
 //            if (isElementPresent(atomberg, DEVICE_ALREADY_PAIRED)) {
 //                atomberg.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]")).click();
-//                System.out.println("Cancel clicked: Device already paired.");
+//                logpoint("Cancel clicked: Device already paired.");
 //                sleep(1);
 //                return true;
 //            }
 //            if (isElementPresent(atomberg, COULD_NOT_REACH_DEVICE)) {
-//                System.out.println("Out of reach.");
+//                logpoint("Out of reach.");
 //                atomberg.navigate().back();
 //                atomberg.navigate().back();
 //                return true;
@@ -931,11 +931,11 @@ public class  FanManagement implements SmartDevice {
 //                return true;
 //            }
 //            if (isElementPresent(atomberg, OPERATION_FAILED)){
-//                System.out.println(atomberg.findElement(OPERATION_FAILED).getDomAttribute("accessibility id"));
+//                logpoint(atomberg.findElement(OPERATION_FAILED).getDomAttribute("accessibility id"));
 //            }
 //        } catch (Exception e) {
-//            System.out.println("Error checking connection status: " + e.getMessage());
+//            logpoint("Error checking connection status: " + e.getMessage());
 //        }
-//        return false; // No errors found — assume success
+//        return false; // No errors found â€” assume success
 //    }
 }

@@ -1,4 +1,4 @@
-package com.appTest.tests;
+﻿package com.appTest.tests;
 
 import ExtentReports.ExtentReportAT;
 import app.ServerInitializer;
@@ -16,21 +16,21 @@ import static app.resources.AppInfo.*;
 import static app.resources.Endpoints.APPIUM_URL;
 
 /**
- * BaseTest – driver lifecycle, Appium server management, and Extent reporting.
+ * BaseTest â€“ driver lifecycle, Appium server management, and Extent reporting.
 
  * FIX C11: Listeners are declared ONLY here (on BaseTest). Subclasses must NOT
- * redeclare @Listeners — doing so causes TestNG to register each listener twice,
+ * redeclare @Listeners â€” doing so causes TestNG to register each listener twice,
  * producing duplicate log entries and inflated pass/fail counts in the report.
  * The testng.xml <listeners> block is also REMOVED from the XML to avoid a
  * third registration path (XML + @Listeners is already sufficient, XML alone is
- * what you want when @Listeners is present on the class — not both).
+ * what you want when @Listeners is present on the class â€” not both).
 
  * FIX H1/H2: The driver field is now ThreadLocal so that each parallel <test>
  * block (thread) owns its own driver instance. Direct assignment from @BeforeClass
  * only into a plain field is thread-unsafe when parallel="tests" is used.
 
  * FIX C12: Removed unreachable `if (driver == null)` guard that appeared after
- * Assert.assertNotNull(driver) — the assert already throws if null.
+ * Assert.assertNotNull(driver) â€” the assert already throws if null.
  */
 @Listeners({
         com.appTest.listeners.TestListeners.class,
@@ -46,7 +46,7 @@ public class BaseTest {
     private static final ThreadLocal<ExtentReportAT> TL_REPORTER     = new ThreadLocal<>();
     private static final ThreadLocal<String>          TL_DEVICE_SLOT  = new ThreadLocal<>();
 
-    /** Convenience accessor for subclasses — mirrors the old `driver` field. */
+    /** Convenience accessor for subclasses â€” mirrors the old `driver` field. */
     protected AndroidDriver getDriver()   { return TL_DRIVER.get(); }
 
     /** Kept for backward-compat where subclasses reference `driver` directly. */
@@ -69,7 +69,7 @@ public class BaseTest {
 
     private final ServerInitializer serverInit = new ServerInitializer();
 
-    // ── Suite hooks ──────────────────────────────────────────────────────────
+    // â”€â”€ Suite hooks â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     @BeforeSuite(alwaysRun = true)
     public void beforeSuite() {
@@ -83,7 +83,7 @@ public class BaseTest {
         if (r != null) r.close();
     }
 
-    // ── Per-test-class hooks ─────────────────────────────────────────────────
+    // â”€â”€ Per-test-class hooks â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /**
      * Sets up a fresh AndroidDriver for each TestNG {@code <test>} block.
@@ -103,7 +103,7 @@ public class BaseTest {
         TL_REPORTER.set(rep);
         this.reporter = rep;
 
-        System.out.printf("[BaseTest] Setup – slot=%s  udid=%s%n",
+        System.out.printf("[BaseTest] Setup â€“ slot=%s  udid=%s%n",
                 slot, (deviceUdid == null || deviceUdid.isBlank()) ? "<device-farm auto-allocate>" : deviceUdid);
 
         UiAutomator2Options options = buildOptions(deviceUdid);
@@ -118,7 +118,7 @@ public class BaseTest {
         TL_DRIVER.set(d);
         this.driver = d;
 
-        System.out.println("[BaseTest] Driver initialised for: " + slot);
+        logpoint("[BaseTest] Driver initialised for: " + slot);
     }
 
     @AfterClass(alwaysRun = true)
@@ -139,13 +139,13 @@ public class BaseTest {
             this.reporter = null;
         }
         TL_DEVICE_SLOT.remove();
-        System.out.println("[BaseTest] Driver quit for: " + deviceSlot);
+        logpoint("[BaseTest] Driver quit for: " + deviceSlot);
     }
 
-    // ── Shared helpers ───────────────────────────────────────────────────────
+    // â”€â”€ Shared helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /**
-     * Best-effort recovery after a test failure — navigates back to home screen.
+     * Best-effort recovery after a test failure â€” navigates back to home screen.
      * Prevents cascading failures when one test leaves the app in an unexpected state.
      */
     protected void afterTestFailure() {
@@ -156,7 +156,7 @@ public class BaseTest {
         }
     }
 
-    // ── Private builders ─────────────────────────────────────────────────────
+    // â”€â”€ Private builders â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     private UiAutomator2Options buildOptions(String deviceUdid) {
         UiAutomator2Options options = new UiAutomator2Options();
@@ -165,14 +165,14 @@ public class BaseTest {
         options.setPlatformName("Android");
 
         // The Appium Device Farm plugin auto-allocates a free connected device for
-        // each new session when no UDID is supplied — this is how parallel <test>
+        // each new session when no UDID is supplied â€” this is how parallel <test>
         // blocks each get a distinct device. Supply deviceUdid in testng.xml only
         // to pin a specific <test> block to a specific device.
         if (deviceUdid != null && !deviceUdid.isBlank()) {
             options.setUdid(deviceUdid);
-            System.out.println("[BaseTest] Pinning session to device UDID: " + deviceUdid);
+            logpoint("[BaseTest] Pinning session to device UDID: " + deviceUdid);
         } else {
-            System.out.println("[BaseTest] No UDID set — Appium Device Farm will auto-allocate a device.");
+            logpoint("[BaseTest] No UDID set â€” Appium Device Farm will auto-allocate a device.");
         }
         return options;
     }

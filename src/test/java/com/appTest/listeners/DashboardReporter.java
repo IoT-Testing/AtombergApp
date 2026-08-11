@@ -1,4 +1,4 @@
-package com.appTest.listeners;
+﻿package com.appTest.listeners;
 
 import com.appTest.models.AppiumTestResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,10 +15,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * DashboardReporter – writes test results to a JSON file for dashboard consumption.
+ * DashboardReporter â€“ writes test results to a JSON file for dashboard consumption.
  * FIX H5: The original {@code results} field was a plain static {@code ArrayList}.
  * In parallel runs ({@code parallel="tests"}) multiple threads call onTestSuccess /
- * onTestFailure / onTestSkipped concurrently → {@code ConcurrentModificationException}.
+ * onTestFailure / onTestSkipped concurrently â†’ {@code ConcurrentModificationException}.
  * Fix: replaced with {@link CopyOnWriteArrayList} which is thread-safe for concurrent
  * writes without needing explicit synchronization. For write-heavy scenarios a
  * {@code ConcurrentLinkedQueue} would be preferable, but test suites produce at most
@@ -36,11 +36,11 @@ public class DashboardReporter implements ITestListener {
     /*
      * FIX H5: CopyOnWriteArrayList replaces ArrayList for concurrent safety.
      * Static field so all listener instances (one per parallel thread) share the
-     * same result accumulator — matches the intended "one file per suite" design.
+     * same result accumulator â€” matches the intended "one file per suite" design.
      */
     private static final List<AppiumTestResult> RESULTS = new CopyOnWriteArrayList<>();
 
-    // ── ITestListener callbacks ──────────────────────────────────────────────
+    // â”€â”€ ITestListener callbacks â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     @Override
     public void onTestSuccess(ITestResult result) {
@@ -68,7 +68,7 @@ public class DashboardReporter implements ITestListener {
         writeResultsToFile();
     }
 
-    // ── Helpers ──────────────────────────────────────────────────────────────
+    // â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     private void record(ITestResult result, String status, String error, String stackTrace) {
         String platform = param(result, "platform",    System.getProperty("appium.platformName", "Android"));
@@ -94,7 +94,7 @@ public class DashboardReporter implements ITestListener {
         try {
             Files.createDirectories(Paths.get(OUTPUT_DIR));
             MAPPER.writeValue(new File(OUTPUT_FILE), RESULTS);
-            System.out.println("[DashboardReporter] Results written to: " + OUTPUT_FILE);
+            logpoint("[DashboardReporter] Results written to: " + OUTPUT_FILE);
         } catch (IOException e) {
             System.err.println("[DashboardReporter] Failed to write results file: " + e.getMessage());
         }
@@ -103,7 +103,7 @@ public class DashboardReporter implements ITestListener {
     private String param(ITestResult result, String paramName, String fallback) {
         // Try TestNG parameters first
         Object[] params = result.getParameters();
-        // Parameters are positional, not named — use system properties as fallback
+        // Parameters are positional, not named â€” use system properties as fallback
         String v = result.getTestContext().getCurrentXmlTest().getParameter(paramName);
         return (v != null && !v.isBlank()) ? v : fallback;
     }

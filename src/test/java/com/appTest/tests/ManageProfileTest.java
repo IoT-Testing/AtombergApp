@@ -1,4 +1,4 @@
-package com.appTest.tests;
+﻿package com.appTest.tests;
 
 import app.MoreTab.Profile;
 import app.util.AppUtil;
@@ -10,14 +10,14 @@ import static app.resources.Locators.Android.HomeLocators.MORE_TAB;
 
 public class ManageProfileTest extends BaseTest {
 
-    // No local driver field — uses BaseTest.driver directly via inheritance.
+    // No local driver field â€” uses BaseTest.driver directly via inheritance.
 
-    // NOTE: must be public — TestNG silently ignores non-public @Test methods.
+    // NOTE: must be public â€” TestNG silently ignores non-public @Test methods.
     @Test(priority = 2, description = "Edit user profile")
     public void testManageProfile() {
         try {
             reporter.startTest("Profile Edit", deviceSlot);
-            System.out.println("Profile Edit test start");
+            logpoint("Profile Edit test start");
             Profile profile = new Profile(driver);
             profile.edit();
             Assert.assertTrue(AppUtil.isElementPresent(driver, MORE_TAB),
@@ -27,7 +27,7 @@ public class ManageProfileTest extends BaseTest {
             reporter.log(Status.FAIL, "Profile edit failed: " + e.getMessage());
             throw e;
         } finally {
-            System.out.println("Profile Edit test end");
+            logpoint("Profile Edit test end");
             reporter.endTest();
         }
     }

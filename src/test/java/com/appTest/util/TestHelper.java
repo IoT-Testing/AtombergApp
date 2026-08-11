@@ -1,4 +1,4 @@
-package com.appTest.util;
+﻿package com.appTest.util;
 
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
@@ -32,18 +32,18 @@ public class TestHelper {
             try {
                 WebElement element = driver.findElement(locator);
                 if (element.isDisplayed()) {
-                    System.out.println("✅ Found element: " + locator);
+                    logpoint("âœ… Found element: " + locator);
                     return element;
                 }
             } catch (NoSuchElementException | StaleElementReferenceException e) {
                 // Expected during retry loop
             } catch (WebDriverException e) {
-                System.err.println("⚠️  WebDriver error: " + e.getMessage());
+                System.err.println("âš ï¸  WebDriver error: " + e.getMessage());
             }
             ActionsUtil.sleep(POLLING_INTERVAL_MS);
         }
 
-        throw new RuntimeException("❌ Element not found after " + timeoutSec + "s: " + locator);
+        throw new RuntimeException("âŒ Element not found after " + timeoutSec + "s: " + locator);
     }
 
     /**
@@ -74,11 +74,11 @@ public class TestHelper {
             WebElement element = driver.findElement(locator);
             if (element.isDisplayed()) {
                 element.click();
-                System.out.println("✅ Clicked element: " + locator);
+                logpoint("âœ… Clicked element: " + locator);
                 return true;
             }
         } catch (NoSuchElementException | StaleElementReferenceException e) {
-            System.out.println("⚠️  Element not found for click: " + locator);
+            logpoint("âš ï¸  Element not found for click: " + locator);
         }
         return false;
     }
@@ -94,7 +94,7 @@ public class TestHelper {
             try {
                 driver.navigate().back();
                 ActionsUtil.sleep(1000);
-                System.out.println("Back pressed (" + (i + 1) + "/" + maxRetries + ")");
+                logpoint("Back pressed (" + (i + 1) + "/" + maxRetries + ")");
             } catch (Exception e) {
                 System.err.println("Back press failed: " + e.getMessage());
                 break;
@@ -118,17 +118,17 @@ public class TestHelper {
         for (int attempt = 1; attempt <= maxRetries; attempt++) {
             try {
                 operation.execute();
-                System.out.println("✅ Operation succeeded on attempt " + attempt);
+                logpoint("âœ… Operation succeeded on attempt " + attempt);
                 return true;
             } catch (Exception e) {
-                System.err.println("⚠️  Attempt " + attempt + " failed: " + e.getMessage());
+                System.err.println("âš ï¸  Attempt " + attempt + " failed: " + e.getMessage());
                 if (attempt < maxRetries) {
                     ActionsUtil.sleep(delay);
                     delay *= 2; // Exponential backoff
                 }
             }
         }
-        System.err.println("❌ Operation failed after " + maxRetries + " attempts");
+        System.err.println("âŒ Operation failed after " + maxRetries + " attempts");
         return false;
     }
 
@@ -165,9 +165,9 @@ public class TestHelper {
                     }});
                     break;
             }
-            System.out.println("✅ Scrolled " + direction);
+            logpoint("âœ… Scrolled " + direction);
         } catch (Exception e) {
-            System.err.println("⚠️  Scroll failed: " + e.getMessage());
+            System.err.println("âš ï¸  Scroll failed: " + e.getMessage());
         }
     }
 
@@ -187,7 +187,7 @@ public class TestHelper {
             WebElement element = driver.findElement(locator);
             return element.getText();
         } catch (NoSuchElementException e) {
-            System.out.println("⚠️  Element not found: " + locator);
+            logpoint("âš ï¸  Element not found: " + locator);
             return "";
         }
     }
@@ -205,12 +205,13 @@ public class TestHelper {
             WebElement element = driver.findElement(locator);
             element.clear();
             element.sendKeys(text);
-            System.out.println("✅ Text entered: " + text);
+            logpoint("âœ… Text entered: " + text);
             return true;
         } catch (NoSuchElementException e) {
-            System.err.println("❌ Input field not found: " + locator);
+            System.err.println("âŒ Input field not found: " + locator);
             return false;
         }
     }
 }
+
 

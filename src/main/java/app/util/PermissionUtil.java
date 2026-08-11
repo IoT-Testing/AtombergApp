@@ -1,4 +1,4 @@
-package app.util;
+﻿package app.util;
 
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
@@ -61,17 +61,17 @@ public class PermissionUtil {
          */
         public void handleStandardFlow() {
             if (isPermissionDialogPresent()) {
-                System.out.println("Permissions dialog detected.");
+                logpoint("Permissions dialog detected.");
                 clickAllowButton();           // First allow (full permission)
                 clickLocationPermission();    // Foreground only
                 clickAllowButton();           // Final allow
-                System.out.println("All Permissions Granted");
+                logpoint("All Permissions Granted");
                 alexaPopUp();                 // Optional cancel
                 clickEnableIfPresent();       // Handle Enable button
             } else if (isAddDeviceButtonPresent(EMPTY_FAMILY_ADD_BUTTON)) {
                 handleEmptyFamilyFlow();
             } else {
-                System.out.println("No permissions dialog detected, and Add Device button not found. Assuming permissions already granted.");
+                logpoint("No permissions dialog detected, and Add Device button not found. Assuming permissions already granted.");
                 alexaPopUp();
                 clickEnableIfPresent();
             }
@@ -82,9 +82,9 @@ public class PermissionUtil {
          */
         public void handleBrowserStackFlow() {
             if (isPermissionDialogPresent()) {
-                System.out.println("Permissions dialog detected (BrowserStack).");
+                logpoint("Permissions dialog detected (BrowserStack).");
                 clickAllowForegroundOnly();   // Only one prompt expected
-                System.out.println("Permissions Granted");
+                logpoint("Permissions Granted");
                 alexaPopUp();                 // Cancel Alexa
             } else if (isAddDeviceButtonPresent(ADD_FIRST_DEVICE_ICON)) {
                 handleEmptyFamilyFlow();
@@ -128,7 +128,7 @@ public class PermissionUtil {
          */
         private void handleEmptyFamilyFlow() {
 
-            System.out.println("No device present – navigating to Add Device.");
+            logpoint("No device present â€“ navigating to Add Device.");
             ActionsUtil.Tap.withCoordinates(driver, ADD_BUTTON_X, ADD_BUTTON_Y);
 
             // Re-check for permissions after tapping Add
@@ -136,7 +136,7 @@ public class PermissionUtil {
                 handleStandardFlow(); // Re-enter full flow
             } else {
                 driver.navigate().back();
-                System.out.println("Returned to previous screen.");
+                logpoint("Returned to previous screen.");
             }
         }
 
@@ -148,9 +148,9 @@ public class PermissionUtil {
             if (alexaPopup != null) {
                 try {driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]")).click();
 
-                    System.out.println("Alexa popup canceled.");
+                    logpoint("Alexa popup canceled.");
                 } catch (Exception e) {
-                    System.out.println("Failed to close Alexa popup: " + e.getMessage());
+                    logpoint("Failed to close Alexa popup: " + e.getMessage());
                 }
             }
         }
@@ -163,7 +163,7 @@ public class PermissionUtil {
                 WebElement enableBtn = driver.findElement(By.xpath("//android.widget.Button[@content-desc='Enable']"));
                 if (enableBtn.isDisplayed()) {
                     enableBtn.click();
-                    System.out.println("Enable button clicked.");
+                    logpoint("Enable button clicked.");
                 }
             } catch (NoSuchElementException e) {
                 // Ignore: not always present
@@ -203,7 +203,7 @@ public class PermissionUtil {
         private void clickElement(By locator, String label) {
             try {
                 driver.findElement(locator).click();
-                System.out.println(label + " clicked.");
+                logpoint(label + " clicked.");
             } catch (Exception e) {
                 System.err.println("Failed to click " + label + ": " + e.getMessage());
             }

@@ -1,4 +1,4 @@
-//package app.marketPlace;
+﻿//package app.marketPlace;
 //
 //import app.ScreenCheck.ScreenCheck;
 //import app.util.ActionsUtil;
@@ -68,7 +68,7 @@
 //            addTOCart = product.findElement(By.xpath(".//android.widget.Button[@content-desc=\"Add to Cart\"]"));
 //        } catch (Exception ignored) {
 //        }
-//        System.out.println(addTOCart == null);
+//        logpoint(addTOCart == null);
 //        if (addTOCart == null) {
 //            ActionsUtil.Scroll.slowUp(atomberg);
 //            try {
@@ -95,7 +95,7 @@
 //
 //        color = path.color;
 //        if (color != null && !color.equals("null")) {
-//            List<WebElement> Elements = atomberg.findElements(By.className("android.view.View"));
+//            List<WebElement> Elements = atomberg.findElements(AppiumBy.className("android.view.View"));
 //            List<WebElement> availableColors = Elements.stream().filter(element -> element.getDomAttribute("content-desc") != null).collect(Collectors.toList());
 //            for (WebElement availableColor : availableColors) {
 //                if (Objects.requireNonNull(availableColor.getDomAttribute("content-desc")).equals(color)) {
@@ -143,11 +143,11 @@
 //        if (product.rating != null && !product.rating.isEmpty() && !product.rating.equals("null")) {
 //            // With rating
 //            xpath = "//android.widget.ImageView[@content-desc=\"" + product.rating + "\n" + product.name + "\n" + product.rate + "\"]";
-//            System.out.println(xpath);
+//            logpoint(xpath);
 //        } else {
-//            // No rating — product name is the first line
+//            // No rating â€” product name is the first line
 //            xpath = "//android.widget.ImageView[@content-desc=\"" + product.name + "\n" + product.rate + "\"]";
-//            System.out.println(xpath);
+//            logpoint(xpath);
 //        }
 //        return atomberg.findElement(By.xpath(xpath));
 //    }

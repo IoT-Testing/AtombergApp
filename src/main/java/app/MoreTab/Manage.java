@@ -1,9 +1,10 @@
-package app.MoreTab;
+﻿package app.MoreTab;
 
 import app.ScreenCheck.ScreenCheck;
 import app.util.ActionsUtil;
 import app.util.AppUtil;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,7 +29,7 @@ public class Manage {
 
     public void theme() {
         if (clickElementIfExists(THEME_BUTTON, "Theme")) {
-            System.out.println("Theme");
+            logpoint("Theme");
         }
     }
 
@@ -51,7 +52,7 @@ public class Manage {
     public void help() {
         screenCheck.moreTab();
         if (scrollToAndClick(HELP_BUTTON, "Help")) {
-            System.out.println("Navigated to Help section.");
+            logpoint("Navigated to Help section.");
         }
     }
 
@@ -85,7 +86,7 @@ public class Manage {
         if (!scrollToAndClick(LOGOUT_BUTTON, "Logout")) return;
         AppUtil.captureScreenshot(atomberg, "Logout");
         if (clickElementIfExists(YES_BUTTON, "Yes (Confirm Logout)")) {
-            System.out.println("Logged out successfully.");
+            logpoint("Logged out successfully.");
         }
     }
 
@@ -93,7 +94,7 @@ public class Manage {
         screenCheck.moreTab();
         if (!scrollToAndClick(MANAGE_FAMILY, "Manage Family")) return;
         AppUtil.captureScreenshot(atomberg, "Manage Family");
-        System.out.println("Tap on Manage Family");
+        logpoint("Tap on Manage Family");
 
         List<WebElement> families = getVisibleFamilyNames();
         int initialCount = families.size();
@@ -112,7 +113,7 @@ public class Manage {
                 i--; // Adjust index due to deletion
             } else if (name != null) {
                 // Optional: leave or ignore other homes
-                System.out.println("Skipping family: " + name);
+                logpoint("Skipping family: " + name);
             }
         }
         atomberg.navigate().back(); // Back to More tab
@@ -162,14 +163,14 @@ public class Manage {
             WebElement el = atomberg.findElement(locator);
             if (el.isDisplayed()) {
                 el.click();
-                System.out.println("Tap on " + label);
+                logpoint("Tap on " + label);
                 return true;
             } else {
-                System.out.println(label + " found but not displayed.");
+                logpoint(label + " found but not displayed.");
                 return false;
             }
         } catch (NoSuchElementException e) {
-            System.out.println(label + " not found.");
+            logpoint(label + " not found.");
             return false;
         } catch (Exception e) {
             System.err.println("Error clicking " + label + ": " + e.getMessage());
@@ -192,17 +193,17 @@ public class Manage {
      * Gets list of visible family names.
      */
     private List<WebElement> getVisibleFamilyNames() {
-        return atomberg.findElements(By.className("android.widget.ImageView")).stream()
+        return atomberg.findElements(AppiumBy.className("android.widget.ImageView")).stream()
                 .filter(el -> getElementText(el) != null)
                 .collect(Collectors.toList());
     }
 
     /**
-     * Handles an existing "Script" family: edit → leave/delete.
+     * Handles an existing "Script" family: edit â†’ leave/delete.
      */
     private void handleExistingScriptFamily() {
         if (!clickElementIfExists(FAMILY_EDIT_ICON, "Family Edit")) return;
-        System.out.println("Family Edit");
+        logpoint("Family Edit");
         AppUtil.captureScreenshot(atomberg, "Family Edit Screen");
 
         if (clickElementIfExists(LEAVE_HOME, "Leave Home")) {

@@ -1,8 +1,9 @@
-package app.BLEOnlyFans;
+﻿package app.BLEOnlyFans;
 
 import app.ScreenCheck.ScreenCheck;
 import app.util.AppUtil;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
@@ -32,12 +33,12 @@ public class FanManagementBLEOnly {
     public void addBLEFan(){
         AppUtil.navigateToAddScreen(atomberg);
 
-        System.out.println("Searching for available devices...");
+        logpoint("Searching for available devices...");
         for (int attempt = 0; attempt < 10; attempt++){
             SSleep(15);
-            System.out.println("15 seconds wait complete");// Wait for scan results
+            logpoint("15 seconds wait complete");// Wait for scan results
 
-            List<WebElement> availableBLEDevice = atomberg.findElements(By.className("android.view.View")).stream()
+            List<WebElement> availableBLEDevice = atomberg.findElements(AppiumBy.className("android.view.View")).stream()
                     .filter(element -> {
                         try {
                             String desc = element.getDomAttribute("content-desc");
@@ -47,7 +48,7 @@ public class FanManagementBLEOnly {
                         }
                     })
                     .collect(Collectors.toList());
-            System.out.println("Available BLE Device Count " + availableBLEDevice.size());
+            logpoint("Available BLE Device Count " + availableBLEDevice.size());
         }
     }
 
@@ -57,7 +58,7 @@ public class FanManagementBLEOnly {
 
         WebElement emptyFamily = findOptionalElement(atomberg, ADD_FIRST_DEVICE_ICON);
         if(emptyFamily != null){
-            System.out.println("No Fan Added");
+            logpoint("No Fan Added");
         }
         return emptyFamily != null;
     }
@@ -80,14 +81,14 @@ public class FanManagementBLEOnly {
         }
 
         if (matchedDevices.isEmpty()) {
-            System.out.println("No device found with content-desc starting with: " + devicePrefix);
+            logpoint("No device found with content-desc starting with: " + devicePrefix);
             return;
         }
 
         // Find all Connect buttons
         List<WebElement> connectButtons = atomberg.findElements(By.xpath(connectButtonXpath));
         if (connectButtons.isEmpty()) {
-            System.out.println("No Connect buttons found.");
+            logpoint("No Connect buttons found.");
             return;
         }
 
@@ -120,14 +121,14 @@ public class FanManagementBLEOnly {
             // Click if within reasonable distance (tolerance ~100px)
             if (bestMatchButton != null && minDiff <= 50) {
                 String actualName = deviceElement.getAttribute("content-desc");
-                System.out.println("Connecting to device: '" + actualName +
+                logpoint("Connecting to device: '" + actualName +
                         "' (matched by prefix: '" + devicePrefix + "')");
                 bestMatchButton.click();
                 return; // Success, exit after first valid match
             }
         }
 
-        System.out.println("Failed to find a Connect button near device with prefix: " + devicePrefix);
+        logpoint("Failed to find a Connect button near device with prefix: " + devicePrefix);
     }
 
     /**
@@ -143,3 +144,4 @@ public class FanManagementBLEOnly {
     }
 
 }
+

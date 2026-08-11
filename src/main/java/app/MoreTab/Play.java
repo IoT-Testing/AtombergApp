@@ -1,8 +1,9 @@
-package app.MoreTab;
+﻿package app.MoreTab;
 
 import app.util.ActionsUtil;
 import app.util.AppUtil;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -62,7 +63,7 @@ public class Play {
         if (!clickElementIfExists(locator, label)) return false;
 
         AppUtil.captureScreenshot(driver, label);
-        System.out.println(label + " Video Opened");
+        logpoint(label + " Video Opened");
 
         // Simulate watching: go back twice (handles overlay/back buttons)
         videoTryCatch();
@@ -100,14 +101,14 @@ public class Play {
             WebElement el = driver.findElement(locator);
             if (el.isDisplayed()) {
                 el.click();
-                System.out.println("Tap on " + label);
+                logpoint("Tap on " + label);
                 return true;
             } else {
-                System.out.println(label + " found but not displayed.");
+                logpoint(label + " found but not displayed.");
                 return false;
             }
         } catch (NoSuchElementException e) {
-            System.out.println(label + " not found.");
+            logpoint(label + " not found.");
             return false;
         } catch (Exception e) {
             System.err.println("Error clicking " + label + ": " + e.getMessage());
@@ -122,7 +123,7 @@ public class Play {
     private void videoTryCatch() {
         int attempts = 0;
         while (!isElementPresent(VIDEO_TUTORIALS_LINK) && attempts < 10) {
-            System.out.println("Navigating back... attempt " + (++attempts));
+            logpoint("Navigating back... attempt " + (++attempts));
             driver.navigate().back();
             ActionsUtil.sleep(1000);
         }
@@ -179,7 +180,7 @@ public class Play {
      * Gets all visible elements with non-null content-desc.
      */
     private List<WebElement> getLabeledElements() {
-        return driver.findElements(By.className("android.view.View")).stream()
+        return driver.findElements(AppiumBy.className("android.view.View")).stream()
                 .filter(el -> getElementText(el) != null)
                 .collect(Collectors.toList());
     }

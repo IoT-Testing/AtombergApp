@@ -1,4 +1,4 @@
-package com.appTest.tests;
+﻿package com.appTest.tests;
 
 import app.AppInitializer;
 import app.MoreTab.Manage;
@@ -12,12 +12,12 @@ import static app.resources.AppInfo.*;
 import static app.resources.Locators.Android.HomeLocators.MORE_TAB;
 
 /**
- * ManageFamilyTest – verifies that the Manage Family workflow is reachable
+ * ManageFamilyTest â€“ verifies that the Manage Family workflow is reachable
  * and executes without crashing.
  *
  * <p>Inherits driver lifecycle and Extent reporting from {@link BaseTest}.</p>
  *
- * <p><strong>@Listeners must NOT be redeclared here</strong> — it is registered
+ * <p><strong>@Listeners must NOT be redeclared here</strong> â€” it is registered
  * once on {@code BaseTest}. Re-declaring it causes each listener to fire twice.</p>
  */
 public class ManageFamilyTest extends BaseTest {
@@ -29,14 +29,14 @@ public class ManageFamilyTest extends BaseTest {
         Assert.assertNotNull(driver, "Driver must not be null before ManageFamilyTest");
         appInitializer = new AppInitializer(driver);
         appInitializer.setDriver(driver);
-        System.out.println("ManageFamilyTest ready on: " + deviceSlot);
+        logpoint("ManageFamilyTest ready on: " + deviceSlot);
     }
 
     @Test(priority = 1, description = "Navigate to Manage Family and verify the screen loads")
     public void testManageFamily() throws Exception {
         reporter.startTest("Manage Family", deviceSlot);
         try {
-            System.out.println("Manage Family test start");
+            logpoint("Manage Family test start");
 
             driver.activateApp(ATOMBERG_HOME);
             ActionsUtil.SSleep(5);
@@ -59,8 +59,9 @@ public class ManageFamilyTest extends BaseTest {
             afterTestFailure();
             throw e;
         } finally {
-            System.out.println("Manage Family test end");
+            logpoint("Manage Family test end");
             reporter.endTest();
         }
     }
 }
+

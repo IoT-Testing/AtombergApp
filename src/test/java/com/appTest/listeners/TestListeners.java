@@ -1,4 +1,4 @@
-package com.appTest.listeners;
+﻿package com.appTest.listeners;
 
 import io.appium.java_client.android.AndroidDriver;
 import org.testng.ITestContext;
@@ -6,10 +6,10 @@ import org.testng.ITestListener;
 import org.testng.ITestResult;
 
 /**
- * TestListeners – TestNG lifecycle listener for console logging.
+ * TestListeners â€“ TestNG lifecycle listener for console logging.
  *
  * FIX C13: The original implementation had {@code driver} and {@code deviceSlot}
- * as instance fields that were never populated — a TestNG listener is NOT the same
+ * as instance fields that were never populated â€” a TestNG listener is NOT the same
  * object as the test class, so those fields are always null, causing NPE in
  * {@code afterTestFailure()}.
  *
@@ -21,58 +21,58 @@ public class TestListeners implements ITestListener {
     @Override
     public void onTestStart(ITestResult result) {
         try {
-            System.out.println("▶  Test Started:  [" + getSlot(result) + "] " + result.getMethod().getMethodName());
+            logpoint("â–¶  Test Started:  [" + getSlot(result) + "] " + result.getMethod().getMethodName());
         } catch (Exception e) {
-            System.out.println("⚠  onTestStart error: " + e.getMessage());
+            logpoint("âš   onTestStart error: " + e.getMessage());
         }
     }
 
     @Override
     public void onTestSuccess(ITestResult result) {
-        System.out.println("✅ Test Passed:   [" + getSlot(result) + "] " + result.getMethod().getMethodName());
+        logpoint("âœ… Test Passed:   [" + getSlot(result) + "] " + result.getMethod().getMethodName());
     }
 
     @Override
     public void onTestFailure(ITestResult result) {
         String slot = getSlot(result);
-        System.out.println("❌ Test Failed:   [" + slot + "] " + result.getMethod().getMethodName());
+        logpoint("âŒ Test Failed:   [" + slot + "] " + result.getMethod().getMethodName());
 
         // FIX C13: Extract driver from the test instance, not from an unpopulated field.
         AndroidDriver driver = extractDriver(result);
         if (driver != null) {
             try {
-                System.out.println("   Current activity: " + driver.currentActivity());
-                System.out.println("   Current package:  " + driver.getCurrentPackage());
+                logpoint("   Current activity: " + driver.currentActivity());
+                logpoint("   Current package:  " + driver.getCurrentPackage());
             } catch (Exception e) {
-                System.out.println("   Could not query device state: " + e.getMessage());
+                logpoint("   Could not query device state: " + e.getMessage());
             }
         }
 
         if (result.getThrowable() != null) {
-            System.out.println("   Cause: " + result.getThrowable().getMessage());
+            logpoint("   Cause: " + result.getThrowable().getMessage());
         }
     }
 
     @Override
     public void onTestSkipped(ITestResult result) {
-        System.out.println("⏭  Test Skipped: [" + getSlot(result) + "] " + result.getMethod().getMethodName());
+        logpoint("â­  Test Skipped: [" + getSlot(result) + "] " + result.getMethod().getMethodName());
     }
 
     @Override
     public void onStart(ITestContext context) {
-        System.out.println("🔵 Context Start: " + context.getName());
+        logpoint("ðŸ”µ Context Start: " + context.getName());
     }
 
     @Override
     public void onFinish(ITestContext context) {
-        System.out.printf("🟢 Context Finish: %s — passed=%d, failed=%d, skipped=%d%n",
+        System.out.printf("ðŸŸ¢ Context Finish: %s â€” passed=%d, failed=%d, skipped=%d%n",
                 context.getName(),
                 context.getPassedTests().size(),
                 context.getFailedTests().size(),
                 context.getSkippedTests().size());
     }
 
-    // ── Helpers ──────────────────────────────────────────────────────────────
+    // â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /**
      * Safely reads the deviceSlot field from the test instance via reflection.

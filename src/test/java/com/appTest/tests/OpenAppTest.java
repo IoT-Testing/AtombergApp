@@ -1,4 +1,4 @@
-package com.appTest.tests;
+﻿package com.appTest.tests;
 
 import app.AppInitializer;
 import app.util.ActionsUtil;
@@ -13,7 +13,7 @@ import static app.resources.AppInfo.ATOMBERG_HOME;
 import static app.resources.Locators.Android.HomeLocators.MORE_TAB;
 
 /**
- * OpenAppTest – verifies the app launches and reaches a usable home screen state.
+ * OpenAppTest â€“ verifies the app launches and reaches a usable home screen state.
  *
  * NOTE: @Listeners is intentionally omitted here.
  * It is declared on BaseTest and is inherited by all subclasses.
@@ -27,7 +27,7 @@ public class OpenAppTest extends BaseTest {
     public void setUp() {
         Assert.assertNotNull(driver, "Driver must not be null before OpenAppTest");
         appInitializer = new AppInitializer(driver);
-        System.out.println("OpenAppTest ready on device: " + deviceSlot);
+        logpoint("OpenAppTest ready on device: " + deviceSlot);
     }
 
     @Test(priority = 1, description = "Open Atomberg app and verify the home screen is reached")
@@ -58,3 +58,4 @@ public class OpenAppTest extends BaseTest {
         }
     }
 }
+

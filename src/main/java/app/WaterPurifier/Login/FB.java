@@ -1,4 +1,4 @@
-package app.WaterPurifier.Login;
+﻿package app.WaterPurifier.Login;
 
 //Add First Device
 import app.util.PermissionUtil;
@@ -34,12 +34,12 @@ public class FB {
 			Continue.click(); // Enter Email id
 			captureScreenshot(driver, "Continue");
 			sleep(10000);
-			System.out.println("On Home Screen");
+			logpoint("On Home Screen");
 			captureScreenshot(driver, "Home Screen");
 			WebElement appLogo =driver.findElement(By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.widget.ImageView"));
 			assert appLogo.isDisplayed();
 			await().atMost(10, TimeUnit.SECONDS).until(appLogo::isDisplayed);
-			System.out.println("Test Passed");
+			logpoint("Test Passed");
 			PermissionUtil.allow(driver);
 		}
 	}

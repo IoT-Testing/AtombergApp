@@ -1,4 +1,4 @@
-package app.util;
+﻿package app.util;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -49,7 +49,7 @@ public class BluetoothUtils {
             driver.executeScript("mobile: shell", params);
         } catch (UnsupportedCommandException e) {
             // Fallback for older versions (less common)
-            System.out.println("Fallback: Using legacy execute command");
+            logpoint("Fallback: Using legacy execute command");
             driver.execute("mobile: shell", params);
         } catch (Exception ex) {
             System.err.println("Failed to set Bluetooth " + action + ": " + ex.getMessage());
@@ -66,3 +66,4 @@ public class BluetoothUtils {
         setBluetoothState(driver, true);
     }
 }
+

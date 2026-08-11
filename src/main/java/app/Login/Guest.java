@@ -1,4 +1,4 @@
-package app.Login;
+﻿package app.Login;
 
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
@@ -32,7 +32,7 @@ public class Guest {
      * @param driver AndroidDriver instance
      */
     public static void Mode(AndroidDriver driver) {
-        System.out.println("Entering guest mode...");
+        logpoint("Entering guest mode...");
 
         if (clickElementWithWait(driver, CONTINUE_WITHOUT_LOGIN_BUTTON)) {
             System.err.println("Failed to click 'Continue without login'. Aborting guest mode.");
@@ -44,7 +44,7 @@ public class Guest {
             return;
         }
 
-        System.out.println("Successfully entered guest mode.");
+        logpoint("Successfully entered guest mode.");
     }
 
     // === Utility Methods ===
@@ -63,7 +63,7 @@ public class Guest {
                 WebElement element = driver.findElement(locator);
                 if (element.isDisplayed() && isClickable(element)) {
                     element.click();
-                    System.out.println("Clicked: " + locatorToString(locator));
+                    logpoint("Clicked: " + locatorToString(locator));
                     return false;
                 }
             } catch (NoSuchElementException ignored) {
@@ -74,7 +74,7 @@ public class Guest {
             }
             app.util.ActionsUtil.sleep(500); // Wait before retry
         }
-        System.out.println("Timed out waiting for: " + locatorToString(locator));
+        logpoint("Timed out waiting for: " + locatorToString(locator));
         return true;
     }
 

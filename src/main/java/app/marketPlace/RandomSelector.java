@@ -1,4 +1,4 @@
-//package app.marketPlace;
+﻿//package app.marketPlace;
 //
 //import java.util.List;
 //import java.util.Random;
@@ -18,14 +18,15 @@
 //                String sweep = product.sweeps.isEmpty() ? null :
 //                    product.sweeps.get(random.nextInt(product.sweeps.size()));
 //                // Optionally print
-//                System.out.println("Selected Category: " + category.name);
-//                System.out.println("  Product: " + product.name);
-//                System.out.println("  Rating: " + product.rating);
-//                System.out.println("    Color: " + color);
-//                System.out.println("    Sweep Size: " + sweep);
-//                System.out.println("    Stock: " + product.stock);
+//                logpoint("Selected Category: " + category.name);
+//                logpoint("  Product: " + product.name);
+//                logpoint("  Rating: " + product.rating);
+//                logpoint("    Color: " + color);
+//                logpoint("    Sweep Size: " + sweep);
+//                logpoint("    Stock: " + product.stock);
 //
 //        return new SelectedPath(category, product, color, sweep);
 //    }
 //}
 //
+

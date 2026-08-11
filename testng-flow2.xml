@@ -1,0 +1,42 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<!--
+  Atomberg – FLOW 2 ONLY  (long-press a device tile → "Share device")
+  ═══════════════════════════════════════════════════════════════════════════
+  Runs ONLY DeviceShareLongPressFlowTest, i.e. the flow:
+
+      ADMIN : Home → long-press device tile → "Share device"
+              → "Share access to family?" dialog → Yes
+              → QR + invite code → read code into a variable
+      MEMBER: More → Manage family → (+) Add → enter code → Join
+              → Home → Switch Family → the admin's family
+      VERIFY: both phones list the SAME devices
+      CLEANUP: member leaves family + admin removes member
+
+  Permission levels (Super / Basic / Custom) are ON HOLD — the feature is not in
+  production yet and the long-press path presents no picker on the current build.
+  The access matrix stays in SharedAccess/PermissionModel for when the APK that
+  exposes the levels is installed on both phones.
+
+  Use this suite when you do NOT want the Flow-1 (Manage Family → FAB → QR)
+  tests to run. The full suite — which also includes DeviceSharingFlowTest
+  (Flow 1), FanUiControlPermissionTest and SharingEdgeCaseTest, all of which
+  share via the Manage Family path — stays in testng-sharing.xml.
+
+  ── Run ─────────────────────────────────────────────────────────────────────
+      mvn test "-DsuiteFile=testng-flow2.xml"
+
+  Both phones must be connected, pre-logged-in (admin on ADMIN_DEVICE_UDID,
+  member on MEMBER_DEVICE_UDID) and the admin's family must already contain the
+  fan, lock and water purifier named in sharing-test.properties.
+  Listeners are registered once via @Listeners on BaseDeviceSharingTest.
+  ═══════════════════════════════════════════════════════════════════════════
+-->
+<suite name="Atomberg – Device Sharing Flow 2 (long-press)" verbose="2">
+
+    <test name="Flow 2 – long-press share (two phones)">
+        <classes>
+            <class name="com.appTest.tests.DeviceShareLongPressFlowTest"/>
+        </classes>
+    </test>
+
+</suite>

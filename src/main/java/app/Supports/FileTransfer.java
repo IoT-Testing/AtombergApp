@@ -1,4 +1,4 @@
-package app.Supports;
+﻿package app.Supports;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -22,7 +22,7 @@ public class FileTransfer {
 				laptopFileOutput.write(buffer, 0, length);
 			}
 
-			System.out.println("File transferred successfully.");
+			logpoint("File transferred successfully.");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
