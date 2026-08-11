@@ -1,4 +1,4 @@
-﻿package com.appTest.tests;
+package com.appTest.tests;
 
 import app.Login.Email;
 import app.MoreTab.Manage;
@@ -13,18 +13,18 @@ import static app.resources.Locators.Android.AppLocators.Login.*;
 import static app.resources.Locators.Android.HomeLocators.MORE_TAB;
 
 /**
- * LoginTest â€“ validates email login, invalid credential handling, and logout.
+ * LoginTest – validates email login, invalid credential handling, and logout.
  *
  * NOTE: @Listeners is intentionally omitted here.
  * It is declared on BaseTest and is inherited by all subclasses.
  * Re-declaring it here would register each listener twice.
  *
  * Test order:
- *   1. Valid login                  â†’ asserts MORE_TAB visible (home screen reached)
- *   2. Logout                       â†’ asserts LOGIN_SCREEN_INDICATOR visible
- *   3. Invalid password             â†’ asserts INCORRECT_PASSWORD_MESSAGE visible
- *   4. Invalid email format         â†’ asserts exception thrown (Continue blocked)
- *   5. Re-login (state restore)     â†’ asserts MORE_TAB visible again
+ *   1. Valid login                  → asserts MORE_TAB visible (home screen reached)
+ *   2. Logout                       → asserts LOGIN_SCREEN_INDICATOR visible
+ *   3. Invalid password             → asserts INCORRECT_PASSWORD_MESSAGE visible
+ *   4. Invalid email format         → asserts exception thrown (Continue blocked)
+ *   5. Re-login (state restore)     → asserts MORE_TAB visible again
  */
 public class LoginTest extends BaseTest {
 
@@ -36,10 +36,10 @@ public class LoginTest extends BaseTest {
         emailLogin = new Email(driver);
         manage     = new Manage(driver);
         Assert.assertNotNull(driver, "Driver must be initialised before LoginTest");
-        logpoint("LoginTest ready on device: " + deviceSlot);
+        System.out.println("LoginTest ready on device: " + deviceSlot);
     }
 
-    // â”€â”€ 1. Valid login â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── 1. Valid login ────────────────────────────────────────────────────────
 
     @Test(priority = 1, description = "Login with valid credentials and verify home screen")
     public void testValidLogin() throws Exception {
@@ -51,10 +51,10 @@ public class LoginTest extends BaseTest {
 
             Assert.assertTrue(
                     AppUtil.isElementPresent(driver, MORE_TAB),
-                    "More tab must be visible after a successful login â€” confirms home screen reached");
+                    "More tab must be visible after a successful login — confirms home screen reached");
 
             AppUtil.captureScreenshot(driver, "valid_login_success");
-            reporter.log(Status.PASS, "Logged in as " + DEFAULT_EMAIL + " â€” home screen confirmed");
+            reporter.log(Status.PASS, "Logged in as " + DEFAULT_EMAIL + " — home screen confirmed");
         } catch (Exception e) {
             AppUtil.captureScreenshot(driver, "valid_login_fail");
             reporter.log(Status.FAIL, "Valid login failed: " + e.getMessage());
@@ -65,7 +65,7 @@ public class LoginTest extends BaseTest {
         }
     }
 
-    // â”€â”€ 2. Logout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── 2. Logout ─────────────────────────────────────────────────────────────
 
     @Test(priority = 2, description = "Logout and verify return to login screen",
             dependsOnMethods = "testValidLogin")
@@ -80,7 +80,7 @@ public class LoginTest extends BaseTest {
                     "Login screen indicator must be visible after logout");
 
             AppUtil.captureScreenshot(driver, "logout_success");
-            reporter.log(Status.PASS, "Logout succeeded â€” login screen visible");
+            reporter.log(Status.PASS, "Logout succeeded — login screen visible");
         } catch (Exception e) {
             AppUtil.captureScreenshot(driver, "logout_fail");
             reporter.log(Status.FAIL, "Logout failed: " + e.getMessage());
@@ -91,7 +91,7 @@ public class LoginTest extends BaseTest {
         }
     }
 
-    // â”€â”€ 3. Invalid password â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── 3. Invalid password ───────────────────────────────────────────────────
 
     @Test(priority = 3, description = "Wrong password shows incorrect-password error message",
             dependsOnMethods = "testLogout")
@@ -99,7 +99,7 @@ public class LoginTest extends BaseTest {
         reporter.startTest("Invalid Password Login", deviceSlot);
         try {
             // Attempt login with a known-wrong password.
-            // Email.email() throws Exception("Invalid Password: â€¦") after the app displays the error.
+            // Email.email() throws Exception("Invalid Password: …") after the app displays the error.
             // We catch only that expected exception; anything else (driver crash, network error,
             // IllegalArgumentException) propagates so the test correctly fails.
             try {
@@ -110,8 +110,8 @@ public class LoginTest extends BaseTest {
                         !e.getMessage().contains("Incorrect password")) {
                     throw e;
                 }
-                // Otherwise it is the expected exception â€” continue to assertion below
-                logpoint("Expected exception caught: " + e.getMessage());
+                // Otherwise it is the expected exception — continue to assertion below
+                System.out.println("Expected exception caught: " + e.getMessage());
             }
 
             ActionsUtil.SSleep(2);
@@ -132,9 +132,9 @@ public class LoginTest extends BaseTest {
         }
     }
 
-    // â”€â”€ 4. Invalid email format â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── 4. Invalid email format ───────────────────────────────────────────────
 
-    @Test(priority = 4, description = "Invalid email format â€” Continue button must be blocked",
+    @Test(priority = 4, description = "Invalid email format — Continue button must be blocked",
             dependsOnMethods = "testInvalidPasswordLogin")
     public void testInvalidEmailLogin() {
         reporter.startTest("Invalid Email Login", deviceSlot);
@@ -147,7 +147,7 @@ public class LoginTest extends BaseTest {
             }
 
             Assert.assertNotNull(caught,
-                    "An exception must be thrown when an invalid email is entered â€” " +
+                    "An exception must be thrown when an invalid email is entered — " +
                             "Email.email() should detect that Continue is not clickable");
 
             Assert.assertTrue(
@@ -170,7 +170,7 @@ public class LoginTest extends BaseTest {
         }
     }
 
-    // â”€â”€ 5. Re-login (state restore) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── 5. Re-login (state restore) ───────────────────────────────────────────
 
     @Test(priority = 5, description = "Re-login with valid credentials to restore clean state",
             dependsOnMethods = "testInvalidEmailLogin")
@@ -186,10 +186,10 @@ public class LoginTest extends BaseTest {
 
             Assert.assertTrue(
                     AppUtil.isElementPresent(driver, MORE_TAB),
-                    "More tab must be visible after re-login â€” confirms home screen reached");
+                    "More tab must be visible after re-login — confirms home screen reached");
 
             AppUtil.captureScreenshot(driver, "relogin_success");
-            reporter.log(Status.PASS, "Re-login successful â€” home screen confirmed");
+            reporter.log(Status.PASS, "Re-login successful — home screen confirmed");
         } catch (Exception e) {
             AppUtil.captureScreenshot(driver, "relogin_fail");
             reporter.log(Status.FAIL, "Re-login failed: " + e.getMessage());
@@ -200,4 +200,3 @@ public class LoginTest extends BaseTest {
         }
     }
 }
-

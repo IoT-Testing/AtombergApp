@@ -1,8 +1,7 @@
-﻿package app.BLEOnlyFans;
+package app.BLEOnlyFans;
 
 import app.util.ActionsUtil;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import java.io.PrintWriter;
@@ -49,7 +48,7 @@ public class ProgressivePauseResume {
      * Executes the full firmware verification and pause-resume cycle
      */
     public void runProgressivePauseResume() {
-        logpoint("â± Starting high-accuracy pause-resume using coordinate taps...");
+        System.out.println("⏱ Starting high-accuracy pause-resume using coordinate taps...");
 
         // Initialize CSV on first run
 //        initCSV();
@@ -57,9 +56,9 @@ public class ProgressivePauseResume {
         boolean success = executePauseResumeSequence(currentAttempt);
 
         if (success) {
-            logpoint("âœ… Firmware verification and pause-resume completed successfully!");
+            System.out.println("✅ Firmware verification and pause-resume completed successfully!");
         } else {
-            logpoint("âŒ Failed to complete firmware verification and pause-resume sequence");
+            System.out.println("❌ Failed to complete firmware verification and pause-resume sequence");
         }
 
         currentAttempt++; // Increment for next run
@@ -72,9 +71,9 @@ public class ProgressivePauseResume {
 
     public void openMenuAndWait() {
         if (!clickIfExists(MENU_BUTTON)) {
-            throw new RuntimeException("âŒ Menu button not found after returning to device control");
+            throw new RuntimeException("❌ Menu button not found after returning to device control");
         }
-        logpoint("âœ… Menu opened");
+        System.out.println("✅ Menu opened");
         sleep(3000); // Allow load
     }
 
@@ -93,26 +92,26 @@ public class ProgressivePauseResume {
                 // Step 1: Click Start (if not already started)
                 try {
                     driver.findElement(START_BUTTON).click();
-                    logpoint("â–¶ï¸ Start button clicked.");
+                    System.out.println("▶️ Start button clicked.");
                 } catch (Exception e) {
-                    logpoint("âš ï¸ 'Start' button not found or already running.");
+                    System.out.println("⚠️ 'Start' button not found or already running.");
                 }
                 sleep(HOLD_DURATION_MS);
 
                 // Step 2: Perform pause-resume cycles
                 boolean allCyclesSuccessful = true;
                 for (int i = 0; i < PAUSE_RESUME_CYCLES; i++) {
-                    // â¸ï¸ Pause: Tap at center-bottom
+                    // ⏸️ Pause: Tap at center-bottom
 //                    ActionsUtil.Tap.withCoordinates(driver, 370, 1220);// for narzo only
                     ActionsUtil.Tap.withCoordinates(driver, 500, 2020);// for Poco only
                     sleep(HOLD_DURATION_MS);
 
-                    // â–¶ï¸ Resume: Tap again
+                    // ▶️ Resume: Tap again
 //                    ActionsUtil.Tap.withCoordinates(driver, 370, 1220);// for narzo only
                     ActionsUtil.Tap.withCoordinates(driver, 500, 2020);// for Poco only
                     sleep(HOLD_DURATION_MS);
 
-                    logpoint("ðŸ” Cycle " + (i + 1) + "/" + PAUSE_RESUME_CYCLES + " completed");
+                    System.out.println("🔁 Cycle " + (i + 1) + "/" + PAUSE_RESUME_CYCLES + " completed");
 
                     // Check if we're still connected
                     if (!isDeviceConnected()) {
@@ -220,7 +219,7 @@ public class ProgressivePauseResume {
 
     private String getCurrentFirmwareVersionFromMenu() {
         try {
-            List<WebElement> views = driver.findElements(AppiumBy.className("android.view.View"));
+            List<WebElement> views = driver.findElements(By.className("android.view.View"));
             return views.stream()
                     .map(el -> {
                         try {

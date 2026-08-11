@@ -1,4 +1,4 @@
-﻿package com.appTest.tests;
+package com.appTest.tests;
 
 import app.AppInitializer;
 import app.Login.Email;
@@ -37,7 +37,7 @@ import static app.util.AppUtil.waitForElement;
 
 public class SecondAppTest extends BaseTest {
 
-    // No local driver field â€” uses BaseTest.driver directly via inheritance.
+    // No local driver field — uses BaseTest.driver directly via inheritance.
     private final SoftAssert softAssert;
 
     // === Locators ===
@@ -62,7 +62,7 @@ public class SecondAppTest extends BaseTest {
     public void testOpenApp() throws Exception {
         reporter.startTest("Open App", deviceSlot);
         try {
-            logpoint("OpenApp test start");
+            System.out.println("OpenApp test start");
 
             ActionsUtil.SSleep(2);
             driver.activateApp(APP_PACKAGE);
@@ -71,7 +71,7 @@ public class SecondAppTest extends BaseTest {
             AppInitializer appInitializer = new AppInitializer(driver);
 
             boolean onLoginScreen = appInitializer.checkMainScreen();
-            logpoint("On login screen: " + onLoginScreen);
+            System.out.println("On login screen: " + onLoginScreen);
 
             if (onLoginScreen) {
                 Email login = new Email(driver);
@@ -79,7 +79,7 @@ public class SecondAppTest extends BaseTest {
                         app.resources.Env.required("SECOND_APP_PASSWORD"));
             }
 
-            // âœ… Assertion: Verify we are past login
+            // ✅ Assertion: Verify we are past login
             WebElement moreTab = waitForElement(driver, MORE_TAB, 5);
             Assert.assertNotNull(moreTab);
             Assert.assertTrue(moreTab.isDisplayed(), "Should reach home screen after login");
@@ -89,7 +89,7 @@ public class SecondAppTest extends BaseTest {
             reporter.log(Status.FAIL, "App Open failed: " + e.getMessage());
             throw e; // Fail fast
         } finally {
-            logpoint("OpenApp test end");
+            System.out.println("OpenApp test end");
             reporter.endTest();
         }
     }
@@ -113,12 +113,12 @@ public class SecondAppTest extends BaseTest {
 
             sleep(5000); // Wait for home screen
 
-            Assert.assertTrue(isElementPresent(APP_LOGO), "âŒ App Logo not found after login");
-            reporter.log(Status.PASS, "âœ… Logged in successfully and reached Home Screen");
+            Assert.assertTrue(isElementPresent(APP_LOGO), "❌ App Logo not found after login");
+            reporter.log(Status.PASS, "✅ Logged in successfully and reached Home Screen");
             AppUtil.captureScreenshot(driver, "Login_Success");
 
         } catch (Exception e) {
-            reporter.log(Status.FAIL, "âŒ Login failed: " + e.getMessage());
+            reporter.log(Status.FAIL, "❌ Login failed: " + e.getMessage());
             AppUtil.captureScreenshot(driver, "Login_Failure");
             Assert.fail("Login failed: " + e.getMessage());
         }
@@ -145,11 +145,11 @@ public class SecondAppTest extends BaseTest {
             driver.findElement(By.xpath("//android.widget.Button[@content-desc='Finish']")).click();
             sleep(3000);
 
-            reporter.log(Status.PASS, "âœ… Fan added successfully to dashboard");
+            reporter.log(Status.PASS, "✅ Fan added successfully to dashboard");
             AppUtil.captureScreenshot(driver, "Fan_Added");
 
         } catch (Exception e) {
-            reporter.log(Status.FAIL, "âŒ Fan addition failed: " + e.getMessage());
+            reporter.log(Status.FAIL, "❌ Fan addition failed: " + e.getMessage());
             AppUtil.captureScreenshot(driver, "Fan_Addition_Failed");
             Assert.fail("Device addition failed");
         }
@@ -176,21 +176,21 @@ public class SecondAppTest extends BaseTest {
             // Check Firmware Version
             String firmwareText = driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'Firmware Version')]"))
                     .getDomAttribute("content-desc");
-            logpoint("ðŸ“„ Firmware: " + firmwareText);
+            System.out.println("📄 Firmware: " + firmwareText);
 
             Assert.assertNotNull(firmwareText);
             softAssert.assertTrue(firmwareText.contains("Firmware Version"), "Firmware info missing");
-            reporter.log(Status.INFO, "ðŸ“„ Firmware Info: " + firmwareText);
+            reporter.log(Status.INFO, "📄 Firmware Info: " + firmwareText);
 
             // Close menu
             driver.navigate().back();
             sleep(1000);
 
-            reporter.log(Status.PASS, "âœ… Fan controlled and firmware verified");
+            reporter.log(Status.PASS, "✅ Fan controlled and firmware verified");
             AppUtil.captureScreenshot(driver, "Firmware_Checked");
 
         } catch (Exception e) {
-            reporter.log(Status.FAIL, "âŒ Control or firmware check failed: " + e.getMessage());
+            reporter.log(Status.FAIL, "❌ Control or firmware check failed: " + e.getMessage());
             AppUtil.captureScreenshot(driver, "Control_Firmware_Fail");
             softAssert.fail("Control/Firmware error");
         }
@@ -214,11 +214,11 @@ public class SecondAppTest extends BaseTest {
             softAssert.assertTrue(isElementPresent(By.xpath("//*[contains(@text,'Energy Saved')]")), "Energy section missing");
             softAssert.assertTrue(isElementPresent(By.xpath("//*[contains(@text,'Speed Usage')]")), "Speed usage missing");
 
-            reporter.log(Status.PASS, "âœ… All analytics screens loaded correctly");
+            reporter.log(Status.PASS, "✅ All analytics screens loaded correctly");
             AppUtil.captureScreenshot(driver, "Analytics_Viewed");
 
         } catch (Exception e) {
-            reporter.log(Status.FAIL, "âŒ Analytics view failed: " + e.getMessage());
+            reporter.log(Status.FAIL, "❌ Analytics view failed: " + e.getMessage());
             AppUtil.captureScreenshot(driver, "Analytics_Failed");
             softAssert.fail("Analytics error");
         }
@@ -260,11 +260,11 @@ public class SecondAppTest extends BaseTest {
                     "Automation not saved"
             );
 
-            reporter.log(Status.PASS, "âœ… Automation created: 'Turn On at 8:00 AM'");
+            reporter.log(Status.PASS, "✅ Automation created: 'Turn On at 8:00 AM'");
             AppUtil.captureScreenshot(driver, "Automation_Created");
 
         } catch (Exception e) {
-            reporter.log(Status.FAIL, "âŒ Automation creation failed: " + e.getMessage());
+            reporter.log(Status.FAIL, "❌ Automation creation failed: " + e.getMessage());
             AppUtil.captureScreenshot(driver, "Automation_Failed");
             softAssert.fail("Automation error");
         }
@@ -293,7 +293,7 @@ public class SecondAppTest extends BaseTest {
             driver.findElement(By.xpath("//android.widget.Button[@content-desc='Save']")).click();
             sleep(1000);
 
-            reporter.log(Status.INFO, "âœ… Name updated in profile");
+            reporter.log(Status.INFO, "✅ Name updated in profile");
 
             // Manage Family
             driver.findElement(By.xpath("//android.widget.TextView[@text='Manage Family']")).click();
@@ -353,11 +353,11 @@ public class SecondAppTest extends BaseTest {
             sleep(2000);
             driver.navigate().back();
 
-            reporter.log(Status.PASS, "âœ… More Tab sections validated");
+            reporter.log(Status.PASS, "✅ More Tab sections validated");
             AppUtil.captureScreenshot(driver, "MoreTab_Validated");
 
         } catch (Exception e) {
-            reporter.log(Status.FAIL, "âŒ MoreTab validation failed: " + e.getMessage());
+            reporter.log(Status.FAIL, "❌ MoreTab validation failed: " + e.getMessage());
             AppUtil.captureScreenshot(driver, "MoreTab_Failed");
             softAssert.fail("MoreTab error");
         }
@@ -382,14 +382,14 @@ public class SecondAppTest extends BaseTest {
 
             Assert.assertTrue(
                     isElementPresent(By.xpath("//android.widget.ImageView[@content-desc='Email']")),
-                    "âŒ Did not return to login screen"
+                    "❌ Did not return to login screen"
             );
 
-            reporter.log(Status.PASS, "âœ… Successfully logged out");
+            reporter.log(Status.PASS, "✅ Successfully logged out");
             AppUtil.captureScreenshot(driver, "Logged_Out");
 
         } catch (Exception e) {
-            reporter.log(Status.FAIL, "âŒ Logout failed: " + e.getMessage());
+            reporter.log(Status.FAIL, "❌ Logout failed: " + e.getMessage());
             AppUtil.captureScreenshot(driver, "Logout_Failed");
             Assert.fail("Logout failed");
         }
@@ -428,7 +428,7 @@ public class SecondAppTest extends BaseTest {
             )).click();
             sleep(1000);
         } catch (Exception e) {
-            System.err.println("âš ï¸ Scroll to '" + text + "' failed: " + e.getMessage());
+            System.err.println("⚠️ Scroll to '" + text + "' failed: " + e.getMessage());
         }
     }
 

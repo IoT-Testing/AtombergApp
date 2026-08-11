@@ -1,4 +1,4 @@
-﻿package app.BLEOnlyFans;
+package app.BLEOnlyFans;
 
 import app.AppInitializer;
 import app.ServerInitializer;
@@ -38,7 +38,7 @@ public class TestRunner {
      */
     private void startAppiumServer() {
         server.startServer();
-        logpoint("ðŸš€ Appium server started.");
+        System.out.println("🚀 Appium server started.");
     }
 
     public void runTestFlow() throws Exception {
@@ -51,7 +51,7 @@ public class TestRunner {
 
         // Run test flow for specified number of attempts
         for (int i = 1; i <= 20; i++) {
-            logpoint("\n=== ATTEMPT #" + i + " ===");
+            System.out.println("\n=== ATTEMPT #" + i + " ===");
             try {
                 // Ensure we're on home screen
                 confirmOnHomeScreen(driver);
@@ -60,9 +60,9 @@ public class TestRunner {
                 // Execute the full firmware verification and pause-resume sequence
                 FirmwareVersionChecker checker = new FirmwareVersionChecker(driver);
                 checker.runSequentialFirmwareUpdates(controller);
-                logpoint("âœ… Attempt #" + i + " completed successfully");
+                System.out.println("✅ Attempt #" + i + " completed successfully");
             } catch (Exception e) {
-                System.err.println("âŒ Error during attempt #" + i + ": " + e.getMessage());
+                System.err.println("❌ Error during attempt #" + i + ": " + e.getMessage());
                 // Continue with next attempt even if current fails
             }
 
@@ -73,8 +73,8 @@ public class TestRunner {
             sleep(1000);
         }
 
-        logpoint("\nâœ… All 20 attempts completed!");
-        logpoint("ðŸ“Š CSV report saved to: test_results_*.csv");
+        System.out.println("\n✅ All 20 attempts completed!");
+        System.out.println("📊 CSV report saved to: test_results_*.csv");
     }
 
     /**
@@ -91,7 +91,7 @@ public class TestRunner {
             }
             return Integer.parseInt(input);
         } catch (Exception e) {
-            logpoint("âš ï¸ Invalid input. Using default of " + DEFAULT_ATTEMPTS + " attempts.");
+            System.out.println("⚠️ Invalid input. Using default of " + DEFAULT_ATTEMPTS + " attempts.");
             return DEFAULT_ATTEMPTS;
         }
     }
@@ -112,7 +112,7 @@ public class TestRunner {
         initializer.initializeDriver(); // Connects to device
         // Set implicit wait
 //        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
-        logpoint("Driver initialized successfully.");
+        System.out.println("Driver initialized successfully.");
     }
 
     private UiAutomator2Options baseOptions() {
@@ -135,9 +135,9 @@ public class TestRunner {
         try {
             driver = new AndroidDriver(url, options);
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-            logpoint("âœ… Driver created successfully.");
+            System.out.println("✅ Driver created successfully.");
         } catch (Exception e) {
-            System.err.println("âŒ Failed to create AndroidDriver: " + e.getMessage());
+            System.err.println("❌ Failed to create AndroidDriver: " + e.getMessage());
             throw new RuntimeException("Driver initialization failed", e);
         }
     }
@@ -147,11 +147,11 @@ public class TestRunner {
     public void quitDriverSafely() {
         if (driver != null) {
             try {
-                logpoint("\nðŸ§¹ Cleaning up resources...");
+                System.out.println("\n🧹 Cleaning up resources...");
                 driver.quit();
-                logpoint("âœ… Driver session ended.");
+                System.out.println("✅ Driver session ended.");
             } catch (Exception e) {
-                System.err.println("âš ï¸ Error during driver quit: " + e.getMessage());
+                System.err.println("⚠️ Error during driver quit: " + e.getMessage());
             }
         }
     }

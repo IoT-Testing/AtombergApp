@@ -1,4 +1,4 @@
-﻿package com.appTest.tests;
+package com.appTest.tests;
 
 import app.AppInitializer;
 import app.Login.Email;
@@ -13,17 +13,17 @@ import static app.resources.AppInfo.*;
 import static app.resources.Credentials.*;
 
 /**
- * QuickSmokeTest â€“ rapid device-farm sanity check:
- * launch â†’ login (or re-login if already logged in) â†’ verify home screen.
+ * QuickSmokeTest – rapid device-farm sanity check:
+ * launch → login (or re-login if already logged in) → verify home screen.
  *
  * <p>Used to prove that the test script has full device control after
  * acquiring a session from a device farm (e.g. STF). The test does NOT
- * call {@code driver.quit()} â€” the driver lifecycle is owned by
+ * call {@code driver.quit()} — the driver lifecycle is owned by
  * {@link BaseTest#teardown()}.</p>
  *
  * <p>Inherits driver lifecycle and Extent reporting from {@link BaseTest}.</p>
  *
- * <p><strong>@Listeners must NOT be redeclared here</strong> â€” it is registered
+ * <p><strong>@Listeners must NOT be redeclared here</strong> — it is registered
  * once on {@code BaseTest}. Re-declaring it causes each listener to fire twice.</p>
  */
 public class QuickSmokeTest extends BaseTest {
@@ -35,16 +35,16 @@ public class QuickSmokeTest extends BaseTest {
         Assert.assertNotNull(driver, "Driver must not be null before QuickSmokeTest");
         appInitializer = new AppInitializer(driver);
         appInitializer.setDriver(driver);
-        logpoint("QuickSmokeTest ready on: " + deviceSlot);
+        System.out.println("QuickSmokeTest ready on: " + deviceSlot);
     }
 
-    @Test(description = "Verify device farm control: launch â†’ login â†’ confirm home screen")
+    @Test(description = "Verify device farm control: launch → login → confirm home screen")
     public void verifyDeviceFarmControl() throws Exception {
         reporter.startTest("Quick Smoke Test", deviceSlot);
         try {
-            logpoint("Session : " + driver.getSessionId());
-            logpoint("Device  : " + driver.getCapabilities().getCapability("deviceName"));
-            logpoint("UDID    : " + driver.getCapabilities().getCapability("udid"));
+            System.out.println("Session : " + driver.getSessionId());
+            System.out.println("Device  : " + driver.getCapabilities().getCapability("deviceName"));
+            System.out.println("UDID    : " + driver.getCapabilities().getCapability("udid"));
 
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
             driver.activateApp(ATOMBERG_HOME);
@@ -55,8 +55,8 @@ public class QuickSmokeTest extends BaseTest {
             boolean wasOnLoginScreen = appInitializer.checkMainScreen();
 
             if (!wasOnLoginScreen) {
-                // Already logged in â€” log out then re-login with default credentials
-                logpoint("Already logged in. Logging out for clean smoke runâ€¦");
+                // Already logged in — log out then re-login with default credentials
+                System.out.println("Already logged in. Logging out for clean smoke run…");
                 new Manage(driver).logout();
                 ActionsUtil.SSleep(3);
                 driver.activateApp(ATOMBERG_HOME);
@@ -76,7 +76,7 @@ public class QuickSmokeTest extends BaseTest {
 
             AppUtil.captureScreenshot(driver, "quick_smoke_pass");
             reporter.log(Status.PASS,
-                    "Script has full device control â€” session: " + driver.getSessionId());
+                    "Script has full device control — session: " + driver.getSessionId());
         } catch (Exception e) {
             AppUtil.captureScreenshot(driver, "quick_smoke_fail");
             reporter.log(Status.FAIL, "Quick smoke test failed on " + deviceSlot + ": " + e.getMessage());
@@ -87,4 +87,3 @@ public class QuickSmokeTest extends BaseTest {
         }
     }
 }
-

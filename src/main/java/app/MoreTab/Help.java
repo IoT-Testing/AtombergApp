@@ -1,10 +1,9 @@
-﻿package app.MoreTab;
+package app.MoreTab;
 
 import app.util.ActionsUtil;
 import app.util.AppUtil;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.appmanagement.ApplicationState;
-import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.*;
 import java.time.Duration;
 import java.util.List;
@@ -55,16 +54,16 @@ public class Help {
         waitForPresence(COMPLAINT_STATUS_HEADER, 10);
 
         if (isElementPresent(NO_COMPLAINTS_INDICATOR)) {
-            logpoint("No Complaints Raised.");
+            System.out.println("No Complaints Raised.");
         } else {
-            logpoint("Complaints are present.");
+            System.out.println("Complaints are present.");
         }
         videoTryCatch();
     }
 
     public void manual() {
         if (!clickElementIfExists(MANUAL_BUTTON, "Manual")) return;
-        logpoint("Manual Open");
+        System.out.println("Manual Open");
         ActionsUtil.sleep(2500);
         videoTryCatch();
     }
@@ -103,15 +102,15 @@ public class Help {
             WebElement el = atomberg.findElement(locator);
             if (el.isDisplayed()) {
                 el.click();
-                logpoint("Tap on " + label);
+                System.out.println("Tap on " + label);
                 AppUtil.captureScreenshot(atomberg, label);
                 return true;
             } else {
-                logpoint(label + " found but not displayed.");
+                System.out.println(label + " found but not displayed.");
                 return false;
             }
         } catch (NoSuchElementException e) {
-            logpoint(label + " not found.");
+            System.out.println(label + " not found.");
             return false;
         } catch (Exception e) {
             System.err.println("Error clicking " + label + ": " + e.getMessage());
@@ -134,7 +133,7 @@ public class Help {
                 WebElement device = atomberg.findElement(modelLocator);
                 device.click();
                 AppUtil.captureScreenshot(atomberg, "Model Selected");
-                logpoint(category + ": " + model);
+                System.out.println(category + ": " + model);
 
                 if (model.contains("Smart") || "Other".equals(model)) {
                     EnterSerialNumber();
@@ -147,7 +146,7 @@ public class Help {
                     ReturnToHome();
                 }
             } catch (NoSuchElementException e) {
-                logpoint("Model not available: " + model + " (optional)");
+                System.out.println("Model not available: " + model + " (optional)");
 
             } catch (Exception e) {
                 System.err.println("Unexpected error during model selection: " + e.getMessage());
@@ -169,13 +168,13 @@ public class Help {
 
             manualEnter.click();
             AppUtil.captureScreenshot(atomberg, "Enter Barcode Manually");
-            logpoint("Enter Barcode Manually...");
+            System.out.println("Enter Barcode Manually...");
 
             List<WebElement> images = manualEnter.findElements(By.tagName("ImageView"));
             if (!images.isEmpty()) {
                 images.get(0).click();
                 AppUtil.captureScreenshot(atomberg, "Scan Barcode");
-                logpoint("Scan Barcode ...");
+                System.out.println("Scan Barcode ...");
             }
 
             // Handle camera permission prompt
@@ -227,15 +226,15 @@ public class Help {
             } else if ("No".equals(desc)) {
                 btn.click();
                 clickElementIfExists(APP_EMAIL_OPTION, "App Email");
-                logpoint("app Email ...");
+                System.out.println("app Email ...");
                 atomberg.navigate().back();
 
                 clickElementIfExists(GENERIC_EMAIL_OPTION, "Generic Email");
-                logpoint("generic Email ...");
+                System.out.println("generic Email ...");
                 atomberg.navigate().back();
 
                 clickElementIfExists(CALL_OPTION, "Call");
-                logpoint("Call ...");
+                System.out.println("Call ...");
 
                 waitForElement(CONTACT_SUPPORT_HEADER, 10);
                 break;
@@ -253,7 +252,7 @@ public class Help {
     private void videoTryCatch() {
         int attempts = 0;
         while (!isElementPresent(VIDEO_TUTORIALS_LINK) && attempts < 10) {
-            logpoint("Navigating back... attempt " + (++attempts));
+            System.out.println("Navigating back... attempt " + (++attempts));
             atomberg.navigate().back();
             ActionsUtil.sleep(1000);
 
@@ -332,7 +331,7 @@ public class Help {
      * Gets all visible buttons with non-null content-desc.
      */
     private List<WebElement> getVisibleButtons() {
-        return atomberg.findElements(AppiumBy.className("android.widget.Button")).stream()
+        return atomberg.findElements(By.className("android.widget.Button")).stream()
                 .filter(el -> el.getDomAttribute("content-desc") != null)
                 .collect(Collectors.toList());
     }

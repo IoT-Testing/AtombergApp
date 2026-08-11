@@ -1,11 +1,10 @@
-﻿package app.BLEOnlyFans;
+package app.BLEOnlyFans;
 
 import app.Fan.FanManagement;
 import app.resources.ArduinoRelayControllerModern;
 import app.util.ActionsUtil;
 import app.util.Navigation;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.*;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -38,78 +37,78 @@ public class FirmwareVersionChecker {
 
     /**
      * Runs exactly 20 OTA updates using dynamically named files:
-     * Production_1.0.1.bin â†’ Production_1.0.20.bin
+     * Production_1.0.1.bin → Production_1.0.20.bin
      * Skips if current version >= "i"
      * Scrolls if file not in view
      */
     public void runSequentialFirmwareUpdates(ArduinoRelayControllerModern controller) {
-        logpoint("ðŸ” Starting 20-iteration dynamic OTA update test...");
+        System.out.println("🔁 Starting 20-iteration dynamic OTA update test...");
 
         // Initialize CSV
         initCSV();
-        logpoint("\nðŸ“Š CSV Log Format:");
-        logpoint("Attempt Number,Action ID,Iteration,Status,Updated Version");
-        logpoint("--------------------------------------------------");
+        System.out.println("\n📊 CSV Log Format:");
+        System.out.println("Attempt Number,Action ID,Iteration,Status,Updated Version");
+        System.out.println("--------------------------------------------------");
 
         // Step 1: Open Fan Control & Read Current Firmware
         Navigation.openFanControl(driver);
         sleep(2000);
 
         if (!clickElementWithRetry(FAN_MORE_BUTTON, 3)) {
-            throw new RuntimeException("âŒ Failed to click Menu button");
+            throw new RuntimeException("❌ Failed to click Menu button");
         }
         sleep(2000);
 
         WebElement firmwareElement = findElementByContentDescStartsWith(FIRMWARE_VERSION_PREFIX);
         if (firmwareElement == null) {
-            throw new RuntimeException("âŒ 'Firmware Version' option not found");
+            throw new RuntimeException("❌ 'Firmware Version' option not found");
         }
 
         String currentFullText = firmwareElement.getDomAttribute("content-desc");
         String currentVersion = extractVersionFromFirmwareText(currentFullText);
-        logpoint("ðŸ“„ Current Firmware: " + currentVersion);
+        System.out.println("📄 Current Firmware: " + currentVersion);
 
-        // Parse patch version: 1.0.X â†’ X
+        // Parse patch version: 1.0.X → X
         int currentPatch = parsePatchVersion(currentVersion);
         int startFrom = currentPatch + 1;
-        logpoint("âž¡ï¸ Starting from iteration: " + startFrom);
+        System.out.println("➡️ Starting from iteration: " + startFrom);
 
         // Main Loop: i = 1 to 20
         //TODO : i is the file number to start from.
         for (int i = 1; i <= 20; i++) {
             if (i < startFrom) {
-                logpoint("â­ï¸ Skipping iteration " + i + " (already at or above this version)");
+                System.out.println("⏭️ Skipping iteration " + i + " (already at or above this version)");
                 continue;
             }
 
             String fileName = "4.1." + i + ".bin";
             String expectedVersion = "1.0." + i;
 
-            logpoint("\nðŸš€ Starting Iteration " + i + "/20");
-            logpoint("ðŸ“„ Firmware File: " + fileName);
-            logpoint("ðŸŽ¯ Expected Version: " + expectedVersion);
+            System.out.println("\n🚀 Starting Iteration " + i + "/20");
+            System.out.println("📄 Firmware File: " + fileName);
+            System.out.println("🎯 Expected Version: " + expectedVersion);
 
             // Click Firmware Version
             firmwareElement = findElementByContentDescStartsWith(FIRMWARE_VERSION_PREFIX);
             if (firmwareElement == null) {
-                throw new RuntimeException("âŒ 'Firmware Version' option not found");
+                throw new RuntimeException("❌ 'Firmware Version' option not found");
             }
             firmwareElement.click();
-            logpoint("âœ… Clicked on Firmware Version");
+            System.out.println("✅ Clicked on Firmware Version");
             sleep(2000);
 
             // Click 'Select File'
             if (!clickElementWithRetry(SELECT_FILE_OPTION, 1)) {
-                throw new RuntimeException("âŒ 'Select File' option not clickable");
+                throw new RuntimeException("❌ 'Select File' option not clickable");
             }
-            logpoint("ðŸ“ Select File clicked. Waiting for file picker...");
+            System.out.println("📁 Select File clicked. Waiting for file picker...");
             sleep(3000);
 
-            // âœ… Scroll and select correct file (handles bad sorting)
+            // ✅ Scroll and select correct file (handles bad sorting)
             selectFileWithScroll(fileName);
             sleep(2000);
 
-            // Run validation: wait for success â†’ click Done â†’ verify
+            // Run validation: wait for success → click Done → verify
 
 
 //            1. Pause Resume
@@ -141,7 +140,7 @@ public class FirmwareVersionChecker {
             currentAttempt++;
         }
 
-        logpoint("âœ… Completed all dynamic OTA updates successfully!");
+        System.out.println("✅ Completed all dynamic OTA updates successfully!");
         driver.navigate().back();
         driver.navigate().back();
         driver.navigate().back();
@@ -294,7 +293,7 @@ public class FirmwareVersionChecker {
      * Handles incorrectly sorted file lists (e.g., 1.0.1, 1.0.10, 1.0.2).
      */
     private void selectFileWithScroll(String fileName) {
-        logpoint("ðŸ” Scrolling to find: " + fileName);
+        System.out.println("🔍 Scrolling to find: " + fileName);
         By fileLocator = By.xpath("//android.widget.TextView[@resource-id='android:id/title' and @text='" + fileName + "']");
 
         boolean found = false;
@@ -306,7 +305,7 @@ public class FirmwareVersionChecker {
                 WebElement fileEl = driver.findElement(fileLocator);
                 if (fileEl.isDisplayed()) {
                     fileEl.click();
-                    logpoint("âœ… File selected: " + fileName);
+                    System.out.println("✅ File selected: " + fileName);
                     sleep(2000);
                     return;
                 }
@@ -317,7 +316,7 @@ public class FirmwareVersionChecker {
             sleep(800); // Let UI stabilize
         }
 
-        throw new RuntimeException("âŒ Could not find or click file: " + fileName +
+        throw new RuntimeException("❌ Could not find or click file: " + fileName +
                 " | Total scrolls attempted: " + scrolls);
     }
 
@@ -325,13 +324,13 @@ public class FirmwareVersionChecker {
      * Finds element with content-desc starting with given prefix.
      */
     private WebElement findElementByContentDescStartsWith(String prefix) {
-        List<WebElement> candidates = driver.findElements(AppiumBy.className("android.view.View"));
+        List<WebElement> candidates = driver.findElements(By.className("android.view.View"));
         return candidates.stream()
                 .map(el -> getAttribute(el, "content-desc"))
                 .filter(Objects::nonNull)
                 .filter(desc -> desc.startsWith(prefix))
                 .findFirst()
-                .flatMap(desc -> driver.findElements(AppiumBy.className("android.view.View")).stream()
+                .flatMap(desc -> driver.findElements(By.className("android.view.View")).stream()
                         .filter(el -> Objects.equals(getAttribute(el, "content-desc"), desc))
                         .findFirst())
                 .orElse(null);
@@ -349,7 +348,7 @@ public class FirmwareVersionChecker {
     }
 
     /**
-     * Extracts version from "Firmware Version 1.0.2" â†’ returns "1.0.2"
+     * Extracts version from "Firmware Version 1.0.2" → returns "1.0.2"
      */
     private String extractVersionFromFirmwareText(String fullText) {
         return fullText.replaceFirst("Firmware Version\\s*", "").trim();
@@ -360,7 +359,7 @@ public class FirmwareVersionChecker {
      */
     private String getCurrentFirmwareVersionFromMenu() {
         try {
-            List<WebElement> views = driver.findElements(AppiumBy.className("android.view.View"));
+            List<WebElement> views = driver.findElements(By.className("android.view.View"));
             return views.stream()
                     .map(el -> {
                         try {
@@ -381,7 +380,7 @@ public class FirmwareVersionChecker {
     }
 
     /**
-     * Parses patch version from "1.0.4" â†’ returns 4
+     * Parses patch version from "1.0.4" → returns 4
      */
     private int parsePatchVersion(String version) {
         try {

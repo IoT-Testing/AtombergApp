@@ -1,8 +1,7 @@
-﻿package app.Analytics;
+package app.Analytics;
 
 import app.util.ActionsUtil;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.*;
 import java.util.List;
 import java.util.Objects;
@@ -37,11 +36,11 @@ public class analytics {
         rateUs(); // Dismiss any popup
 
         if (isNoDeviceMessagePresent()) {
-            logpoint("Fan Not Available in Analytics");
+            System.out.println("Fan Not Available in Analytics");
             return;
         }
 
-        logpoint("Fan Available in Analytics");
+        System.out.println("Fan Available in Analytics");
         inspectAllDevices();
     }
 
@@ -54,7 +53,7 @@ public class analytics {
         try {
             WebElement analyticsTab = atomberg.findElement(ANALYTICS_TAB);
             analyticsTab.click();
-            logpoint("Switched to Analytics");
+            System.out.println("Switched to Analytics");
         } catch (NoSuchElementException e) {
             System.err.println("Analytics tab not found.");
         }
@@ -77,7 +76,7 @@ public class analytics {
     private void inspectAllDevices() {
         List<String> deviceNames = getAvailableDeviceNames();
         if (deviceNames.isEmpty()) {
-            logpoint("No selectable devices found.");
+            System.out.println("No selectable devices found.");
             return;
         }
 
@@ -99,7 +98,7 @@ public class analytics {
     private List<String> getAvailableDeviceNames() {
         fanChange(); // Open device list
 
-        List<WebElement> elements = atomberg.findElements(AppiumBy.className("android.view.View"));
+        List<WebElement> elements = atomberg.findElements(By.className("android.view.View"));
         return elements.stream()
                 .map(el -> el.getDomAttribute("content-desc"))
                 .filter(Objects::nonNull)
@@ -111,7 +110,7 @@ public class analytics {
      * Opens the device selection dropdown.
      */
     private void fanChange() {
-        List<WebElement> fans = atomberg.findElements(AppiumBy.className("android.view.View")).stream()
+        List<WebElement> fans = atomberg.findElements(By.className("android.view.View")).stream()
                 .filter(el -> {
                     String desc = el.getDomAttribute("content-desc");
                     return desc != null && (desc.endsWith("Fan") || desc.contains("Select"));
@@ -178,7 +177,7 @@ public class analytics {
      * Checks for and interacts with confetti animation.
      */
     private void confetti() {
-        logpoint("Checking confetti");
+        System.out.println("Checking confetti");
         List<WebElement> images = atomberg.findElements(CONFETTI_IMAGE);
 
         List<WebElement> confettiCandidates = images.stream()
@@ -186,11 +185,11 @@ public class analytics {
                 .filter(this::hasConfettiBounds) // Use method reference
                 .collect(Collectors.toList());
 
-        logpoint("Confetti size: " + confettiCandidates.size());
+        System.out.println("Confetti size: " + confettiCandidates.size());
 
         for (WebElement e : confettiCandidates) {
             try {
-                logpoint("Confetti bounds: " + e.getDomAttribute("bounds"));
+                System.out.println("Confetti bounds: " + e.getDomAttribute("bounds"));
                 e.click();
                 ActionsUtil.sleep(2000);
                 atomberg.navigate().back();
@@ -233,7 +232,7 @@ public class analytics {
             for (WebElement btn : buttons) {
                 if ("Cancel".equals(btn.getDomAttribute("content-desc"))) {
                     btn.click();
-                    logpoint("Canceled Rate us");
+                    System.out.println("Canceled Rate us");
                     break;
                 }
             }

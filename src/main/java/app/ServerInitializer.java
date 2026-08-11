@@ -1,4 +1,4 @@
-﻿package app;
+package app;
 
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
@@ -12,18 +12,18 @@ import java.nio.file.Paths;
 import java.util.List;
 
 /**
- * ServerInitializer â€“ manages the Appium server lifecycle.
+ * ServerInitializer – manages the Appium server lifecycle.
  *
  * <p>Supports three execution modes:
  * <ol>
- *   <li><b>External server already running</b> (Appium GUI / Device Farm started separately) â€“
+ *   <li><b>External server already running</b> (Appium GUI / Device Farm started separately) –
  *       detected automatically; programmatic start is skipped.</li>
- *   <li><b>Programmatic start with Device Farm plugin</b> â€“ starts Appium + ATD plugin in-process.</li>
- *   <li><b>CI/CD with APPIUM_URL set</b> â€“ remote hub; no local server needed.</li>
+ *   <li><b>Programmatic start with Device Farm plugin</b> – starts Appium + ATD plugin in-process.</li>
+ *   <li><b>CI/CD with APPIUM_URL set</b> – remote hub; no local server needed.</li>
  * </ol>
  *
  * FIX C7: All hardcoded absolute paths ("C:/Users/Rohitbhagat/...") removed.
- *         Appium is located via APPIUM_JS_PATH env var â†’ PATH resolution â†’ OS-specific heuristics.
+ *         Appium is located via APPIUM_JS_PATH env var → PATH resolution → OS-specific heuristics.
  * FIX H3: withAppiumJS() is now called when main.js is found so Appium starts reliably.
  * FIX H4: ATD readiness check uses correct endpoint /device-farm/api/device (not /devices).
  */
@@ -36,18 +36,18 @@ public class ServerInitializer {
     private static final String STATUS_ENDPOINT = APPIUM_URL + "/status";
     private static final int    DEFAULT_PORT    = 4723;
 
-    // â”€â”€ Public API â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Public API ─────────────────────────────────────────────────────────────
 
     /**
      * Starts the Appium server (or skips if already running externally).
      */
     public void startServer() {
         if (isExternalServerRunning()) {
-            logpoint("[ServerInitializer] External Appium server detected at " + APPIUM_URL + " â€” skipping local start.");
+            System.out.println("[ServerInitializer] External Appium server detected at " + APPIUM_URL + " — skipping local start.");
             return;
         }
         if (isServerRunning()) {
-            logpoint("[ServerInitializer] Programmatic server already running at: " + service.getUrl());
+            System.out.println("[ServerInitializer] Programmatic server already running at: " + service.getUrl());
             return;
         }
 
@@ -57,11 +57,11 @@ public class ServerInitializer {
             service.start();
 
             if (!service.isRunning()) {
-                throw new RuntimeException("Appium service started but isRunning() returned false â€” check Appium installation.");
+                throw new RuntimeException("Appium service started but isRunning() returned false — check Appium installation.");
             }
 
             waitForDeviceFarmReady();
-            logpoint("[ServerInitializer] Appium + Device Farm started at: " + service.getUrl());
+            System.out.println("[ServerInitializer] Appium + Device Farm started at: " + service.getUrl());
 
         } catch (Exception e) {
             System.err.println("[ServerInitializer] FATAL: Failed to start Appium server: " + e.getMessage());
@@ -74,13 +74,13 @@ public class ServerInitializer {
      */
     public void stopServer() {
         if (isExternalServerRunning() && !isServerRunning()) {
-            logpoint("[ServerInitializer] External Appium server â€” skipping stop.");
+            System.out.println("[ServerInitializer] External Appium server — skipping stop.");
             return;
         }
         if (isServerRunning()) {
             service.stop();
             service = null;
-            logpoint("[ServerInitializer] Appium server stopped.");
+            System.out.println("[ServerInitializer] Appium server stopped.");
         }
     }
 
@@ -88,7 +88,7 @@ public class ServerInitializer {
         return service != null && service.isRunning();
     }
 
-    // â”€â”€ Private helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Private helpers ────────────────────────────────────────────────────────
 
     /**
      * Pings the /status endpoint to detect an already-running server.
@@ -108,10 +108,10 @@ public class ServerInitializer {
 
     /**
      * FIX H4: Polls the correct ATD endpoint /device-farm/api/device (singular).
-     * Previous code polled /device-farm/api/devices which does not exist â†’ 404 always.
+     * Previous code polled /device-farm/api/devices which does not exist → 404 always.
      */
     private void waitForDeviceFarmReady() {
-        logpoint("[ServerInitializer] Waiting for Appium Device Farm to initialise device pool...");
+        System.out.println("[ServerInitializer] Waiting for Appium Device Farm to initialise device pool...");
         final int maxWaitSeconds = 30;
         int waited = 0;
 
@@ -126,7 +126,7 @@ public class ServerInitializer {
                 conn.setReadTimeout(2_000);
 
                 if (conn.getResponseCode() == 200) {
-                    logpoint("[ServerInitializer] Device Farm ready after " + waited + "s.");
+                    System.out.println("[ServerInitializer] Device Farm ready after " + waited + "s.");
                     return;
                 }
             } catch (InterruptedException ie) {
@@ -144,7 +144,7 @@ public class ServerInitializer {
      * Builds the AppiumServiceBuilder.
      *
      * FIX C7 / H3: detectAppiumJsPath() uses environment variables and OS-aware
-     * heuristics â€” no hardcoded personal paths.
+     * heuristics — no hardcoded personal paths.
      */
     private AppiumServiceBuilder buildServiceBuilder() {
         AppiumServiceBuilder builder = new AppiumServiceBuilder()
@@ -164,9 +164,9 @@ public class ServerInitializer {
         File mainJs = detectAppiumJsPath();
         if (mainJs != null) {
             builder.withAppiumJS(mainJs);
-            logpoint("[ServerInitializer] Using Appium main.js: " + mainJs.getAbsolutePath());
+            System.out.println("[ServerInitializer] Using Appium main.js: " + mainJs.getAbsolutePath());
         } else {
-            logpoint("[ServerInitializer] Appium main.js not found via heuristics; relying on PATH.");
+            System.out.println("[ServerInitializer] Appium main.js not found via heuristics; relying on PATH.");
         }
 
         return builder;
@@ -177,10 +177,10 @@ public class ServerInitializer {
      *
      * FIX C7: Removed hardcoded "C:/Users/Rohitbhagat/..." path entirely.
      * Priority:
-     *   1. APPIUM_JS_PATH env var (highest priority â€” set this in CI secrets)
+     *   1. APPIUM_JS_PATH env var (highest priority — set this in CI secrets)
      *   2. Windows global npm: %APPDATA%/npm/node_modules/appium/build/lib/main.js
      *   3. macOS/Linux: $(npm root -g)/appium/build/lib/main.js resolved via common prefixes
-     *   4. Returns null â†’ relying on PATH (still works if appium is on PATH)
+     *   4. Returns null → relying on PATH (still works if appium is on PATH)
      */
     private File detectAppiumJsPath() {
         // Priority 1: explicit override
@@ -205,7 +205,7 @@ public class ServerInitializer {
             if (Files.exists(candidate)) return candidate.toFile();
 
         } else {
-            // Priority 3: Unix â€” check common global npm roots
+            // Priority 3: Unix — check common global npm roots
             for (String prefix : List.of(
                     "/usr/local/lib",
                     "/usr/lib",
@@ -216,7 +216,7 @@ public class ServerInitializer {
             }
         }
 
-        return null; // main.js not found â€” caller will rely on PATH
+        return null; // main.js not found — caller will rely on PATH
     }
 
     /**

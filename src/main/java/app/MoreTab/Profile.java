@@ -1,4 +1,4 @@
-﻿package app.MoreTab;
+package app.MoreTab;
 
 import app.ScreenCheck.ScreenCheck;
 import app.util.ActionsUtil;
@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 import static app.resources.Locators.Android.AppLocators.MoreTab.*;
 
 /**
- * Profile â€“ handles user profile editing: avatar, name, and phone number trigger.
+ * Profile – handles user profile editing: avatar, name, and phone number trigger.
  *
  * <p>Follows the page-object pattern: each public method represents a high-level
  * user action and delegates internally to focused helper methods. All transient
@@ -29,10 +29,10 @@ public class Profile {
         this.screenCheck  = new ScreenCheck(driver);
     }
 
-    // â”€â”€ Public API â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Public API ────────────────────────────────────────────────────────────
 
     /**
-     * Full profile-edit flow: navigate â†’ avatar â†’ name/phone â†’ save â†’ back to home.
+     * Full profile-edit flow: navigate → avatar → name/phone → save → back to home.
      */
     public void edit() {
         openProfile();
@@ -42,7 +42,7 @@ public class Profile {
         navigateBackToHome();
     }
 
-    // â”€â”€ Internal steps â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Internal steps ────────────────────────────────────────────────────────
 
     /**
      * Navigates to the More tab and opens the profile via the "Hi," greeting element.
@@ -55,11 +55,11 @@ public class Profile {
                 .collect(Collectors.toList());
 
         if (greetings.isEmpty()) {
-            System.err.println("No profile greeting found â€” cannot open profile.");
+            System.err.println("No profile greeting found — cannot open profile.");
             return;
         }
         greetings.get(0).click();
-        logpoint("Opened Edit Profile.");
+        System.out.println("Opened Edit Profile.");
         AppUtil.captureScreenshot(atomberg, "edit_profile_opened");
         ActionsUtil.sleep(3000);
     }
@@ -98,7 +98,7 @@ public class Profile {
             nameField.click();
             nameField.clear();
             nameField.sendKeys("IoT");
-            logpoint("Name updated to 'IoT'.");
+            System.out.println("Name updated to 'IoT'.");
             AppUtil.captureScreenshot(atomberg, "name_updated");
         } else {
             System.err.println("Name input field not found.");
@@ -114,7 +114,7 @@ public class Profile {
      */
     private void saveChanges() {
         if (clickElementIfExists(UPDATE_BUTTON, "Update")) {
-            logpoint("Profile updated successfully.");
+            System.out.println("Profile updated successfully.");
             ActionsUtil.SSleep(2);
         }
     }
@@ -127,17 +127,17 @@ public class Profile {
         final int MAX_BACK_PRESS = 10;
         for (int i = 0; i < MAX_BACK_PRESS; i++) {
             if (isElementPresent(SELECT_AND_LINK_DEVICE_HEADER)) {
-                logpoint("Returned to device selection screen.");
+                System.out.println("Returned to device selection screen.");
                 return;
             }
-            System.out.printf("Navigating backâ€¦ (%d/%d)%n", i + 1, MAX_BACK_PRESS);
+            System.out.printf("Navigating back… (%d/%d)%n", i + 1, MAX_BACK_PRESS);
             atomberg.navigate().back();
             ActionsUtil.sleep(1000);
         }
         System.err.println("Failed to return to expected screen after " + MAX_BACK_PRESS + " back presses.");
     }
 
-    // â”€â”€ Micro-utilities â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Micro-utilities ───────────────────────────────────────────────────────
 
     private boolean isDisplayed(WebElement el) {
         try { return el.isDisplayed(); } catch (Exception e) { return false; }
@@ -160,13 +160,13 @@ public class Profile {
             WebElement el = atomberg.findElement(locator);
             if (isDisplayed(el)) {
                 el.click();
-                logpoint("Tapped: " + label);
+                System.out.println("Tapped: " + label);
                 return true;
             }
-            logpoint(label + " found but not displayed.");
+            System.out.println(label + " found but not displayed.");
             return false;
         } catch (NoSuchElementException e) {
-            logpoint(label + " not found.");
+            System.out.println(label + " not found.");
             return false;
         } catch (Exception e) {
             System.err.println("Error clicking " + label + ": " + e.getMessage());
@@ -179,4 +179,3 @@ public class Profile {
         catch (NoSuchElementException e) { return false; }
     }
 }
-

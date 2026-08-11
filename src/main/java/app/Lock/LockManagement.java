@@ -1,10 +1,9 @@
-﻿package app.Lock;
+package app.Lock;
 
 import app.SmartDevice;
 import app.util.ActionsUtil;
 import app.util.AppUtil;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,14 +50,14 @@ public class LockManagement implements SmartDevice {
      */
     public void addition() {
         navigateToAddScreen(atomberg);
-        logpoint("Searching for available devices...");
+        System.out.println("Searching for available devices...");
         ActionsUtil.sleep(15000); // Allow scan
 
         if (isElementPresent(SMART_LOCK_INDICATOR)) {
             clickWhenReady(atomberg, CONNECT_BUTTON);
-            logpoint("Connection initiated.");
+            System.out.println("Connection initiated.");
         } else {
-            logpoint("No smart lock detected.");
+            System.out.println("No smart lock detected.");
         }
     }
 
@@ -85,7 +84,7 @@ public class LockManagement implements SmartDevice {
         ActionsUtil.sleep(5000);
 
         if (isElementPresent(SUCCESS_MESSAGE)) {
-            logpoint("Lock Added Successfully");
+            System.out.println("Lock Added Successfully");
             ActionsUtil.sleep(1500);
         } else {
             System.err.println("Lock addition failed: Success message not shown.");
@@ -98,7 +97,7 @@ public class LockManagement implements SmartDevice {
      */
     public void checkLock() {
         clickWhenReady(atomberg, LOCK_TAB);
-        List<WebElement> locks = atomberg.findElements(AppiumBy.className("android.widget.Button"));
+        List<WebElement> locks = atomberg.findElements(By.className("android.widget.Button"));
 
         List<WebElement> validLocks = locks.stream()
                 .filter(el -> {
@@ -107,11 +106,11 @@ public class LockManagement implements SmartDevice {
                 }).collect(Collectors.toList());
 
         if (validLocks.isEmpty()) {
-            logpoint("No Lock Available");
+            System.out.println("No Lock Available");
             return;
         }
 
-        logpoint(validLocks.size() + " Lock(s) Available");
+        System.out.println(validLocks.size() + " Lock(s) Available");
 
         for (WebElement lock : validLocks) {
             lock.click();
@@ -126,12 +125,12 @@ public class LockManagement implements SmartDevice {
     public void control() {
         ActionsUtil.sleep(7500);
         clickWhenReady(atomberg, UNLOCK_HANDLE);
-        logpoint("Unlocking...");
+        System.out.println("Unlocking...");
 
         ActionsUtil.sleep(3000);
 
         if (isElementPresent(By.xpath("//android.view.View[@content-desc='Unlocked']"))) {
-            logpoint("Successfully unlocked");
+            System.out.println("Successfully unlocked");
             history();
             ActionsUtil.sleep(5000);
             atomberg.navigate().back();
@@ -140,7 +139,7 @@ public class LockManagement implements SmartDevice {
             lockSettings();
             atomberg.navigate().back();
         } else if (isElementPresent(By.xpath("//android.view.View[@content-desc='Could not unlock']"))) {
-            logpoint("Lock not available or Bluetooth off");
+            System.out.println("Lock not available or Bluetooth off");
         }
     }
 
@@ -165,11 +164,11 @@ public class LockManagement implements SmartDevice {
      * Inspects all types of remote keys (OTP, Timed Pin).
      */
     private void KeyType() {
-        List<WebElement> keyButtons = atomberg.findElements(AppiumBy.className("android.widget.Button"));
+        List<WebElement> keyButtons = atomberg.findElements(By.className("android.widget.Button"));
         int total = keyButtons.size();
 
         for (int i = 0; i < total; i++) {
-            List<WebElement> currentKeys = atomberg.findElements(AppiumBy.className("android.widget.Button"));
+            List<WebElement> currentKeys = atomberg.findElements(By.className("android.widget.Button"));
             WebElement key = currentKeys.get(i);
 
             String desc = key.getDomAttribute("content-desc");
@@ -226,11 +225,11 @@ public class LockManagement implements SmartDevice {
      */
     private void preferences() {
         if (!isElementPresent(PREFERENCES_SECTION)) {
-            logpoint("Preferences section not found.");
+            System.out.println("Preferences section not found.");
             return;
         }
 
-        List<WebElement> switches = atomberg.findElements(AppiumBy.className("android.widget.Switch"));
+        List<WebElement> switches = atomberg.findElements(By.className("android.widget.Switch"));
         if (switches.size() < 5) {
             System.err.println("Expected at least 5 switches in Preferences.");
             return;
@@ -247,17 +246,17 @@ public class LockManagement implements SmartDevice {
 
         // Toggle Fingerprint
         switches.get(FINGERPRINT_SWITCH_INDEX).click();
-        logpoint("Fingerprint toggled");
+        System.out.println("Fingerprint toggled");
         fingerprint();
 
         // Toggle Card
         switches.get(CARD_SWITCH_INDEX).click();
-        logpoint("Card toggled");
+        System.out.println("Card toggled");
         CardEnable();
 
         // Toggle All Pins
         WebElement pinsSwitch = switches.get(PINS_SWITCH_INDEX);
-        logpoint(pinsSwitch.getDomAttribute("checked").equals("true") ?
+        System.out.println(pinsSwitch.getDomAttribute("checked").equals("true") ?
                 "Disable all pins" : "Enable all pins");
         pinsSwitch.click();
     }
@@ -280,11 +279,11 @@ public class LockManagement implements SmartDevice {
      */
     private void passageMode(boolean wasEnabled) {
         if (wasEnabled) {
-            // Already enabled â†’ now disabling â†’ no prompts
+            // Already enabled → now disabling → no prompts
             return;
         }
 
-        // Enabling passage mode â†’ show prompts
+        // Enabling passage mode → show prompts
         if (isElementPresent(PASSAGE_MODE_PROMPT_1)) {
             clickWhenReady(atomberg, YES_BUTTON);
         }
@@ -292,7 +291,7 @@ public class LockManagement implements SmartDevice {
             clickWhenReady(atomberg, YES_BUTTON);
         }
         if (isElementPresent(PASSAGE_MODE_SUCCESS)) {
-            logpoint("Passage Mode Enabled Successfully");
+            System.out.println("Passage Mode Enabled Successfully");
         }
     }
 
@@ -301,13 +300,13 @@ public class LockManagement implements SmartDevice {
      */
     private void fingerprint() {
         if (isElementPresent(FP_DISABLED_MSG)) {
-            logpoint("All Fingerprints Disabled Successfully!\nEnabling them again");
-            List<WebElement> switches = atomberg.findElements(AppiumBy.className("android.widget.Switch"));
+            System.out.println("All Fingerprints Disabled Successfully!\nEnabling them again");
+            List<WebElement> switches = atomberg.findElements(By.className("android.widget.Switch"));
             if (switches.size() > FINGERPRINT_SWITCH_INDEX) {
                 switches.get(FINGERPRINT_SWITCH_INDEX).click();
             }
         } else if (isElementPresent(FP_ENABLED_MSG)) {
-            logpoint("All Fingerprints Enabled Successfully");
+            System.out.println("All Fingerprints Enabled Successfully");
         }
     }
 
@@ -316,15 +315,15 @@ public class LockManagement implements SmartDevice {
      */
     private void CardEnable() {
         if (isElementPresent(CARD_NOT_AVAILABLE)) {
-            logpoint("No Cards present for this Lock. Please add one");
+            System.out.println("No Cards present for this Lock. Please add one");
         } else if (isElementPresent(By.xpath("//android.view.View[@content-desc='All Cards Disabled Successfully!']"))) {
-            logpoint("Cards Disabled, Enabling it ...");
-            List<WebElement> switches = atomberg.findElements(AppiumBy.className("android.widget.Switch"));
+            System.out.println("Cards Disabled, Enabling it ...");
+            List<WebElement> switches = atomberg.findElements(By.className("android.widget.Switch"));
             if (switches.size() > CARD_SWITCH_INDEX) {
                 switches.get(CARD_SWITCH_INDEX).click();
             }
         } else if (isElementPresent(By.xpath("//android.view.View[@content-desc='All Cards Enabled Successfully!']"))) {
-            logpoint("Cards Enabled");
+            System.out.println("Cards Enabled");
         }
     }
 
@@ -332,7 +331,7 @@ public class LockManagement implements SmartDevice {
      * Configures periodic timed PIN duration using seekbar scroll.
      */
     private void periodicTimedPin() {
-        List<WebElement> seekBars = atomberg.findElements(AppiumBy.className("android.widget.SeekBar"));
+        List<WebElement> seekBars = atomberg.findElements(By.className("android.widget.SeekBar"));
         List<WebElement> labeledSeekBars = seekBars.stream()
                 .filter(el -> el.getDomAttribute("content-desc") != null)
                 .collect(Collectors.toList());
@@ -441,7 +440,7 @@ public class LockManagement implements SmartDevice {
      * @return List of labeled elements
      */
     private List<WebElement> getVisibleLabeledElements() {
-        return atomberg.findElements(AppiumBy.className("android.view.View")).stream()
+        return atomberg.findElements(By.className("android.view.View")).stream()
                 .filter(el -> el.getDomAttribute("content-desc") != null)
                 .collect(Collectors.toList());
     }
@@ -454,7 +453,7 @@ public class LockManagement implements SmartDevice {
     private void printContentDesc(List<WebElement> elements, String type) {
         for (WebElement el : elements) {
             String desc = el.getDomAttribute("content-desc");
-            if (desc != null) logpoint(type + ": " + desc);
+            if (desc != null) System.out.println(type + ": " + desc);
         }
     }
 
@@ -467,7 +466,7 @@ public class LockManagement implements SmartDevice {
      */
     private void toggleSwitchAndConfirm(WebElement switchEl, String label, Runnable action) {
         switchEl.click();
-        logpoint(label);
+        System.out.println(label);
         ActionsUtil.sleep(1000);
         action.run();
     }

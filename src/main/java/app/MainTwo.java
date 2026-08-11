@@ -1,9 +1,8 @@
-﻿package app;
+package app;
 
 import app.util.ActionsUtil;
 import app.util.Navigation;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
-import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -83,7 +82,7 @@ public class MainTwo {
 
     private void OTATest(){
         driver.findElement(OTA).click();
-        logpoint("OTA Test clicked");
+        System.out.println("OTA Test clicked");
     }
 
     private void startLog(){
@@ -110,13 +109,13 @@ public class MainTwo {
     }
 
     private WebElement findElementByContentDescStartsWith(String prefix) {
-        List<WebElement> candidates = driver.findElements(AppiumBy.className("android.view.View"));
+        List<WebElement> candidates = driver.findElements(By.className("android.view.View"));
         return candidates.stream()
                 .map(el -> getAttribute(el, "content-desc"))
                 .filter(Objects::nonNull)
                 .filter(desc -> desc.startsWith(prefix))
                 .findFirst()
-                .flatMap(desc -> driver.findElements(AppiumBy.className("android.view.View")).stream()
+                .flatMap(desc -> driver.findElements(By.className("android.view.View")).stream()
                         .filter(el -> Objects.equals(getAttribute(el, "content-desc"), desc))
                         .findFirst())
                 .orElse(null);
@@ -125,7 +124,7 @@ public class MainTwo {
     private void selectFileWithScroll(int i) {
         driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"File\"]")).click();
         sleep(5000);
-        logpoint("ðŸ” Scrolling to find: " + i);
+        System.out.println("🔍 Scrolling to find: " + i);
         By fileLocator = By.xpath("//android.widget.TextView[@resource-id='android:id/title' and @text='4.1." + i + ".bin']");
                                                  //android.widget.TextView[@resource-id="android:id/title" and @text="4.1.1.bin"]
         boolean found = false;
@@ -137,7 +136,7 @@ public class MainTwo {
                 WebElement fileEl = driver.findElement(fileLocator);
                 if (fileEl.isDisplayed()) {
                     fileEl.click();
-                    logpoint("âœ… File selected: 4.1." + i +".bin");
+                    System.out.println("✅ File selected: 4.1." + i +".bin");
                     return;
                 }
             } catch (Exception ignored) {}
@@ -146,12 +145,12 @@ public class MainTwo {
             scrolls++;
         }
 
-        throw new RuntimeException("âŒ Could not find or click file: 4.1. " + i +
+        throw new RuntimeException("❌ Could not find or click file: 4.1. " + i +
                 ".bin | Total scrolls attempted: " + scrolls);
     }
 
     public void runProgressivePauseResume() {
-        logpoint("â± Starting high-accuracy pause-resume using coordinate taps...");
+        System.out.println("⏱ Starting high-accuracy pause-resume using coordinate taps...");
 
         // Initialize CSV on first run
 //        initCSV();
@@ -159,9 +158,9 @@ public class MainTwo {
         boolean success = executePauseResumeSequence(currentAttempt);
 
         if (success) {
-            logpoint("âœ… Firmware verification and pause-resume completed successfully!");
+            System.out.println("✅ Firmware verification and pause-resume completed successfully!");
         } else {
-            logpoint("âŒ Failed to complete firmware verification and pause-resume sequence");
+            System.out.println("❌ Failed to complete firmware verification and pause-resume sequence");
         }
 
         currentAttempt++; // Increment for next run
@@ -179,26 +178,26 @@ public class MainTwo {
                 // Step 1: Click Start (if not already started)
                 try {
                     driver.findElement(START_BUTTON).click();
-                    logpoint("â–¶ï¸ Start button clicked.");
+                    System.out.println("▶️ Start button clicked.");
                 } catch (Exception e) {
-                    logpoint("âš ï¸ 'Start' button not found or already running.");
+                    System.out.println("⚠️ 'Start' button not found or already running.");
                 }
                 sleep(HOLD_DURATION_MS);
 
                 // Step 2: Perform pause-resume cycles
                 boolean allCyclesSuccessful = true;
                 for (int i = 0; i < PAUSE_RESUME_CYCLES; i++) {
-                    // â¸ï¸ Pause: Tap at center-bottom
+                    // ⏸️ Pause: Tap at center-bottom
 //                    ActionsUtil.Tap.withCoordinates(driver, 370, 1220);// for narzo only
                     ActionsUtil.Tap.withCoordinates(driver, 500, 2020);// for Poco only
                     sleep(HOLD_DURATION_MS);
 
-                    // â–¶ï¸ Resume: Tap again
+                    // ▶️ Resume: Tap again
 //                    ActionsUtil.Tap.withCoordinates(driver, 370, 1220);// for narzo only
                     ActionsUtil.Tap.withCoordinates(driver, 500, 2020);// for Poco only
                     sleep(HOLD_DURATION_MS);
 
-                    logpoint("ðŸ” Cycle " + (i + 1) + "/" + PAUSE_RESUME_CYCLES + " completed");
+                    System.out.println("🔁 Cycle " + (i + 1) + "/" + PAUSE_RESUME_CYCLES + " completed");
 
                     // Check if we're still connected
                     if (!isDeviceConnected()) {
@@ -255,7 +254,7 @@ public class MainTwo {
 
         // Set implicit wait
 //        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
-        logpoint("Driver initialized successfully.");
+        System.out.println("Driver initialized successfully.");
     }
 
     // === Utility Methods ===
@@ -264,7 +263,7 @@ public class MainTwo {
         if (driver != null) {
             try {
                 driver.quit();
-                logpoint("Driver session ended.");
+                System.out.println("Driver session ended.");
             } catch (Throwable e) {
                 System.err.println("Error during driver quit: " + e.getMessage());
             }
@@ -303,4 +302,3 @@ public class MainTwo {
         // Now 'element' is guaranteed to be present in the DOM
     }
 }
-

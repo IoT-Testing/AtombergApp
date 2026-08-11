@@ -1,4 +1,4 @@
-﻿package ExtentReports;
+package ExtentReports;
 
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
@@ -82,7 +82,7 @@ public class ExtentReportAT {
         ext.setSystemInfo("Tester", "Rohit Bhagat");
         ext.setSystemInfo("Environment", "Production");
 
-        logpoint("Report generated at: " + filePath);
+        System.out.println("Report generated at: " + filePath);
         return ext;
     }
 
@@ -101,18 +101,6 @@ public class ExtentReportAT {
     }
 
     /**
-     * Registers a parent node for the given device slot if one does not already
-     * exist. Needed by multi-device tests (e.g. the two-phone Device Sharing
-     * suite) that report under several slots â€” "Admin_Device", "Member_Device",
-     * "Admin+Member" â€” from a single reporter instance.
-     *
-     * @param deviceSlot Device identifier to register
-     */
-    public void registerDevice(String deviceSlot) {
-        createParentTestIfAbsent(deviceSlot);
-    }
-
-    /**
      * Starts a new child test under the device-specific parent node.
      *
      * @param testName    Name of the test
@@ -126,7 +114,7 @@ public class ExtentReportAT {
 
         ExtentTest node = parent.createNode(testName);
         testNode.set(node);
-        logpoint("Started test: " + testName + " [Device: " + deviceSlot + "]");
+        System.out.println("Started test: " + testName + " [Device: " + deviceSlot + "]");
     }
 
     /**
@@ -199,6 +187,6 @@ public class ExtentReportAT {
             extent = null;
         }
         parentMap.clear();
-        logpoint("ExtentReports closed and resources released.");
+        System.out.println("ExtentReports closed and resources released.");
     }
 }

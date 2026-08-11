@@ -1,4 +1,4 @@
-﻿package app.util;
+package app.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -86,7 +86,7 @@ public class ReadFromCSV {
                 result.add(List.of(email, password));
             }
 
-            logpoint("Successfully loaded " + result.size() + " account(s) from: " + csvPath);
+            System.out.println("Successfully loaded " + result.size() + " account(s) from: " + csvPath);
             return result;
 
         } catch (IOException e) {

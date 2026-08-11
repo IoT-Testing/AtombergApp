@@ -1,4 +1,4 @@
-﻿package app.Supports;
+package app.Supports;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -21,16 +21,16 @@ public class NetOnOff {
 		cap.setCapability("apksigner",
 				"C:\\Users\\Rohit\\Desktop\\android-sdk\\build-tools\\34.0.0\\lib\\apksigner.jar");
 		try {
-			logpoint("Initializing Appium driver..."); // Check if the Appium driver is initialized
+			System.out.println("Initializing Appium driver..."); // Check if the Appium driver is initialized
 			URL url = new URL("http://127.0.0.1:4723/wd/hub"); // URL of the Appium session
 			driver = new AndroidDriver(url, cap);
-			logpoint("Appium driver initialized.");
+			System.out.println("Appium driver initialized.");
 		} catch (MalformedURLException e) {
-			logpoint("Error initializing Appium driver: " + e.getMessage());
+			System.out.println("Error initializing Appium driver: " + e.getMessage());
 			e.printStackTrace();
 			return;
 		}
-		logpoint("Atomberg App Opened...");
+		System.out.println("Atomberg App Opened...");
 		sleep(6000);
 		AppUtil.captureScreenshot(driver,"driver");
 	}

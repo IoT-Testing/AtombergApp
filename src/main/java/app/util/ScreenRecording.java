@@ -1,4 +1,4 @@
-﻿package app.util;
+package app.util;
 
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.*;
@@ -40,10 +40,10 @@ public class ScreenRecording {
             throw new RuntimeException("Failed to find any start button in recorder app.");
         }
 
-        // Step 2: Handle optional dialog: "A single app" â†’ "Entire screen" â†’ final Start
+        // Step 2: Handle optional dialog: "A single app" → "Entire screen" → final Start
         handleRecordingOptionsDialog();
 
-        logpoint("Recording started.");
+        System.out.println("Recording started.");
     }
 
     /**     * Stops ongoing screen recording.     */
@@ -51,7 +51,7 @@ public class ScreenRecording {
         try {
             activateRecorderApp();
             if (clickElementIfExists(STOP_BUTTON, DEFAULT_WAIT_SECONDS)) {
-                logpoint("Screen recording stopped.");
+                System.out.println("Screen recording stopped.");
             } else {
                 System.err.println("Could not find STOP button in recorder app.");
             }
@@ -75,14 +75,14 @@ public class ScreenRecording {
         // 1. Click "A single app" (if present)
         if (!clickElementIfExists(SINGLE_APP_OPTION, 4)) {
             // Not fatal in some recorder versions; continue if not present
-            logpoint("'A single app' option not present; continuing.");
+            System.out.println("'A single app' option not present; continuing.");
         } else {
             ActionsUtil.sleep(800);
         }
 
         // 2. Click "Entire screen" (if present)
         if (!clickElementIfExists(ENTIRE_SCREEN_OPTION, 4)) {
-            logpoint("'Entire screen' option not present; continuing.");
+            System.out.println("'Entire screen' option not present; continuing.");
         } else {
             ActionsUtil.sleep(1200);
         }

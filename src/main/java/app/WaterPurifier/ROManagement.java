@@ -1,10 +1,9 @@
-﻿package app.WaterPurifier;
+package app.WaterPurifier;
 
 import app.ScreenCheck.ScreenCheck;
 import app.util.ActionsUtil;
 import app.util.AppUtil;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.*;
 import org.openqa.selenium.NoSuchElementException;
 
@@ -34,7 +33,7 @@ public class ROManagement {
     private static final By BUY_NOW_BUTTON = By.xpath("//android.widget.Button[@content-desc=\"Buy Now!\"]");
     private static final By CHECK_HEALTH_BUTTON = By.xpath("//android.view.View[@content-desc=\"Check Health\"]");
     private static final By MODE_BUTTON = By.xpath("//android.widget.ImageView[@content-desc=\"Mode\"]");
-    private static final By CONTENT_DESC_VIEW = AppiumBy.className("android.view.View");
+    private static final By CONTENT_DESC_VIEW = By.className("android.view.View");
 
     public ROManagement(AndroidDriver driver) {
         this.atomberg = driver;
@@ -45,7 +44,7 @@ public class ROManagement {
      * Adds a new RO device via scan/add flow.
      */
     public void addRO() {
-        logpoint("Searching for available RO devices...");
+        System.out.println("Searching for available RO devices...");
 
         if (!clickAddButton()) {
             ActionsUtil.Tap.withCoordinates(atomberg, 540, 1850);
@@ -64,7 +63,7 @@ public class ROManagement {
 
         // Confirm pairing started
         if (isElementPresent(PAIRING_IN_PROGRESS)) {
-            logpoint("Pairing with RO device...");
+            System.out.println("Pairing with RO device...");
         } else {
             System.err.println("Pairing did not start. Expected \"Pairing with device\" message.");
         }
@@ -133,14 +132,14 @@ public class ROManagement {
      */
     private void checkROOnline() {
         if (!clickElementIfExists(WATER_PURIFIER_BADGE, "Water Purifier")) {
-            logpoint("No RO Online or badge not found.");
+            System.out.println("No RO Online or badge not found.");
             return;
         }
 
         ActionsUtil.sleep(3000);
 
         if (isElementPresent(BUY_NOW_BUTTON)) {
-            logpoint("RO requires purchase action.");
+            System.out.println("RO requires purchase action.");
             return;
         }
 
@@ -149,14 +148,14 @@ public class ROManagement {
                 .collect(Collectors.toList());
 
         if (purifiers.isEmpty()) {
-            logpoint("No RO devices online.");
+            System.out.println("No RO devices online.");
             return;
         }
 
-        logpoint("RO Available: " + purifiers.size());
+        System.out.println("RO Available: " + purifiers.size());
         for (WebElement purifier : purifiers) {
             String name = purifier.getDomAttribute("content-desc");
-            logpoint("Interacting with: " + name);
+            System.out.println("Interacting with: " + name);
             purifier.click();
             ROControl();
         }
@@ -185,9 +184,9 @@ public class ROManagement {
             elements.remove(elements.size() - 1); // Remove header/footer
         }
 
-        logpoint("=== RO Health Metrics ===");
+        System.out.println("=== RO Health Metrics ===");
         for (WebElement el : elements) {
-            logpoint("- " + el.getDomAttribute("content-desc"));
+            System.out.println("- " + el.getDomAttribute("content-desc"));
         }
         atomberg.navigate().back();
     }
@@ -206,7 +205,7 @@ public class ROManagement {
         for (int i = 0; i < modeElements.size(); i++) {
             WebElement modeEl = modeElements.get(i);
             String content = modeEl.getDomAttribute("content-desc");
-            logpoint("Setting RO mode: " + content);
+            System.out.println("Setting RO mode: " + content);
             modeEl.click();
 
             if ("Custom Taste Preference".equals(content)) {
@@ -230,7 +229,7 @@ public class ROManagement {
 
         if (!options.isEmpty()) {
             WebElement selected = options.get(random.nextInt(options.size()));
-            logpoint(selected.getDomAttribute("content-desc") + " Selected");
+            System.out.println(selected.getDomAttribute("content-desc") + " Selected");
             selected.click();
         }
     }
@@ -256,14 +255,14 @@ public class ROManagement {
             WebElement el = atomberg.findElement(locator);
             if (el.isDisplayed()) {
                 el.click();
-                logpoint("Clicked: " + label);
+                System.out.println("Clicked: " + label);
                 return true;
             } else {
-                logpoint(label + " found but not displayed.");
+                System.out.println(label + " found but not displayed.");
                 return false;
             }
         } catch (NoSuchElementException e) {
-            logpoint(label + " not found.");
+            System.out.println(label + " not found.");
             return false;
         } catch (Exception e) {
             System.err.println("Error clicking " + label + ": " + e.getMessage());

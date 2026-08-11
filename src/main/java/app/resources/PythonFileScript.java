@@ -1,4 +1,4 @@
-﻿package app.resources;
+package app.resources;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,15 +16,14 @@ public class PythonFileScript {
 //            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 //            String line;
 //            while ((line = reader.readLine()) != null) {
-//                logpoint(line);
+//                System.out.println(line);
 //            }
 //
 //            // Wait for the process to finish and get the exit code
 //            int exitCode = process.waitFor();
-//            logpoint("Python script exited with code: " + exitCode);
+//            System.out.println("Python script exited with code: " + exitCode);
         } catch (IOException e) {
-            logpoint(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 }
-

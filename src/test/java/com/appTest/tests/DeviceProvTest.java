@@ -1,4 +1,4 @@
-﻿package com.appTest.tests;
+package com.appTest.tests;
 
 import app.AppInitializer;
 import app.Login.Email;
@@ -21,8 +21,8 @@ import static app.resources.AppInfo.ATOMBERG_HOME;
 import static app.resources.Credentials.*;
 
 /**
- * DeviceProvTest â€“ end-to-end provisioning smoke test:
- * login â†’ verify home screen â†’ logout â†’ verify login screen returned.
+ * DeviceProvTest – end-to-end provisioning smoke test:
+ * login → verify home screen → logout → verify login screen returned.
  *
  * <p>The hardware-specific iteration loop (Arduino relay, Python script, fan
  * management) is gated behind the {@code DEVICE_PROV_HARDWARE_ENABLED} system
@@ -32,7 +32,7 @@ import static app.resources.Credentials.*;
  *
  * <p>Inherits driver lifecycle and Extent reporting from {@link BaseTest}.</p>
  *
- * <p><strong>@Listeners must NOT be redeclared here</strong> â€” it is registered
+ * <p><strong>@Listeners must NOT be redeclared here</strong> — it is registered
  * once on {@code BaseTest}. Re-declaring it causes each listener to fire twice.</p>
  */
 public class DeviceProvTest extends BaseTest {
@@ -49,14 +49,14 @@ public class DeviceProvTest extends BaseTest {
         Assert.assertNotNull(driver, "Driver must not be null before DeviceProvTest");
         appInitializer = new AppInitializer(driver);
         appInitializer.setDriver(driver);
-        logpoint("DeviceProvTest ready on: " + deviceSlot);
+        System.out.println("DeviceProvTest ready on: " + deviceSlot);
     }
 
-    @Test(priority = 1, description = "Open app â†’ login â†’ verify home screen â†’ logout")
+    @Test(priority = 1, description = "Open app → login → verify home screen → logout")
     public void testDeviceProvisioning() throws Exception {
         reporter.startTest("Device Provisioning", deviceSlot);
         try {
-            logpoint("Device Provisioning test start");
+            System.out.println("Device Provisioning test start");
 
             driver.activateApp(ATOMBERG_HOME);
             ActionsUtil.SSleep(5);
@@ -64,10 +64,10 @@ public class DeviceProvTest extends BaseTest {
             // checkMainScreen() returns true when login screen was found (auto-login ran)
             boolean wasOnLoginScreen = appInitializer.checkMainScreen();
             if (wasOnLoginScreen) {
-                logpoint("Auto-login triggered by checkMainScreen().");
+                System.out.println("Auto-login triggered by checkMainScreen().");
             } else {
-                // Already logged in â€” log out and re-login with provisioning credentials
-                logpoint("Already logged in. Re-logging in with provisioning accountâ€¦");
+                // Already logged in — log out and re-login with provisioning credentials
+                System.out.println("Already logged in. Re-logging in with provisioning account…");
                 new Manage(driver).logout();
                 ActionsUtil.SSleep(3);
                 driver.activateApp(ATOMBERG_HOME);
@@ -83,11 +83,11 @@ public class DeviceProvTest extends BaseTest {
                     AppUtil.isElementPresent(driver, app.resources.Locators.Android.HomeLocators.MORE_TAB),
                     "Home screen (More tab) must be visible after provisioning login");
 
-            // Hardware loop â€” only runs when physical relay + dependencies are present
+            // Hardware loop — only runs when physical relay + dependencies are present
             if (HARDWARE_ENABLED) {
                 runHardwareProvisioningLoop();
             } else {
-                logpoint("Hardware provisioning loop skipped " +
+                System.out.println("Hardware provisioning loop skipped " +
                         "(set -DDEVICE_PROV_HARDWARE_ENABLED=true to enable).");
             }
 
@@ -110,15 +110,15 @@ public class DeviceProvTest extends BaseTest {
             throw e;
         } finally {
             closeCsv();
-            logpoint("Device Provisioning test end");
+            System.out.println("Device Provisioning test end");
             reporter.endTest();
         }
     }
 
-    // â”€â”€ Internal helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Internal helpers ──────────────────────────────────────────────────────
 
     /**
-     * Logs in with provisioning credentials (env vars â†’ fallback to defaults).
+     * Logs in with provisioning credentials (env vars → fallback to defaults).
      */
     private void performLogin() throws Exception {
         String email    = System.getenv("TEST_EMAIL");
@@ -132,7 +132,7 @@ public class DeviceProvTest extends BaseTest {
     }
 
     /**
-     * Hardware provisioning loop â€” requires ArduinoRelayControllerModern,
+     * Hardware provisioning loop — requires ArduinoRelayControllerModern,
      * PythonFileScript, and FanManagement on the local classpath.
      *
      * <p>This method is intentionally left as a documented stub so that the
@@ -163,10 +163,10 @@ public class DeviceProvTest extends BaseTest {
          * }
          * controller.disconnect();
          */
-        logpoint("runHardwareProvisioningLoop() stub executed (no-op).");
+        System.out.println("runHardwareProvisioningLoop() stub executed (no-op).");
     }
 
-    // â”€â”€ CSV result logging â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── CSV result logging ────────────────────────────────────────────────────
 
     void printRow(int attemptNumber, String status) {
         initCsv();

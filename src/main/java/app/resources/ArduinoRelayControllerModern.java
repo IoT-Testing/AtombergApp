@@ -1,4 +1,4 @@
-﻿package app.resources;
+package app.resources;
 
 import com.fazecast.jSerialComm.*;
 
@@ -23,11 +23,11 @@ public class ArduinoRelayControllerModern {
      * List all available serial ports
      */
     public static void listPorts() {
-        logpoint("\nAvailable Serial Ports:");
+        System.out.println("\nAvailable Serial Ports:");
         SerialPort[] ports = SerialPort.getCommPorts();
 
         if (ports.length == 0) {
-            logpoint("No serial ports found!");
+            System.out.println("No serial ports found!");
         } else {
             for (int i = 0; i < ports.length; i++) {
                 System.out.printf("%d. %s - %s\n", 
@@ -52,7 +52,7 @@ public class ArduinoRelayControllerModern {
             );
 
             if (serialPort.openPort()) {
-                logpoint("Connected to Arduino on " + portName);
+                System.out.println("Connected to Arduino on " + portName);
 
                 // Wait for Arduino to initialize
                 Thread.sleep(2000);
@@ -86,7 +86,7 @@ public class ArduinoRelayControllerModern {
                         portName.contains("ttyUSB") ||
                         portName.contains("ttyACM")) {
 
-                    logpoint("Trying to connect to: " + portName);
+                    System.out.println("Trying to connect to: " + portName);
 
                     if (connect(portName)) {
                         return true;
@@ -105,7 +105,7 @@ public class ArduinoRelayControllerModern {
             System.err.println("Error: Serial port not open");
             return;
         }
-        logpoint(serialPort.isOpen());
+        System.out.println(serialPort.isOpen());
         try {
             String jsonCommand = "{\"power_toggle\":" + ledState + "}\n";
             byte[] buffer = jsonCommand.getBytes();
@@ -113,7 +113,7 @@ public class ArduinoRelayControllerModern {
             int bytesWritten = serialPort.writeBytes(buffer, buffer.length);
 
             if (bytesWritten > 0) {
-                logpoint("Sent: " + jsonCommand.trim());
+                System.out.println("Sent: " + jsonCommand.trim());
             } else {
                 System.err.println("Failed to send command");
             }
@@ -137,7 +137,7 @@ public class ArduinoRelayControllerModern {
 
             if (numRead > 0) {
                 String response = new String(buffer, 0, numRead);
-                logpoint("Arduino: " + response.trim());
+                System.out.println("Arduino: " + response.trim());
             }
 
         } catch (Exception e) {
@@ -154,7 +154,7 @@ public class ArduinoRelayControllerModern {
         }
         if (serialPort != null && serialPort.isOpen()) {
             serialPort.closePort();
-            logpoint("Disconnected from Arduino");
+            System.out.println("Disconnected from Arduino");
         }
     }
 
@@ -174,7 +174,7 @@ public class ArduinoRelayControllerModern {
             connected = controller.connect(args[0]);
         } else {
             // Try auto-connect
-            logpoint("Attempting auto-connect...");
+            System.out.println("Attempting auto-connect...");
             connected = controller.autoConnect();
             if(!connected) {
                 controller.disconnect();
@@ -191,7 +191,6 @@ public class ArduinoRelayControllerModern {
         // Interactive control loop
         controller.sendLEDCommand(true);
         controller.disconnect();
-        logpoint("\nProgram terminated.");
+        System.out.println("\nProgram terminated.");
     }
 }
-

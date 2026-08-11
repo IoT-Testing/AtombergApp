@@ -1,6 +1,5 @@
-﻿package app.sharing;
+package app.sharing;
 
-import app.resources.Locators.Android.Sharing.SharingLocators;
 import app.util.ActionsUtil;
 import app.util.AppUtil;
 import io.appium.java_client.android.AndroidDriver;
@@ -9,26 +8,24 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import app.sharing.MemberDevicePage.*;
+
 import java.time.Duration;
 import java.util.List;
 
 import static app.resources.Locators.Android.AppLocators.MoreTab.MANAGE_FAMILY;
 import static app.resources.Locators.Android.HomeLocators.MORE_TAB;
-import static app.resources.Locators.Android.HomeLocators.DEVICES;
-import static app.resources.Locators.Android.HomeLocators.APP_LOGO;
 import static app.resources.Locators.Android.Sharing.SharingLocators.*;
 
 /**
- * DeviceSharingPage â€“ Page Object for the Device Sharing &amp; Permission
- * Management feature (spec Â§4 â€“ User Flows 1, 2, 3).
+ * DeviceSharingPage – Page Object for the Device Sharing &amp; Permission
+ * Management feature (spec §4 – User Flows 1, 2, 3).
  * This page object is always operated by the ADMIN driver, because:
- *   â€“ Only Admins/Device Owners can share devices (spec Â§2.4)
- *   â€“ Only Admins can edit member permissions in Manage Family (spec Â§4 Flow 2)
+ *   – Only Admins/Device Owners can share devices (spec §2.4)
+ *   – Only Admins can edit member permissions in Manage Family (spec §4 Flow 2)
  * Naming convention:
- *   flow1_*  â†’ Device Onboarding: Assign Permissions (post-onboarding share)
- *   flow2_*  â†’ Manage Family: Edit Device Permissions Per User
- *   flow3_*  â†’ Share Home or Specific Devices via QR
+ *   flow1_*  → Device Onboarding: Assign Permissions (post-onboarding share)
+ *   flow2_*  → Manage Family: Edit Device Permissions Per User
+ *   flow3_*  → Share Home or Specific Devices via QR
  */
 public class DeviceSharingPage {
 
@@ -41,36 +38,26 @@ public class DeviceSharingPage {
         this.wait   = new WebDriverWait(adminDriver, TIMEOUT);
     }
 
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    // ══════════════════════════════════════════════════════════════════════════
     // NAVIGATION
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    // ══════════════════════════════════════════════════════════════════════════
 
-    /** Navigate to More tab â†’ Manage Family */
+    /** Navigate to More tab → Manage Family */
     public DeviceSharingPage navigateToManageFamily() {
-        // Callers arrive from anywhere â€” notably the QR/share screen at the end of a
-        // share, which has no bottom bar, so reaching straight for the More tab there
-        // throws. Get back to a root screen first.
-        returnToHomeScreen();
         tap(MORE_TAB, "More Tab");
         ActionsUtil.SSleep(1);
-        dumpTree("more_tab_screen");   // capture the More-tab tree to locate the real "Manage family" node
         scrollAndTap(MANAGE_FAMILY, "Manage Family");
         ActionsUtil.SSleep(2);
         AppUtil.captureScreenshot(driver, "manage_family_screen");
         return this;
     }
 
-    /**
-     * On the Manage Family list, tap the family tile to open it.
-     *
-     * <p>The tile is an {@code ImageView} whose content-desc carries the member
-     * count as a prefix ("1\nMain Family", "2\nMain Family" once a member joins),
-     * so {@link SharingLocators#familyTile} matches on the NAME only.</p>
-     */
+    /** On Manage Family, tap the family/home row to expand members. */
     public DeviceSharingPage openFamilyHome(String homeNameContains) {
-        tap(familyTile(homeNameContains), "Family tile: " + homeNameContains);
+        By homeRow = By.xpath("//android.view.View[contains(@content-desc, \""
+                + homeNameContains + "\")]");
+        tap(homeRow, "Home row: " + homeNameContains);
         ActionsUtil.SSleep(2);
-        AppUtil.captureScreenshot(driver, "family_opened_" + homeNameContains.replace(" ", "_"));
         return this;
     }
 
@@ -82,9 +69,9 @@ public class DeviceSharingPage {
         return this;
     }
 
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    // FLOW 2 â€” Manage Family: Edit Device Permissions Per User  (spec Â§4)
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    // ══════════════════════════════════════════════════════════════════════════
+    // FLOW 2 — Manage Family: Edit Device Permissions Per User  (spec §4)
+    // ══════════════════════════════════════════════════════════════════════════
 
     /**
      * Flow 2 step 3a: Add a device to a member at the given permission level.
@@ -116,7 +103,7 @@ public class DeviceSharingPage {
 
     /**
      * Flow 2 step 3b: Edit an existing device's permission level for a member.
-     * Calls /edit_user_device (PUT) â€” upsert semantics (spec Â§5.1).
+     * Calls /edit_user_device (PUT) — upsert semantics (spec §5.1).
      *
      * @param deviceName      Device already shared with the member
      * @param permissionLevel New level: "Super", "Basic", or "Custom"
@@ -136,12 +123,12 @@ public class DeviceSharingPage {
 
     /**
      * Flow 2 step 3c: Remove a device from a member.
-     * Calls /remove_user_device (spec Â§5.1).
+     * Calls /remove_user_device (spec §5.1).
      *
      * @param deviceName Device to remove access from
      */
     public DeviceSharingPage flow2_removeDeviceFromMember(String deviceName) {
-        // Long-press or swipe left on device row to expose Remove option, OR tap row â†’ Remove
+        // Long-press or swipe left on device row to expose Remove option, OR tap row → Remove
         tap(memberDeviceRow(deviceName), "Device row: " + deviceName);
         ActionsUtil.SSleep(1);
 
@@ -160,7 +147,7 @@ public class DeviceSharingPage {
      * @param control        enable/disable fan control
      * @param editDevice     enable/disable edit device
      * @param viewAnalytics  enable/disable view analytics
-     * @param editWifi       enable/disable edit Wi-Fi
+     * @param editWifi       enable/disable edit wifi
      * @param automations    enable/disable automations
      */
     public DeviceSharingPage setFanCustomPermissions(
@@ -181,523 +168,14 @@ public class DeviceSharingPage {
         return this;
     }
 
-    /**
-     * Flow 2 helper: open a shared fan's permission editor for the current
-     * member, switch it to Custom, apply the given capability toggles, and Save.
-     * Used by the UI-control permission matrix to drive one capability
-     * combination per iteration.
-     */
-    public DeviceSharingPage flow2_setFanCustomPermission(
-            String deviceName, boolean control, boolean editDevice,
-            boolean viewAnalytics, boolean editWifi, boolean automations) {
-
-        tap(memberDeviceRow(deviceName), "Device row: " + deviceName);
-        ActionsUtil.SSleep(1);
-
-        setFanCustomPermissions(control, editDevice, viewAnalytics, editWifi, automations);
-
-        tap(PERMISSION_SAVE_BUTTON, "Save button");
-        ActionsUtil.SSleep(2);
-        AppUtil.captureScreenshot(driver, "flow2_custom_fan_" + deviceName.replace(" ", "_"));
-        return this;
-    }
-
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    // HOME NAVIGATION + device presence (Flow 2 pre-flight)
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    // ══════════════════════════════════════════════════════════════════════════
+    // FLOW 3 — Share via QR  (spec §4, Flow 3)
+    // ══════════════════════════════════════════════════════════════════════════
 
     /**
-     * Best-effort: pop any nested screens and land on the Devices/home dashboard
-     * where device tiles are shown. Used before a long-press share and by the
-     * pre-flight that verifies all target devices are present.
-     */
-    public DeviceSharingPage goToDevicesHome() {
-        // Never blind-loop navigate().back() here â€” on a root screen that exits the
-        // app. ensureAppHome() checks foreground state after each press instead.
-        AppUtil.ensureAppHome(driver);
-        tapFirstPresent("Devices/Home tab", DEVICES, APP_LOGO);
-        ActionsUtil.SSleep(2);
-        AppUtil.captureScreenshot(driver, "admin_devices_home");
-        return this;
-    }
-
-    /**
-     * Returns true if the named device tile is present on the admin's home. Scrolls
-     * a few times so tiles below the fold are still found.
-     */
-    public boolean isDeviceOnHome(String deviceName) {
-        By tile = deviceCardOnHome(deviceName);
-        if (isPresent(tile)) return true;
-
-        // NOTE: ActionsUtil.Scroll.Up() is what reveals content FURTHER DOWN a list
-        // (the finger swipes upward). Scroll.Down() moves back toward the top, so
-        // calling it here just bounced at the top of the list forever. Every other
-        // scroll-to-find in this codebase uses Scroll.Up for the same reason.
-        String previous = null;
-        for (int i = 0; i < 4; i++) {
-            ActionsUtil.Scroll.Up(driver);
-            ActionsUtil.SSleep(1);
-            if (isPresent(tile)) return true;
-
-            // Stop early once the list stops moving (bottom reached) instead of
-            // burning the remaining scrolls on an unchanging screen.
-            String current = pageSourceQuietly();
-            if (current != null && current.equals(previous)) {
-                logpoint("[DeviceSharingPage] Reached end of list â€” '"
-                        + deviceName.replace("\n", " / ") + "' not found.");
-                break;
-            }
-            previous = current;
-        }
-        return false;
-    }
-
-    /**
-     * Scrapes the admin's Home dashboard for every device tile, scrolling to the
-     * bottom so tiles below the fold are included. This is the "expected" side of
-     * the post-join parity check â€” after the member joins the family, their home
-     * must list the same devices.
-     *
-     * @return tile content-descs ("&lt;device&gt;\n&lt;room&gt;"), de-duplicated
-     */
-    public java.util.List<String> listDevicesOnHome() {
-        goToDevicesHome();
-
-        java.util.LinkedHashSet<String> all =
-                new java.util.LinkedHashSet<>(AppUtil.listDeviceTilesOnHome(driver));
-        String previous = null;
-        for (int i = 0; i < 6; i++) {
-            String current = pageSourceQuietly();
-            if (current != null && current.equals(previous)) break;  // list stopped moving
-            previous = current;
-
-            ActionsUtil.Scroll.Up(driver);
-            ActionsUtil.SSleep(1);
-            all.addAll(AppUtil.listDeviceTilesOnHome(driver));
-        }
-
-        java.util.List<String> tiles = new java.util.ArrayList<>(all);
-        logpoint("[DeviceSharingPage] Admin home devices: " + AppUtil.prettyTiles(tiles));
-        return tiles;
-    }
-
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    // FLOW 2 (long-press) â€” Home tile â†’ "Share device" â†’ apply access â†’ QR/code
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-
-    /**
-     * Flow 2 entry point: long-press a device tile on the Home screen and tap
-     * "Share device". The tile is located with {@link SharingLocators#deviceCardOnHome}
-     * and long-pressed via {@link ActionsUtil#longPress(AndroidDriver, int, int)} at
-     * the tile's center (the app exposes the Share action from a long-press context
-     * menu / bottom sheet rather than a tap).
-     *
-     * @param deviceName display name of the device tile to share
-     */
-    public DeviceSharingPage shareDeviceFromHomeLongPress(String deviceName) {
-        // A prior iteration's cleanup can leave the admin deep in Manage Family;
-        // return to the Devices dashboard so the tile is reachable.
-        goToDevicesHome();
-
-        By tile = deviceCardOnHome(deviceName);
-        WebElement el = wait.until(ExpectedConditions.presenceOfElementLocated(tile));
-        int cx = el.getLocation().getX() + (el.getSize().getWidth() / 2);
-        int cy = el.getLocation().getY() + (el.getSize().getHeight() / 2);
-        ActionsUtil.longPress(driver, cx, cy);
-        ActionsUtil.SSleep(1);
-        AppUtil.captureScreenshot(driver, "long-press_menu_" + deviceName.replace(" ", "_"));
-
-        tap(LONGPRESS_SHARE_DEVICE_OPTION, "Share device (long-press)");
-        ActionsUtil.SSleep(2);
-        AppUtil.captureScreenshot(driver, "share_device_screen_" + deviceName);
-
-        // "Share device" opens a confirmation dialog, not the share screen itself.
-        confirmShareToFamily();
-        return this;
-    }
-
-    /**
-     * Answers the "Share access to family?" dialog that the app raises after
-     * "Share device" is tapped. The dialog warns that access is granted for the
-     * whole family rather than the single device, and offers No / Yes; "Yes" is
-     * what advances to the QR + invite-code screen.
-     *
-     * <p>Tolerant by design: if the dialog is absent (build without it, or already
-     * dismissed) this is a no-op, so the caller's flow is unchanged.</p>
-     *
-     * @return true if the dialog was present and confirmed
-     */
-    public boolean confirmShareToFamily() {
-        if (!isPresent(SHARE_FAMILY_CONFIRM_TITLE) && !isPresent(SHARE_FAMILY_CONFIRM_YES)) {
-            logpoint("[DeviceSharingPage] No 'Share access to family?' dialog â€” continuing.");
-            return false;
-        }
-        AppUtil.captureScreenshot(driver, "share_access_to_family_dialog");
-        tap(SHARE_FAMILY_CONFIRM_YES, "Share access to family? â†’ Yes");
-        ActionsUtil.SSleep(3);
-        AppUtil.captureScreenshot(driver, "share_confirmed_qr_screen");
-
-        // The QR/invite-code screen's real content-desc values have not been
-        // captured on-device yet; dump it so the code/Copy locators can be
-        // pinned to actual nodes instead of the current candidate guesses.
-        dumpTree("qr_share_screen");
-        return true;
-    }
-
-    /**
-     * Applies the access captured in a {@link SharedAccess} to the current share
-     * screen: selects Super / Basic / Custom and, for Custom, flips each capability
-     * toggle to match the spec's expected mask. Then confirms so the QR + invite
-     * code are generated. The {@code spec} itself is the "store the set access to
-     * verify later" record the member phone reads back.
-     *
-     * @param spec the access the admin intends to grant (source of truth)
-     */
-    public DeviceSharingPage applyShareAccess(SharedAccess spec) {
-        // A confirmation dialog may still be up if the caller reached this screen
-        // by a path that didn't already answer it.
-        confirmShareToFamily();
-
-        // The picker is only driven when the app actually offers one. On the
-        // long-press path it does not: "Share device" leads straight to the
-        // family-level confirmation and then the QR screen, with no Super/Basic/
-        // Custom step. Hard-failing there cost the whole matrix at row 1, so a
-        // missing picker is now recorded rather than thrown.
-        permissionLevelApplied = isPresent(PERMISSION_LEVEL_SUPER)
-                || isPresent(PERMISSION_LEVEL_BASIC)
-                || isPresent(PERMISSION_LEVEL_CUSTOM);
-
-        if (permissionLevelApplied) {
-            switch (spec.level()) {
-                case SUPER  -> selectPermissionLevel("Super");
-                case BASIC  -> selectPermissionLevel("Basic");
-                case CUSTOM -> {
-                    selectPermissionLevel("Custom");
-                    ActionsUtil.SSleep(1);
-                    applyCustomToggles(spec);
-                }
-            }
-            ActionsUtil.SSleep(1);
-        } else {
-            logpoint("[DeviceSharingPage] No permission-level picker on this screen â€” "
-                    + "'" + spec.level() + "' was NOT applied. Sharing is family-wide on this path; "
-                    + "any per-level assertion for " + spec + " is unverified.");
-            dumpTree("no_permission_picker_" + spec.deviceType());
-        }
-
-        // The share screen ends with a Share/Confirm action, then the QR appears.
-        if (!tapFirstPresent("Confirm share",
-                SHARE_CONFIRM_BUTTON, PERMISSION_CONFIRM_BUTTON, QR_SHARE_BUTTON)) {
-            logpoint("[DeviceSharingPage] No explicit confirm button â€” assuming QR auto-generates.");
-        }
-        ActionsUtil.SSleep(3);
-        AppUtil.captureScreenshot(driver, "share_access_applied_" + spec.deviceType()
-                + "_" + spec.label());
-        return this;
-    }
-
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    // PROBE â€” capture the share journey on a new build (no assertions)
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-
-    /**
-     * Walks the long-press share flow one step at a time, dumping the tree and a
-     * screenshot at each, and reports whether a Super/Basic/Custom picker appears.
-     * Asserts nothing â€” its only job is to hand back the real node names so the
-     * permission-level locators can be pinned instead of guessed.
-     *
-     * <p>Written for the permission-levels APK. Two things decide the shape of that
-     * work and neither can be answered from the current build:</p>
-     * <ol>
-     *   <li><b>Is there a picker, and where?</b> On the build tested through
-     *       2026-08-10 "Share device" went straight to the family confirmation and
-     *       then the QR screen, with no level step at all.</li>
-     *   <li><b>Is sharing still family-wide?</b> The "Share access to family?" dialog
-     *       says access is granted for every device in the family. If that dialog is
-     *       gone, sharing is now per-device and the access matrix is a genuine
-     *       per-device grid; if it remains, a per-device matrix is still meaningless
-     *       and the levels apply to the whole family.</li>
-     * </ol>
-     *
-     * <p>Leaves the phone on whatever screen the flow ends at, then returns Home.</p>
-     *
-     * @param deviceName display name of the tile to long-press
-     */
-    public void probeShareFlow(String deviceName) {
-        logpoint("\n========== SHARE FLOW PROBE: " + deviceName.replace("\n", " / ")
-                + " ==========");
-
-        goToDevicesHome();
-        capture("probe_01_home");
-
-        By tile = deviceCardOnHome(deviceName);
-        WebElement el = wait.until(ExpectedConditions.presenceOfElementLocated(tile));
-        int cx = el.getLocation().getX() + (el.getSize().getWidth() / 2);
-        int cy = el.getLocation().getY() + (el.getSize().getHeight() / 2);
-        ActionsUtil.longPress(driver, cx, cy);
-        ActionsUtil.SSleep(2);
-        capture("probe_02_longpress_menu");
-
-        if (!tapFirstPresent("Share device (long-press)", LONGPRESS_SHARE_DEVICE_OPTION)) {
-            System.err.println("[Probe] 'Share device' not found on the long-press menu â€” "
-                    + "see probe_02_longpress_menu.xml.");
-            returnToHomeScreen();
-            return;
-        }
-        ActionsUtil.SSleep(2);
-        capture("probe_03_after_share_device");
-        reportPicker("immediately after 'Share device'");
-
-        boolean familyDialog = isPresent(SHARE_FAMILY_CONFIRM_TITLE)
-                || isPresent(SHARE_FAMILY_CONFIRM_YES);
-        if (familyDialog) {
-            logpoint("[Probe] FAMILY-WIDE dialog still present â€” access is granted "
-                    + "for the whole family, so a PER-DEVICE access matrix stays meaningless.");
-            tapFirstPresent("Share access to family? â†’ Yes", SHARE_FAMILY_CONFIRM_YES);
-            ActionsUtil.SSleep(3);
-        } else {
-            logpoint("[Probe] No family-wide dialog â€” this build may share PER DEVICE. "
-                    + "If so, the per-device matrix in SharedAccess becomes meaningful again.");
-        }
-        capture("probe_04_after_family_dialog");
-
-        boolean picker = reportPicker("after the family dialog");
-        if (picker && tapFirstPresent("Custom level", PERMISSION_LEVEL_CUSTOM)) {
-            ActionsUtil.SSleep(2);
-            capture("probe_05_custom_toggles");
-            logpoint("[Probe] Custom selected â€” probe_05_custom_toggles.xml holds the "
-                    + "per-capability toggle nodes for TOGGLE_* pinning.");
-        }
-
-        logpoint("[Probe] QR visible: " + isQrCodeVisible()
-                + " | invite code: " + readInviteCode());
-        logpoint("========== END PROBE ==========\n");
-        returnToHomeScreen();
-    }
-
-    /** Logs which of the three level options are on screen right now. */
-    private boolean reportPicker(String where) {
-        boolean superLvl  = isPresent(PERMISSION_LEVEL_SUPER);
-        boolean basicLvl  = isPresent(PERMISSION_LEVEL_BASIC);
-        boolean customLvl = isPresent(PERMISSION_LEVEL_CUSTOM);
-        boolean any = superLvl || basicLvl || customLvl;
-
-        logpoint("[Probe] Level picker " + where + ": "
-                + (any ? "PRESENT" : "absent")
-                + "  (Super=" + superLvl + ", Basic=" + basicLvl + ", Custom=" + customLvl + ")");
-        if (!any) {
-            logpoint("[Probe]   â†’ if the build DOES show levels here, the "
-                    + "PERMISSION_LEVEL_* locators are wrong; read the dumped XML for this step.");
-        }
-        return any;
-    }
-
-    /** Screenshot + tree dump under one tag, so the pair is easy to line up. */
-    private void capture(String tag) {
-        AppUtil.captureScreenshot(driver, tag);
-        dumpTree(tag);
-    }
-
-    /** Whether the last {@link #applyShareAccess} actually found a level picker to drive. */
-    private boolean permissionLevelApplied;
-
-    /**
-     * True when the most recent {@link #applyShareAccess} found and drove a
-     * Super/Basic/Custom picker. False means the app never offered one, so the
-     * spec's level was not applied and must not be asserted as if it had been.
-     */
-    public boolean wasPermissionLevelApplied() {
-        return permissionLevelApplied;
-    }
-
-    /** Flips the per-capability Custom toggles for the device family in {@code spec}. */
-    private void applyCustomToggles(SharedAccess spec) {
-        int mask = spec.expectedMask();
-        switch (spec.deviceType()) {
-            case FAN -> {
-                setToggle(TOGGLE_FAN_CONTROL,        bit(mask, FAN_CONTROL_BIT),        "Fan Control");
-                setToggle(TOGGLE_FAN_EDIT_DEVICE,    bit(mask, FAN_EDIT_DEVICE_BIT),    "Fan Edit Device");
-                setToggle(TOGGLE_FAN_VIEW_ANALYTICS, bit(mask, FAN_VIEW_ANALYTICS_BIT), "Fan View Analytics");
-                setToggle(TOGGLE_FAN_EDIT_WIFI,      bit(mask, FAN_EDIT_WIFI_BIT),      "Fan Edit Wifi");
-                setToggle(TOGGLE_FAN_AUTOMATIONS,    bit(mask, FAN_AUTOMATIONS_BIT),    "Fan Automations");
-            }
-            case LOCK -> {
-                setToggle(TOGGLE_LOCK_VIEW_KEYS_PINS,     bit(mask, 0), "Lock View Keys & Pins");
-                setToggle(TOGGLE_LOCK_VIEW_SETTINGS,      bit(mask, 1), "Lock View Settings");
-                setToggle(TOGGLE_LOCK_VIEW_HISTORY,       bit(mask, 2), "Lock View History");
-                setToggle(TOGGLE_LOCK_UNLOCK,             bit(mask, 3), "Lock Unlock");
-                setToggle(TOGGLE_LOCK_ADD_UNLOCK_METHODS, bit(mask, 4), "Lock Add Unlock Methods");
-                setToggle(TOGGLE_LOCK_EDIT_DEVICE,        bit(mask, 8), "Lock Edit Device");
-            }
-            case WATER_PURIFIER -> {
-                setToggle(TOGGLE_WP_CHECK_HEALTH,   bit(mask, 0), "WP Check Health");
-                setToggle(TOGGLE_WP_RUN_DIAGNOSTICS,bit(mask, 1), "WP Run Diagnostics");
-                setToggle(TOGGLE_WP_EDIT_DEVICE,    bit(mask, 2), "WP Edit Device");
-                setToggle(TOGGLE_WP_EDIT_WIFI,      bit(mask, 3), "WP Edit Wifi");
-                setToggle(TOGGLE_WP_MODE_CHANGE,    bit(mask, 4), "WP Mode Change");
-                setToggle(TOGGLE_WP_VALUE_REFRESH,  bit(mask, 5), "WP Value Refresh");
-                setToggle(TOGGLE_WP_SETTINGS,       bit(mask, 6), "WP Settings");
-                setToggle(TOGGLE_WP_VIEW_ANALYTICS, bit(mask, 7), "WP View Analytics");
-            }
-        }
-        AppUtil.captureScreenshot(driver, "custom_toggles_" + spec.deviceType());
-    }
-
-    // Fan capability bit positions (mirror PermissionModel.FanCapability).
-    private static final int FAN_CONTROL_BIT        = 0;
-    private static final int FAN_EDIT_DEVICE_BIT    = 1;
-    private static final int FAN_VIEW_ANALYTICS_BIT = 2;
-    private static final int FAN_EDIT_WIFI_BIT      = 3;
-    private static final int FAN_AUTOMATIONS_BIT    = 4;
-
-    private static boolean bit(int mask, int position) {
-        return (mask & (1 << position)) != 0;
-    }
-
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    // FLOW 2 (cleanup) â€” admin removes a member from the family
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-
-    /**
-     * Flow 2 cleanup: removes a member from the family so the next iteration starts
-     * clean. Reuses the Manage Family navigation, opens the member's detail screen,
-     * and â€” in the same menu where "Make admin" appears â€” taps "Remove member"
-     * instead, then confirms.
-     *
-     * @param homeHint   substring of the family/home name row
-     * @param memberName display name of the member to remove
-     */
-    public DeviceSharingPage removeMemberFromFamily(String homeHint, String memberName) {
-        // The admin reaches this straight off the QR screen, with a dashboard rendered
-        // BEFORE the member joined. Manage Family is populated from that stale state,
-        // so without a refresh the member row can be absent and openMemberPermissions
-        // fails on a member who is demonstrably in the family.
-        refreshHomeDashboard();
-        navigateToManageFamily();
-        openFamilyHome(homeHint);
-//        openMemberPermissions(memberName);
-
-        // Open the member options menu if one is present (the menu that also
-        // offers "Make admin"); otherwise the Remove option may be inline.
-        tapFirstPresent("Member options menu", MEMBER_OPTIONS_MENU);
-        ActionsUtil.SSleep(1);
-
-        tap(MEMBER_REMOVE_OPTION, "Remove member");
-        ActionsUtil.SSleep(1);
-        tapFirstPresent("Confirm remove member", MEMBER_REMOVE_CONFIRM);
-        ActionsUtil.SSleep(2);
-        AppUtil.captureScreenshot(driver, "member_removed_" + memberName.replace(" ", "_"));
-        return this;
-    }
-
-    /**
-     * True when the Devices dashboard is on screen, keyed on the
-     * "Devices / Rooms / Automations" segment row that exists nowhere else.
-     */
-    public boolean isOnHomeScreen() {
-        return isPresent(HOME_SCREEN_MARKER);
-    }
-
-    /**
-     * Pull-to-refresh the admin's Devices dashboard so it reflects server-side changes
-     * made since the screen was drawn â€” chiefly a member who joined while the admin
-     * sat on the QR screen.
-     *
-     * <p>{@code Scroll.Down} is the refresh gesture despite the name: it drags the
-     * finger DOWNWARD (y 0.5 â†’ 0.8), which is the pull-to-refresh direction.
-     * {@code Scroll.Up} drags upward to reveal content further down a list, so it is
-     * the wrong one here â€” the same naming trips up
-     * {@link #isDeviceOnHome(String)}, which wants {@code Up} for exactly that reason.</p>
-     *
-     * <p>Best-effort: if Home can't be reached this logs and returns rather than
-     * throwing, since callers run it as a freshness measure and not as the step
-     * under test.</p>
-     */
-    public DeviceSharingPage refreshHomeDashboard() {
-        if (!returnToHomeScreen()) {
-            System.err.println("[DeviceSharingPage] Not on Home â€” skipping dashboard refresh.");
-            return this;
-        }
-        ActionsUtil.Scroll.Down(driver);           // swipe down
-        ActionsUtil.Scroll.Down(driver);           // == pull-to-refresh
-        ActionsUtil.SSleep(3);                     // let the refetch settle
-        AppUtil.captureScreenshot(driver, "admin_home_refreshed");
-        logpoint("[DeviceSharingPage] Admin dashboard refreshed.");
-        return this;
-    }
-
-    /**
-     * Lands the admin phone on the Devices dashboard and reports whether it got there.
-     *
-     * <p>Needed because the share flow ends on the QR screen, which has no bottom tab
-     * bar at all â€” so any later step that reaches for the More tab has to back out
-     * first. {@code AppUtil.ensureAppHome} is not sufficient on its own: it returns as
-     * soon as {@code MORE_TAB} appears, and that bar shows on every root tab, so it can
-     * stop on Analytics or More and call it done.</p>
-     *
-     * @return true if the dashboard is on screen when this returns
-     */
-    public boolean returnToHomeScreen() {
-        for (int attempt = 1; attempt <= 3; attempt++) {
-            AppUtil.ensureAppHome(driver);
-            ActionsUtil.SSleep(1);
-            if (isOnHomeScreen()) return true;
-
-            // The dashboard tab is labelled with the profile name ("Admin\nTab 2 of 3"),
-            // so HOME_TAB matches the "Tab 2 of 3" suffix rather than a label.
-            if (isPresent(HOME_TAB)) {
-                tap(HOME_TAB, "Home/dashboard tab");
-            } else {
-                logpoint("[DeviceSharingPage] No bottom bar (attempt " + attempt
-                        + ") â€” likely the QR/share screen; pressing back.");
-                try { driver.navigate().back(); } catch (Exception ignored) {}
-            }
-            ActionsUtil.SSleep(2);
-            if (isOnHomeScreen()) return true;
-        }
-
-        System.err.println("[DeviceSharingPage] Could not reach the Home/Devices dashboard.");
-        AppUtil.captureScreenshot(driver, "admin_home_not_reached");
-        dumpTree("admin_home_not_reached");
-        return false;
-    }
-
-
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    // FLOW 3 â€” Share via QR  (spec Â§4, Flow 3)
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-
-    /**
-     * Flow 3: open the share bottom sheet, using the family name configured as
-     * {@code ADMIN_FAMILY_HINT} (default "Main Family").
+     * Flow 3: Tap the (+) FAB on Manage Family to open the share bottom sheet.
      */
     public DeviceSharingPage flow3_openShareBottomSheet() {
-        return flow3_openShareBottomSheet(
-                SharingConfig.get("ADMIN_FAMILY_HINT", "Main Family"));
-    }
-
-    /**
-     * Flow 3: Manage Family â†’ <b>open the family</b> â†’ tap the (+) to open the
-     * share bottom sheet.
-     *
-     * <p>The (+) lives <em>inside</em> an opened family, not on the Manage Family
-     * list, so the family row must be tapped first â€” skipping that step is why the
-     * FAB lookup failed with NoSuchElementException. The open is skipped when the
-     * FAB is already on screen (i.e. the family is already open).</p>
-     *
-     * @param familyName family/home name to open (matched with contains())
-     */
-    public DeviceSharingPage flow3_openShareBottomSheet(String familyName) {
-        // Gate on the FAMILY TILE, never on FAB_ADD_MEMBER. The FAB's locator is a
-        // generic absolute path (.../View/View/View[3]) that also matches unrelated
-        // nodes on the Manage Family LIST screen, so "is the FAB present?" answered
-        // TRUE while still on the list â€” the family was never opened and the
-        // subsequent clickable-wait timed out. The family tile only exists on the
-        // list, so its presence is an unambiguous "not opened yet".
-        if (isPresent(familyTile(familyName))) {
-            openFamilyHome(familyName);
-            ActionsUtil.SSleep(1);
-        }
         tap(FAB_ADD_MEMBER, "FAB Add Member");
         ActionsUtil.SSleep(1);
         AppUtil.captureScreenshot(driver, "share_bottom_sheet");
@@ -706,7 +184,7 @@ public class DeviceSharingPage {
 
     /**
      * Flow 3 step 2a: Share the entire home.
-     * All devices shared at Basic permission level by default (spec Â§4 Flow 3 step 2a).
+     * All devices shared at Basic permission level by default (spec §4 Flow 3 step 2a).
      */
     public DeviceSharingPage flow3_shareEntireHome() {
         tap(SHARE_ENTIRE_HOME_OPTION, "Share Entire Home");
@@ -732,7 +210,7 @@ public class DeviceSharingPage {
             By deviceCheckbox = By.xpath(
                     "//android.widget.CheckBox[contains(@content-desc, \"" + deviceName + "\")]");
             tap(deviceCheckbox, "Device checkbox: " + deviceName);
-            ActionsUtil.SSleep(1);
+            ActionsUtil.SSleep(500);
         }
 
         tap(SHARE_NEXT_BUTTON, "Next button");
@@ -748,9 +226,9 @@ public class DeviceSharingPage {
         return this;
     }
 
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    // DEVICE DETAIL â€” share from device screen  (Flow 1 post-onboarding path)
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    // ══════════════════════════════════════════════════════════════════════════
+    // DEVICE DETAIL — share from device screen  (Flow 1 post-onboarding path)
+    // ══════════════════════════════════════════════════════════════════════════
 
     /**
      * Opens the named device's detail screen from the home screen.
@@ -763,15 +241,15 @@ public class DeviceSharingPage {
     }
 
     /**
-     * Taps the share icon / kebab â†’ Share Device on the device detail screen.
+     * Taps the share icon / kebab → Share Device on the device detail screen.
      */
     public DeviceSharingPage tapShareDevice() {
-        // Try direct share icon first; fall back to kebab â†’ Share Device
+        // Try direct share icon first; fall back to kebab → Share Device
         if (isPresent(DEVICE_SHARE_ICON)) {
             tap(DEVICE_SHARE_ICON, "Share Icon");
         } else {
             tap(DEVICE_KEBAB_MENU, "Kebab menu");
-            ActionsUtil.SSleep(1);
+            ActionsUtil.SSleep(500);
             tap(DEVICE_SHARE_OPTION, "Share Device option");
         }
         ActionsUtil.SSleep(2);
@@ -779,7 +257,7 @@ public class DeviceSharingPage {
     }
 
     /**
-     * Flow 1 step 3â€“5a: Select users and apply permission level from the user list.
+     * Flow 1 step 3–5a: Select users and apply permission level from the user list.
      *
      * @param userNames       Non-admin users to share with (admin rows must be greyed-out)
      * @param permissionLevel "Super", "Basic", or "Custom"
@@ -787,7 +265,7 @@ public class DeviceSharingPage {
     public DeviceSharingPage shareWithUsers(List<String> userNames, String permissionLevel) {
         for (String user : userNames) {
             tap(shareUserCheckbox(user), "User checkbox: " + user);
-            ActionsUtil.SSleep(1);
+            ActionsUtil.SSleep(400);
         }
 
         tap(SHARE_NEXT_BUTTON, "Next button");
@@ -812,82 +290,9 @@ public class DeviceSharingPage {
         return this;
     }
 
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    // INVITE CODE â€” camera-less cross-phone join  (spec Â§4, Flow 3, step 3)
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-
-    /**
-     * Reads the invite/share code generated on the admin's QR screen so it can be
-     * carried to the member phone WITHOUT camera scanning (which Appium cannot
-     * drive). Two strategies are tried, in order:
-     *   1. Tap "Copy" then read the admin device clipboard (most apps copy the
-     *      code/link to the clipboard).
-     *   2. Fall back to reading the visible code text element's content-desc and
-     *      extracting the token after "Code:".
-     *
-     * @return the invite code string, or null if it could not be read
-     */
-    public String readInviteCode() {
-        // Strategy 1 â€” Copy button â†’ clipboard
-        if (isPresent(SHARE_CODE_COPY_BUTTON)) {
-            tap(SHARE_CODE_COPY_BUTTON, "Copy code button");
-            ActionsUtil.SSleep(1);
-            try {
-                String clip = driver.getClipboardText();
-                if (clip != null && !clip.isBlank()) {
-                    return clip.trim();
-                }
-            } catch (Exception e) {
-                System.err.println("[DeviceSharingPage] Clipboard read failed: " + e.getMessage());
-            }
-        }
-
-        // Strategy 2 â€” visible code text
-        try {
-            WebElement codeEl = driver.findElement(SHARE_CODE_TEXT);
-            String desc = codeEl.getDomAttribute("content-desc");
-            if (desc != null && !desc.isBlank()) {
-                String code = desc.contains("Code:")
-                        ? desc.substring(desc.indexOf("Code:") + 5).trim()
-                        : desc.trim();
-                logpoint("[DeviceSharingPage] Invite code (from code text): " + code);
-                return code;
-            }
-        } catch (NoSuchElementException e) {
-            System.err.println("[DeviceSharingPage] Invite code text not found.");
-        }
-
-        // Strategy 3 â€” scan the page source for a code-shaped token. The QR
-        // screen's real content-desc values aren't pinned yet, so strategies 1-2
-        // depend on candidate locators that may not match this build. This scan
-        // does not, which keeps the run alive long enough to produce the dump
-        // that lets the locators be fixed properly.
-        String source = pageSourceQuietly();
-        if (source != null) {
-            java.util.regex.Matcher m = INVITE_CODE_PATTERN.matcher(source);
-            if (m.find()) {
-                String code = m.group(1);
-                logpoint("[DeviceSharingPage] Invite code (from page source scan): " + code);
-                return code;
-            }
-        }
-
-        AppUtil.captureScreenshot(driver, "invite_code_not_read");
-        dumpTree("invite_code_not_read");
-        return null;
-    }
-
-    /**
-     * Matches a standalone 6â€“10 char uppercase-alphanumeric invite code inside a
-     * {@code content-desc}. Anchored on the attribute so ordinary UI copy and the
-     * XML's own identifiers can't be mistaken for a code.
-     */
-    private static final java.util.regex.Pattern INVITE_CODE_PATTERN =
-            java.util.regex.Pattern.compile("content-desc=\"([A-Z0-9]{6,10})\"");
-
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    // ══════════════════════════════════════════════════════════════════════════
     // STATE QUERIES (used by tests for assertions)
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    // ══════════════════════════════════════════════════════════════════════════
 
     /** Returns true if the QR code image is visible on screen. */
     public boolean isQrCodeVisible() {
@@ -906,7 +311,7 @@ public class DeviceSharingPage {
 
     /**
      * Verifies that the admin member row in the user list is disabled/greyed-out.
-     * Spec Â§6 edge case 1: admin rows must be non-selectable.
+     * Spec §6 edge case 1: admin rows must be non-selectable.
      *
      * @param adminName  Display name of the admin member
      * @return true if the row is found but not enabled (disabled state)
@@ -950,9 +355,9 @@ public class DeviceSharingPage {
         return isPresent(deviceCardOnHome(deviceName));
     }
 
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    // ══════════════════════════════════════════════════════════════════════════
     // Private helpers
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    // ══════════════════════════════════════════════════════════════════════════
 
     private void selectPermissionLevel(String level) {
         switch (level.toLowerCase()) {
@@ -970,11 +375,11 @@ public class DeviceSharingPage {
             boolean currentlyChecked = Boolean.parseBoolean(toggle.getDomAttribute("checked"));
             if (currentlyChecked != enabledState) {
                 toggle.click();
-                logpoint("[DeviceSharingPage] Toggle " + label
-                        + " â†’ " + (enabledState ? "ON" : "OFF"));
+                System.out.println("[DeviceSharingPage] Toggle " + label
+                        + " → " + (enabledState ? "ON" : "OFF"));
             } else {
-                logpoint("[DeviceSharingPage] Toggle " + label
-                        + " already " + (enabledState ? "ON" : "OFF") + " â€” skipping");
+                System.out.println("[DeviceSharingPage] Toggle " + label
+                        + " already " + (enabledState ? "ON" : "OFF") + " — skipping");
             }
         } catch (NoSuchElementException e) {
             System.err.println("[DeviceSharingPage] Toggle not found: " + label);
@@ -985,35 +390,11 @@ public class DeviceSharingPage {
         try {
             WebElement el = wait.until(ExpectedConditions.elementToBeClickable(locator));
             el.click();
-            // Remember what we just tapped so an untagged screenshot taken on the
-            // screen this opens is still named after the action that produced it.
-            AppUtil.noteAction(label);
-            logpoint("[DeviceSharingPage] Tapped: " + label);
+            System.out.println("[DeviceSharingPage] Tapped: " + label);
         } catch (Exception e) {
-            System.err.println("[DeviceSharingPage] Could not tap: " + label + " â€” " + e.getMessage());
+            System.err.println("[DeviceSharingPage] Could not tap: " + label + " — " + e.getMessage());
             AppUtil.captureScreenshot(driver, "tap_fail_" + label.replace(" ", "_").toLowerCase());
-            dumpTree("tap_fail_" + label.replace(" ", "_").toLowerCase());
             throw new RuntimeException("Tap failed on: " + label, e);
-        }
-    }
-
-    /**
-     * Dumps the current screen's accessibility tree (page source) to
-     * {@code test-output/pagesource/<tag>.xml} so the real content-desc values
-     * can be read off and the locators corrected. Called automatically whenever
-     * a tap fails; can also be called manually at any navigation point.
-     */
-    public void dumpTree(String tag) {
-        try {
-            String xml = driver.getPageSource();
-            java.nio.file.Path dir = java.nio.file.Path.of(
-                    System.getProperty("user.dir", "."), "test-output", "page-source");
-            java.nio.file.Files.createDirectories(dir);
-            java.nio.file.Path file = dir.resolve(tag.replaceAll("[^a-zA-Z0-9_-]", "_") + ".xml");
-            java.nio.file.Files.writeString(file, xml);
-            logpoint("[DeviceSharingPage] Page source dumped: " + file.toAbsolutePath());
-        } catch (Exception ex) {
-            System.err.println("[DeviceSharingPage] Could not dump page source: " + ex.getMessage());
         }
     }
 
@@ -1021,7 +402,7 @@ public class DeviceSharingPage {
         if (isPresent(locator)) { tap(locator, label); return; }
         for (int i = 0; i < 5; i++) {
             ActionsUtil.Scroll.Up(driver);
-            ActionsUtil.SSleep(1);
+            ActionsUtil.SSleep(500);
             if (isPresent(locator)) { tap(locator, label); return; }
         }
         tap(locator, label);  // Let it fail with a clear message
@@ -1030,29 +411,6 @@ public class DeviceSharingPage {
     private boolean isPresent(By locator) {
         try { return driver.findElement(locator).isDisplayed(); }
         catch (Exception e) { return false; }
-    }
-
-    /** Page source, or null if it could not be read â€” used for change detection. */
-    private String pageSourceQuietly() {
-        try { return driver.getPageSource(); }
-        catch (Exception e) { return null; }
-    }
-
-    /**
-     * Taps the first of the given locators that is present, and returns true.
-     * Unlike {@link #tap}, a total miss is NOT fatal â€” it returns false so callers
-     * can treat an optional/absent control (e.g. a confirm button that some app
-     * versions skip) gracefully. Dumps the tree once when nothing matched.
-     */
-    private boolean tapFirstPresent(String label, By... locators) {
-        for (By locator : locators) {
-            if (isPresent(locator)) {
-                tap(locator, label);
-                return true;
-            }
-        }
-        dumpTree("none_present_" + label.replace(" ", "_").toLowerCase());
-        return false;
     }
 
     // Overload: millisecond sleep flag

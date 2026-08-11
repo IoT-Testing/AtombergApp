@@ -1,10 +1,9 @@
-﻿package app.Assistants;
+package app.Assistants;
 
 import app.resources.Credentials;
 import app.ScreenCheck.ScreenCheck;
 import app.util.ActionsUtil;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.*;
 import java.time.Duration;
 import java.util.List;
@@ -31,14 +30,14 @@ public class GoogleHome {
     private static final By USERNAME_FIELD = By.id("signInFormUsername");
     private static final By PASSWORD_FIELD = By.id("signInFormPassword");
     private static final By SUBMIT_BUTTON = By.xpath("//android.widget.Button[@text='submit']");
-    private static final By SIGN_IN_AS_BUTTONS = AppiumBy.className("android.widget.Button"); // Filter by text later
+    private static final By SIGN_IN_AS_BUTTONS = By.className("android.widget.Button"); // Filter by text later
     private static final By UNLINK_ACCOUNT = By.xpath("//android.widget.TextView[@text='Unlink account']");
     private static final By UNLINK_CONFIRM_BUTTON = By.xpath("//android.widget.Button[@text='UNLINK']");
     private static final By NAVIGATE_UP = By.xpath("//android.widget.ImageButton[@content-desc='Navigate up']");
     private static final By CREATE_HOME_BUTTON = By.xpath("//android.widget.Button[@content-desc='Create home']");
     private static final By SELECT_AND_LINK_DEVICE_HEADER = By.xpath("//android.view.View[@content-desc='Select and link device']");
 
-    // Credentials loaded from environment â€” see test.env.example
+    // Credentials loaded from environment — see test.env.example
     private static final String TEST_EMAIL    = Credentials.GOOGLE_TEST_EMAIL;
     private static final String TEST_PASSWORD = Credentials.GOOGLE_TEST_PASSWORD;
 
@@ -64,7 +63,7 @@ public class GoogleHome {
         screenCheck.moreTab();
 
         if (!clickElementIfExists(GOOGLE_CONNECTED_BADGE, "Google Connected")) {
-            logpoint("Google is not currently connected.");
+            System.out.println("Google is not currently connected.");
             return;
         }
 
@@ -82,11 +81,11 @@ public class GoogleHome {
      */
     private void connectToGoogleHome() {
         if (!clickElementIfExists(GOOGLE_CONNECT_BUTTON, "Google Connect")) {
-            logpoint("Google Home is already connected.");
+            System.out.println("Google Home is already connected.");
             return;
         }
 
-        logpoint("Connecting Google Home...");
+        System.out.println("Connecting Google Home...");
         handleAccountLinkingGuide();
         checkContinueOrTapFallback();
         performLoginIfRequired();
@@ -111,7 +110,7 @@ public class GoogleHome {
         if (clickElementIfExists(CONTINUE_BUTTON, "Continue")) {
             return;
         }
-        logpoint("Fallback: Tapping coordinates for Continue");
+        System.out.println("Fallback: Tapping coordinates for Continue");
         ActionsUtil.Tap.withCoordinates(driver, 890, 1290);
     }
 
@@ -144,7 +143,7 @@ public class GoogleHome {
 
         if (!buttons.isEmpty()) {
             buttons.get(0).click();
-            logpoint("Selected saved Google account");
+            System.out.println("Selected saved Google account");
             ActionsUtil.sleep(8000);
         }
     }
@@ -192,7 +191,7 @@ public class GoogleHome {
         screenCheck.moreTab();
 
         if (clickElementIfExists(GOOGLE_CONNECT_BUTTON, "Google Connect (after unlink)")) {
-            logpoint("Google Home Unlinked Successfully");
+            System.out.println("Google Home Unlinked Successfully");
         } else {
             // Retry once
             screenCheck.homeScreen();
@@ -201,7 +200,7 @@ public class GoogleHome {
             screenCheck.moreTab();
 
             if (isElementPresent(GOOGLE_CONNECT_BUTTON)) {
-                logpoint("Google Home Unlinked Successfully (retry)");
+                System.out.println("Google Home Unlinked Successfully (retry)");
             } else {
                 System.err.println("Google unlink verification failed.");
             }
@@ -216,7 +215,7 @@ public class GoogleHome {
         final int MAX_BACK_PRESS = 10;
 
         while (!isOnDeviceSelectionScreen() && backCount < MAX_BACK_PRESS) {
-            logpoint("Navigating back... (" + (backCount + 1) + "/" + MAX_BACK_PRESS + ")");
+            System.out.println("Navigating back... (" + (backCount + 1) + "/" + MAX_BACK_PRESS + ")");
             driver.navigate().back();
             ActionsUtil.sleep(1000);
             backCount++;
@@ -255,14 +254,14 @@ public class GoogleHome {
             WebElement el = driver.findElement(locator);
             if (el.isDisplayed()) {
                 el.click();
-                logpoint("Clicked: " + label);
+                System.out.println("Clicked: " + label);
                 return true;
             } else {
-                logpoint(label + " found but not displayed.");
+                System.out.println(label + " found but not displayed.");
                 return false;
             }
         } catch (NoSuchElementException e) {
-            logpoint(label + " not found.");
+            System.out.println(label + " not found.");
             return false;
         } catch (Exception e) {
             System.err.println("Error clicking " + label + ": " + e.getMessage());
@@ -281,7 +280,7 @@ public class GoogleHome {
         }
         field.click();
         field.sendKeys(value);
-        logpoint(label + " entered: " + maskSensitiveData(value));
+        System.out.println(label + " entered: " + maskSensitiveData(value));
         return true;
     }
 
@@ -289,7 +288,7 @@ public class GoogleHome {
      * Gets all TextView elements with non-null text.
      */
     private List<WebElement> findLabeledTextElements() {
-        return driver.findElements(AppiumBy.className("android.widget.TextView")).stream()
+        return driver.findElements(By.className("android.widget.TextView")).stream()
                 .filter(el -> getAttribute(el, "text") != null)
                 .collect(Collectors.toList());
     }

@@ -1,4 +1,4 @@
-﻿package app.util;
+package app.util;
 
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
@@ -10,7 +10,7 @@ import java.time.Duration;
 import java.util.Collections;
 
 /**
- * ActionsUtil â€“ reusable touch/gesture interactions for Appium Android.
+ * ActionsUtil – reusable touch/gesture interactions for Appium Android.
  *
  * <p>Provides three inner utility classes ({@link Tap}, {@link Scroll},
  * {@link Swipe}) and top-level helpers ({@link #longPress}, {@link #killApp},
@@ -19,7 +19,7 @@ import java.util.Collections;
  */
 public class ActionsUtil {
 
-    // â”€â”€ Tap â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Tap ───────────────────────────────────────────────────────────────────
 
     /**
      * Tap utilities: coordinate, percentage, element-center, and connect-button.
@@ -35,10 +35,10 @@ public class ActionsUtil {
                     .addAction(new Pause(finger, Duration.ofMillis(150)))
                     .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
             driver.perform(Collections.singletonList(tap));
-            logpoint("Tap at (" + x + ", " + y + ")");
+            System.out.println("Tap at (" + x + ", " + y + ")");
         }
 
-        /** Taps at a position expressed as ratios (0.0â€“1.0) of the screen dimensions. */
+        /** Taps at a position expressed as ratios (0.0–1.0) of the screen dimensions. */
         public static void withPercentage(AndroidDriver driver, double xRatio, double yRatio) {
             Dimension size = driver.manage().window().getSize();
             int x = (int) (size.getWidth()  * xRatio);
@@ -53,7 +53,7 @@ public class ActionsUtil {
 
         /**
          * Finds the first visible "Connect" button on screen and taps at the same
-         * vertical centre as {@code targetElement} â€” useful for rows in a device list.
+         * vertical centre as {@code targetElement} — useful for rows in a device list.
          */
         public static void connectButton(AndroidDriver driver, WebElement targetElement) {
             int midY = getElementCenterY(targetElement);
@@ -76,7 +76,7 @@ public class ActionsUtil {
         }
     }
 
-    // â”€â”€ Scroll â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Scroll ────────────────────────────────────────────────────────────────
 
     /**
      * Vertical scroll utilities: up, down, slow, and within-element.
@@ -91,19 +91,19 @@ public class ActionsUtil {
         /** Scrolls up from mid-screen to near the top. */
         public static void Up(AndroidDriver driver) {
             performScroll(driver, SCROLL_START_Y_RATIO, SCROLL_UP_END_RATIO, DEFAULT_DURATION_MS);
-            logpoint("Scrolled Up");
+            System.out.println("Scrolled Up");
         }
 
         /** Scrolls down from mid-screen toward the bottom. */
         public static void Down(AndroidDriver driver) {
             performScroll(driver, SCROLL_START_Y_RATIO, SCROLL_DOWN_END_RATIO, DEFAULT_DURATION_MS);
-            logpoint("Scrolled Down");
+            System.out.println("Scrolled Down");
         }
 
-        /** Slower scroll up â€” useful for content that needs time to load. */
+        /** Slower scroll up — useful for content that needs time to load. */
         public static void slowUp(AndroidDriver driver) {
             performScroll(driver, SCROLL_START_Y_RATIO, SCROLL_UP_END_RATIO, 500);
-            logpoint("Slowly Scrolled Up");
+            System.out.println("Slowly Scrolled Up");
         }
 
         /**
@@ -124,7 +124,7 @@ public class ActionsUtil {
                     .addAction(finger.createPointerMove(Duration.ofMillis(250), PointerInput.Origin.viewport(), centerX, endY))
                     .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
             driver.perform(Collections.singletonList(scroll));
-            logpoint("Scrolled inside element");
+            System.out.println("Scrolled inside element");
         }
 
         private static void performScroll(AndroidDriver driver,
@@ -145,7 +145,7 @@ public class ActionsUtil {
         }
     }
 
-    // â”€â”€ Swipe â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Swipe ─────────────────────────────────────────────────────────────────
 
     /**
      * Horizontal swipe and notification-panel utilities.
@@ -157,46 +157,46 @@ public class ActionsUtil {
         /**
          * Swipes left starting at {@code startXRatio} and landing at 50 % of screen width.
          *
-         * @param startXRatio horizontal start position (0.0â€“1.0)
-         * @param yRatio      vertical position          (0.0â€“1.0)
+         * @param startXRatio horizontal start position (0.0–1.0)
+         * @param yRatio      vertical position          (0.0–1.0)
          */
         public static void Left(AndroidDriver driver, double startXRatio, double yRatio) {
             performHorizontalSwipe(driver, startXRatio, yRatio, 0.50, FLING_DURATION_MS);
-            logpoint("Swiped Left");
+            System.out.println("Swiped Left");
         }
 
         /**
          * Swipes right starting at {@code startXRatio} and landing at 50 % of screen width.
          *
-         * @param startXRatio horizontal start position (0.0â€“1.0)
-         * @param yRatio      vertical position          (0.0â€“1.0)
+         * @param startXRatio horizontal start position (0.0–1.0)
+         * @param yRatio      vertical position          (0.0–1.0)
          */
         public static void Right(AndroidDriver driver, double startXRatio, double yRatio) {
             performHorizontalSwipe(driver, startXRatio, yRatio, 0.50, FLING_DURATION_MS);
-            logpoint("Swiped Right");
+            System.out.println("Swiped Right");
         }
 
         /** Swipes from the left edge toward the right (screen-level gesture). */
         public static void screenLeft(AndroidDriver driver) {
             performHorizontalSwipe(driver, 0.1, 0.5, 0.9, FLING_DURATION_MS);
-            logpoint("Screen Swiped Left");
+            System.out.println("Screen Swiped Left");
         }
 
         /** Swipes from the right edge toward the left (screen-level gesture). */
         public static void screenRight(AndroidDriver driver) {
             performHorizontalSwipe(driver, 0.9, 0.5, 0.1, FLING_DURATION_MS);
-            logpoint("Screen Swiped Right");
+            System.out.println("Screen Swiped Right");
         }
 
         /**
          * Pulls down the notification shade by swiping from the status bar downward.
          *
-         * @param xRatio       horizontal touch position   (0.0â€“1.0)
-         * @param startYRatio  starting Y position â€” use a value near 0.0 for the status bar
+         * @param xRatio       horizontal touch position   (0.0–1.0)
+         * @param startYRatio  starting Y position — use a value near 0.0 for the status bar
          */
         public static void Notifications(AndroidDriver driver, double xRatio, double startYRatio) {
             performVerticalSwipe(driver, xRatio, startYRatio, 0.50, FLING_DURATION_MS);
-            logpoint("Pulled down notifications");
+            System.out.println("Pulled down notifications");
         }
 
         private static void performHorizontalSwipe(AndroidDriver driver,
@@ -236,7 +236,7 @@ public class ActionsUtil {
         }
     }
 
-    // â”€â”€ Pull-to-refresh â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Pull-to-refresh ───────────────────────────────────────────────────────
 
     /** Performs a standard pull-to-refresh gesture from mid-screen downward. */
     public static void refresh(AndroidDriver driver) {
@@ -253,10 +253,10 @@ public class ActionsUtil {
                 .addAction(finger.createPointerMove(Duration.ofMillis(150), PointerInput.Origin.viewport(), centerX, endY))
                 .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
         driver.perform(Collections.singletonList(seq));
-        logpoint("Pull-to-refresh performed");
+        System.out.println("Pull-to-refresh performed");
     }
 
-    // â”€â”€ Long press â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Long press ────────────────────────────────────────────────────────────
 
     /**
      * Performs a 2-second long press at the given screen coordinates.
@@ -272,10 +272,10 @@ public class ActionsUtil {
                 .addAction(new Pause(finger, Duration.ofSeconds(2)))
                 .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
         driver.perform(Collections.singletonList(longPressSeq));
-        logpoint("Long press at (" + x + ", " + y + ")");
+        System.out.println("Long press at (" + x + ", " + y + ")");
     }
 
-    // â”€â”€ Minimize / Kill â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Minimize / Kill ───────────────────────────────────────────────────────
 
     /** Taps the home soft-key area to minimize the app. */
     public static void minimize(AndroidDriver driver) {
@@ -304,10 +304,10 @@ public class ActionsUtil {
                 .addAction(finger.createPointerMove(Duration.ofMillis(150), PointerInput.Origin.viewport(), centerX, endY))
                 .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
         driver.perform(Collections.singletonList(swipeAway));
-        logpoint("App removed from recent tasks");
+        System.out.println("App removed from recent tasks");
     }
 
-    // â”€â”€ Sleep â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Sleep ─────────────────────────────────────────────────────────────────
 
     /** Pauses the current thread for {@code millis} milliseconds. */
     public static void sleep(long millis) {

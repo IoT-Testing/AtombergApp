@@ -1,28 +1,29 @@
-﻿package app.Login;
+package app.Login;
 
 import app.util.ActionsUtil;
 import app.util.AppUtil;
 import app.util.PermissionUtil;
-import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
+
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+
 import static app.resources.Credentials.DEFAULT_EMAIL;
 import static app.resources.Credentials.DEFAULT_PASSWORD;
 import static app.resources.Locators.Android.AppLocators.Login.*;
 import static app.util.AppUtil.waitForElement;
 
 /**
- * Email â€“ Handles login using email + password credentials.
+ * Email – Handles login using email + password credentials.
  *
  * The Atomberg Home App uses a two-step login flow:
  *   1. Tap the Email login button (4th option, ImageView index="5")
- *   2. Enter email in the EditText â†’ tap Continue
- *   3. Enter password in the same EditText â†’ tap Continue
+ *   2. Enter email in the EditText → tap Continue
+ *   3. Enter password in the same EditText → tap Continue
  */
 public class Email {
 
@@ -35,13 +36,13 @@ public class Email {
     /**
      * Login with default credentials from {@link app.resources.Credentials}.
      * <p>
-     * FIX H7: added null guard â€” throws a clear IllegalStateException instead of an
+     * FIX H7: added null guard — throws a clear IllegalStateException instead of an
      * NPE deep inside performLogin() if setDriver() was never called.
      */
     public void Login() {
         if (atomberg == null)
             throw new IllegalStateException(
-                    "Email.Login(): driver is null â€” call setDriver() or use Email(driver) constructor before login.");
+                    "Email.Login(): driver is null — call setDriver() or use Email(driver) constructor before login.");
         performLogin(DEFAULT_EMAIL, DEFAULT_PASSWORD);
         handlePostLoginFlow();
     }
@@ -58,7 +59,7 @@ public class Email {
     public void email(String email, String password) throws Exception {
         if (atomberg == null)
             throw new IllegalStateException(
-                    "Email.email(): driver is null â€” pass a live AndroidDriver to the Email constructor.");
+                    "Email.email(): driver is null — pass a live AndroidDriver to the Email constructor.");
         if (email == null || email.trim().isEmpty())
             throw new IllegalArgumentException("Email cannot be null or empty");
         if (password == null || password.isEmpty())
@@ -76,7 +77,7 @@ public class Email {
         }
     }
 
-    // â”€â”€ Internal helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Internal helpers ──────────────────────────────────────────────────────
 
     /**
      * Executes the core two-step login flow.
@@ -99,34 +100,21 @@ public class Email {
         AppUtil.captureScreenshot(atomberg, "04_password_entered");
 
         clickContinue();
+        System.out.println("Login submitted.");
         return true;
     }
 
     private void clickEmailLoginButton() {
         WebElement btn = waitForElement(atomberg, EMAIL_LOGIN_BUTTON, 10);
         btn.click();
+        System.out.println("Email login option (4th option) selected.");
     }
 
-    /**
-     * Enters text into a Flutter text field.
-     *
-     * <p>Flutter fields resolve as {@code android.widget.EditText} for element
-     * lookup but are backed by an {@code android.view.View}, so UiAutomator2
-     * rejects {@code element.clear()/sendKeys()} with "Incorrect UI Element Class
-     * 'android.view.View'". Instead, we tap to focus the field and type via the
-     * device keyboard (W3C Actions), which targets the focused element and skips
-     * the element-class check.</p>
-     */
     private void enterText(String text) {
         WebElement field = waitForElement(atomberg, EDIT_TEXT_FIELD, 10);
-        field.click();                 // focus the Flutter field
-        ActionsUtil.sleep(400);
-        try {
-            field.clear();             // best-effort; no-op/throws on a non-editable View
-        } catch (Exception ignore) {
-            // Field is a Flutter View â€” nothing to clear via the element API.
-        }
-        new Actions(atomberg).sendKeys(text).perform();   // type into the focused field
+        field.click();
+        field.clear();
+        field.sendKeys(text);
     }
 
     private boolean isContinueClickable() {
@@ -141,7 +129,7 @@ public class Email {
     private void clickContinue() {
         try {
             atomberg.findElement(LOGIN_CONTINUE_BUTTON).click();
-            logpoint("Continue tapped.");
+            System.out.println("Continue tapped.");
         } catch (Exception e) {
             throw new RuntimeException("Failed to tap Continue button", e);
         }
@@ -153,10 +141,10 @@ public class Email {
     private void handlePostLoginFlow() {
         PermissionUtil.allow(atomberg);
 
-        List<WebElement> views = atomberg.findElements(AppiumBy.className("android.view.View"));
+        List<WebElement> views = atomberg.findElements(By.className("android.view.View"));
         List<WebElement> labeled = views.stream()
                 .filter(el -> el.getDomAttribute("content-desc") != null)
-                .toList();
+                .collect(Collectors.toList());
 
         for (WebElement el : labeled) {
             if (Objects.equals(el.getDomAttribute("content-desc"),
@@ -164,7 +152,7 @@ public class Email {
                 try {
                     atomberg.findElement(
                             By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]")).click();
-                    logpoint("Alexa popup dismissed.");
+                    System.out.println("Alexa popup dismissed.");
                 } catch (Exception e) {
                     System.err.println("Could not dismiss Alexa popup: " + e.getMessage());
                 }
@@ -181,4 +169,3 @@ public class Email {
         }
     }
 }
-

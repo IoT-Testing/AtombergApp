@@ -1,4 +1,4 @@
-﻿package app;
+package app;
 
 import app.Fan.FanManagement;
 import app.Login.Email;
@@ -115,7 +115,7 @@ public class Main {
             URL url = new URL("http://127.0.0.1:4723/");
             driver = new AndroidDriver(url, options);
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
-            logpoint("Driver initialized successfully for the device");
+            System.out.println("Driver initialized successfully for the device");
         }catch (Exception e) {
             e.printStackTrace();
             throw e;
@@ -144,7 +144,7 @@ public class Main {
         else if ("atomberg".equals(appType)) {
             driver.activateApp("com.atomberg.app");
             ActionsUtil.SSleep(6);
-            logpoint("Atomberg Home App launched.");
+            System.out.println("Atomberg Home App launched.");
         }
     }
 
@@ -162,7 +162,7 @@ public class Main {
         Email login = new Email(driver);
         try {
             login.email(email, password);
-            logpoint("Login successful.");
+            System.out.println("Login successful.");
         } catch (Exception e) {
             System.err.println("Login failed: " + e.getMessage());
             throw e; // Re-throw after logging
@@ -180,7 +180,7 @@ public class Main {
         if (driver != null) {
             try {
                 driver.quit();
-                logpoint("Driver session ended.");
+                System.out.println("Driver session ended.");
             } catch (Exception e) {
                 System.err.println("Error during driver quit: " + e.getMessage());
             }

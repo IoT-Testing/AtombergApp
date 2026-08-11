@@ -1,4 +1,4 @@
-﻿package app.Fan;
+package app.Fan;
 
 import app.util.ActionsUtil;
 import io.appium.java_client.android.AndroidDriver;
@@ -173,7 +173,7 @@ public class FanModels {
         }
 
         String colorName = allColors[choiceIndex];
-        logpoint(colorName + " selected.");
+        System.out.println(colorName + " selected.");
         clickElement(allLocators[choiceIndex], colorName);
     }
 
@@ -200,7 +200,7 @@ public class FanModels {
     private void clickElement(By locator, String label) {
         try {
             driver.findElement(locator).click();
-            logpoint(label + " clicked.");
+            System.out.println(label + " clicked.");
         } catch (Exception e) {
             System.err.println("Failed to click '" + label + "': " + e.getMessage());
             throw new RuntimeException("Interaction failed: " + label, e);

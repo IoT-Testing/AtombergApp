@@ -1,4 +1,4 @@
-﻿package app.Login;
+package app.Login;
 
 import app.resources.Env;
 import app.util.ActionsUtil;
@@ -32,7 +32,7 @@ public class Apple {
 	 * @param atomberg AndroidDriver instance
 	 */
 	public static void Login(AndroidDriver atomberg) {
-		logpoint("Starting Apple login process...");
+		System.out.println("Starting Apple login process...");
 
 		if (clickElementIfExists(atomberg, APPLE_LOGIN_BUTTON)) {
 			System.err.println("Failed to find or click Apple Login button.");
@@ -43,7 +43,7 @@ public class Apple {
 		ActionsUtil.sleep(5000); // Allow for navigation or redirect
 
 		if (isOnHomeScreen(atomberg)) {
-			logpoint("Detected home screen â€” login likely successful.");
+			System.out.println("Detected home screen — login likely successful.");
 			PermissionUtil.allow(atomberg);
 		} else {
 			performFallbackLogin(atomberg);
@@ -72,14 +72,14 @@ public class Apple {
 			WebElement element = driver.findElement(locator);
 			if (element.isDisplayed() && Boolean.parseBoolean(element.getDomAttribute("clickable"))) {
 				element.click();
-				logpoint("Clicked element: " + locator);
+				System.out.println("Clicked element: " + locator);
 				return false;
 			} else {
-				logpoint("Element found but not clickable: " + locator);
+				System.out.println("Element found but not clickable: " + locator);
 				return true;
 			}
 		} catch (NoSuchElementException e) {
-			logpoint("Element not found: " + locator);
+			System.out.println("Element not found: " + locator);
 			return true;
 		} catch (Exception e) {
 			System.err.println("Unexpected error clicking element " + locator + ": " + e.getMessage());
@@ -93,7 +93,7 @@ public class Apple {
 	 * @param driver Driver instance
 	 */
 	private static void performFallbackLogin(AndroidDriver driver) {
-		logpoint("Apple redirect failed. Falling back to email/password login...");
+		System.out.println("Apple redirect failed. Falling back to email/password login...");
 
 		if (enterTextSafely(driver, TEXT_INPUT_FIELD, Env.required("APPLE_TEST_EMAIL"), "Email")) {
 			System.err.println("Failed to enter email. Aborting login.");
@@ -120,12 +120,12 @@ public class Apple {
 			return;
 		}
 
-		logpoint("Sign In submitted. Waiting for home screen...");
+		System.out.println("Sign In submitted. Waiting for home screen...");
 
 		waitForHomeScreen(driver);
 
 		if (isOnHomeScreen(driver)) {
-			logpoint("Test Passed: Successfully logged in and reached home screen.");
+			System.out.println("Test Passed: Successfully logged in and reached home screen.");
 			AppUtil.captureScreenshot(driver, "Login Successful");
 			PermissionUtil.allow(driver);
 		} else {
@@ -148,7 +148,7 @@ public class Apple {
 			field.click();
 			field.clear();
 			field.sendKeys(text);
-			logpoint(label + " entered: " + maskSensitiveData(text));
+			System.out.println(label + " entered: " + maskSensitiveData(text));
 			return false;
 		} catch (NoSuchElementException e) {
 			System.err.println(label + " field not found: " + locator);
@@ -165,7 +165,7 @@ public class Apple {
 	 * @param driver Driver instance
 	 */
 	private static void waitForHomeScreen(AndroidDriver driver) {
-		logpoint("Waiting for home screen...");
+		System.out.println("Waiting for home screen...");
 		try {
 			await()
 					.atMost(10, TimeUnit.SECONDS)

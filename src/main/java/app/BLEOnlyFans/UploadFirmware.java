@@ -1,4 +1,4 @@
-﻿package app.BLEOnlyFans;
+package app.BLEOnlyFans;
 
 import app.util.ActionsUtil;
 import io.appium.java_client.android.AndroidDriver;
@@ -24,9 +24,9 @@ public class UploadFirmware extends FirmwareVersionChecker {
                 // Step 1: Click Start (if not already started)
                 try {
                     driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Start\"]")).click();
-                    logpoint("â–¶ï¸ Start button clicked.");
+                    System.out.println("▶️ Start button clicked.");
                 } catch (Exception e) {
-                    logpoint("âš ï¸ 'Start' button not found or already running.");
+                    System.out.println("⚠️ 'Start' button not found or already running.");
                 }
                 ActionsUtil.sleep(25000);
                 status = "Success";

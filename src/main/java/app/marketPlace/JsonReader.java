@@ -1,4 +1,4 @@
-﻿//package app.marketPlace;
+//package app.marketPlace;
 //
 //import com.fasterxml.jackson.databind.JsonNode;
 //import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,7 +14,7 @@
 //    public JsonReader() throws Exception {
 //
 //        File file = new File("products.json");
-////        logpoint("File exists: " + file.exists() + " | Absolute path: " + file.getAbsolutePath());
+////        System.out.println("File exists: " + file.exists() + " | Absolute path: " + file.getAbsolutePath());
 //        ObjectMapper mapper = new ObjectMapper();
 //        this.root = mapper.readTree(file);
 //    }
@@ -35,4 +35,3 @@
 //        return names;
 //    }
 //}
-

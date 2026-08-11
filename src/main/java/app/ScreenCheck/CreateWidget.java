@@ -1,8 +1,7 @@
-﻿package app.ScreenCheck;
+package app.ScreenCheck;
 
 import app.util.ActionsUtil;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -53,7 +52,7 @@ public class CreateWidget {
      * Opens the widgets tray from home screen.
      */
     private void openWidgetsTray() {
-        logpoint("Opening widgets tray...");
+        System.out.println("Opening widgets tray...");
         ActionsUtil.Tap.withCoordinates(driver, WIDGETS_TRAY_TAP_X, WIDGETS_TRAY_TAP_Y);
         ActionsUtil.sleep(1000);
 
@@ -70,7 +69,7 @@ public class CreateWidget {
      * Scrolls and selects the Atomberg Home Widget.
      */
     private void selectAtombergWidget() {
-        logpoint("Searching for Atomberg Home widget...");
+        System.out.println("Searching for Atomberg Home widget...");
 
         if (clickElementIfExists(ATOMBERG_WIDGET_ITEM, "Atomberg Home Widget")) {
             return; // Found immediately
@@ -95,9 +94,9 @@ public class CreateWidget {
     private void confirmAndClose() {
         if (clickElementIfExists(DONE_BUTTON, "Done (Exit Widgets Tray)")) {
             ActionsUtil.sleep(POST_ACTION_WAIT_MS);
-            logpoint("Widget created successfully.");
+            System.out.println("Widget created successfully.");
         } else {
-            System.err.println("Warning: Could not confirm widget creation â€” 'Done' button not found.");
+            System.err.println("Warning: Could not confirm widget creation — 'Done' button not found.");
         }
     }
 
@@ -115,14 +114,14 @@ public class CreateWidget {
             WebElement el = driver.findElement(locator);
             if (el.isDisplayed()) {
                 el.click();
-                logpoint("Clicked: " + label);
+                System.out.println("Clicked: " + label);
                 return true;
             } else {
-                logpoint(label + " found but not displayed.");
+                System.out.println(label + " found but not displayed.");
                 return false;
             }
         } catch (NoSuchElementException e) {
-            logpoint(label + " not found.");
+            System.out.println(label + " not found.");
             return false;
         } catch (Exception e) {
             System.err.println("Error clicking " + label + ": " + e.getMessage());
@@ -142,7 +141,7 @@ public class CreateWidget {
 
         if (!widgets.isEmpty()) {
             widgets.get(0).click();
-            logpoint("Selected Atomberg Home widget");
+            System.out.println("Selected Atomberg Home widget");
         } else {
             scrollAndFindWidget();
         }
@@ -174,7 +173,7 @@ public class CreateWidget {
      * Gets all elements with non-null content-desc.
      */
     private List<WebElement> findLabeledElements() {
-        return driver.findElements(AppiumBy.className("android.widget.TextView")).stream()
+        return driver.findElements(By.className("android.widget.TextView")).stream()
                 .filter(el -> getAttribute(el, "content-desc") != null)
                 .collect(Collectors.toList());
     }

@@ -1,7 +1,6 @@
-﻿package app.ScreenCheck;
+package app.ScreenCheck;
 
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
@@ -11,7 +10,7 @@ import java.util.List;
 import static app.resources.Locators.Android.HomeLocators.*;
 
 /**
- * ScreenCheck â€“ verifies presence on and navigates to main app screens:
+ * ScreenCheck – verifies presence on and navigates to main app screens:
  * Home, Analytics, and More tab.
  *
  * <p>Designed as a thin helper: each method ensures the correct screen is
@@ -26,7 +25,7 @@ public class ScreenCheck {
         this.atomberg = atomberg;
     }
 
-    // â”€â”€ Tab navigation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Tab navigation ────────────────────────────────────────────────────────
 
     /**
      * Navigates to the More tab. If the tab is already selected, does nothing.
@@ -54,15 +53,15 @@ public class ScreenCheck {
         rateUsPopup();
     }
 
-    // â”€â”€ Popup dismissal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Popup dismissal ───────────────────────────────────────────────────────
 
     /**
      * Dismisses a "Rate Us" popup if one is currently displayed.
-     * Failures are swallowed â€” the popup is optional and must not fail tests.
+     * Failures are swallowed — the popup is optional and must not fail tests.
      */
     public void rateUsPopup() {
         try {
-            List<WebElement> buttons = atomberg.findElements(AppiumBy.className("android.widget.Button"));
+            List<WebElement> buttons = atomberg.findElements(By.className("android.widget.Button"));
             List<WebElement> cancelButtons = buttons.stream()
                     .filter(btn -> "Cancel".equals(btn.getDomAttribute("content-desc")))
                     .toList();
@@ -70,7 +69,7 @@ public class ScreenCheck {
             for (WebElement cancelButton : cancelButtons) {
                 if (cancelButton.isDisplayed() && cancelButton.isEnabled()) {
                     cancelButton.click();
-                    logpoint("Rate Us popup dismissed.");
+                    System.out.println("Rate Us popup dismissed.");
                     break;
                 }
             }
@@ -79,7 +78,7 @@ public class ScreenCheck {
         }
     }
 
-    // â”€â”€ Internal helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Internal helpers ──────────────────────────────────────────────────────
 
     /**
      * Ensures a tab is visible and selected. Clicks only if not already selected.
@@ -89,10 +88,10 @@ public class ScreenCheck {
      */
     private void ensureOnScreen(By locator, String label) {
         WebElement tab = waitForElement(locator);
-        logpoint(label + " tab selected: " + tab.isSelected());
+        System.out.println(label + " tab selected: " + tab.isSelected());
         if (!tab.isSelected()) {
             tab.click();
-            logpoint(label + " tab clicked.");
+            System.out.println(label + " tab clicked.");
         }
     }
 
@@ -125,4 +124,3 @@ public class ScreenCheck {
         }
     }
 }
-

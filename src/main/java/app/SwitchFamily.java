@@ -1,8 +1,7 @@
-﻿package app;
+package app;
 
 import app.util.ActionsUtil;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import java.time.Duration;
@@ -18,7 +17,7 @@ public class SwitchFamily {
     private final AndroidDriver atomberg;
 
     // === Locators ===
-    private static final By VIEW_ELEMENT = AppiumBy.className("android.view.View");
+    private static final By VIEW_ELEMENT = By.className("android.view.View");
 
     public SwitchFamily(AndroidDriver driver) {
         this.atomberg = driver;
@@ -38,20 +37,20 @@ public class SwitchFamily {
 
         List<String> familyNames = getAvailableFamilyNames();
         if (familyNames.isEmpty()) {
-            logpoint("No additional families found.");
+            System.out.println("No additional families found.");
             return;
         }
 
         for (int i = 0; i < familyNames.size(); i++) {
             String targetFamily = familyNames.get(i);
-            logpoint("Switching to family: " + targetFamily);
+            System.out.println("Switching to family: " + targetFamily);
 
             if (Objects.equals(targetFamily, currentFamilyName)) {
-                logpoint("Already on family: " + targetFamily);
+                System.out.println("Already on family: " + targetFamily);
                 atomberg.navigate().back();
             } else {
                 if (selectFamily(targetFamily)) {
-                    logpoint(targetFamily + " selected");
+                    System.out.println(targetFamily + " selected");
                 } else {
                     System.err.println("Failed to select family: " + targetFamily);
                     continue;
@@ -79,7 +78,7 @@ public class SwitchFamily {
         if (!elements.isEmpty()) {
             try {
                 String desc = elements.get(0).getDomAttribute("content-desc");
-                logpoint("Current Family: " + desc);
+                System.out.println("Current Family: " + desc);
                 return desc;
             } catch (Exception e) {
                 System.err.println("Error reading current family name: " + e.getMessage());
@@ -119,7 +118,7 @@ public class SwitchFamily {
             familyNames.remove(familyNames.size() - 1);
         }
 
-        logpoint("Number of families present = " + familyNames.size());
+        System.out.println("Number of families present = " + familyNames.size());
         return familyNames;
     }
 

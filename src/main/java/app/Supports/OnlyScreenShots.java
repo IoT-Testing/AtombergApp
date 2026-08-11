@@ -1,4 +1,4 @@
-﻿package app.Supports;
+package app.Supports;
 //Add First Device
 
 import java.net.MalformedURLException;
@@ -23,8 +23,8 @@ public class OnlyScreenShots {
 		try {
 			openAtomberg();
 		} catch (Exception exp) {
-			logpoint(exp.getCause());
-			logpoint(exp.getMessage());
+			System.out.println(exp.getCause());
+			System.out.println(exp.getMessage());
 			exp.printStackTrace();
 		}
 	}
@@ -41,21 +41,21 @@ public class OnlyScreenShots {
 				"C:\\Users\\Rohit\\Desktop\\android-sdk\\build-tools\\34.0.0\\lib\\apksigner.jar");
 		cap.setCapability("dumpAppPackageInfo", true);
 		try {
-			logpoint("Initializing Appium driver..."); // Check if the Appium driver is initialized
+			System.out.println("Initializing Appium driver..."); // Check if the Appium driver is initialized
 			URL url = new URL("http://192.168.8.255:4723/wd/hub"); // URL of the Appium session
 			driver = new AndroidDriver(url, cap);
-			logpoint("Appium driver initialized.");
+			System.out.println("Appium driver initialized.");
 		} catch (MalformedURLException e) {
-			logpoint("Error initializing Appium driver: " + e.getMessage());
+			System.out.println("Error initializing Appium driver: " + e.getMessage());
 			AppUtil.captureScreenshot(driver, "driver initialized");
 			return;
 		}
 		AppUtil.captureScreenshot(driver,"driver successful");
 		List<WebElement> el = driver.findElements(By.xpath("//android.widget.ImageView"));
-		logpoint("List Size: " + el.size() + "\n");
+		System.out.println("List Size: " + el.size() + "\n");
 
 		for (WebElement element : el) {
-			logpoint("Element text: " + element.getDomAttribute("bounds") + "\n");
+			System.out.println("Element text: " + element.getDomAttribute("bounds") + "\n");
 		}
 		sleep(500);
 

@@ -1,4 +1,4 @@
-﻿package app.Assistants;
+package app.Assistants;
 
 import app.resources.Credentials;
 import app.ScreenCheck.ScreenCheck;
@@ -16,7 +16,7 @@ public class Alexa {
     private final AndroidDriver driver;
     private final ScreenCheck screenCheck;
 
-    // Credentials loaded from environment â€” see test.env.example
+    // Credentials loaded from environment — see test.env.example
     private static final String TEST_EMAIL    = Credentials.ALEXA_TEST_EMAIL;
     private static final String TEST_PASSWORD = Credentials.ALEXA_TEST_PASSWORD;
 
@@ -43,13 +43,13 @@ public class Alexa {
         WebElement connected = driver.findElement(ALEXA_CONNECTED_BUTTON);
         if (connected != null && connected.isDisplayed()) {
             connected.click();
-            logpoint("Unlinking Alexa...");
+            System.out.println("Unlinking Alexa...");
 
             if (clickElementIfExists(YES_BUTTON, "Yes (Confirm Unlink)")) {
                 waitForAndLogMessage(UNLINK_SUCCESS, "Alexa Unlink Successful");
             }
         } else {
-            logpoint("Alexa is not currently connected.");
+            System.out.println("Alexa is not currently connected.");
         }
     }
 
@@ -60,11 +60,11 @@ public class Alexa {
      */
     private void connectToAlexa() {
         if (!clickElementIfExists(ALEXA_CONNECT_BUTTON, "Amazon Alexa Connect")) {
-            logpoint("Alexa is already connected or button not found.");
+            System.out.println("Alexa is already connected or button not found.");
             return;
         }
 
-        logpoint("Alexa Connect");
+        System.out.println("Alexa Connect");
 
         handlePairAlexaPrompt();
         handleAccountLinkingGuide();
@@ -107,7 +107,7 @@ public class Alexa {
             return;
         }
 
-        logpoint("Performing Alexa account login...");
+        System.out.println("Performing Alexa account login...");
 
         if (!fillInputField(USERNAME_FIELD, TEST_EMAIL, "Email")) return;
         if (!fillInputField(PASSWORD_FIELD, TEST_PASSWORD, "Password")) return;
@@ -128,7 +128,7 @@ public class Alexa {
         }
         field.click();
         field.sendKeys(value);
-        logpoint(label + " entered: " + maskSensitiveData(value));
+        System.out.println(label + " entered: " + maskSensitiveData(value));
         return true;
     }
 
@@ -137,7 +137,7 @@ public class Alexa {
      */
     private void confirmLinkSuccess() {
         if (isElementPresent(driver, ALEXA_LINK_SUCCESS)) {
-            logpoint("Alexa Linked Successfully");
+            System.out.println("Alexa Linked Successfully");
             // Tap somewhere safe to dismiss toast
             ActionsUtil.Tap.withPercentage(driver, 0.20, 0.20);
         } else {
@@ -153,7 +153,7 @@ public class Alexa {
         final int MAX_BACK_PRESS = 10;
 
         while (!isOnDeviceSelectionScreen() && backCount < MAX_BACK_PRESS) {
-            logpoint("Navigating back... (" + (backCount + 1) + "/" + MAX_BACK_PRESS + ")");
+            System.out.println("Navigating back... (" + (backCount + 1) + "/" + MAX_BACK_PRESS + ")");
             driver.navigate().back();
             ActionsUtil.sleep(1000);
             backCount++;
@@ -176,7 +176,7 @@ public class Alexa {
      */
     private void waitForAndLogMessage(By locator, String logMessage) {
         if (isElementPresent(driver, locator)) {
-            logpoint(logMessage);
+            System.out.println(logMessage);
         } else {
             System.err.println("Expected message not found: " + logMessage);
         }
@@ -192,14 +192,14 @@ public class Alexa {
             WebElement el = driver.findElement(locator);
             if (el.isDisplayed()) {
                 el.click();
-                logpoint("Clicked: " + label);
+                System.out.println("Clicked: " + label);
                 return true;
             } else {
-                logpoint(label + " found but not displayed.");
+                System.out.println(label + " found but not displayed.");
                 return false;
             }
         } catch (NoSuchElementException e) {
-            logpoint(label + " not found.");
+            System.out.println(label + " not found.");
             return false;
         } catch (Exception e) {
             System.err.println("Error clicking " + label + ": " + e.getMessage());

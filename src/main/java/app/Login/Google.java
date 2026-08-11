@@ -1,4 +1,4 @@
-﻿package app.Login;
+package app.Login;
 
 import app.util.ActionsUtil;
 import app.util.AppUtil;
@@ -48,7 +48,7 @@ public class Google {
 	 * @param driver AndroidDriver instance
 	 */
 	public static void Login(AndroidDriver driver) {
-		logpoint("Starting Google login...");
+		System.out.println("Starting Google login...");
 
 		// Step 1: Click Google Login Button
 		if (!clickElementIfExists(driver, GOOGLE_LOGIN_BUTTON)) {
@@ -61,21 +61,21 @@ public class Google {
 
 		// Step 2: Check if already on Home Screen (already logged in)
 		if (isOnHomeScreen(driver)) {
-			logpoint("Already logged in. Proceeding to permissions.");
+			System.out.println("Already logged in. Proceeding to permissions.");
 			PermissionUtil.allow(driver);
 			return;
 		}
 
 		// Step 3: Otherwise, interact with Google WebView
 		if (waitForAndClick(driver, CONTINUE_IN_WEBVIEW, 60)) {
-			logpoint("Clicked continue in Google WebView");
+			System.out.println("Clicked continue in Google WebView");
 			AppUtil.captureScreenshot(driver, "Google Webview");
 
 			// Wait for navigation to home screen
 			waitForHomeScreen(driver);
 
 			if (isOnHomeScreen(driver)) {
-				logpoint("Test Passed: Successfully logged in via Google.");
+				System.out.println("Test Passed: Successfully logged in via Google.");
 				AppUtil.captureScreenshot(driver, "Test Successful");
 				PermissionUtil.allow(driver);
 			} else {
@@ -115,14 +115,14 @@ public class Google {
 			WebElement element = driver.findElement(locator);
 			if (element.isDisplayed() && Boolean.parseBoolean(element.getDomAttribute("clickable"))) {
 				element.click();
-				logpoint("Clicked: " + locatorToString(locator));
+				System.out.println("Clicked: " + locatorToString(locator));
 				return true;
 			} else {
-				logpoint("Element found but not clickable: " + locatorToString(locator));
+				System.out.println("Element found but not clickable: " + locatorToString(locator));
 				return false;
 			}
 		} catch (NoSuchElementException e) {
-			logpoint("Element not found: " + locatorToString(locator));
+			System.out.println("Element not found: " + locatorToString(locator));
 			return false;
 		} catch (Exception e) {
 			System.err.println("Error interacting with " + locatorToString(locator) + ": " + e.getMessage());
@@ -139,7 +139,7 @@ public class Google {
 	 * @return true if element was found and clicked
 	 */
 	private static boolean waitForAndClick(AndroidDriver driver, By locator, long timeoutSec) {
-		logpoint("Waiting for element: " + locatorToString(locator));
+		System.out.println("Waiting for element: " + locatorToString(locator));
 
 		try {
 			await()
@@ -168,7 +168,7 @@ public class Google {
 	 * @param driver Driver instance
 	 */
 	private static void waitForHomeScreen(AndroidDriver driver) {
-		logpoint("Waiting for home screen...");
+		System.out.println("Waiting for home screen...");
 		try {
 			await()
 					.atMost(Duration.ofSeconds(10))

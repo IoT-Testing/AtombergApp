@@ -1,6 +1,5 @@
 package app.resources.Locators.Android.AppLocators;
 
-import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.By;
 
 public class MoreTab {
@@ -53,7 +52,7 @@ public class MoreTab {
     public static final By OPTIONS_HEADER = By.xpath("//android.view.View[@content-desc=\"Options\"]");
     public static final By PROFILE_GREETING = By.xpath("//android.widget.ImageView[contains(@content-desc, \"Hi,\")]");
     public static final By CHANGE_AVATAR_BUTTON = By.xpath("//android.widget.ImageView[@content-desc=\"Change avatar\"]");
-    public static final By AVATAR_OPTIONS = AppiumBy.className("android.widget.ImageView");
+    public static final By AVATAR_OPTIONS = By.className("android.widget.ImageView");
     public static final By NAME_INPUT_FIELD = By.xpath("//android.widget.EditText[contains(@text, \"\")]");
     public static final By PHONE_EDIT_SECTION = By.xpath("//android.view.View[contains(@content-desc, \"+91\")]"); // Adjust based on actual content
     public static final By UPDATE_BUTTON = By.xpath("//android.widget.Button[@content-desc=\"Update\"]");

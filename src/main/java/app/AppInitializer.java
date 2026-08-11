@@ -1,4 +1,4 @@
-﻿package app;
+package app;
 
 import app.Login.Email;
 import app.util.ActionsUtil;
@@ -18,7 +18,7 @@ import static app.resources.Credentials.*;
 import static app.resources.Endpoints.*;
 
 /**
- * AppInitializer â€“ initialises the AndroidDriver and handles app launch.
+ * AppInitializer – initialises the AndroidDriver and handles app launch.
  */
 public class AppInitializer {
 
@@ -62,7 +62,7 @@ public class AppInitializer {
         // Apply a consistent implicit-wait so all element lookups through this
         // initializer respect the same timeout as the rest of the test suite.
         atomberg.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
-        logpoint("AppInitializer: driver set â€” session id: "
+        System.out.println("AppInitializer: driver set — session id: "
                 + atomberg.getSessionId());
     }
 
@@ -71,15 +71,15 @@ public class AppInitializer {
      * {@link #initializeDriver()}) and quits the active driver session.
      *
      * <p>Safe to call even when the service was never started or the driver
-     * was injected externally â€” both cases are handled gracefully.</p>
+     * was injected externally — both cases are handled gracefully.</p>
      */
     public void stopServer() {
         if (atomberg != null) {
             try {
                 atomberg.quit();
-                logpoint("AppInitializer: driver session closed.");
+                System.out.println("AppInitializer: driver session closed.");
             } catch (Exception e) {
-                System.err.println("AppInitializer: error closing driver session â€” " + e.getMessage());
+                System.err.println("AppInitializer: error closing driver session — " + e.getMessage());
             } finally {
                 atomberg = null;
             }
@@ -88,19 +88,19 @@ public class AppInitializer {
         if (service != null && service.isRunning()) {
             try {
                 service.stop();
-                logpoint("AppInitializer: Appium service stopped.");
+                System.out.println("AppInitializer: Appium service stopped.");
             } catch (Exception e) {
-                System.err.println("AppInitializer: error stopping Appium service â€” " + e.getMessage());
+                System.err.println("AppInitializer: error stopping Appium service — " + e.getMessage());
             } finally {
                 service = null;
             }
         } else {
-            logpoint("AppInitializer: no locally-managed Appium service to stop " +
+            System.out.println("AppInitializer: no locally-managed Appium service to stop " +
                     "(service was either never started or is already stopped).");
         }
     }
 
-    // â”€â”€ Driver setup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Driver setup ──────────────────────────────────────────────────────────
 
     /**
      * Opens the app with the standard package + activity.
@@ -126,12 +126,12 @@ public class AppInitializer {
         options.setCapability("platformName", "Android");
         options.setCapability("platformVersion", "15");
         URL url = service.getUrl();
-        logpoint("Appium URL: " + url);
+        System.out.println("Appium URL: " + url);
         atomberg = new AndroidDriver(url, options);
         atomberg.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
     }
 
-    // â”€â”€ Login / screen check â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Login / screen check ──────────────────────────────────────────────────
 
     /**
      * Checks whether the app is on the login screen.
@@ -142,13 +142,12 @@ public class AppInitializer {
         ApplicationState state = atomberg.queryAppState(ATOMBERG_HOME);
         if (state != ApplicationState.RUNNING_IN_FOREGROUND) {
             atomberg.activateApp(ATOMBERG_HOME);
+            ActionsUtil.SSleep(5);
         }
-        ActionsUtil.SSleep(10);
         WebElement loginIndicator = findOptional(
-                By.xpath("//android.view.View[@content-desc=\"Experience smart living \n" +
-                        " with Atomberg\"]"));
+                By.xpath("//android.view.View[@content-desc=\"Experience smart living \n with Atomberg\"]"));
         if (loginIndicator != null) {
-            logpoint("Login screen detected â€“ logging in.");
+            System.out.println("Login screen detected – logging in.");
             new Email(atomberg).email(DEFAULT_EMAIL, DEFAULT_PASSWORD);
             ActionsUtil.SSleep(3);
 
@@ -160,12 +159,12 @@ public class AppInitializer {
             // Confirm we reached the home screen after auto-login
             AppUtil.confirmOnHomeScreen(atomberg);
         } else {
-            logpoint("Already logged in.");
+            System.out.println("Already logged in.");
         }
         return loginIndicator != null;
     }
 
-    // â”€â”€ Internal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Internal ──────────────────────────────────────────────────────────────
 
     private WebElement findOptional(By locator) {
         try {
