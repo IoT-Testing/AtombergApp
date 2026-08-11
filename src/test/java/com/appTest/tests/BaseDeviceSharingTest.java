@@ -20,15 +20,19 @@ import org.testng.annotations.*;
  *   memberDriver → Phone 2 — logged in as Member (non-admin family member)
  *
  * ── Environment variables needed ─────────────────────────────────────────────
+ *   Required:
  *   ADMIN_DEVICE_UDID       UDID of admin phone  (from `adb devices`)
  *   MEMBER_DEVICE_UDID      UDID of member phone (from `adb devices`)
- *   APPIUM_URL              Appium server URL (default: http://127.0.0.1:4723)
- *   ADMIN_EMAIL             Admin account email
- *   ADMIN_PASSWORD          Admin account password
- *   MEMBER_EMAIL            Member account email (non-admin, already in the home)
- *   MEMBER_PASSWORD         Member account password
  *   TEST_FAN_DEVICE_NAME    Display name of the fan to test with (e.g. "My Aris Fan")
  *   TEST_MEMBER_DISPLAY_NAME Display name of the member in the admin's family list
+ *
+ *   Optional:
+ *   APPIUM_URL              Appium server URL (default: http://127.0.0.1:4723)
+ *   ADMIN_EMAIL / ADMIN_PASSWORD    Fallback login ONLY — unused while the admin
+ *                                   phone stays logged in (noReset=true)
+ *   MEMBER_EMAIL / MEMBER_PASSWORD  Fallback login ONLY — unused while the member
+ *                                   phone stays logged in
+ *   ADMIN_DISPLAY_NAME      Enables the §6.1 admin-row-greyed-out edge-case test
  *
  * ── Running from command line ─────────────────────────────────────────────────
  *   # Discover connected device UDIDs:
@@ -69,20 +73,43 @@ public abstract class BaseDeviceSharingTest {
     protected String adminPassword;
     protected String memberEmail;
     protected String memberPassword;
-    protected String testDeviceName;
+    protected String testDeviceName;          // fan (required — back-compat)
+    protected String testLockDeviceName;      // optional — Flow 2 lock iteration
+    protected String testPurifierDeviceName;  // optional — Flow 2 water-purifier iteration
     protected String testMemberDisplayName;
+
+    // ── Role-guard hints (detect swapped phones) ──────────────────────────────
+    protected String adminProfileHint;
+    protected String adminFamilyHint;
+    protected String memberProfileHint;
+    protected String memberPresentFamily;
 
     // ── Lifecycle ─────────────────────────────────────────────────────────────
 
     @BeforeClass(alwaysRun = true)
     public void setupDualDevices() {
-        // Load env-driven test data
-        adminEmail             = requireEnv("ADMIN_EMAIL");
-        adminPassword          = requireEnv("ADMIN_PASSWORD");
-        memberEmail            = requireEnv("MEMBER_EMAIL");
-        memberPassword         = requireEnv("MEMBER_PASSWORD");
+        // Required test targets — the tests must know which fan / which member to act on.
         testDeviceName         = requireEnv("TEST_FAN_DEVICE_NAME");
         testMemberDisplayName  = requireEnv("TEST_MEMBER_DISPLAY_NAME");
+
+        // Optional device names for the Flow 2 per-device loop. When a name is
+        // unset the corresponding device type is skipped in DeviceShareLongPressFlowTest.
+        testLockDeviceName     = optionalEnv("TEST_LOCK_DEVICE_NAME",      null);
+        testPurifierDeviceName = optionalEnv("TEST_PURIFIER_DEVICE_NAME",  null);
+
+        // Role-guard hints (defaults match the standard admin/member accounts).
+        adminProfileHint    = optionalEnv("ADMIN_PROFILE_HINT",     "Admin");
+        adminFamilyHint     = optionalEnv("ADMIN_FAMILY_HINT",      "Main Family");
+        memberProfileHint   = optionalEnv("MEMBER_PROFILE_HINT",    "Member");
+        memberPresentFamily = optionalEnv("MEMBER_PRESENT_FAMILY",  "Secondary Family");
+
+        // Account credentials are OPTIONAL — both phones are expected to stay
+        // logged in (noReset=true). These are only used as a fallback IF a login
+        // screen is unexpectedly detected. Leave them unset for a normal run.
+        adminEmail             = optionalEnv("ADMIN_EMAIL",     null);
+        adminPassword          = optionalEnv("ADMIN_PASSWORD",  null);
+        memberEmail            = optionalEnv("MEMBER_EMAIL",    null);
+        memberPassword         = optionalEnv("MEMBER_PASSWORD", null);
 
         // Detect connected devices and print them for diagnostics
         System.out.println("=== Connected ADB devices ===");
@@ -96,10 +123,18 @@ public abstract class BaseDeviceSharingTest {
         adminSharingPage = new DeviceSharingPage(adminDriver);
         memberDevicePage = new MemberDevicePage(memberDriver);
         reporter         = new ExtentReportAT("DualDevice_Sharing");
+        // Register every device slot the sharing tests report under, so
+        // reporter.startTest(..., slot) can find its parent node.
+        reporter.registerDevice("Admin_Device");
+        reporter.registerDevice("Member_Device");
+        reporter.registerDevice("Admin+Member");
 
         // Ensure both phones are logged in
         ensureAdminLoggedIn();
         ensureMemberLoggedIn();
+
+        // Fail fast if the phones/accounts are swapped (admin UDID → member phone).
+        verifyDeviceRoles();
 
         System.out.println("=== BaseDeviceSharingTest setup complete ===");
     }
@@ -120,7 +155,12 @@ public abstract class BaseDeviceSharingTest {
     protected void ensureAdminLoggedIn() {
         System.out.println("[Base] Checking admin phone login state...");
         if (isOnLoginScreen(adminDriver)) {
-            System.out.println("[Base] Admin phone: login required.");
+            if (adminEmail == null || adminPassword == null)
+                throw new IllegalStateException(
+                        "Admin phone is on the LOGIN screen but ADMIN_EMAIL/ADMIN_PASSWORD "
+                                + "were not provided. Keep the admin account logged in, or set "
+                                + "those env vars to enable fallback login.");
+            System.out.println("[Base] Admin phone: login required (using fallback credentials).");
             try {
                 new Email(adminDriver).email(adminEmail, adminPassword);
                 ActionsUtil.SSleep(5);
@@ -139,7 +179,12 @@ public abstract class BaseDeviceSharingTest {
     protected void ensureMemberLoggedIn() {
         System.out.println("[Base] Checking member phone login state...");
         if (isOnLoginScreen(memberDriver)) {
-            System.out.println("[Base] Member phone: login required.");
+            if (memberEmail == null || memberPassword == null)
+                throw new IllegalStateException(
+                        "Member phone is on the LOGIN screen but MEMBER_EMAIL/MEMBER_PASSWORD "
+                                + "were not provided. Keep the member account logged in, or set "
+                                + "those env vars to enable fallback login.");
+            System.out.println("[Base] Member phone: login required (using fallback credentials).");
             try {
                 new Email(memberDriver).email(memberEmail, memberPassword);
                 ActionsUtil.SSleep(5);
@@ -168,12 +213,18 @@ public abstract class BaseDeviceSharingTest {
      * Reads a required environment variable. Throws with a clear message if absent.
      */
     protected static String requireEnv(String key) {
-        String v = System.getenv(key);
-        if (v == null || v.isBlank())
-            throw new IllegalStateException(
-                    "Missing required environment variable for device sharing tests: " + key
-                            + "\nSee BaseDeviceSharingTest Javadoc for setup instructions.");
-        return v;
+        // Delegates to SharingConfig: sharing-test.properties → env var → -D property.
+        return app.sharing.SharingConfig.require(key);
+    }
+
+    /**
+     * Reads an optional config value, returning {@code fallback} when it is
+     * unset. Resolves via SharingConfig (properties file, then env var). Used for
+     * the account credentials, which are only needed as a login fallback when the
+     * phones are not already logged in.
+     */
+    protected static String optionalEnv(String key, String fallback) {
+        return app.sharing.SharingConfig.get(key, fallback);
     }
 
     /**
@@ -183,5 +234,83 @@ public abstract class BaseDeviceSharingTest {
      */
     protected void waitForPermissionPropagation() {
         ActionsUtil.SSleep(4);
+    }
+
+    // ── Role guard ──────────────────────────────────────────────────────────────
+
+    /**
+     * Fail-fast check that the two phones are not swapped. Each driver is brought
+     * to its home dashboard (best-effort) and its screen is scanned for the
+     * configured admin/member hints (family name + profile label). The suite
+     * aborts ONLY on a positive swap signal — the ADMIN driver showing member
+     * markers AND the MEMBER driver showing admin markers — so a screen that
+     * simply lacks the hints never produces a false failure.
+     */
+    protected void verifyDeviceRoles() {
+        System.out.println("[Base] Verifying admin/member phone roles...");
+        bestEffortHome(adminDriver);
+        bestEffortHome(memberDriver);
+
+        String adminSrc  = pageSourceOrEmpty(adminDriver);
+        String memberSrc = pageSourceOrEmpty(memberDriver);
+
+        boolean adminHasAdminMarker  = contains(adminSrc,  adminProfileHint)  || contains(adminSrc,  adminFamilyHint);
+        boolean adminHasMemberMarker = contains(adminSrc,  memberProfileHint) || contains(adminSrc,  memberPresentFamily);
+        boolean memberHasMemberMarker= contains(memberSrc, memberProfileHint) || contains(memberSrc, memberPresentFamily);
+        boolean memberHasAdminMarker = contains(memberSrc, adminProfileHint)  || contains(memberSrc, adminFamilyHint);
+
+        boolean swapped = adminHasMemberMarker && !adminHasAdminMarker
+                && memberHasAdminMarker && !memberHasMemberMarker;
+
+        if (swapped) {
+            String adminUdid  = app.sharing.SharingConfig.get(DualDeviceManager.ENV_ADMIN_UDID);
+            String memberUdid = app.sharing.SharingConfig.get(DualDeviceManager.ENV_MEMBER_UDID);
+            AppUtil.captureScreenshot(adminDriver,  "role_guard_admin_looks_like_member");
+            AppUtil.captureScreenshot(memberDriver, "role_guard_member_looks_like_admin");
+            throw new IllegalStateException(
+                    "Admin/Member phones appear SWAPPED: the ADMIN driver (UDID=" + adminUdid
+                    + ") is showing MEMBER markers and the MEMBER driver (UDID=" + memberUdid
+                    + ") is showing ADMIN markers. Swap ADMIN_DEVICE_UDID and MEMBER_DEVICE_UDID "
+                    + "in sharing-test.properties (admin = the phone logged into '" + adminFamilyHint
+                    + "').");
+        }
+
+        if (adminHasAdminMarker && memberHasMemberMarker) {
+            System.out.println("[Base] Role check OK — admin/member phones correctly mapped.");
+        } else {
+            System.out.println("[Base] Role check inconclusive (hints not visible on the current "
+                    + "screens) — proceeding. Set ADMIN_/MEMBER_ hints to enable a stronger check.");
+        }
+    }
+
+    /**
+     * Best-effort: land on a root/home screen. Delegates to
+     * {@link AppUtil#ensureAppHome(AndroidDriver)}, which never presses BACK off
+     * the app (a blind back-loop closes the app on a root screen — it looks like
+     * "the member phone's app shut itself down").
+     */
+    private void bestEffortHome(AndroidDriver driver) {
+        AppUtil.ensureAppHome(driver);
+        clickIfPresent(driver, app.resources.Locators.Android.HomeLocators.DEVICES);
+        ActionsUtil.SSleep(1);
+    }
+
+    private static boolean contains(String haystack, String needle) {
+        return needle != null && !needle.isBlank() && haystack.contains(needle);
+    }
+
+    private static String pageSourceOrEmpty(AndroidDriver driver) {
+        try { return driver.getPageSource(); }
+        catch (Exception e) { return ""; }
+    }
+
+    private static boolean isPresent(AndroidDriver driver, By locator) {
+        try { return driver.findElement(locator).isDisplayed(); }
+        catch (Exception e) { return false; }
+    }
+
+    private static void clickIfPresent(AndroidDriver driver, By locator) {
+        try { if (driver.findElement(locator).isDisplayed()) driver.findElement(locator).click(); }
+        catch (Exception ignored) {}
     }
 }

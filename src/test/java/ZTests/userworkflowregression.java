@@ -11,6 +11,7 @@ import app.util.ActionsUtil;
 import app.util.AppUtil;
 import com.appTest.listeners.DashboardReporter;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
@@ -148,7 +149,7 @@ public class userworkflowregression {
                 ActionsUtil.sleep(2000);
 
                 // Try to find fan control elements
-                List<WebElement> controls = driver.findElements(By.className("android.widget.ImageView"));
+                List<WebElement> controls = driver.findElements(AppiumBy.className("android.widget.ImageView"));
                 Assert.assertFalse(controls.isEmpty(), "Fan controls should be available");
 
                 AppUtil.captureScreenshot(driver, "Fan Control Screen");

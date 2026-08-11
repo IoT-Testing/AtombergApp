@@ -4,6 +4,7 @@ import app.resources.Credentials;
 import app.ScreenCheck.ScreenCheck;
 import app.util.ActionsUtil;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.*;
 import java.time.Duration;
 import java.util.List;
@@ -30,7 +31,7 @@ public class GoogleHome {
     private static final By USERNAME_FIELD = By.id("signInFormUsername");
     private static final By PASSWORD_FIELD = By.id("signInFormPassword");
     private static final By SUBMIT_BUTTON = By.xpath("//android.widget.Button[@text='submit']");
-    private static final By SIGN_IN_AS_BUTTONS = By.className("android.widget.Button"); // Filter by text later
+    private static final By SIGN_IN_AS_BUTTONS = AppiumBy.className("android.widget.Button"); // Filter by text later
     private static final By UNLINK_ACCOUNT = By.xpath("//android.widget.TextView[@text='Unlink account']");
     private static final By UNLINK_CONFIRM_BUTTON = By.xpath("//android.widget.Button[@text='UNLINK']");
     private static final By NAVIGATE_UP = By.xpath("//android.widget.ImageButton[@content-desc='Navigate up']");
@@ -288,7 +289,7 @@ public class GoogleHome {
      * Gets all TextView elements with non-null text.
      */
     private List<WebElement> findLabeledTextElements() {
-        return driver.findElements(By.className("android.widget.TextView")).stream()
+        return driver.findElements(AppiumBy.className("android.widget.TextView")).stream()
                 .filter(el -> getAttribute(el, "text") != null)
                 .collect(Collectors.toList());
     }

@@ -2,6 +2,7 @@ package app.Analytics;
 
 import app.util.ActionsUtil;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.*;
 import java.util.List;
 import java.util.Objects;
@@ -98,7 +99,7 @@ public class analytics {
     private List<String> getAvailableDeviceNames() {
         fanChange(); // Open device list
 
-        List<WebElement> elements = atomberg.findElements(By.className("android.view.View"));
+        List<WebElement> elements = atomberg.findElements(AppiumBy.className("android.view.View"));
         return elements.stream()
                 .map(el -> el.getDomAttribute("content-desc"))
                 .filter(Objects::nonNull)
@@ -110,7 +111,7 @@ public class analytics {
      * Opens the device selection dropdown.
      */
     private void fanChange() {
-        List<WebElement> fans = atomberg.findElements(By.className("android.view.View")).stream()
+        List<WebElement> fans = atomberg.findElements(AppiumBy.className("android.view.View")).stream()
                 .filter(el -> {
                     String desc = el.getDomAttribute("content-desc");
                     return desc != null && (desc.endsWith("Fan") || desc.contains("Select"));

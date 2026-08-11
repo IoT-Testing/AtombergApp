@@ -142,10 +142,11 @@ public class AppInitializer {
         ApplicationState state = atomberg.queryAppState(ATOMBERG_HOME);
         if (state != ApplicationState.RUNNING_IN_FOREGROUND) {
             atomberg.activateApp(ATOMBERG_HOME);
-            ActionsUtil.SSleep(5);
         }
+        ActionsUtil.SSleep(10);
         WebElement loginIndicator = findOptional(
-                By.xpath("//android.view.View[@content-desc=\"Experience smart living \n with Atomberg\"]"));
+                By.xpath("//android.view.View[@content-desc=\"Experience smart living \n" +
+                        " with Atomberg\"]"));
         if (loginIndicator != null) {
             System.out.println("Login screen detected – logging in.");
             new Email(atomberg).email(DEFAULT_EMAIL, DEFAULT_PASSWORD);

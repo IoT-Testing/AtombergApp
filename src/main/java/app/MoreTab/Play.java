@@ -3,6 +3,7 @@ package app.MoreTab;
 import app.util.ActionsUtil;
 import app.util.AppUtil;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -179,7 +180,7 @@ public class Play {
      * Gets all visible elements with non-null content-desc.
      */
     private List<WebElement> getLabeledElements() {
-        return driver.findElements(By.className("android.view.View")).stream()
+        return driver.findElements(AppiumBy.className("android.view.View")).stream()
                 .filter(el -> getElementText(el) != null)
                 .collect(Collectors.toList());
     }

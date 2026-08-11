@@ -271,6 +271,18 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${surefire.plugin.version}</version>
+                <!-- FIX: junit-jupiter is on the test classpath (via Cucumber/JUnit5),
+                     so surefire auto-detected the JUnit Platform provider and IGNORED
+                     the TestNG <suiteXmlFiles> — every TestNG suite reported
+                     "Tests run: 0". Explicitly pinning the surefire-testng provider
+                     stops auto-detection and makes suiteXmlFiles run under TestNG. -->
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.surefire</groupId>
+                        <artifactId>surefire-testng</artifactId>
+                        <version>${surefire.plugin.version}</version>
+                    </dependency>
+                </dependencies>
                 <configuration>
                     <suiteXmlFiles>
                         <suiteXmlFile>${suiteFile}</suiteXmlFile>

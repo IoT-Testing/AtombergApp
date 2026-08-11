@@ -4,6 +4,7 @@ import app.SmartDevice;
 import app.util.ActionsUtil;
 import app.util.AppUtil;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -97,7 +98,7 @@ public class LockManagement implements SmartDevice {
      */
     public void checkLock() {
         clickWhenReady(atomberg, LOCK_TAB);
-        List<WebElement> locks = atomberg.findElements(By.className("android.widget.Button"));
+        List<WebElement> locks = atomberg.findElements(AppiumBy.className("android.widget.Button"));
 
         List<WebElement> validLocks = locks.stream()
                 .filter(el -> {
@@ -164,11 +165,11 @@ public class LockManagement implements SmartDevice {
      * Inspects all types of remote keys (OTP, Timed Pin).
      */
     private void KeyType() {
-        List<WebElement> keyButtons = atomberg.findElements(By.className("android.widget.Button"));
+        List<WebElement> keyButtons = atomberg.findElements(AppiumBy.className("android.widget.Button"));
         int total = keyButtons.size();
 
         for (int i = 0; i < total; i++) {
-            List<WebElement> currentKeys = atomberg.findElements(By.className("android.widget.Button"));
+            List<WebElement> currentKeys = atomberg.findElements(AppiumBy.className("android.widget.Button"));
             WebElement key = currentKeys.get(i);
 
             String desc = key.getDomAttribute("content-desc");
@@ -229,7 +230,7 @@ public class LockManagement implements SmartDevice {
             return;
         }
 
-        List<WebElement> switches = atomberg.findElements(By.className("android.widget.Switch"));
+        List<WebElement> switches = atomberg.findElements(AppiumBy.className("android.widget.Switch"));
         if (switches.size() < 5) {
             System.err.println("Expected at least 5 switches in Preferences.");
             return;
@@ -301,7 +302,7 @@ public class LockManagement implements SmartDevice {
     private void fingerprint() {
         if (isElementPresent(FP_DISABLED_MSG)) {
             System.out.println("All Fingerprints Disabled Successfully!\nEnabling them again");
-            List<WebElement> switches = atomberg.findElements(By.className("android.widget.Switch"));
+            List<WebElement> switches = atomberg.findElements(AppiumBy.className("android.widget.Switch"));
             if (switches.size() > FINGERPRINT_SWITCH_INDEX) {
                 switches.get(FINGERPRINT_SWITCH_INDEX).click();
             }
@@ -318,7 +319,7 @@ public class LockManagement implements SmartDevice {
             System.out.println("No Cards present for this Lock. Please add one");
         } else if (isElementPresent(By.xpath("//android.view.View[@content-desc='All Cards Disabled Successfully!']"))) {
             System.out.println("Cards Disabled, Enabling it ...");
-            List<WebElement> switches = atomberg.findElements(By.className("android.widget.Switch"));
+            List<WebElement> switches = atomberg.findElements(AppiumBy.className("android.widget.Switch"));
             if (switches.size() > CARD_SWITCH_INDEX) {
                 switches.get(CARD_SWITCH_INDEX).click();
             }
@@ -331,7 +332,7 @@ public class LockManagement implements SmartDevice {
      * Configures periodic timed PIN duration using seekbar scroll.
      */
     private void periodicTimedPin() {
-        List<WebElement> seekBars = atomberg.findElements(By.className("android.widget.SeekBar"));
+        List<WebElement> seekBars = atomberg.findElements(AppiumBy.className("android.widget.SeekBar"));
         List<WebElement> labeledSeekBars = seekBars.stream()
                 .filter(el -> el.getDomAttribute("content-desc") != null)
                 .collect(Collectors.toList());
@@ -440,7 +441,7 @@ public class LockManagement implements SmartDevice {
      * @return List of labeled elements
      */
     private List<WebElement> getVisibleLabeledElements() {
-        return atomberg.findElements(By.className("android.view.View")).stream()
+        return atomberg.findElements(AppiumBy.className("android.view.View")).stream()
                 .filter(el -> el.getDomAttribute("content-desc") != null)
                 .collect(Collectors.toList());
     }

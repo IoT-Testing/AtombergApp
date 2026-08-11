@@ -2,6 +2,7 @@ package app.Widget;
 
 import app.util.ActionsUtil;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
@@ -16,7 +17,7 @@ import static app.util.AppUtil.*;
 public class Widgets {
 
     // === Locator Constants ===
-    private static final By WIDGET_CONTAINER = By.className("android.widget.RelativeLayout");
+    private static final By WIDGET_CONTAINER = AppiumBy.className("android.widget.RelativeLayout");
     private static final By BUTTON_SPEED_UP = By.id("com.atomberg.app:id/bt_up");
     private static final By BUTTON_SPEED_DOWN = By.id("com.atomberg.app:id/bt_down");
     private static final By BUTTON_PREV_FAN = By.id("com.atomberg.app:id/bt_prev");

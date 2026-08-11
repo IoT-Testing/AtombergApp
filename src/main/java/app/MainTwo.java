@@ -3,6 +3,7 @@ package app;
 import app.util.ActionsUtil;
 import app.util.Navigation;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
+import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -109,13 +110,13 @@ public class MainTwo {
     }
 
     private WebElement findElementByContentDescStartsWith(String prefix) {
-        List<WebElement> candidates = driver.findElements(By.className("android.view.View"));
+        List<WebElement> candidates = driver.findElements(AppiumBy.className("android.view.View"));
         return candidates.stream()
                 .map(el -> getAttribute(el, "content-desc"))
                 .filter(Objects::nonNull)
                 .filter(desc -> desc.startsWith(prefix))
                 .findFirst()
-                .flatMap(desc -> driver.findElements(By.className("android.view.View")).stream()
+                .flatMap(desc -> driver.findElements(AppiumBy.className("android.view.View")).stream()
                         .filter(el -> Objects.equals(getAttribute(el, "content-desc"), desc))
                         .findFirst())
                 .orElse(null);

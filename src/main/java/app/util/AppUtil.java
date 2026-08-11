@@ -42,9 +42,48 @@ public class AppUtil {
 
     // ── Screenshots ───────────────────────────────────────────────────────────
 
+    /**
+     * Label of the most recent element a page object tapped. Screenshots taken
+     * with no name of their own fall back to this, so an untagged capture is
+     * still identifiable by the action that produced it.
+     * Written from page-object taps on both driver threads → volatile.
+     */
+    private static volatile String lastActionLabel = "screen";
+
+    /**
+     * Records the element a page object just interacted with. Call this from tap
+     * helpers; {@link #captureScreenshot(AndroidDriver)} then names untagged
+     * screenshots after it.
+     */
+    public static void noteAction(String label) {
+        String safe = sanitizeFileName(label);
+        if (!safe.isEmpty()) lastActionLabel = safe;
+    }
+
+    /** The last recorded action label — used as the fallback screenshot name. */
+    public static String lastActionLabel() {
+        return lastActionLabel;
+    }
+
+    /**
+     * Screenshot named after the last tapped element (see {@link #noteAction}).
+     * Use when there is no meaningful tag for the current screen.
+     */
+    public static void captureScreenshot(AndroidDriver driver) {
+        captureScreenshot(driver, lastActionLabel);
+    }
+
     public static void captureScreenshot(AndroidDriver driver, String name) {
+        // Device names carry the room on a second line ("Aris Fan\nLiving Room"),
+        // so raw names reach here containing newlines — and a newline in a path is
+        // what produced "The filename, directory name, or volume label syntax is
+        // incorrect" on Windows. Sanitize centrally so every call site is covered
+        // rather than relying on each one to strip its own separators.
+        String safeName = sanitizeFileName(name);
+        if (safeName.isEmpty()) safeName = lastActionLabel;
+
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String destPath  = SCREENSHOT_DIR + name + "_" + timestamp + ".png";
+        String destPath  = SCREENSHOT_DIR + safeName + "_" + timestamp + ".png";
         try {
             File src = driver.getScreenshotAs(OutputType.FILE);
             FileUtils.copyFile(src, new File(destPath));
@@ -52,6 +91,74 @@ public class AppUtil {
         } catch (IOException | WebDriverException e) {
             System.err.println("Failed to save screenshot: " + e.getMessage());
         }
+    }
+
+    /**
+     * Makes an arbitrary UI label safe to embed in a Windows filename: collapses
+     * newlines/tabs and the reserved set {@code \ / : * ? " < > |} to underscores
+     * and caps the length so the full path stays inside MAX_PATH.
+     *
+     * @return the sanitized name, or "" when nothing usable remains
+     */
+    public static String sanitizeFileName(String raw) {
+        if (raw == null) return "";
+        String s = raw.replaceAll("[\\r\\n\\t]+", "_")
+                      .replaceAll("[\\\\/:*?\"<>|]", "_")
+                      .replaceAll("\\s+", "_")
+                      .replaceAll("_{2,}", "_")
+                      .replaceAll("^_+|_+$", "");
+        return s.length() > 80 ? s.substring(0, 80) : s;
+    }
+
+    // ── Home device tiles ─────────────────────────────────────────────────────
+
+    /**
+     * Scrapes the display names of every device tile on the current Home/Devices
+     * screen. Used to compare the admin's and member's dashboards after a share
+     * (they must list the same devices).
+     *
+     * <p><b>Best-effort / diagnostic only.</b> Tiles are matched on the
+     * {@code "<device>\n<room>"} content-desc shape, across the same three classes
+     * {@code SharingLocators.deviceCardOnHome} ORs — a run on 2026-08-07 scanning
+     * only {@code ImageView} returned zero while {@code isDeviceOnHome} found every
+     * device, i.e. the tiles are not all ImageViews. Until a real Home-screen dump
+     * pins the structure, never assert on this list being complete: use it to
+     * report what is on screen, and drive assertions off known device names with
+     * {@code deviceCardOnHome}. Chrome that shares the newline shape (the tab bar's
+     * "Analytics\nTab 1 of 3", count-prefixed family tiles) is filtered out.</p>
+     *
+     * @return the tile content-descs, newline intact, in screen order and de-duped
+     */
+    public static java.util.List<String> listDeviceTilesOnHome(AndroidDriver driver) {
+        java.util.LinkedHashSet<String> tiles = new java.util.LinkedHashSet<>();
+        String[] tileClasses = {
+                "android.view.View", "android.widget.ImageView", "android.widget.Button"
+        };
+        for (String cls : tileClasses) {
+            try {
+                for (WebElement el : driver.findElements(By.className(cls))) {
+                    String desc;
+                    try {
+                        desc = el.getDomAttribute("content-desc");
+                    } catch (StaleElementReferenceException e) {
+                        continue;
+                    }
+                    if (desc == null || !desc.contains("\n")) continue;
+                    if (desc.contains("Tab ") || desc.matches("(?s)^\\d+\\n.*")) continue;
+                    tiles.add(desc.trim());
+                }
+            } catch (WebDriverException e) {
+                System.err.println("[AppUtil] Could not scrape " + cls + " tiles: " + e.getMessage());
+            }
+        }
+        return new java.util.ArrayList<>(tiles);
+    }
+
+    /** Renders a scraped tile list for logs/assert messages ("Aris Fan / Living Room"). */
+    public static String prettyTiles(java.util.Collection<String> tiles) {
+        return tiles.stream()
+                .map(t -> t.replace("\n", " / "))
+                .collect(java.util.stream.Collectors.joining(", ", "[", "]"));
     }
 
     // ── Element helpers ───────────────────────────────────────────────────────
@@ -172,6 +279,56 @@ public class AppUtil {
         if (state != ApplicationState.RUNNING_IN_FOREGROUND) {
             driver.activateApp(ATOMBERG_HOME);
         }
+    }
+
+    /**
+     * True when the Atomberg app is currently in the foreground on this device.
+     */
+    public static boolean isAppInForeground(AndroidDriver driver) {
+        try {
+            return driver.queryAppState(ATOMBERG_HOME) == ApplicationState.RUNNING_IN_FOREGROUND;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Brings the app to a root/home screen <b>without ever pressing BACK off the
+     * app</b>.
+     *
+     * <p>A blind {@code navigate().back()} loop is unsafe: on a root screen the
+     * back press exits the app entirely (the app "closes by itself" while the other
+     * phone keeps running). This method presses back at most {@code maxBacks} times
+     * and, after every press, checks whether the app is still in the foreground —
+     * if a press knocked it out, the app is immediately re-activated and the loop
+     * stops. {@link HomeLocators#MORE_TAB} (the bottom nav) is the home marker,
+     * because it is present on every root screen including an empty device list.</p>
+     */
+    public static void ensureAppHome(AndroidDriver driver, int maxBacks) {
+        if (!isAppInForeground(driver)) {
+            System.out.println("[AppUtil] App not in foreground — re-activating.");
+            try { driver.activateApp(ATOMBERG_HOME); } catch (Exception ignored) {}
+            sleep(2000);
+        }
+
+        for (int i = 0; i < maxBacks; i++) {
+            if (isElementPresent(driver, HomeLocators.MORE_TAB)) return;   // already at a root screen
+            try { driver.navigate().back(); } catch (Exception ignored) {}
+            sleep(1000);
+
+            if (!isAppInForeground(driver)) {
+                // That back press left the app — undo it and stop pressing.
+                System.out.println("[AppUtil] BACK exited the app — re-activating and stopping.");
+                try { driver.activateApp(ATOMBERG_HOME); } catch (Exception ignored) {}
+                sleep(2000);
+                return;
+            }
+        }
+    }
+
+    /** {@link #ensureAppHome(AndroidDriver, int)} with a sensible default depth. */
+    public static void ensureAppHome(AndroidDriver driver) {
+        ensureAppHome(driver, 3);
     }
 
     // ── Wi-Fi provisioning ────────────────────────────────────────────────────

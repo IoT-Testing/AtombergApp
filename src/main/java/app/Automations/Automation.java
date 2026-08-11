@@ -2,6 +2,7 @@ package app.Automations;
 
 import app.util.ActionsUtil;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.*;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.interactions.*;
@@ -149,7 +150,7 @@ public class Automation {
     private void selectRandomFan() {
         clickElementIfExists(By.xpath("//android.view.View[@content-desc='Select fans']"), "Select Fans");
 
-        List<WebElement> checkboxes = driver.findElements(By.className("android.widget.CheckBox"));
+        List<WebElement> checkboxes = driver.findElements(AppiumBy.className("android.widget.CheckBox"));
         if (checkboxes.isEmpty()) {
             System.err.println("No fan checkboxes found.");
             return;
@@ -192,7 +193,7 @@ public class Automation {
      */
     private void selectRandomAction() {
         clickElementIfExists(By.xpath("//android.widget.Button[@content-desc='Power ON']"), "Power ON");
-        List<WebElement> actions = driver.findElements(By.className("android.view.View"));
+        List<WebElement> actions = driver.findElements(AppiumBy.className("android.view.View"));
         if (!actions.isEmpty()) {
             int index = random.nextInt(actions.size());
             try {
@@ -255,7 +256,7 @@ public class Automation {
      * Gets list of automation items starting with given prefix.
      */
     private List<WebElement> getAutomationListStartingWith(String prefix) {
-        return driver.findElements(By.className("android.widget.ImageView")).stream()
+        return driver.findElements(AppiumBy.className("android.widget.ImageView")).stream()
                 .filter(el -> {
                     String desc = getAttribute(el, "content-desc");
                     return desc != null && desc.startsWith(prefix);

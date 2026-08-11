@@ -1,6 +1,7 @@
 package app.ScreenCheck;
 
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
@@ -61,7 +62,7 @@ public class ScreenCheck {
      */
     public void rateUsPopup() {
         try {
-            List<WebElement> buttons = atomberg.findElements(By.className("android.widget.Button"));
+            List<WebElement> buttons = atomberg.findElements(AppiumBy.className("android.widget.Button"));
             List<WebElement> cancelButtons = buttons.stream()
                     .filter(btn -> "Cancel".equals(btn.getDomAttribute("content-desc")))
                     .toList();

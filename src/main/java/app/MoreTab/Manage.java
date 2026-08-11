@@ -4,6 +4,7 @@ import app.ScreenCheck.ScreenCheck;
 import app.util.ActionsUtil;
 import app.util.AppUtil;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -192,7 +193,7 @@ public class Manage {
      * Gets list of visible family names.
      */
     private List<WebElement> getVisibleFamilyNames() {
-        return atomberg.findElements(By.className("android.widget.ImageView")).stream()
+        return atomberg.findElements(AppiumBy.className("android.widget.ImageView")).stream()
                 .filter(el -> getElementText(el) != null)
                 .collect(Collectors.toList());
     }

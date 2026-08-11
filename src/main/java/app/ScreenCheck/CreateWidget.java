@@ -2,6 +2,7 @@ package app.ScreenCheck;
 
 import app.util.ActionsUtil;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -173,7 +174,7 @@ public class CreateWidget {
      * Gets all elements with non-null content-desc.
      */
     private List<WebElement> findLabeledElements() {
-        return driver.findElements(By.className("android.widget.TextView")).stream()
+        return driver.findElements(AppiumBy.className("android.widget.TextView")).stream()
                 .filter(el -> getAttribute(el, "content-desc") != null)
                 .collect(Collectors.toList());
     }

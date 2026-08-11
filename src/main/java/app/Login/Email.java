@@ -3,15 +3,14 @@ package app.Login;
 import app.util.ActionsUtil;
 import app.util.AppUtil;
 import app.util.PermissionUtil;
+import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
-
+import org.openqa.selenium.interactions.Actions;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
-
 import static app.resources.Credentials.DEFAULT_EMAIL;
 import static app.resources.Credentials.DEFAULT_PASSWORD;
 import static app.resources.Locators.Android.AppLocators.Login.*;
@@ -100,21 +99,34 @@ public class Email {
         AppUtil.captureScreenshot(atomberg, "04_password_entered");
 
         clickContinue();
-        System.out.println("Login submitted.");
         return true;
     }
 
     private void clickEmailLoginButton() {
         WebElement btn = waitForElement(atomberg, EMAIL_LOGIN_BUTTON, 10);
         btn.click();
-        System.out.println("Email login option (4th option) selected.");
     }
 
+    /**
+     * Enters text into a Flutter text field.
+     *
+     * <p>Flutter fields resolve as {@code android.widget.EditText} for element
+     * lookup but are backed by an {@code android.view.View}, so UiAutomator2
+     * rejects {@code element.clear()/sendKeys()} with "Incorrect UI Element Class
+     * 'android.view.View'". Instead, we tap to focus the field and type via the
+     * device keyboard (W3C Actions), which targets the focused element and skips
+     * the element-class check.</p>
+     */
     private void enterText(String text) {
         WebElement field = waitForElement(atomberg, EDIT_TEXT_FIELD, 10);
-        field.click();
-        field.clear();
-        field.sendKeys(text);
+        field.click();                 // focus the Flutter field
+        ActionsUtil.sleep(400);
+        try {
+            field.clear();             // best-effort; no-op/throws on a non-editable View
+        } catch (Exception ignore) {
+            // Field is a Flutter View — nothing to clear via the element API.
+        }
+        new Actions(atomberg).sendKeys(text).perform();   // type into the focused field
     }
 
     private boolean isContinueClickable() {
@@ -141,10 +153,10 @@ public class Email {
     private void handlePostLoginFlow() {
         PermissionUtil.allow(atomberg);
 
-        List<WebElement> views = atomberg.findElements(By.className("android.view.View"));
+        List<WebElement> views = atomberg.findElements(AppiumBy.className("android.view.View"));
         List<WebElement> labeled = views.stream()
                 .filter(el -> el.getDomAttribute("content-desc") != null)
-                .collect(Collectors.toList());
+                .toList();
 
         for (WebElement el : labeled) {
             if (Objects.equals(el.getDomAttribute("content-desc"),

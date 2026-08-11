@@ -4,6 +4,7 @@ import app.ScreenCheck.ScreenCheck;
 import app.util.ActionsUtil;
 import app.util.AppUtil;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.*;
 import org.openqa.selenium.NoSuchElementException;
 
@@ -33,7 +34,7 @@ public class ROManagement {
     private static final By BUY_NOW_BUTTON = By.xpath("//android.widget.Button[@content-desc=\"Buy Now!\"]");
     private static final By CHECK_HEALTH_BUTTON = By.xpath("//android.view.View[@content-desc=\"Check Health\"]");
     private static final By MODE_BUTTON = By.xpath("//android.widget.ImageView[@content-desc=\"Mode\"]");
-    private static final By CONTENT_DESC_VIEW = By.className("android.view.View");
+    private static final By CONTENT_DESC_VIEW = AppiumBy.className("android.view.View");
 
     public ROManagement(AndroidDriver driver) {
         this.atomberg = driver;

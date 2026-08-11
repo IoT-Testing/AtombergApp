@@ -3,6 +3,7 @@ package app.BLEOnlyFans;
 import app.ScreenCheck.ScreenCheck;
 import app.util.AppUtil;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
@@ -37,7 +38,7 @@ public class FanManagementBLEOnly {
             SSleep(15);
             System.out.println("15 seconds wait complete");// Wait for scan results
 
-            List<WebElement> availableBLEDevice = atomberg.findElements(By.className("android.view.View")).stream()
+            List<WebElement> availableBLEDevice = atomberg.findElements(AppiumBy.className("android.view.View")).stream()
                     .filter(element -> {
                         try {
                             String desc = element.getDomAttribute("content-desc");

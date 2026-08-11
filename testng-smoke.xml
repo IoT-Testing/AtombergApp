@@ -1,0 +1,28 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<!--
+  Atomberg – SMOKE suite
+  ─────────────────────────────────────────────────────────────────
+  Minimal end-to-end pipeline check on a single connected device:
+  build → device session → launch → login. Use this to validate the
+  setup before running the full regression (testng.xml).
+
+  Run with:
+      mvn test -DsuiteFile=testng-smoke.xml
+
+  Listeners (TestListeners, DashboardReporter) are registered once via
+  @Listeners on BaseTest — do NOT declare them here (avoids double
+  registration).
+  ─────────────────────────────────────────────────────────────────
+-->
+<suite name="Atomberg Home App – Smoke Suite" verbose="2">
+
+    <test name="Smoke – Open &amp; Login">
+        <parameter name="deviceSlot" value="Local_Device_Slot1"/>
+        <!-- deviceUdid omitted → Appium Device Farm auto-allocates the device -->
+        <classes>
+            <class name="com.appTest.tests.OpenAppTest"/>
+            <class name="com.appTest.tests.LoginTest"/>
+        </classes>
+    </test>
+
+</suite>

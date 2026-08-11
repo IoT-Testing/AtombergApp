@@ -40,6 +40,8 @@ import static app.resources.AppInfo.ATOMBERG_ACTIVITY;
 public class DualDeviceManager {
 
     // Environment variable names — set these before running tests
+    // These are the CONFIG KEY NAMES to look up (in sharing-test.properties or
+    // as env vars) — NOT the values. The actual UDIDs live in sharing-test.properties.
     public static final String ENV_ADMIN_UDID  = "ADMIN_DEVICE_UDID";
     public static final String ENV_MEMBER_UDID = "MEMBER_DEVICE_UDID";
     public static final String ENV_APPIUM_URL  = "APPIUM_URL";
@@ -56,9 +58,10 @@ public class DualDeviceManager {
      * @throws RuntimeException      if driver creation fails
      */
     public static DualDeviceManager create() {
-        String adminUdid  = requireEnv(ENV_ADMIN_UDID);
-        String memberUdid = requireEnv(ENV_MEMBER_UDID);
-        String appiumUrl  = optionalEnv(ENV_APPIUM_URL, "http://127.0.0.1:4723");
+        // Resolves via SharingConfig: sharing-test.properties → env var → -D property.
+        String adminUdid  = SharingConfig.require(ENV_ADMIN_UDID);
+        String memberUdid = SharingConfig.require(ENV_MEMBER_UDID);
+        String appiumUrl  = SharingConfig.get(ENV_APPIUM_URL, "http://127.0.0.1:4723");
         return new DualDeviceManager(adminUdid, memberUdid, appiumUrl);
     }
 
@@ -72,20 +75,36 @@ public class DualDeviceManager {
 
     // ── Constructor ───────────────────────────────────────────────────────────
 
+    // Distinct UiAutomator2 ports per session. Two concurrent UiAutomator2
+    // sessions on ONE Appium server MUST use different systemPorts — otherwise
+    // both default to 8200, the second session's instrumentation collides with
+    // the first, and commands route to the WRONG device (admin↔member swap).
+    private static final int ADMIN_SYSTEM_PORT  = 8200;
+    private static final int MEMBER_SYSTEM_PORT = 8201;
+    private static final int ADMIN_MJPEG_PORT   = 7810;
+    private static final int MEMBER_MJPEG_PORT  = 7811;
+
     private DualDeviceManager(String adminUdid, String memberUdid, String appiumUrl) {
-        System.out.println("[DualDeviceManager] Admin  UDID: " + adminUdid);
-        System.out.println("[DualDeviceManager] Member UDID: " + memberUdid);
-        System.out.println("[DualDeviceManager] Appium URL : " + appiumUrl);
+        System.out.println("[DualDeviceManager] Admin  UDID: " + adminUdid
+                + "  (systemPort " + ADMIN_SYSTEM_PORT + ")");
+        System.out.println("[DualDeviceManager] Member UDID: " + memberUdid
+                + "  (systemPort " + MEMBER_SYSTEM_PORT + ")");
+        if (adminUdid.equals(memberUdid)) {
+            throw new IllegalStateException(
+                    "ADMIN_DEVICE_UDID and MEMBER_DEVICE_UDID are identical (" + adminUdid
+                            + "). Set two different device UDIDs — run `adb devices`.");
+        }
 
         URL url = parseUrl(appiumUrl);
 
-        // Admin phone – creates session 1 on the Appium server
-        adminDriver  = buildDriver(url, adminUdid,  "Admin_Device");
+        // Admin phone – session 1 (own systemPort / mjpegServerPort)
+        adminDriver = buildDriver(url, adminUdid, "Admin_Device",
+                ADMIN_SYSTEM_PORT, ADMIN_MJPEG_PORT);
 
-        // Member phone – creates session 2 on the SAME Appium server
-        memberDriver = buildDriver(url, memberUdid, "Member_Device");
+        // Member phone – session 2 on the SAME Appium server (distinct ports)
+        memberDriver = buildDriver(url, memberUdid, "Member_Device",
+                MEMBER_SYSTEM_PORT, MEMBER_MJPEG_PORT);
 
-        System.out.println("[DualDeviceManager] Both drivers created successfully.");
     }
 
     // ── Accessors ─────────────────────────────────────────────────────────────
@@ -129,7 +148,6 @@ public class DualDeviceManager {
                     .map(line -> line.split("\t")[0].trim())
                     .filter(udid -> !udid.isEmpty())
                     .toList();
-            System.out.println("[DualDeviceManager] Connected devices: " + udids);
             return udids;
         } catch (Exception e) {
             System.err.println("[DualDeviceManager] Could not run 'adb devices': " + e.getMessage());
@@ -147,20 +165,35 @@ public class DualDeviceManager {
 
     // ── Private builders ──────────────────────────────────────────────────────
 
-    private static AndroidDriver buildDriver(URL url, String udid, String deviceLabel) {
+    private static AndroidDriver buildDriver(URL url, String udid, String deviceLabel,
+                                             int systemPort, int mjpegServerPort) {
         UiAutomator2Options opts = new UiAutomator2Options();
         opts.setUdid(udid);
         opts.setAppPackage(ATOMBERG_HOME);
         opts.setAppActivity(ATOMBERG_ACTIVITY);
         opts.setPlatformName("Android");
         opts.setAutomationName("UiAutomator2");
+        // Isolate this session's UiAutomator2 instrumentation from the other
+        // device's — REQUIRED for two concurrent sessions on one Appium server.
+        opts.setSystemPort(systemPort);
+        opts.setMjpegServerPort(mjpegServerPort);
+        // Pin the capability to this exact device so a slow/failed attach never
+        // falls back to whichever device the server sees first.
+        opts.setDeviceName(udid);
         // Do not reset — preserve existing login sessions on both devices
         opts.setNoReset(true);
+        // In a two-phone suite one session idles while the other works (the admin
+        // long-presses, shares and reads the invite code while the member waits).
+        // The default newCommandTimeout is 60 s, after which Appium kills the idle
+        // session AND closes its app — which looks like "the member phone shut its
+        // app down on its own". 30 min is comfortably longer than any single step.
+        opts.setNewCommandTimeout(Duration.ofMinutes(30));
 
         try {
             AndroidDriver d = new AndroidDriver(url, opts);
             d.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
-            System.out.println("[DualDeviceManager] " + deviceLabel + " session: " + d.getSessionId());
+            System.out.println("[DualDeviceManager] " + deviceLabel + " session created on UDID="
+                    + udid + " (systemPort " + systemPort + ")");
             return d;
         } catch (Exception e) {
             throw new RuntimeException(

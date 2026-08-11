@@ -101,6 +101,18 @@ public class ExtentReportAT {
     }
 
     /**
+     * Registers a parent node for the given device slot if one does not already
+     * exist. Needed by multi-device tests (e.g. the two-phone Device Sharing
+     * suite) that report under several slots — "Admin_Device", "Member_Device",
+     * "Admin+Member" — from a single reporter instance.
+     *
+     * @param deviceSlot Device identifier to register
+     */
+    public void registerDevice(String deviceSlot) {
+        createParentTestIfAbsent(deviceSlot);
+    }
+
+    /**
      * Starts a new child test under the device-specific parent node.
      *
      * @param testName    Name of the test

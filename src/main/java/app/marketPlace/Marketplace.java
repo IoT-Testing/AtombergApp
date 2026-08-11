@@ -95,7 +95,7 @@
 //
 //        color = path.color;
 //        if (color != null && !color.equals("null")) {
-//            List<WebElement> Elements = atomberg.findElements(By.className("android.view.View"));
+//            List<WebElement> Elements = atomberg.findElements(AppiumBy.className("android.view.View"));
 //            List<WebElement> availableColors = Elements.stream().filter(element -> element.getDomAttribute("content-desc") != null).collect(Collectors.toList());
 //            for (WebElement availableColor : availableColors) {
 //                if (Objects.requireNonNull(availableColor.getDomAttribute("content-desc")).equals(color)) {

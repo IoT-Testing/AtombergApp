@@ -2,6 +2,7 @@ package app.BLEOnlyFans;
 
 import app.util.ActionsUtil;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import java.io.PrintWriter;
@@ -219,7 +220,7 @@ public class ProgressivePauseResume {
 
     private String getCurrentFirmwareVersionFromMenu() {
         try {
-            List<WebElement> views = driver.findElements(By.className("android.view.View"));
+            List<WebElement> views = driver.findElements(AppiumBy.className("android.view.View"));
             return views.stream()
                     .map(el -> {
                         try {

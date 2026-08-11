@@ -2,6 +2,7 @@ package app;
 
 import app.util.ActionsUtil;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import java.time.Duration;
@@ -17,7 +18,7 @@ public class SwitchFamily {
     private final AndroidDriver atomberg;
 
     // === Locators ===
-    private static final By VIEW_ELEMENT = By.className("android.view.View");
+    private static final By VIEW_ELEMENT = AppiumBy.className("android.view.View");
 
     public SwitchFamily(AndroidDriver driver) {
         this.atomberg = driver;

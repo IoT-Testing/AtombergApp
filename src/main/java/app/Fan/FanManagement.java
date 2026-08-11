@@ -10,6 +10,7 @@ import app.resources.PythonFileScript;
 import app.util.ActionsUtil;
 import app.util.AppUtil;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -613,7 +614,7 @@ public class  FanManagement implements SmartDevice {
      * @return List of valid fan web elements
      */
     private List<WebElement> getVisibleFanList() {
-        List<WebElement> allButtons = atomberg.findElements(By.className("android.widget.Button"));
+        List<WebElement> allButtons = atomberg.findElements(AppiumBy.className("android.widget.Button"));
         return allButtons.stream()
                 .map(el -> {
                     String desc = el.getDomAttribute("content-desc");
@@ -643,7 +644,6 @@ public class  FanManagement implements SmartDevice {
             for (WebElement fan : fans) {
                 //android.widget.Button[@index="0"] xPath of error triangle
                 String name = fan.getDomAttribute("content-desc");
-                System.out.println("Controlling fan: " + name);
                 fan.click();
                 if (isElementPresent(atomberg, REMOVE_DEVICE)) clickIfExists(atomberg, YES);
                 if (isElementPresent(atomberg, DEVICE_REMOVED_SUCCESSFULLY))

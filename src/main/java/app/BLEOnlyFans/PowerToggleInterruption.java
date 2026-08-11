@@ -6,6 +6,7 @@ import app.util.AppUtil;
 import app.util.Navigation;
 import com.fazecast.jSerialComm.SerialPort;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -218,13 +219,13 @@ public class PowerToggleInterruption {
     }
 
     private WebElement findElementByContentDescStartsWith(String prefix) {
-        List<WebElement> candidates = driver.findElements(By.className("android.view.View"));
+        List<WebElement> candidates = driver.findElements(AppiumBy.className("android.view.View"));
         return candidates.stream()
                 .map(el -> getAttribute(el, "content-desc"))
                 .filter(Objects::nonNull)
                 .filter(desc -> desc.startsWith(prefix))
                 .findFirst()
-                .flatMap(desc -> driver.findElements(By.className("android.view.View")).stream()
+                .flatMap(desc -> driver.findElements(AppiumBy.className("android.view.View")).stream()
                         .filter(el -> Objects.equals(getAttribute(el, "content-desc"), desc))
                         .findFirst())
                 .orElse(null);
@@ -269,7 +270,7 @@ public class PowerToggleInterruption {
 
     private String getCurrentFirmwareVersionFromMenu() {
         try {
-            List<WebElement> views = driver.findElements(By.className("android.view.View"));
+            List<WebElement> views = driver.findElements(AppiumBy.className("android.view.View"));
             return views.stream()
                     .map(el -> {
                         try {

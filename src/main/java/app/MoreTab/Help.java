@@ -4,6 +4,7 @@ import app.util.ActionsUtil;
 import app.util.AppUtil;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.appmanagement.ApplicationState;
+import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.*;
 import java.time.Duration;
 import java.util.List;
@@ -331,7 +332,7 @@ public class Help {
      * Gets all visible buttons with non-null content-desc.
      */
     private List<WebElement> getVisibleButtons() {
-        return atomberg.findElements(By.className("android.widget.Button")).stream()
+        return atomberg.findElements(AppiumBy.className("android.widget.Button")).stream()
                 .filter(el -> el.getDomAttribute("content-desc") != null)
                 .collect(Collectors.toList());
     }
