@@ -36,6 +36,7 @@ yarn-error.log*
 # ── Test output ────────────────────────────────────────────────────────────────
 screenshots/
 logs/
+SS and XML/
 test-results/
 test-output/
 ExtentReports/
