@@ -1,5 +1,6 @@
 package com.appTest.tests;
 
+import app.sharing.DeviceSharingPage;
 import app.util.AppUtil;
 import com.aventstack.extentreports.Status;
 import org.testng.Assert;
@@ -121,6 +122,20 @@ public class DeviceShareLongPressFlowTest extends BaseDeviceSharingTest {
 
     private static boolean isSet(String s) { return s != null && !s.isBlank(); }
 
+    /**
+     * How many times to ask the app for an invite code before giving up, when it
+     * answers "Error generating the code". Override per run with
+     * {@code -DCODE_GENERATION_ATTEMPTS=1} to make the failure hard and see it
+     * unmasked — useful when investigating the error itself rather than testing
+     * around it.
+     *
+     * <p>Three is a deliberate ceiling: enough to ride out a transient server blip,
+     * few enough that a genuinely broken backend fails the run in reasonable time
+     * instead of retrying indefinitely.</p>
+     */
+    private static final int CODE_GENERATION_ATTEMPTS =
+            Integer.getInteger("CODE_GENERATION_ATTEMPTS", 3);
+
     // ── The round-trip ──────────────────────────────────────────────────────────
 
     /**
@@ -133,6 +148,16 @@ public class DeviceShareLongPressFlowTest extends BaseDeviceSharingTest {
     public void shareViaLongPress() {
         reporter.startTest("Flow2 LongPress – family share round-trip", "Admin+Member");
         try {
+            // This is the canonical round trip for the user's "Flow 2 — without permissions
+            // (present flow)". It is deliberately NOT mode-gated: the long-press share entry
+            // point exists in both builds, and asserting dashboard parity is valid in both.
+            // What differs is only whether a level was applied along the way, which this test
+            // does not claim either way. Logged so the report says which build produced it.
+            reporter.log(Status.INFO, "Sharing mode: " + sharingMode.label
+                    + (sharingMode.hasPermissionLevels()
+                        ? " — a level picker exists on this build; per-level assertions live in "
+                          + "SharingRolesTest / SharingManageFamilyTest, not here."
+                        : " — family-wide share, no level picker. This is the present flow."));
             // ── ADMIN: long-press the tile → "Share device" → confirmation → Yes ──
             // shareDeviceFromHomeLongPress() answers the "Share access to family?"
             // dialog itself, so the QR screen is up when it returns.
@@ -146,12 +171,31 @@ public class DeviceShareLongPressFlowTest extends BaseDeviceSharingTest {
                 reporter.log(Status.WARNING, "QR image not detected — continuing on the invite code.");
             }
 
-            // ── The code: read once, stored, carried to the other phone ───────────
-            String inviteCode = adminSharingPage.readInviteCode();
-            Assert.assertTrue(isSet(inviteCode),
-                    "Admin must be able to read/copy the invite code from the share screen "
-                            + "— see test-output/page-source/invite_code_not_read.xml for what was on screen.");
-            reporter.log(Status.INFO, "Invite code captured: " + inviteCode);
+            // ── The code: generated with retry, stored, carried to the other phone ─
+            // The app intermittently answers "Error generating the code". That is a
+            // real product defect, so it is reported even when a retry rescues the
+            // run — a silent PASS would bury it.
+            DeviceSharingPage.ShareCodeResult codeResult =
+                    adminSharingPage.obtainInviteCode(testDeviceName, CODE_GENERATION_ATTEMPTS);
+
+            if (codeResult.hadCodeError()) {
+                reporter.log(Status.WARNING, "CODE GENERATION ERROR — " + codeResult.summary());
+                for (String err : codeResult.errors) {
+                    reporter.log(Status.WARNING, "  " + err);
+                }
+                reporter.log(Status.WARNING, "Probable root cause: " + codeResult.diagnosis);
+                System.err.println("[Flow2LP] " + codeResult.summary());
+            }
+
+            Assert.assertTrue(codeResult.succeeded(),
+                    "Admin could not generate an invite code after "
+                            + codeResult.attempts + " attempt(s)."
+                            + "\n  " + codeResult.summary()
+                            + "\n  Screens: test-output/page-source/share_code_error_attempt*.xml");
+
+            String inviteCode = codeResult.code;
+            reporter.log(codeResult.hadCodeError() ? Status.WARNING : Status.INFO,
+                    "Invite code captured on attempt " + codeResult.attempts + ": " + inviteCode);
             System.out.println("[Flow2LP] Invite code = " + inviteCode);
 
             // ── MEMBER: Manage Family → (+) Add → Join an existing smart home ─────

@@ -882,6 +882,207 @@ public class DeviceSharingPage {
             java.util.regex.Pattern.compile("content-desc=\"([A-Z0-9]{6,10})\"");
 
     // ══════════════════════════════════════════════════════════════════════════
+    // Invite code with retry — "Error generating the code" failsafe
+    // ══════════════════════════════════════════════════════════════════════════
+
+    /**
+     * Outcome of {@link #obtainInviteCode}: the code if one was produced, plus the
+     * full history of what went wrong on the way.
+     *
+     * <p>Carried back to the test rather than logged and forgotten, because a code
+     * that only appeared on attempt 3 still means the app failed twice — and a run
+     * that reports nothing but PASS hides a real product defect.</p>
+     */
+    public static final class ShareCodeResult {
+        /** The invite code, or null when every attempt failed. */
+        public final String code;
+        /** How many share attempts were made (1 == worked first time). */
+        public final int attempts;
+        /** One entry per observed "Error generating the code", in order. */
+        public final java.util.List<String> errors;
+        /** Best-effort root-cause reading, or null when no error was seen. */
+        public final String diagnosis;
+
+        ShareCodeResult(String code, int attempts,
+                        java.util.List<String> errors, String diagnosis) {
+            this.code = code;
+            this.attempts = attempts;
+            this.errors = java.util.List.copyOf(errors);
+            this.diagnosis = diagnosis;
+        }
+
+        public boolean succeeded()     { return code != null && !code.isBlank(); }
+        public boolean hadCodeError()  { return !errors.isEmpty(); }
+
+        /** One-line summary for the test report. */
+        public String summary() {
+            if (!hadCodeError()) return "Invite code generated first try: " + code;
+            return (succeeded()
+                    ? "Invite code generated on attempt " + attempts + " (" + code + ")"
+                    : "Invite code NEVER generated after " + attempts + " attempts")
+                    + " — " + errors.size() + " × code-generation error."
+                    + "\n  errors   : " + String.join(" | ", errors)
+                    + "\n  diagnosis: " + diagnosis;
+        }
+    }
+
+    /**
+     * Generates the invite code, retrying the share when the app answers with
+     * "Error generating the code".
+     *
+     * <p>The error is intermittent and server-side, so a single failure is not a
+     * reason to fail the whole round-trip — but it IS a reason to record that it
+     * happened. Each failure is captured with a screenshot, a page-source dump, and a
+     * root-cause reading taken while the error is still on screen.</p>
+     *
+     * <p>Retry strategy: tap an in-place Retry control if the build offers one,
+     * otherwise back out and re-run the long-press share from Home. The second is the
+     * path that actually exercises on this build, and it also clears any half-made
+     * share state the failed attempt left behind.</p>
+     *
+     * @param deviceName  tile to long-press when a full re-share is needed
+     * @param maxAttempts total attempts including the first (values &lt; 1 mean 1)
+     */
+    public ShareCodeResult obtainInviteCode(String deviceName, int maxAttempts) {
+        int limit = Math.max(1, maxAttempts);
+        java.util.List<String> errors = new java.util.ArrayList<>();
+        String diagnosis = null;
+
+        for (int attempt = 1; attempt <= limit; attempt++) {
+            waitForCodeGeneration();
+
+            if (isPresent(SHARE_CODE_ERROR)) {
+                String errorText = readErrorText();
+                // Diagnose BEFORE any navigation — connectivity and the error copy are
+                // only trustworthy while the failing screen is still up.
+                diagnosis = diagnoseCodeFailure(errorText);
+                errors.add("attempt " + attempt + ": " + errorText);
+
+                System.err.println("[DeviceSharingPage] Code generation FAILED (attempt "
+                        + attempt + "/" + limit + "): " + errorText);
+                System.err.println("[DeviceSharingPage] Diagnosis: " + diagnosis);
+                AppUtil.captureScreenshot(driver, "share_code_error_attempt" + attempt);
+                dumpTree("share_code_error_attempt" + attempt);
+
+                if (attempt < limit) {
+                    regenerateCode(deviceName, attempt);
+                    continue;
+                }
+                return new ShareCodeResult(null, attempt, errors, diagnosis);
+            }
+
+            String code = readInviteCode();
+            if (code != null && !code.isBlank()) {
+                return new ShareCodeResult(code, attempt, errors, diagnosis);
+            }
+
+            // No error banner, but nothing readable either — treat as a soft failure
+            // so it still retries instead of handing null to the member phone.
+            errors.add("attempt " + attempt + ": no error shown, but no code could be read");
+            diagnosis = diagnoseCodeFailure(null);
+            if (attempt < limit) {
+                regenerateCode(deviceName, attempt);
+            }
+        }
+        return new ShareCodeResult(null, limit, errors, diagnosis);
+    }
+
+    /** Convenience overload — three attempts, enough to ride out a transient blip. */
+    public ShareCodeResult obtainInviteCode(String deviceName) {
+        return obtainInviteCode(deviceName, 3);
+    }
+
+    /**
+     * Blocks until the "Please wait..." spinner clears, so the screen has settled into
+     * either a code or an error before either is read.
+     */
+    private void waitForCodeGeneration() {
+        if (!isPresent(SHARE_CODE_LOADING)) return;
+        System.out.println("[DeviceSharingPage] Generating code — waiting for spinner...");
+        try {
+            new WebDriverWait(driver, Duration.ofSeconds(30))
+                    .until(ExpectedConditions.invisibilityOfElementLocated(SHARE_CODE_LOADING));
+        } catch (Exception e) {
+            System.err.println("[DeviceSharingPage] Spinner still up after 30s — "
+                    + "code generation appears hung.");
+        }
+        ActionsUtil.SSleep(1);
+    }
+
+    /** Full text of the error node, for the report. Falls back to the generic copy. */
+    private String readErrorText() {
+        try {
+            String desc = driver.findElement(SHARE_CODE_ERROR).getDomAttribute("content-desc");
+            if (desc != null && !desc.isBlank()) return desc.replace("\n", " / ").trim();
+        } catch (Exception ignored) {}
+        return "Error generating the code";
+    }
+
+    /**
+     * Best-effort root cause, gathered while the error is still on screen.
+     *
+     * <p>Appium can only see the device, not the server, so this reports the
+     * conditions that plausibly explain the failure rather than asserting one. The
+     * checks are ordered most-actionable first, and the phrasing keeps the
+     * distinction between "the phone was offline" (our environment) and "connectivity
+     * was fine" (a genuine backend fault worth raising with the app team).</p>
+     */
+    private String diagnoseCodeFailure(String errorText) {
+        java.util.List<String> findings = new java.util.ArrayList<>();
+
+        // 1. Connectivity — the single most common cause, and cheap to read.
+        try {
+            io.appium.java_client.android.connection.ConnectionState net = driver.getConnection();
+            boolean wifi = net.isWiFiEnabled();
+            boolean data = net.isDataEnabled();
+            boolean airplane = net.isAirplaneModeEnabled();
+            if (airplane)            findings.add("AIRPLANE MODE is on — device has no network");
+            else if (!wifi && !data) findings.add("no network: Wi-Fi and mobile data BOTH off");
+            else findings.add("connectivity looks fine (wifi=" + wifi
+                        + ", data=" + data + ") — points at a SERVER-side failure");
+        } catch (Exception e) {
+            findings.add("could not read connection state: " + e.getMessage());
+        }
+
+        // 2. Did the spinner never clear? A hang reads differently from a fast reject.
+        if (isPresent(SHARE_CODE_LOADING)) {
+            findings.add("spinner never cleared — request timed out rather than being refused");
+        }
+
+        // 3. Is the app even still foregrounded?
+        if (!AppUtil.isAppInForeground(driver)) {
+            findings.add("app left the foreground during generation — likely a crash/restart");
+        }
+
+        // 4. Anything the error copy itself carries beyond the generic sentence.
+        if (errorText != null && errorText.length() > "Error generating the code".length() + 3) {
+            findings.add("error detail on screen: \"" + errorText + "\"");
+        }
+
+        return String.join("; ", findings);
+    }
+
+    /**
+     * Clears the failed share and starts a fresh one. Prefers an in-place Retry
+     * control; otherwise re-runs the long-press share, which also discards whatever
+     * partial state the failed attempt left on screen.
+     */
+    private void regenerateCode(String deviceName, int failedAttempt) {
+        System.out.println("[DeviceSharingPage] Regenerating code after attempt " + failedAttempt + "...");
+
+        if (isPresent(SHARE_CODE_RETRY)) {
+            tap(SHARE_CODE_RETRY, "Retry code generation");
+            ActionsUtil.SSleep(2);
+            return;
+        }
+
+        // Back off before re-sharing: hammering a server that just failed tends to
+        // fail again, and the delay costs nothing next to a lost round-trip.
+        ActionsUtil.SSleep(3);
+        shareDeviceFromHomeLongPress(deviceName);
+    }
+
+    // ══════════════════════════════════════════════════════════════════════════
     // STATE QUERIES (used by tests for assertions)
     // ══════════════════════════════════════════════════════════════════════════
 
@@ -944,6 +1145,214 @@ public class DeviceSharingPage {
      */
     public boolean isDeviceVisibleOnHome(String deviceName) {
         return isPresent(deviceCardOnHome(deviceName));
+    }
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // STATE QUERIES for the sheet-mapped suites (RP / F2 / F3)
+    //
+    // These return facts and never assert. Keeping the reading here and the verdict in
+    // the test is what lets one screen state serve a positive assertion in one case and
+    // a negative one in another — "the FAB is present" is required for F3-01 and
+    // forbidden for F3-14, and a helper that threw on either could not serve both.
+    // ══════════════════════════════════════════════════════════════════════════
+
+    /** Public presence check, for tests that need to read a locator directly. */
+    public boolean isElementPresent(By locator) {
+        return isPresent(locator);
+    }
+
+    /**
+     * True when the (+) share FAB is reachable inside the named family.
+     *
+     * <p>Backs both F3-01 (an admin must have it) and F3-14 (a non-admin must not), so it
+     * reports rather than navigates-or-dies: a non-admin may not even reach the family
+     * screen, and that is a pass for F3-14, not an error.</p>
+     */
+    public boolean isShareFabPresent(String familyName) {
+        try {
+            if (isPresent(familyTile(familyName))) {
+                openFamilyHome(familyName);
+                ActionsUtil.SSleep(1);
+            }
+            // FAB_ADD_MEMBER's first branch is a positional path that also matches nodes on
+            // the Manage Family LIST screen, so presence there is not evidence. Only trust
+            // it once the family tile is gone, i.e. the family really is open.
+            boolean stillOnList = isPresent(familyTile(familyName));
+            boolean fab = isPresent(FAB_ADD_MEMBER);
+            System.out.println("[DeviceSharingPage] Share FAB present=" + fab
+                    + " (stillOnFamilyList=" + stillOnList + ")");
+            return fab && !stillOnList;
+        } catch (Exception e) {
+            System.out.println("[DeviceSharingPage] Could not evaluate the share FAB: "
+                    + e.getMessage());
+            return false;
+        }
+    }
+
+    /** Which options the share bottom sheet offers — "Share Entire Home", "Share Specific Devices". */
+    public java.util.List<String> shareSheetOptions() {
+        java.util.List<String> found = new java.util.ArrayList<>();
+        if (isPresent(SHARE_ENTIRE_HOME_OPTION))     found.add("Share Entire Home");
+        if (isPresent(SHARE_SPECIFIC_DEVICES_OPTION)) found.add("Share Specific Devices");
+        if (found.isEmpty()) dumpTree("share_sheet_no_options");
+        return found;
+    }
+
+    /** Opens the "Share Specific Devices" branch. False when the option is absent. */
+    public boolean openSpecificDevicePicker() {
+        if (!isPresent(SHARE_SPECIFIC_DEVICES_OPTION)) {
+            dumpTree("share_specific_devices_option_missing");
+            return false;
+        }
+        tap(SHARE_SPECIFIC_DEVICES_OPTION, "Share Specific Devices");
+        ActionsUtil.SSleep(2);
+        AppUtil.captureScreenshot(driver, "specific_device_picker");
+        dumpTree("specific_device_picker");
+        return true;
+    }
+
+    /**
+     * Whether the "Share Devices" CTA is enabled, or null when it is not on screen.
+     *
+     * <p>Three-valued on purpose. F3-12 requires the CTA to be blocked with nothing
+     * selected, and the app can satisfy that either by disabling the button or by not
+     * rendering it — so "absent" has to be distinguishable from "enabled", which a
+     * boolean would flatten into false and score as a pass for the wrong reason.</p>
+     */
+    public Boolean isShareDevicesButtonEnabled() {
+        WebElement el = AppUtil.findOptionalElement(driver, SHARE_DEVICES_BUTTON);
+        if (el == null) return null;
+        String enabled = el.getDomAttribute("enabled");
+        // Android omits enabled="false" on some Flutter nodes; absence means enabled.
+        return !"false".equalsIgnoreCase(enabled);
+    }
+
+    /** Taps a device's selection control on the specific-device picker. */
+    public boolean selectDeviceForShare(String deviceName) {
+        By control = deviceSelectControl(deviceName);
+        if (!isPresent(control)) {
+            dumpTree("device_select_missing_" + AppUtil.sanitizeFileName(deviceName));
+            return false;
+        }
+        tap(control, "Select device: " + deviceName.replace("\n", " / "));
+        ActionsUtil.SSleep(1);
+        return true;
+    }
+
+    /**
+     * Every device row on the currently-open member device list.
+     *
+     * <p>Reads the whole list rather than probing per device name, because F2-03 asserts a
+     * COUNT and F2-08 asserts emptiness — neither is answerable by asking "is device X
+     * here?". Rows are matched on being clickable with a multi-line content-desc, the
+     * "&lt;device&gt;\n&lt;room-or-level&gt;" shape the tiles use elsewhere in the app.</p>
+     */
+    public java.util.List<String> listMemberDeviceRows() {
+        java.util.LinkedHashSet<String> rows = new java.util.LinkedHashSet<>();
+        try {
+            List<WebElement> candidates = driver.findElements(By.xpath(
+                    "//android.widget.ImageView[@content-desc] | //android.view.View[@content-desc"
+                            + " and @clickable=\"true\"]"));
+            for (WebElement el : candidates) {
+                String desc = el.getDomAttribute("content-desc");
+                if (desc == null || desc.isBlank()) continue;
+                // Drop chrome: tab bar entries and the section headers share the screen.
+                if (desc.contains("Tab ") || desc.equals("Devices") || desc.equals("Rooms")
+                        || desc.equals("Automations") || desc.startsWith("Add ")) continue;
+                rows.add(desc.trim());
+            }
+        } catch (Exception e) {
+            System.err.println("[DeviceSharingPage] Could not list member device rows: "
+                    + e.getMessage());
+        }
+        java.util.List<String> out = new java.util.ArrayList<>(rows);
+        System.out.println("[DeviceSharingPage] Member device rows: " + AppUtil.prettyTiles(out));
+        return out;
+    }
+
+    /** True when the member's device list shows an informative empty state (F2-08). */
+    public boolean isMemberDeviceListEmpty() {
+        boolean emptyState = isPresent(MEMBER_DEVICE_LIST_EMPTY_STATE);
+        if (!emptyState) dumpTree("member_device_list_not_empty_state");
+        return emptyState;
+    }
+
+    /** Opens a device row inside a member's device list, revealing its permission editor. */
+    public boolean openMemberDeviceRow(String deviceName) {
+        By row = memberDeviceRow(deviceName);
+        if (!isPresent(row)) {
+            dumpTree("member_device_row_missing_" + AppUtil.sanitizeFileName(deviceName));
+            return false;
+        }
+        tap(row, "Member device row: " + deviceName.replace("\n", " / "));
+        ActionsUtil.SSleep(2);
+        return true;
+    }
+
+    /**
+     * Starts a per-device revoke and reports whether a confirmation dialog appeared
+     * BEFORE anything was deleted — the F2-14 requirement — then confirms.
+     *
+     * @return an outcome distinguishing "no Remove control", "removed without asking"
+     *         and "prompted, then removed"
+     */
+    public RevokeOutcome revokeDeviceFromMember(String deviceName) {
+        if (!isPresent(MEMBER_REMOVE_DEVICE_OPTION)
+                && !isPresent(DEVICE_REMOVE_ACCESS_OPTION)) {
+            dumpTree("revoke_option_missing_" + AppUtil.sanitizeFileName(deviceName));
+            return new RevokeOutcome(false, false, false,
+                    "no per-device Remove/Revoke control on this screen");
+        }
+        tapFirstPresent("Remove device access",
+                MEMBER_REMOVE_DEVICE_OPTION, DEVICE_REMOVE_ACCESS_OPTION);
+        ActionsUtil.SSleep(1);
+
+        // Read the prompt BEFORE confirming — after the tap the dialog is gone and
+        // "it asked me" is indistinguishable from "it just deleted it".
+        boolean prompted = isPresent(REMOVE_ACCESS_CONFIRM_DIALOG)
+                || isPresent(REMOVE_ACCESS_CONFIRM_BUTTON)
+                || isPresent(DIALOG_CONFIRM_YES);
+        AppUtil.captureScreenshot(driver, "revoke_confirm_dialog");
+
+        boolean confirmed = tapFirstPresent("Confirm revoke",
+                REMOVE_ACCESS_CONFIRM_BUTTON, DIALOG_CONFIRM_YES, DIALOG_CONFIRM_OK);
+        ActionsUtil.SSleep(2);
+        AppUtil.captureScreenshot(driver, "revoke_done_"
+                + AppUtil.sanitizeFileName(deviceName));
+        return new RevokeOutcome(true, prompted, confirmed,
+                prompted ? "confirmation dialog shown before the delete call"
+                         : "NO confirmation dialog — the revoke proceeded unprompted");
+    }
+
+    /**
+     * @param controlFound a Remove/Revoke control existed
+     * @param prompted     a confirmation dialog appeared before deletion (F2-14)
+     * @param confirmed    the confirmation was accepted
+     * @param detail       human-readable reading for the report
+     */
+    public record RevokeOutcome(boolean controlFound, boolean prompted,
+                                boolean confirmed, String detail) {}
+
+    /**
+     * Restarts the app on this phone: terminate, relaunch, land on Home.
+     *
+     * <p>The force-kill half of the stale-cache case (EC-06). The spec's NFR is that
+     * permission-sensitive screens re-fetch on resume, and only a cold start proves the
+     * client is not serving a cached mask — a background/foreground cycle can be answered
+     * from memory.</p>
+     */
+    public DeviceSharingPage restartApp() {
+        try {
+            driver.terminateApp(app.resources.AppInfo.ATOMBERG_HOME);
+            ActionsUtil.SSleep(2);
+            driver.activateApp(app.resources.AppInfo.ATOMBERG_HOME);
+            ActionsUtil.SSleep(6);
+            returnToHomeScreen();
+            AppUtil.captureScreenshot(driver, "admin_app_restarted");
+        } catch (Exception e) {
+            System.err.println("[DeviceSharingPage] App restart failed: " + e.getMessage());
+        }
+        return this;
     }
 
     // ══════════════════════════════════════════════════════════════════════════

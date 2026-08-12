@@ -643,4 +643,285 @@ public final class SharingLocators {
             By.xpath("//android.widget.ImageView[@content-desc=\"More options\"]"
                     + " | //android.view.View[@content-desc=\"Options\"]"
                     + " | " + OPTIONS_MENU_XPATH);
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // Invite-code generation: loading / error / retry
+    // ══════════════════════════════════════════════════════════════════════════
+
+    /**
+     * The blocking spinner shown while the backend mints the invite code. Captured in
+     * test-output/page-source/qr_share_screen.xml as
+     * {@code content-desc="Please wait..."}.
+     *
+     * <p>This is why code-reading must not fire straight after the Yes tap: the screen
+     * is still generating, and whatever is read then is neither the code nor the
+     * error. Waiting for THIS to clear is what makes the success/error distinction
+     * meaningful.</p>
+     */
+    public static final By SHARE_CODE_LOADING =
+            By.xpath("//android.view.View[@content-desc=\"Please wait...\"]"
+                    + " | //android.view.View[starts-with(@content-desc, \"Please wait\")]");
+
+    /**
+     * The failure state the share screen can land in instead of producing a code —
+     * reported on device as "Error generating the code".
+     *
+     * <p>Matched with {@code contains} on the distinctive "generating the code" stem
+     * rather than the full sentence, so trailing punctuation or a wrapped detail line
+     * still matches. Deliberately NOT a bare "Error": the share screens carry other
+     * error copy, and a false positive here would trigger a pointless re-share.</p>
+     */
+    public static final By SHARE_CODE_ERROR =
+            By.xpath("//android.view.View[contains(@content-desc, \"generating the code\")]"
+                    + " | //android.view.View[contains(@content-desc, \"Error generating\")]"
+                    + " | //android.widget.TextView[contains(@text, \"generating the code\")]");
+
+    /**
+     * In-place retry control on the error state, when the build offers one. Absent on
+     * this build as far as we've seen, which is why the retry path falls back to
+     * re-running the whole long-press share rather than depending on this.
+     */
+    public static final By SHARE_CODE_RETRY =
+            By.xpath("//android.widget.Button[@content-desc=\"Retry\""
+                    + " or @content-desc=\"Try again\""
+                    + " or @content-desc=\"Try Again\"]"
+                    + " | //android.view.View[@content-desc=\"Retry\""
+                    + " or @content-desc=\"Try again\"]");
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // PERMISSION LEVELS — widened locators for the with-permissions build
+    //
+    // The PERMISSION_LEVEL_* constants above match android.view.View only, which is
+    // what the pre-levels build rendered everywhere. That is too narrow to DETECT a
+    // picker with: a level rendered as a RadioButton or a Button reads as absent, and
+    // "absent" is the answer that routes the whole suite into the without-permissions
+    // branch. These *_ANY variants widen the node type and tolerate a subtitle, so a
+    // present picker is found whatever it is built from.
+    //
+    // UNPINNED. Written against the spec's labels, not against a page-source capture
+    // of the levels APK — no such capture exists yet. Every helper that uses them
+    // dumps the tree on a miss (test-output/page-source/) so they can be replaced
+    // with real nodes; PermissionEditorPage.discover() reports which variant matched.
+    // ══════════════════════════════════════════════════════════════════════════
+
+    /**
+     * Any node type carrying the given permission-level label.
+     *
+     * <p>Matches an exact content-desc and the {@code "Super\nAll device access"}
+     * title+subtitle shape Flutter uses for list options — the same shape that already
+     * defeated an equality match on the member join sheet (see
+     * {@link #JOIN_EXISTING_HOME_OPTION}). {@code starts-with} on the label plus a
+     * newline keeps "Super" from also matching a longer word.</p>
+     *
+     * @param level "Super", "Basic" or "Custom"
+     */
+    public static By permissionLevelOption(String level) {
+        String match = "@content-desc=\"" + level + "\""
+                + " or starts-with(@content-desc, \"" + level + "\n\")";
+        return By.xpath("//android.view.View["      + match + "]"
+                + " | //android.widget.Button["     + match + "]"
+                + " | //android.widget.RadioButton[" + match + "]"
+                + " | //android.widget.CheckBox["   + match + "]"
+                + " | //android.widget.ImageView["  + match + "]");
+    }
+
+    /** Widened "Super" level option — see {@link #permissionLevelOption}. */
+    public static final By PERMISSION_LEVEL_SUPER_ANY  = permissionLevelOption("Super");
+
+    /** Widened "Basic" level option — the default a QR share is expected to apply. */
+    public static final By PERMISSION_LEVEL_BASIC_ANY  = permissionLevelOption("Basic");
+
+    /** Widened "Custom" level option — reveals the per-capability toggles. */
+    public static final By PERMISSION_LEVEL_CUSTOM_ANY = permissionLevelOption("Custom");
+
+    /**
+     * The currently-SELECTED level, for reading back what the app applied without
+     * re-tapping anything. Flutter exposes selection as {@code checked} on radio-like
+     * nodes and {@code selected} on segmented controls, so both are accepted.
+     *
+     * <p>Used by the re-share/upsert check (RP-18), which has to prove the level
+     * CHANGED — a locator that only proves an option exists cannot show that.</p>
+     */
+    public static final By SELECTED_PERMISSION_LEVEL =
+            By.xpath("//*[(@checked=\"true\" or @selected=\"true\")"
+                    + " and (@content-desc=\"Super\" or @content-desc=\"Basic\""
+                    + " or @content-desc=\"Custom\""
+                    + " or starts-with(@content-desc, \"Super\n\")"
+                    + " or starts-with(@content-desc, \"Basic\n\")"
+                    + " or starts-with(@content-desc, \"Custom\n\"))]");
+
+    /**
+     * A single capability toggle by its spec label ("Control", "View Analytics",
+     * "Unlock", …), across every node type a Flutter toggle can render as.
+     *
+     * <p>The {@code TOGGLE_*} constants above are {@code android.widget.Switch} only.
+     * That is one plausible rendering of five; a checkbox-style capability list would
+     * make every one of them miss, and {@code setToggle} logs a miss and carries on —
+     * so a whole Custom mask would be silently left at its defaults and the test would
+     * assert against permissions it never actually set.</p>
+     *
+     * @param label capability label exactly as it appears in {@code PermissionModel}
+     */
+    public static By capabilityToggle(String label) {
+        String match = "@content-desc=\"" + label + "\""
+                + " or starts-with(@content-desc, \"" + label + "\n\")";
+        return By.xpath("//android.widget.Switch["   + match + "]"
+                + " | //android.widget.CheckBox["   + match + "]"
+                + " | //android.widget.ToggleButton[" + match + "]"
+                + " | //android.view.View["         + match + " ][@clickable=\"true\"]");
+    }
+
+    /**
+     * Every toggle-like node on the current screen, regardless of label.
+     *
+     * <p>This is the only way to assert a NEGATIVE about the capability list — that the
+     * editor offers exactly the device's defined capabilities and no more (RP-14). A
+     * per-label lookup can confirm the expected ones are present but can never reveal
+     * an extra one, which is the case that matters: an unknown bit exposed in the UI is
+     * a permission the backend never validated.</p>
+     */
+    public static final By ALL_CAPABILITY_TOGGLES =
+            By.xpath("//android.widget.Switch | //android.widget.CheckBox"
+                    + " | //android.widget.ToggleButton");
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // PER-MEMBER DEVICE LIST  (Manage Family → member → their devices)
+    // UNPINNED — candidate labels from the spec; dumped on miss.
+    // ══════════════════════════════════════════════════════════════════════════
+
+    /** "Add device" CTA on a member's device list — the Flow 2 add path (F2-04). */
+    public static final By MEMBER_ADD_DEVICE_BUTTON =
+            By.xpath("//android.widget.Button[@content-desc=\"Add device\""
+                    + " or @content-desc=\"Add Device\""
+                    + " or @content-desc=\"Add devices\"]"
+                    + " | //android.view.View[@content-desc=\"Add device\""
+                    + " or @content-desc=\"Add Device\"]");
+
+    /**
+     * Empty state on a member's device list — no devices shared with them yet (F2-08).
+     *
+     * <p>Matched on the "Add device" CTA the spec says accompanies the empty state, OR
+     * on the copy itself. Both are candidates: the point of the test is to prove
+     * SOMETHING informative renders rather than a blank screen, so a locator that can
+     * only match one exact sentence would fail on a copy change that is not a defect.</p>
+     */
+    public static final By MEMBER_DEVICE_LIST_EMPTY_STATE =
+            By.xpath("//android.view.View[contains(@content-desc, \"No devices\")"
+                    + " or contains(@content-desc, \"no devices\")"
+                    + " or contains(@content-desc, \"nothing shared\")]"
+                    + " | //android.widget.Button[@content-desc=\"Add device\""
+                    + " or @content-desc=\"Add Device\"]");
+
+    /** "Remove"/"Revoke" access action on a device row in a member's device list (F2-07). */
+    public static final By MEMBER_REMOVE_DEVICE_OPTION =
+            By.xpath("//android.view.View[@content-desc=\"Remove device\""
+                    + " or @content-desc=\"Remove access\""
+                    + " or @content-desc=\"Revoke access\""
+                    + " or @content-desc=\"Remove\"]"
+                    + " | //android.widget.Button[@content-desc=\"Remove device\""
+                    + " or @content-desc=\"Remove access\"]");
+
+    /**
+     * The confirmation dialog that must precede a revoke (F2-14).
+     *
+     * <p>Its TITLE, not its confirm button: the test asserts a prompt appeared before
+     * the DELETE call, and {@link #REMOVE_ACCESS_CONFIRM_BUTTON} cannot distinguish "a
+     * dialog is up" from "a Remove button is on the underlying screen".</p>
+     */
+    public static final By REMOVE_ACCESS_CONFIRM_DIALOG =
+            By.xpath("//android.view.View[contains(@content-desc, \"Remove access\")"
+                    + " or contains(@content-desc, \"remove access\")"
+                    + " or contains(@content-desc, \"Are you sure\")]");
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // NON-ADMIN AFFORDANCES  (RP-03, RP-04 — actions that must NOT be offered)
+    // ══════════════════════════════════════════════════════════════════════════
+
+    /**
+     * "Delete device" wherever it is offered — device detail, its kebab, or a
+     * long-press menu.
+     *
+     * <p>Deliberately broad. This locator is used almost exclusively for NEGATIVE
+     * assertions ("a non-admin is not offered delete"), and for those, breadth is
+     * safety: a narrow locator that misses a delete control the app really does show
+     * reports a pass on a genuine privilege escalation. Over-matching can only cost a
+     * false failure, which a human then reads.</p>
+     */
+    public static final By DEVICE_DELETE_OPTION =
+            By.xpath("//*[@content-desc=\"Delete device\""
+                    + " or @content-desc=\"Delete Device\""
+                    + " or @content-desc=\"Remove device\""
+                    + " or @content-desc=\"Delete\"]");
+
+    /**
+     * Any share affordance on a device screen — icon, kebab entry or long-press action.
+     * Broad for the same reason as {@link #DEVICE_DELETE_OPTION}: it backs the negative
+     * assertion that a non-admin, non-owner is offered no way to share (RP-04).
+     */
+    public static final By DEVICE_SHARE_AFFORDANCE_ANY =
+            By.xpath("//*[@content-desc=\"Share\""
+                    + " or @content-desc=\"Share device\""
+                    + " or @content-desc=\"Share Device\""
+                    + " or @content-desc=\"Share access\"]");
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // SHARE-LIST EMPTY / BLOCKED STATES  (EC-01, EC-02, RP-17, F3-12, F3-13)
+    // ══════════════════════════════════════════════════════════════════════════
+
+    /**
+     * The message shown when there is nobody to share with — a single-user home
+     * (EC-01) or a home whose every member is an admin (EC-02).
+     *
+     * <p>Matched on distinctive stems ("are admins", "no sharing required", "only user")
+     * rather than a full sentence, because the two cases word it differently and the
+     * assertion is about an informative empty state existing at all.</p>
+     */
+    public static final By SHARE_LIST_EMPTY_MESSAGE =
+            By.xpath("//android.view.View[contains(@content-desc, \"are admins\")"
+                    + " or contains(@content-desc, \"no sharing required\")"
+                    + " or contains(@content-desc, \"No users\")"
+                    + " or contains(@content-desc, \"only user\")]");
+
+    /**
+     * "No devices to share" / "Add a device to family" — an entire-home share from an
+     * empty home (F3-13). The remark on that row records both wordings, so both match.
+     */
+    public static final By NO_DEVICES_TO_SHARE_MESSAGE =
+            By.xpath("//android.view.View[contains(@content-desc, \"No Devices to Share\")"
+                    + " or contains(@content-desc, \"No devices to share\")"
+                    + " or contains(@content-desc, \"Add a device to Family\")"
+                    + " or contains(@content-desc, \"Add a device\")]");
+
+    /**
+     * The "Share Devices" CTA on the specific-device picker. F3-12 asserts it is
+     * DISABLED with nothing selected, so callers read its {@code enabled} attribute —
+     * presence alone is not the assertion.
+     */
+    public static final By SHARE_DEVICES_BUTTON =
+            By.xpath("//android.widget.Button[@content-desc=\"Share Devices\""
+                    + " or @content-desc=\"Share devices\""
+                    + " or @content-desc=\"Share\"]");
+
+    /**
+     * Parameterised: a device's selection control on the specific-device share picker.
+     * Widened past CheckBox — the picker may render rows as tappable Views with a
+     * trailing tick rather than as checkboxes.
+     */
+    public static By deviceSelectControl(String deviceName) {
+        return By.xpath("//android.widget.CheckBox[contains(@content-desc, \"" + deviceName + "\")]"
+                + " | //android.view.View[contains(@content-desc, \"" + deviceName + "\")"
+                + " and @clickable=\"true\"]"
+                + " | //android.widget.ImageView[contains(@content-desc, \"" + deviceName + "\")]");
+    }
+
+    /**
+     * A validation error blocking a zero-capability Custom share (RP-17).
+     * Kept separate from {@link #PERMISSION_DENIED_SNACKBAR}, which is about a MEMBER
+     * being refused an action — this is an ADMIN being refused an invalid save.
+     */
+    public static final By ZERO_PERMISSION_ERROR =
+            By.xpath("//android.view.View[contains(@content-desc, \"at least one\")"
+                    + " or contains(@content-desc, \"Select at least\")"
+                    + " or contains(@content-desc, \"no permission\")"
+                    + " or contains(@content-desc, \"No permission selected\")]");
 }

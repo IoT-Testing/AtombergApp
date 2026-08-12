@@ -113,6 +113,7 @@ public class MemberDevicePage {
             return this;
         }
         ActionsUtil.Scroll.Down(driver);           // swipe down == pull-to-refresh
+        ActionsUtil.Scroll.Down(driver);           // swipe down == pull-to-refresh
         ActionsUtil.SSleep(3);                     // let the refetch settle
         AppUtil.captureScreenshot(driver, "member_home_refreshed_after_revoke");
         System.out.println("[MemberDevicePage] Member dashboard refreshed.");
@@ -685,6 +686,227 @@ public class MemberDevicePage {
         } catch (Exception ex) {
             System.err.println("[MemberDevicePage] Could not dump page source: " + ex.getMessage());
         }
+    }
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // NON-ADMIN AFFORDANCE CHECKS  (RP-03, RP-04, RP-08, F2-02)
+    //
+    // These back NEGATIVE assertions — "a non-admin is not offered this" — which is the
+    // direction that needs the most care. A locator that misses a control the app really
+    // does show reports a pass on a genuine privilege escalation, so each of these looks
+    // in every place the action could be offered and dumps the tree so a human can check
+    // the absence was real.
+    // ══════════════════════════════════════════════════════════════════════════
+
+    /**
+     * Every privileged action the app offers the member for {@code deviceName}, gathered
+     * from the device detail screen, its kebab menu, and the tile's long-press menu.
+     *
+     * <p>Returns what was FOUND rather than a pass/fail, so one walk of the screens serves
+     * both RP-03 (delete must be absent) and RP-04 (share must be absent), and so a
+     * failure message can name the control that should not have been there.</p>
+     */
+    public java.util.List<String> privilegedActionsOfferedFor(String deviceName) {
+        java.util.LinkedHashSet<String> found = new java.util.LinkedHashSet<>();
+
+        if (!returnToHomeScreen()) {
+            System.err.println("[MemberDevicePage] Not on Home — cannot inspect affordances for "
+                    + deviceName.replace("\n", " / "));
+            return new java.util.ArrayList<>(found);
+        }
+
+        // 1. Long-press the tile: the present flow puts "Share device" here.
+        WebElement tile = AppUtil.findOptionalElement(driver, deviceCardOnHome(deviceName));
+        if (tile == null) {
+            System.out.println("[MemberDevicePage] Device '" + deviceName.replace("\n", " / ")
+                    + "' is not on the member's home — no affordances to inspect.");
+            return new java.util.ArrayList<>(found);
+        }
+        try {
+            int cx = tile.getLocation().getX() + (tile.getSize().getWidth()  / 2);
+            int cy = tile.getLocation().getY() + (tile.getSize().getHeight() / 2);
+            ActionsUtil.longPress(driver, cx, cy);
+            ActionsUtil.SSleep(2);
+            dumpTree("member_longpress_menu");
+            AppUtil.captureScreenshot(driver, "member_longpress_menu");
+            collectAffordances(found, "long-press menu");
+            // Close the menu without acting on it.
+            try { driver.navigate().back(); } catch (Exception ignored) {}
+            ActionsUtil.SSleep(1);
+        } catch (Exception e) {
+            System.err.println("[MemberDevicePage] Long-press inspection failed: " + e.getMessage());
+        }
+
+        // 2. Device detail + its kebab, where delete normally lives.
+        try {
+            returnToHomeScreen();
+            openDevice(deviceName);
+            ActionsUtil.SSleep(2);
+            dumpTree("member_device_detail");
+            AppUtil.captureScreenshot(driver, "member_device_detail");
+            collectAffordances(found, "device detail");
+
+            if (tapOptional(DEVICE_KEBAB_MENU, "Device kebab menu")) {
+                ActionsUtil.SSleep(1);
+                dumpTree("member_device_kebab");
+                AppUtil.captureScreenshot(driver, "member_device_kebab");
+                collectAffordances(found, "device kebab");
+                try { driver.navigate().back(); } catch (Exception ignored) {}
+            }
+            try { driver.navigate().back(); } catch (Exception ignored) {}
+        } catch (Exception e) {
+            System.err.println("[MemberDevicePage] Device-detail inspection failed: " + e.getMessage());
+        }
+
+        java.util.List<String> out = new java.util.ArrayList<>(found);
+        System.out.println("[MemberDevicePage] Privileged actions offered to the member for '"
+                + deviceName.replace("\n", " / ") + "': " + (out.isEmpty() ? "none" : out));
+        return out;
+    }
+
+    /** Adds whichever privileged controls are on the current screen, tagged with where. */
+    private void collectAffordances(java.util.Set<String> found, String where) {
+        if (isPresent(DEVICE_DELETE_OPTION))        found.add("delete (" + where + ")");
+        if (isPresent(DEVICE_SHARE_AFFORDANCE_ANY)) found.add("share (" + where + ")");
+        if (isPresent(LONGPRESS_SHARE_DEVICE_OPTION)) found.add("share device (" + where + ")");
+    }
+
+    /**
+     * Whether the member can reach Manage Family, and whether anything there is editable.
+     *
+     * <p>Two facts, not one, because the sheet's own manual run found them to disagree:
+     * F2-02 expects the option to be hidden or refused, and the recorded result was that
+     * non-admins DO reach the screen but cannot change anything inside it. Reporting both
+     * lets the test assert the requirement while the report explains precisely how the
+     * build differs from it.</p>
+     */
+    public ManageFamilyAccess inspectManageFamilyAccess() {
+        boolean reachedMoreTab = false;
+        boolean optionVisible  = false;
+        boolean screenOpened   = false;
+        boolean addFabVisible  = false;
+
+        try {
+            AppUtil.ensureAppHome(driver);
+            ActionsUtil.SSleep(1);
+            reachedMoreTab = tapOptional(MORE_TAB, "More tab");
+            ActionsUtil.SSleep(1);
+
+            for (int i = 0; i < 5 && !(optionVisible = isPresent(MANAGE_FAMILY)); i++) {
+                ActionsUtil.Scroll.Up(driver);
+                ActionsUtil.SSleep(1);
+            }
+            dumpTree("member_more_tab");
+
+            if (optionVisible) {
+                tapOptional(MANAGE_FAMILY, "Manage Family");
+                ActionsUtil.SSleep(2);
+                dumpTree("member_manage_family");
+                AppUtil.captureScreenshot(driver, "member_manage_family");
+                // "Opened" means family management content is on screen — not merely that
+                // the tap did not throw. The Add FAB is the clearest such marker.
+                addFabVisible = isPresent(MEMBER_ADD_FAB);
+                screenOpened  = addFabVisible || isPresent(FAMILY_HOME_ROW);
+            }
+        } catch (Exception e) {
+            System.err.println("[MemberDevicePage] Manage Family inspection failed: "
+                    + e.getMessage());
+        }
+
+        ManageFamilyAccess access = new ManageFamilyAccess(
+                reachedMoreTab, optionVisible, screenOpened, addFabVisible);
+        System.out.println("[MemberDevicePage] " + access);
+        return access;
+    }
+
+    /**
+     * @param reachedMoreTab the More tab opened at all (a sanity check on the walk)
+     * @param optionVisible  "Manage family" was listed for this non-admin
+     * @param screenOpened   family-management content rendered
+     * @param addFabVisible  the (+) member/family control was offered
+     */
+    public record ManageFamilyAccess(boolean reachedMoreTab, boolean optionVisible,
+                                     boolean screenOpened, boolean addFabVisible) {
+        /** True when a non-admin got no further than the More tab — the required outcome. */
+        public boolean properlyBlocked() { return !optionVisible || !screenOpened; }
+
+        @Override public String toString() {
+            return "Manage Family access — optionVisible=" + optionVisible
+                    + ", screenOpened=" + screenOpened + ", addFab=" + addFabVisible
+                    + " → " + (properlyBlocked() ? "blocked" : "REACHABLE");
+        }
+    }
+
+    /**
+     * The families listed in the switcher sheet.
+     *
+     * <p>The oracle for the duplicate-join case (F3-09): joining twice must not create a
+     * second entry for the same home. Counting names is the only UI-visible way to see
+     * that, since the app answers a duplicate join with the same "Added to home
+     * successfully" banner as a first one.</p>
+     */
+    public java.util.List<String> listFamiliesInSwitcher() {
+        java.util.LinkedHashSet<String> families = new java.util.LinkedHashSet<>();
+        if (!returnToHomeScreen()) return new java.util.ArrayList<>(families);
+
+        if (!tapOptional(FAMILY_SWITCHER_TRIGGER, "Family switcher header")) {
+            dumpTree("member_family_switcher_not_opened");
+            return new java.util.ArrayList<>(families);
+        }
+        ActionsUtil.SSleep(2);
+        dumpTree("member_family_switcher_list");
+        AppUtil.captureScreenshot(driver, "member_family_switcher_list");
+
+        try {
+            for (WebElement el : driver.findElements(By.xpath(
+                    "//android.view.View[@content-desc and @clickable=\"true\"]"
+                            + " | //android.widget.ImageView[@content-desc]"))) {
+                String desc = el.getDomAttribute("content-desc");
+                if (desc == null || desc.isBlank()) continue;
+                String name = desc.trim();
+                // Switcher rows are bare family names; skip nav chrome and the
+                // "<count>\n<family>" Manage-Family tile shape, which is a different screen.
+                if (name.contains("Tab ") || name.equals("Devices") || name.equals("Rooms")
+                        || name.equals("Automations") || name.startsWith("Add")) continue;
+                families.add(name);
+            }
+        } catch (Exception e) {
+            System.err.println("[MemberDevicePage] Could not list families: " + e.getMessage());
+        }
+
+        // Close the sheet so the caller is left on Home, not on a modal.
+        try { driver.navigate().back(); } catch (Exception ignored) {}
+        ActionsUtil.SSleep(1);
+
+        java.util.List<String> out = new java.util.ArrayList<>(families);
+        System.out.println("[MemberDevicePage] Families in switcher: " + out);
+        return out;
+    }
+
+    /**
+     * Cold-restarts the app on the member phone and lands on Home.
+     *
+     * <p>The force-kill in EC-06. A cold start is what makes the stale-cache assertion
+     * meaningful: a resumed app can serve the old permission mask from memory, so only a
+     * fresh process proves the client re-fetches.</p>
+     */
+    public MemberDevicePage restartApp() {
+        try {
+            driver.terminateApp(app.resources.AppInfo.ATOMBERG_HOME);
+            ActionsUtil.SSleep(2);
+            driver.activateApp(app.resources.AppInfo.ATOMBERG_HOME);
+            ActionsUtil.SSleep(6);
+            returnToHomeScreen();
+            AppUtil.captureScreenshot(driver, "member_app_restarted");
+        } catch (Exception e) {
+            System.err.println("[MemberDevicePage] App restart failed: " + e.getMessage());
+        }
+        return this;
+    }
+
+    /** Public presence check, for tests that need to read a locator directly. */
+    public boolean isElementPresent(By locator) {
+        return isPresent(locator);
     }
 
     // ══════════════════════════════════════════════════════════════════════════

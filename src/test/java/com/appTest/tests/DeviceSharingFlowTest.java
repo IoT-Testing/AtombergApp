@@ -11,6 +11,22 @@ import java.util.List;
  * DeviceSharingFlowTest – end-to-end, TWO-PHONE tests for the Device Sharing &
  * Permission Management feature (spec §4 User Flows).
  *
+ * <p><b>SUPERSEDED — kept for reference, not in {@code testng-device-sharing.xml}.</b>
+ * Written before {@code Device_Sharing_Test_Cases_by_Kaushik.xlsx} existed, so it carries
+ * no TC IDs and contributes nothing to the coverage matrix. Its scenarios are now covered,
+ * with sheet traceability and mode gating, by:</p>
+ * <ul>
+ *   <li>{@code SharingQrShareTest} — entire-home share and join (F3-02, F3-03, F3-06), and
+ *       the specific-device share at a chosen level (F3-05).</li>
+ *   <li>{@code SharingManageFamilyTest} — the Basic → Super edit (F2-05), the member
+ *       reflecting it without a restart (F2-10) and per-device revocation (F2-07).</li>
+ * </ul>
+ * <p>Critically, every test here asserts a permission LEVEL with no mode gate, so on the
+ * present family-wide build they all fail on a picker that does not exist — reporting six
+ * product defects where the feature is simply not shipped. That is the reason the
+ * replacements exist and why this class is excluded from the suite. It still runs from the
+ * legacy {@code testng-sharing.xml} if you want to compare behaviour.</p>
+ *
  * <p>Both phones are assumed <strong>pre-logged-in</strong>
  * ({@code noReset=true}); {@link BaseDeviceSharingTest} only re-logs in if a
  * login screen is unexpectedly detected.</p>

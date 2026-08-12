@@ -147,4 +147,46 @@ public class PermissionModelTest {
         assertTrue(PermissionModel.hasFanCapability(custom, FanCapability.VIEW_ANALYTICS));
         assertFalse(PermissionModel.hasFanCapability(custom, FanCapability.EDIT_DEVICE));
     }
+
+    // ── EC-11 (Edge Cases sheet): mask width and sign safety ───────────────────
+
+    /**
+     * EC-11 — the widest capability set in the spec must not overflow or go negative.
+     *
+     * <p>The door lock's 9 bits (spec §3.2) are the widest mask the product defines, and
+     * its Super value, 511, is the one the sheet calls out. This is where an integer
+     * problem would first show: a mask stored in a signed 8-bit or 16-bit field, or one
+     * built by shifting past its type's width, produces a negative or truncated value that
+     * silently grants the wrong capabilities.</p>
+     *
+     * <p>Deliberately device-less. The bit arithmetic is what is under test, and asserting
+     * it offline makes the result unambiguous — a UI-level check could only observe the
+     * <em>consequences</em> of an overflow, and would blame the screen that showed them.
+     * The registration below is what puts EC-11 in the coverage matrix; without it the case
+     * would read as "not run" despite being covered here.</p>
+     */
+    @Test(description = "EC-11: the 9-bit door-lock Super mask is exactly 511, positive, and "
+            + "every bit round-trips — no overflow or sign issue")
+    public void lockMaskDoesNotOverflow() {
+        int superMask = LockCapability.superMask();
+
+        assertEquals(superMask, 511, "The 9 door-lock capability bits must sum to 511 (2^9 - 1)");
+        assertTrue(superMask > 0, "The mask must stay positive — a negative value means the "
+                + "sign bit was reached, i.e. the mask outgrew its type");
+        assertEquals(LockCapability.values().length, 9,
+                "EC-11 is about the 9-bit lock; if the capability list changed, the expected "
+                        + "mask above must change with it");
+
+        // Every bit individually addressable inside the full mask: an overflow that merely
+        // truncated would still total 511 if the high bits wrapped onto low ones.
+        for (LockCapability cap : LockCapability.values()) {
+            assertTrue(PermissionModel.hasLockCapability(superMask, cap),
+                    cap.label + " (bit " + cap.bit + ") must be readable inside the 511 mask");
+            assertTrue(cap.mask() > 0,
+                    cap.label + " has a non-positive individual mask — bit " + cap.bit
+                            + " overflowed its type");
+        }
+
+        com.appTest.util.SharingRunLedger.pass("EC-11");
+    }
 }

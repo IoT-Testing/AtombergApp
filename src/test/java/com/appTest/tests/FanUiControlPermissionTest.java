@@ -59,6 +59,12 @@ public class FanUiControlPermissionTest extends BaseDeviceSharingTest {
 
         reporter.startTest("Fan UI matrix – " + label, "Admin+Member");
         try {
+            // Every row of this matrix sets a permission LEVEL, so none of it is meaningful
+            // on the present family-wide flow — there is no level to set. Gating here rather
+            // than letting the rows fail keeps a run on the old APK reporting "not shipped"
+            // instead of six locator failures that look like permission defects.
+            requirePermissionLevels("The fan UI-control permission matrix");
+
             // ── ADMIN: set the member's fan permission for this row ──────────────
             adminSharingPage
                     .navigateToManageFamily()
@@ -92,6 +98,12 @@ public class FanUiControlPermissionTest extends BaseDeviceSharingTest {
 
             reporter.log(Status.PASS, "[" + label + "] control=" + actualControl
                     + " edit=" + actualEdit + " analytics=" + actualAnalytics);
+        } catch (org.testng.SkipException se) {
+            // Must be caught BEFORE the Exception branch below: SkipException is a
+            // RuntimeException, so the generic handler would report a build that simply has
+            // no permission levels as six matrix FAILURES and screenshot both phones for it.
+            reporter.log(Status.SKIP, "[" + label + "] " + se.getMessage());
+            throw se;
         } catch (AssertionError | Exception e) {
             AppUtil.captureScreenshot(adminDriver,  "matrix_fail_admin_"  + label.replace(" ", "_"));
             AppUtil.captureScreenshot(memberDriver, "matrix_fail_member_" + label.replace(" ", "_"));

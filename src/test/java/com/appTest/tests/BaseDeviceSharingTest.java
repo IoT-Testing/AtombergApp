@@ -4,11 +4,17 @@ import app.Login.Email;
 import app.sharing.DeviceSharingPage;
 import app.sharing.DualDeviceManager;
 import app.sharing.MemberDevicePage;
+import app.sharing.PermissionEditorPage;
+import app.sharing.SharingMode;
+import app.sharing.SharingModeDetector;
 import app.util.ActionsUtil;
 import app.util.AppUtil;
+import com.appTest.util.SharingRunLedger;
+import com.aventstack.extentreports.Status;
 import ExtentReports.ExtentReportAT;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
+import org.testng.SkipException;
 import org.testng.annotations.*;
 
 /**
@@ -66,7 +72,20 @@ public abstract class BaseDeviceSharingTest {
     protected AndroidDriver        memberDriver;
     protected DeviceSharingPage    adminSharingPage;
     protected MemberDevicePage     memberDevicePage;
+    protected PermissionEditorPage permissionEditor;   // admin-side only: members never edit
     protected ExtentReportAT       reporter;
+
+    // ── Which of the two sharing flows this build exposes ──────────────────────
+    /**
+     * The mode the run is operating in. Resolved once (cached across classes) in
+     * {@link #setupDualDevices()} and never {@link SharingMode#AUTO} by the time a test
+     * sees it. Gate every Super/Basic/Custom assertion on
+     * {@link #requirePermissionLevels(String)} rather than reading this directly.
+     */
+    protected SharingMode sharingMode = SharingMode.AUTO;
+
+    /** What the probe saw, so a skip can explain itself instead of just happening. */
+    protected SharingModeDetector.Evidence modeEvidence;
 
     // ── Test data (from env vars) ─────────────────────────────────────────────
     protected String adminEmail;
@@ -122,6 +141,7 @@ public abstract class BaseDeviceSharingTest {
         memberDriver    = deviceManager.memberDriver();
         adminSharingPage = new DeviceSharingPage(adminDriver);
         memberDevicePage = new MemberDevicePage(memberDriver);
+        permissionEditor = new PermissionEditorPage(adminDriver);
         reporter         = new ExtentReportAT("DualDevice_Sharing");
         // Register every device slot the sharing tests report under, so
         // reporter.startTest(..., slot) can find its parent node.
@@ -136,7 +156,37 @@ public abstract class BaseDeviceSharingTest {
         // Fail fast if the phones/accounts are swapped (admin UDID → member phone).
         verifyDeviceRoles();
 
+        // Decide WHICH sharing flow this build exposes, before any test asserts on it.
+        // Done here rather than in a separate @BeforeClass because TestNG does not order
+        // sibling @BeforeClass methods that share a dependency — a subclass hook could
+        // otherwise run first and assert against an unresolved mode.
+        resolveSharingMode();
+
         System.out.println("=== BaseDeviceSharingTest setup complete ===");
+    }
+
+    /**
+     * Resolves {@link #sharingMode} for the run, cached across classes by
+     * {@link SharingModeDetector}, so only the first class pays for the probe.
+     *
+     * <p>Never throws. A probe that cannot reach the share screens still has to leave a
+     * usable mode behind, because failing here would abort classes whose tests need no
+     * permission levels at all — the whole present-flow half of the suite. On an error it
+     * falls back to {@link SharingMode#WITHOUT_PERMISSIONS}, which makes the level tests
+     * skip with a reason rather than fail on a setup problem.</p>
+     */
+    protected void resolveSharingMode() {
+        try {
+            modeEvidence = SharingModeDetector.resolve(adminDriver, testDeviceName);
+            sharingMode  = modeEvidence.mode();
+        } catch (Exception e) {
+            System.err.println("[Base] Sharing-mode probe failed: " + e.getMessage()
+                    + " — assuming the present (family-wide) flow so level tests skip "
+                    + "rather than fail on a setup error.");
+            sharingMode  = SharingMode.WITHOUT_PERMISSIONS;
+            modeEvidence = null;
+        }
+        System.out.println("[Base] SHARING MODE: " + sharingMode.label);
     }
 
     @AfterClass(alwaysRun = true)
@@ -234,6 +284,140 @@ public abstract class BaseDeviceSharingTest {
      */
     protected void waitForPermissionPropagation() {
         ActionsUtil.SSleep(4);
+    }
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // TEST-CASE RUNNER — traceability to the sheet, in one place
+    // ══════════════════════════════════════════════════════════════════════════
+
+    /** A test case body. Allowed to throw, so assertions read normally inside it. */
+    @FunctionalInterface
+    protected interface SharingCase {
+        void run() throws Exception;
+    }
+
+    /**
+     * Runs one sheet test case: opens its Extent node, records the verdict against its TC
+     * ID(s) in {@link SharingRunLedger}, screenshots both phones on failure, and closes
+     * the node — then re-raises so TestNG still sees the real outcome.
+     *
+     * <p>Every case goes through here so the three things that must never be forgotten
+     * cannot be: the ledger entry (or the coverage matrix reports the case as "not run"
+     * even though it ran), the failure screenshots (a black-box UI failure is close to
+     * undiagnosable without them), and {@code reporter.endTest()} (a missed one nests
+     * every later case inside this one).</p>
+     *
+     * @param tcIds comma-separated sheet IDs this case covers, e.g. {@code "RP-10, RP-11"}
+     * @param title short human title, shown after the IDs in the report
+     * @param slot  reporting device slot: {@code Admin_Device}, {@code Member_Device} or
+     *              {@code Admin+Member}
+     * @param body  the assertions
+     */
+    protected void runCase(String tcIds, String title, String slot, SharingCase body) {
+        reporter.startTest("[" + tcIds + "] " + title, slot);
+        reporter.log(Status.INFO, "Sharing mode: " + sharingMode.label);
+        try {
+            body.run();
+            SharingRunLedger.pass(tcIds);
+            reporter.log(Status.PASS, tcIds + " — verified.");
+        } catch (SkipException se) {
+            // A skip is a result, not a non-event: it is how the suite says "this build
+            // has nothing for this case to assert against" without faking a pass.
+            SharingRunLedger.skip(tcIds, se.getMessage());
+            reporter.log(Status.SKIP, tcIds + " skipped — " + se.getMessage());
+            throw se;
+        } catch (AssertionError ae) {
+            SharingRunLedger.fail(tcIds, ae.getMessage());
+            reporter.log(Status.FAIL, tcIds + " FAILED — " + ae.getMessage());
+            captureBothPhones(tcIds);
+            throw ae;
+        } catch (Exception e) {
+            SharingRunLedger.fail(tcIds, e.getMessage());
+            reporter.log(Status.FAIL, tcIds + " ERRORED — " + e);
+            captureBothPhones(tcIds);
+            throw new RuntimeException("[" + tcIds + "] " + title + " — " + e.getMessage(), e);
+        } finally {
+            reporter.endTest();
+        }
+    }
+
+    /** Screenshots both phones under one tag, so a cross-phone failure is readable. */
+    protected void captureBothPhones(String tag) {
+        String safe = AppUtil.sanitizeFileName(tag);
+        try { AppUtil.captureScreenshot(adminDriver,  safe + "_admin"); }  catch (Exception ignored) {}
+        try { AppUtil.captureScreenshot(memberDriver, safe + "_member"); } catch (Exception ignored) {}
+    }
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // MODE GATES
+    // ══════════════════════════════════════════════════════════════════════════
+
+    /**
+     * Skips the current case unless the build exposes Super / Basic / Custom.
+     *
+     * <p>A skip rather than a failure, because on the present flow there is genuinely no
+     * permission level to assert — failing would report a product defect where the
+     * feature simply is not shipped yet. The message carries the probe's evidence so the
+     * report says which it was.</p>
+     *
+     * <p>Pin {@code SHARING_MODE=with_permissions} in {@code sharing-test.properties} to
+     * turn these skips into failures. That is what you want while pinning the level
+     * locators against the new APK: there, "no picker found" IS the finding.</p>
+     *
+     * @param what the assertion being gated, named in the skip message
+     */
+    protected void requirePermissionLevels(String what) {
+        if (sharingMode.hasPermissionLevels()) return;
+        throw new SkipException(what + " needs the with-permissions build — this run is on "
+                + sharingMode.label + "."
+                + (modeEvidence == null ? "" : " " + modeEvidence.summary())
+                + " Set SHARING_MODE=with_permissions in sharing-test.properties to make this "
+                + "a failure instead.");
+    }
+
+    /**
+     * Skips unless the build is the present family-wide flow. The mirror of
+     * {@link #requirePermissionLevels}, for the handful of cases that assert on
+     * behaviour the levels build is expected to REMOVE — chiefly the "Share access to
+     * family?" dialog. Asserting that on a levels build would be asserting a regression.
+     */
+    protected void requirePresentFlow(String what) {
+        if (!sharingMode.hasPermissionLevels()) return;
+        throw new SkipException(what + " describes the present family-wide flow, and this "
+                + "build exposes permission levels (" + sharingMode.label + ") — the "
+                + "behaviour it asserts is expected to be gone.");
+    }
+
+    /**
+     * Returns a required-for-this-case config value, or skips when it is unset.
+     *
+     * <p>For test data the bench may legitimately not have — a lock, a water purifier, a
+     * device with a 200-character name. Skipping names the missing key, so an
+     * unexercised case reads as "TEST_LOCK_DEVICE_NAME is not set" rather than as a
+     * mysterious locator miss deep in a flow.</p>
+     *
+     * @param key   the config key, quoted in the skip message
+     * @param value the already-resolved value
+     * @param what  what the case needs it for
+     */
+    protected String requireTestData(String key, String value, String what) {
+        if (value != null && !value.isBlank()) return value;
+        throw new SkipException(key + " is not set — needed for " + what
+                + ". Add it to sharing-test.properties to enable this case.");
+    }
+
+    /**
+     * Skips unless an opt-in flag is switched on. For cases that are automated but too
+     * slow or too invasive to run every time (the 15-minute QR expiry wait, for
+     * instance): they must be runnable on demand, and must not silently disappear.
+     *
+     * @param key  config key, e.g. {@code RUN_QR_EXPIRY_TEST}
+     * @param what what running it costs, so the reader knows why it is opt-in
+     */
+    protected void requireOptIn(String key, String what) {
+        if (Boolean.parseBoolean(app.sharing.SharingConfig.get(key, "false"))) return;
+        throw new SkipException(key + " is not enabled — " + what
+                + ". Set " + key + "=true in sharing-test.properties to run it.");
     }
 
     // ── Role guard ──────────────────────────────────────────────────────────────
