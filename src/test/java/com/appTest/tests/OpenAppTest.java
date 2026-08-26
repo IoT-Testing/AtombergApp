@@ -7,8 +7,6 @@ import com.aventstack.extentreports.Status;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import static app.Supports.OnlyScreenShots.driver;
 import static app.resources.AppInfo.ATOMBERG_HOME;
 import static app.resources.Locators.Android.HomeLocators.MORE_TAB;
 
@@ -27,7 +25,6 @@ public class OpenAppTest extends BaseTest {
     public void setUp() {
         Assert.assertNotNull(driver, "Driver must not be null before OpenAppTest");
         appInitializer = new AppInitializer(driver);
-        System.out.println("OpenAppTest ready on device: " + deviceSlot);
     }
 
     @Test(priority = 1, description = "Open Atomberg app and verify the home screen is reached")

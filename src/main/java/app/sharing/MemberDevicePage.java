@@ -76,9 +76,10 @@ public class MemberDevicePage {
             // The dashboard tab carries the profile NAME ("Member\nTab 2 of 3"), so
             // HOME_TAB matches on the "Tab 2 of 3" suffix rather than a label.
             if (!tapOptional(HOME_TAB, "Home/dashboard tab")) {
-                System.out.println("[MemberDevicePage] Dashboard tab not visible (attempt "
-                        + attempt + ") — backing out and retrying.");
-                try { driver.navigate().back(); } catch (Exception ignored) {}
+                try {
+                    driver.navigate().back();
+                } catch (Exception ignored) {
+                }
             }
             ActionsUtil.SSleep(2);
 
@@ -460,6 +461,73 @@ public class MemberDevicePage {
         AppUtil.captureScreenshot(driver, "member_join_existing_home");
 
         return joinViaCode(inviteCode);
+    }
+
+    /**
+     * Member-side join as the permissions build actually routes it:
+     * <b>family switcher then "Create or Join" then "Join an existing smart home"</b>.
+     *
+     * <p>Pinned 2026-08-25 against 7.6.6 (261). Use this rather than
+     * {@link #joinViaManageFamilyAddCode(String)} on that build, where the older path
+     * no longer exists at either end:</p>
+     * <ul>
+     *   <li>the More tab has no "Manage Family" entry any more - it offers the profile,
+     *       Alexa/Google linking and Preferences only;</li>
+     *   <li>the (+) FAB no longer opens the create-or-join sheet. It goes straight to
+     *       the BLE "Looking for devices" scan, so a run taking that path sits on a
+     *       device scan until the code field times out.</li>
+     * </ul>
+     *
+     * <p>A camera permission prompt can appear on the way in, because the join screen
+     * hosts a QR scanner. It is cleared if present: the scanner is not automatable
+     * (Appium cannot drive the camera) and this flow uses the typed code beside it, so
+     * the prompt is an obstacle to get past rather than anything to assert on.</p>
+     *
+     * @param inviteCode the 6-character code read from the admin share sheet
+     */
+    public MemberDevicePage joinViaFamilySwitcher(String inviteCode) {
+        if (!tapOptional(FAMILY_SWITCHER_TRIGGER, "Family switcher header")) {
+            dumpTree("member_family_switcher_missing");
+            throw new RuntimeException("[MemberDevicePage] Could not open the family switcher - "
+                    + "see test-output/page-source/member_family_switcher_missing.xml");
+        }
+        ActionsUtil.SSleep(2);
+
+        if (!tapOptional(CREATE_OR_JOIN_OPTION, "Create or Join")) {
+            dumpTree("member_create_or_join_missing");
+            throw new RuntimeException("[MemberDevicePage] 'Create or Join' not on the family "
+                    + "switcher sheet - see test-output/page-source/member_create_or_join_missing.xml");
+        }
+        ActionsUtil.SSleep(2);
+
+        if (!tapOptional(JOIN_EXISTING_HOME_OPTION, "Join an existing smart home")) {
+            dumpTree("member_join_option_missing");
+            throw new RuntimeException("[MemberDevicePage] 'Join an existing smart home' not "
+                    + "found - see test-output/page-source/member_join_option_missing.xml");
+        }
+        ActionsUtil.SSleep(3);
+
+        dismissCameraPromptIfPresent();
+        AppUtil.captureScreenshot(driver, "member_join_screen");
+
+        return joinViaCode(inviteCode);
+    }
+
+    /**
+     * Clears the system camera prompt that the QR-scanning join screen can raise.
+     *
+     * <p>Best-effort and silent when absent: the prompt only appears the first time,
+     * so requiring it would make the second run of the same test fail.</p>
+     */
+    private void dismissCameraPromptIfPresent() {
+        By allowForeground = By.id(
+                "com.android.permissioncontroller:id/permission_allow_foreground_only_button");
+        if (AppUtil.isElementPresent(driver, allowForeground)) {
+            AppUtil.clickIfExists(driver, allowForeground);
+            ActionsUtil.SSleep(2);
+            System.out.println("[MemberDevicePage] Cleared the camera permission prompt on the "
+                    + "join screen.");
+        }
     }
 
     /**

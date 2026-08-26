@@ -898,9 +898,10 @@ public final class SharingLocators {
      * presence alone is not the assertion.
      */
     public static final By SHARE_DEVICES_BUTTON =
-            By.xpath("//android.widget.Button[@content-desc=\"Share Devices\""
-                    + " or @content-desc=\"Share devices\""
-                    + " or @content-desc=\"Share\"]");
+            By.xpath("//android.view.View[@content-desc=\"Share Devices\""
+                    + " or @content-desc=\"Share devices\"]"
+                    + " | //android.widget.Button[@content-desc=\"Share Devices\""
+                    + " or @content-desc=\"Share devices\"]");
 
     /**
      * Parameterised: a device's selection control on the specific-device share picker.
@@ -924,4 +925,206 @@ public final class SharingLocators {
                     + " or contains(@content-desc, \"Select at least\")"
                     + " or contains(@content-desc, \"no permission\")"
                     + " or contains(@content-desc, \"No permission selected\")]");
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // PINNED 2026-08-25 against com.atomberg.app 7.6.6 (versionCode 261)
+    //
+    // Everything in this block was read off the running build with `uiautomator
+    // dump` on the bench pair (admin e5b51506054a / member 3d2bf8dd6709), not
+    // written from the spec. The capture notes are in
+    // docs/SHARING_PERMISSIONS_BUILD_FINDINGS_2026-08-25.md. Treat these as facts
+    // about THIS build; the locators above still marked UNPINNED are not.
+    //
+    // Three build facts drive the design of this block:
+    //
+    //  1. Selection state is invisible. The Super/Basic/Custom tabs and the
+    //     device-picker radios report checkable=false checked=false
+    //     selected=false ALWAYS, whichever one is highlighted. So no "currently
+    //     selected level" locator can ever work; read the level off the user card
+    //     (see userCard) or infer it from switch state instead.
+    //  2. clickable is this build's enabled/disabled signal on Flutter Views
+    //     ("Share Devices", "Update Devices"), while real widgets (Switch,
+    //     Button) use enabled. Both have to be checked, per node type.
+    //  3. Two devices can be open in the share editor at once, and they share
+    //     capability labels ("Edit Device" exists on both fan and lock). A bare
+    //     //Switch[@content-desc="Edit Device"] is therefore AMBIGUOUS on that
+    //     screen - scope it with capabilityToggleNear(...).
+    // ══════════════════════════════════════════════════════════════════════════
+
+    /**
+     * "Manage Users" on the device long-press sheet - the entry point to the
+     * per-device permission editor, new on the permissions build.
+     *
+     * <p><b>Do not tap this sheet by position.</b> The option order differs per
+     * device type: on the fan it is second (Edit device, Manage Users, Share
+     * device, Delete device), on the lock it is last (Edit device, Share device,
+     * Delete device, Manage Users).</p>
+     */
+    public static final By LONGPRESS_MANAGE_USERS_OPTION =
+            By.xpath("//android.view.View[@content-desc=\"Manage Users\""
+                    + " or @content-desc=\"Manage users\"]");
+
+    /** Screen title of the per-device permission editor. */
+    public static final By MANAGE_USERS_TITLE =
+            By.xpath("//android.view.View[@content-desc=\"Manage Users\"]");
+
+    /** Screen title of the share flow's device picker. */
+    public static final By MANAGE_DEVICES_TITLE =
+            By.xpath("//android.view.View[@content-desc=\"Manage Devices\"]");
+
+    /**
+     * The "Update Devices" CTA at the bottom of Manage Users.
+     *
+     * <p>Rendered as a View, and clickable=true ONLY while there is an unsaved
+     * change pending - which makes it the signal for "the editor registered my
+     * edit", not merely a button to press.</p>
+     */
+    public static final By UPDATE_DEVICES_BUTTON =
+            By.xpath("//android.view.View[@content-desc=\"Update Devices\"]");
+
+    /**
+     * "Update Permission Role" confirmation, raised by "Update Devices".
+     * Body: "Are you sure you want to update user role?", buttons Cancel / Yes.
+     */
+    public static final By UPDATE_ROLE_DIALOG_TITLE =
+            By.xpath("//android.view.View[@content-desc=\"Update Permission Role\"]");
+
+    /** "Yes" on the Update-Permission-Role confirmation. */
+    public static final By UPDATE_ROLE_CONFIRM_YES =
+            By.xpath("//android.widget.Button[@content-desc=\"Yes\"]");
+
+    /** "Cancel" on the Update-Permission-Role confirmation. */
+    public static final By UPDATE_ROLE_CANCEL =
+            By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]");
+
+    /**
+     * "Share this device with family?" - an EXTRA confirmation the lock raises
+     * before the device picker opens. The fan does NOT raise it, so a share flow
+     * must tolerate its absence rather than wait for it.
+     *
+     * <p>Body: "You can share this individual device with your family members.
+     * This will give family members access to this device." Note "individual
+     * device": the opposite of the old family-wide wording.</p>
+     */
+    public static final By SHARE_INDIVIDUAL_DEVICE_DIALOG =
+            By.xpath("//android.view.View[@content-desc=\"Share this device with family?\"]"
+                    + " | //android.view.View[starts-with(@content-desc,"
+                    + " \"Share this device\")]");
+
+    /**
+     * The tick in the Manage Devices app bar that selects EVERY device at once.
+     * Unlabelled (empty content-desc), so it is matched as a clickable Button
+     * carrying no description - on that screen it is the only one.
+     */
+    public static final By SELECT_ALL_DEVICES_BUTTON =
+            By.xpath("//android.widget.Button[@clickable=\"true\""
+                    + " and @content-desc=\"\"]");
+
+    /**
+     * A user's card in Manage Users, whose content-desc is "name\nlevel" - e.g.
+     * "Member\nCustom". The admin's own card reads "Admin\nAdmin" (role, not
+     * level).
+     *
+     * <p>This is the ONLY reliable read-back of the persisted level, and it shows
+     * the SAVED value - a pending, unsaved tab tap does not change it.</p>
+     */
+    public static By userCard(String userName) {
+        return By.xpath("//android.widget.ImageView[starts-with(@content-desc, \""
+                + userName + "\n\") and not(contains(@content-desc, \"Tab \"))]");
+    }
+
+    /**
+     * Every user card on Manage Users, for counting and enumerating the user list.
+     *
+     * <p>The "Tab " exclusion is load-bearing, not defensive: the bottom navigation
+     * renders as ImageView nodes whose content-desc is "Admin\nTab 2 of 3" /
+     * "Member\nTab 2 of 3" - the same name-newline-something shape as a user card,
+     * and carrying the very names being looked up. Without the exclusion,
+     * userCard("Admin") matches the nav bar and levelOf("Admin") returns
+     * "Tab 2 of 3".</p>
+     */
+    public static final By ALL_USER_CARDS =
+            By.xpath("//android.widget.ImageView[contains(@content-desc, \"\n\")"
+                    + " and not(contains(@content-desc, \"Tab \"))]");
+
+    /**
+     * A capability toggle scoped to the card of a named user or device, for the
+     * screens where two capability lists are on screen at once (build fact 3 at
+     * the top of this block).
+     *
+     * @param anchorDesc start of the owning card's content-desc - a user name on
+     *                   Manage Users, a device name on Manage Devices
+     * @param label      the capability label
+     */
+    public static By capabilityToggleNear(String anchorDesc, String label) {
+        return scopedTo(anchorDesc, "android.widget.Switch", label);
+    }
+
+    /**
+     * A permission-level tab scoped to one card, same reason as
+     * {@link #capabilityToggleNear}.
+     */
+    public static By permissionLevelNear(String anchorDesc, String level) {
+        return scopedTo(anchorDesc, "android.view.View", level);
+    }
+
+    /**
+     * The first node of {@code nodeClass} carrying {@code label} that belongs to the
+     * card whose content-desc starts with {@code anchorDesc}.
+     *
+     * <p><b>Why both axes.</b> The two editors nest their controls differently, and a
+     * single axis is wrong on one of them:</p>
+     * <ul>
+     *   <li>on <b>Manage Users</b> the level tabs and capability switches are CHILDREN
+     *       of the user card, so {@code following::} - which excludes descendants -
+     *       skips straight past them and lands on the NEXT card's controls. That is the
+     *       worst possible failure here: asking for the admin row returns the member
+     *       row, so a locked-row assertion reads an editable row and passes;</li>
+     *   <li>on <b>Manage Devices</b> the inline editor is a SIBLING that follows the
+     *       device row, where {@code descendant::} finds nothing.</li>
+     * </ul>
+     *
+     * <p>Unioning the axes and taking {@code [1]} resolves both: XPath returns the
+     * union in document order, and a descendant always precedes a following node, so
+     * the nested case wins whenever it exists. Verified against captured dumps of both
+     * screens.</p>
+     */
+    private static By scopedTo(String anchorDesc, String nodeClass, String label) {
+        String anchor = "//*[starts-with(@content-desc, \"" + anchorDesc + "\")]";
+        String pred   = "[@content-desc=\"" + label + "\"]";
+        return By.xpath("(" + anchor + "/descendant::" + nodeClass + pred
+                + " | " + anchor + "/following::" + nodeClass + pred + ")[1]");
+    }
+
+    /**
+     * "Create or Join" on the family switcher sheet - the member's route to the
+     * join screen on this build.
+     *
+     * <p>The + FAB does NOT lead here any more: it goes straight to the BLE
+     * "Looking for devices" scan. The join path is
+     * family switcher then Create or Join then Join an existing smart home.</p>
+     */
+    public static final By CREATE_OR_JOIN_OPTION =
+            By.xpath("//android.view.View[@content-desc=\"Create or Join\"]");
+
+    /** A family row in the family-switcher sheet, by exact name (untruncated there). */
+    public static By familySwitcherRow(String familyName) {
+        return By.xpath("//android.view.View[@content-desc=\"" + familyName + "\"]");
+    }
+
+    /**
+     * A device row in the Manage Devices picker.
+     *
+     * <p>Rows render as clickable ImageView nodes whose content-desc is
+     * "device\nroom" - the same shape as a Home tile. Tapping the row is what
+     * toggles selection; the trailing radio is not a separate node.</p>
+     */
+    public static By deviceRowInPicker(String deviceName) {
+        return By.xpath("//android.widget.ImageView[starts-with(@content-desc, \""
+                + deviceName + "\") and @clickable=\"true\"]");
+    }
+
+    /** The "15 minutes" validity notice on the invite-code sheet. */
+    public static final By SHARE_CODE_VALIDITY_NOTICE =
+            By.xpath("//android.view.View[contains(@content-desc, \"valid only for\")]");
 }

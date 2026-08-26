@@ -23,6 +23,8 @@ test.env
 # Data-driven login pool (email,password per line) — provide locally, never commit.
 accounts.csv
 !accounts.csv.example
+adb_commands.txt
+sharing-test.properties
 
 # ── Appium / Node (FIX C6: dist/ was committed — ~500 MB) ─────────────────────
 # The dist/ folder contains a full Node.js Windows binary and appium node_modules.
