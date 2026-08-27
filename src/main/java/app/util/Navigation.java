@@ -1,0 +1,73 @@
+package app.util;
+
+import app.resources.ArduinoRelayControllerModern;
+import io.appium.java_client.android.AndroidDriver;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+
+import static app.util.AppUtil.isElementPresent;
+
+public class Navigation {
+    private static final By bluetoothBtn = By.xpath("//android.view.View[@index=\"3\"]");
+    private static final By bluetoothSuccess = By.xpath("//android.view.View[@content-desc=\"Device is connected via bluetooth\"]");
+    public static final By deviceOffline = By.xpath("//android.view.View[@content-desc=\"Device is offline. If it is nearby, please turn on bluetooth to connect.\"]");
+
+    public static void openFanControl(AndroidDriver driver) {
+        ActionsUtil.Tap.withCoordinates(driver, 800, 950);// for Narzo only
+        ActionsUtil.sleep(5000);
+        executeClickBluetooth(driver);
+    }
+
+    public static boolean clickElementWithRetry(AndroidDriver driver, By locator) {
+        for (int i = 0; i < 5; i++) {
+            try {
+                WebElement el = driver.findElement(locator);
+                // Flutter elements do not expose a "clickable" DOM attribute, so
+                // Boolean.parseBoolean(getDomAttribute("clickable")) is always false
+                // and the click never fires. Gate on displayed + enabled instead.
+                if (el.isDisplayed() && el.isEnabled()) {
+                    el.click();
+                    return true;
+                }
+            } catch (Exception ignored) {
+            }
+            ActionsUtil.sleep(500);
+        }
+        return false;
+    }
+
+    private static boolean executeClickBluetooth(AndroidDriver driver) {
+        String actionId = "click on Bluetooth";
+        int iteration = 1;
+        boolean success = false;
+
+        while (iteration <= 5) {
+            String status = "Fail";
+            if (clickElementWithRetry(driver,bluetoothBtn)) {
+                if (isElementPresent(driver,bluetoothSuccess)) {
+                    status = "Success";
+                    success = true;
+                    driver.navigate().back();
+                }
+            }
+            if (success) {
+                break;
+            }
+            if (iteration == 5) {
+                break;
+            }
+            iteration++;
+        }
+        return success;
+    }
+
+    private static boolean waitForVisible(AndroidDriver driver, By locator, long seconds) {
+        for (int i = 0; i < seconds * 2; i++) {
+            try {
+                if (driver.findElement(locator).isDisplayed()) return true;
+            } catch (Exception ignored) {}
+            ActionsUtil.sleep(500);
+        }
+        return false;
+    }
+}

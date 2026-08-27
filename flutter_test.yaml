@@ -1,0 +1,19 @@
+# flutter_test.yaml
+test_config:
+  devices:
+    - slot: "Local_Device_Slot1"
+      ip: "127.0.0.1"
+      port: 5555
+
+  suites:
+    - name: "Flutter Integration Tests"
+      tests:
+        - "integration_test/login_test.dart"
+        - "integration_test/app_test.dart"
+        - "integration_test/fan_control_test.dart"
+
+  reporters:
+    - type: "flutter_coverage"
+      output: "coverage/"
+    - type: "html"
+      output: "test-output/flutter_report.html"

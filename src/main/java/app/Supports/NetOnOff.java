@@ -4,10 +4,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
+import app.util.AppUtil;
 import org.awaitility.Awaitility;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.testng.Assert;
-import AtombergTest.Method;
 import io.appium.java_client.android.AndroidDriver;
 
 public class NetOnOff {
@@ -28,13 +27,12 @@ public class NetOnOff {
 			System.out.println("Appium driver initialized.");
 		} catch (MalformedURLException e) {
 			System.out.println("Error initializing Appium driver: " + e.getMessage());
-			Assert.fail("Expected element to click not found");
 			e.printStackTrace();
 			return;
 		}
 		System.out.println("Atomberg App Opened...");
 		sleep(6000);
-		Method.captureScreenshot(driver);
+		AppUtil.captureScreenshot(driver,"driver");
 	}
 
 	public static void main(String[] args) {

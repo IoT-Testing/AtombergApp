@@ -1,1 +1,61 @@
+# ── Java / Maven ──────────────────────────────────────────────────────────────
+target/
+*.class
+*.jar
+*.war
+
+# ── IDE ────────────────────────────────────────────────────────────────────────
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+
+# ── macOS ──────────────────────────────────────────────────────────────────────
+.DS_Store
+**/.DS_Store
+
+# ── Credentials & secrets (FIX C8 / M6) ──────────────────────────────────────
+# NEVER commit real credentials — use test.env.example as a template
+test.env
+*.env
+!test.env.example
+# Data-driven login pool (email,password per line) — provide locally, never commit.
+accounts.csv
+!accounts.csv.example
+adb_commands.txt
+sharing-test.properties
+
+# ── Appium / Node (FIX C6: dist/ was committed — ~500 MB) ─────────────────────
+# The dist/ folder contains a full Node.js Windows binary and appium node_modules.
+# These must NEVER be committed. Install Appium globally: npm install -g appium
+dist/
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ── Test output ────────────────────────────────────────────────────────────────
+screenshots/
+logs/
+ss-xml/
+test-results/
+test-output/
+ExtentReports/
 reports/
+coverage/
+*.png
+*.mp4
+
+# ── APKs / IPAs (store in release management, not git) ───────────────────────
+*.apk
+*.ipa
+src/test/resources/apps/
+
+# ── Surefire (generated, not source) ─────────────────────────────────────────
+target/surefire-reports/
+
+# ── Python ─────────────────────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo

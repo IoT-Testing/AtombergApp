@@ -1,0 +1,19 @@
+{
+  "server": {
+    "port": 4723,
+    "use-plugins": ["device-farm"],
+    "plugin": {
+      "device-farm": {
+        "platform": "android",
+        "androidDeviceType": "both",
+        "skipChromeDownload": false
+      }
+    },
+    "allow-insecure": [
+      "*:session_discovery",
+      "uiautomator2:adb_shell"
+    ],
+    "base-path": "/",
+    "keep-alive-timeout": 800
+  }
+}

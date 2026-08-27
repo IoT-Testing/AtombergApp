@@ -1,70 +1,163 @@
-    # AtombergApp
- Testing Atomberg Home app
+# Atomberg App — Test Automation
 
-This project is made to test the atomberg home app, with automated steps.
-As the app is flutter based and also the mobile needs to be near the fan or lock to control them
-this will work only with the physical devices connected to the host.
+Black-box UI automation for the **Atomberg Home** Android app (`com.atomberg.app`), a
+Flutter application. Because the app is Flutter, the native tree exposes no
+`resource-id`s — elements are located via **accessibility labels (`content-desc`)**,
+text, and XPath through **Appium + UiAutomator2**.
 
-There are few stress tests in the project.
+For internet-connected devices (fan, water purifier), UI actions are cross-verified
+against real device state via the Atomberg developer API. The smart lock is
+Bluetooth-only and has no cloud state, so it is verified through the UI alone.
 
-1. Prerequisites
-2. Communication
-3. Initialization
-4. Error Handling
-5. Test Report format
+---
 
+## Stack
 
- **Prerequisites**
-1. Appium Server should be installed in the Host PC
-2. Java compatible IDE (IntelliJ IDE or Eclipse).
-3. Android Device with developer mode. Connect it with host using USB cable.
-4. Dependencies for the project to be mentioned in pom.xml file.
-5. NPM installed in the HOST PC. https://nodejs.org/en
-6. cmd : `npm install appium` 
-7. Linux : `./appium.AppImage --no-sandbox`
+| Piece | Value |
+|---|---|
+| Language / build | Java 17 (builds & runs on JDK 21) · Maven |
+| Automation | Appium `java-client` 10.1.1 · Selenium 4.45.0 · UiAutomator2 |
+| Runner | TestNG 7.12.0 |
+| Device allocation | [appium-device-farm](https://github.com/AppiumTestDistribution/appium-device-farm) plugin |
+| Reporting | ExtentReports 5.1.2 (Spark) + JSON→HTML dashboard |
 
+---
 
-**Communication**
+## Prerequisites
 
-Turn on the developer options in the Android mobile. Now connect the mobile with the Host PC using USB cable.
-After that run cmd prompt and run `adb devices`
-If you have list of devices visible after running the command, then you can use those devices for the process.
-Run Appium Server GUI, or `appium` commands in the terminal to start Appium Server.
+- **JDK 21** (project targets 17; either works) and **Maven**
+- **Node + Appium 3** with the device-farm plugin:
+  ```bash
+  npm install -g appium
+  appium plugin install --source=npm appium-device-farm
+  appium driver install uiautomator2
+  ```
+- **Android SDK / adb** on `PATH`, with one or more devices connected (`adb devices`)
+- The Atomberg app installed on each device
 
-Run Appium Inspector, in there provide the desired capabilities.
-1. platformName(Android or iOS).
-2. platformVersion(The OS version of the specific device).
-3. uuid(is visible in ADB devices list, for iOS in XCODE).
-4. deviceName(Name of the device).
+---
 
-After this you will be able to see the devices screen on the inspector UI.
-After you click on any element of the App or Device, the inspector will provide you the locator of that specific element.
+## Setup
 
-The above same Desired Capabilities are to be used in the Code as well.
+1. Copy the environment template and fill in real values:
+   ```bash
+   cp test.env.example test.env
+   ```
+   Then load it before running:
+   ```bash
+   # Git Bash
+   export $(grep -v '^#' test.env | xargs)
+   ```
+   Credentials are **never** committed — see [test.env.example](test.env.example) for the
+   full list (login accounts, Wi-Fi provisioning, and the developer-API keys used by the
+   state oracle).
+
+2. (Optional) Provide the data-driven login pool `accounts.csv` locally
+   (`email,password` per line — see [accounts.csv.example](accounts.csv.example)). It is
+   git-ignored.
+
+3. Build:
+   ```bash
+   mvn clean test-compile
+   ```
+
+---
+
+## Running
+
+### Appium server (device-farm)
+Start the server with the checked-in config, which enables the device-farm plugin and
+Appium-3 base path `/`:
+```bash
+appium --config server-config.json
 ```
-MutableCapabilities capabilities = new UiAutomator2Options();
- capabilities.setCapability("platformName", "Android");
- capabilities.setCapability("appPackage", "com.appPackage.app");
- capabilities.setCapability("appActivity", "com.appPackage.app.MainActivity");
+The device-farm dashboard is at <http://127.0.0.1:4723/device-farm>.
 
- driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"),capabilities);
- //this will initialize the driver.
- 
- driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
- /*
- this will set an implicit wait, where the driver will wait for
- maximum of 10 seconds for checking the visibility of the element.
- */
+### Option A — TestNG suite
+Runs the full suite defined in [testng.xml](testng.xml):
+```bash
+mvn test
 ```
-When you run the above snippet, you will see that the App has been opened in you connected device.
+Device allocation is automatic — each `<test>` slot opens a session and the plugin
+assigns a free connected device. For multi-device parallel runs, uncomment additional
+slots in `testng.xml` and raise `thread-count` (one slot per phone).
 
-**Error Handling**
+### Option B — Standalone runner
+[`Main.java`](src/main/java/app/Main.java) is a scriptable single-device flow (launch →
+login → fan control) independent of TestNG. Requires `TEST_EMAIL` / `TEST_PASSWORD` in
+the environment.
 
-\\\\\
+---
 
-**Test Report Format**
+## Test classes
 
-For the Test report, we have Extent Reports, from this we can use the required data and add them in the .html file.
-We just have to specify which data we want to mention in the report.
-We can add test status.
-Status includes: PASS / FAIL / SKIPPED / ABORTED .
+Active in the default `testng.xml` slot:
+
+| Class | Covers |
+|---|---|
+| `OpenAppTest` | Launch + auto-login smoke |
+| `LoginTest` | Valid/invalid login, logout, re-login |
+| `AppTest` | Login → Analytics → More tab → logout |
+| `FanTest` | Power, speeds 1–6, sleep, timer |
+| `ManageProfileTest` | Profile edit |
+| `ManageFamilyTest` | Family management entry |
+| `QuickSmokeTest` | Device-farm session smoke |
+| `DeviceProvTest` | Provisioning (hardware loop gated by `-DDEVICE_PROV_HARDWARE_ENABLED`) |
+
+`SecondAppTest` is **quarantined** (pending a rewrite) and excluded from the suite.
+
+---
+
+## Device-state oracle (API cross-verification)
+
+`app.api.DeviceStateVerifier` reads real device state from the Atomberg developer API to
+confirm the effect of a UI action:
+
+```java
+DeviceStateVerifier verifier = new DeviceStateVerifier();
+fan.setSpeed(3);
+assert verifier.awaitState(deviceId, "speed", "3");   // polls through cloud lag
+```
+
+Fields: `power`, `speed`, `timer`, `led`, `sleep`. Requires `ATOMBERG_API_KEY`,
+`ATOMBERG_REFRESH_TOKEN` (same account as the app login) and a device id. **Scope:** fan
+and water purifier only — the BLE smart lock has no cloud state.
+
+---
+
+## Reporting
+
+- **ExtentReports** → `reports/Atomberg<yyyy-MM-dd>/<timestamp>.html`, grouped per device slot.
+- **Dashboard** — [`index.html`](src/main/java/app/index.html) renders the JSON that
+  `DashboardReporter` writes to `test-results/dashboard-data.json`. Serve the folder (e.g.
+  `python -m http.server`) or copy the JSON next to `index.html` — browsers block
+  `file://` fetches, in which case the dashboard shows clearly-labelled sample data.
+
+---
+
+## CI
+
+[`.github/workflows/tests.yml`](.github/workflows/tests.yml) runs **build + static
+analysis only** — GitHub-hosted runners have no Android device, so the Appium suite cannot
+execute there. To run the real suite in CI, register a **self-hosted runner** on the host
+machine with the phones attached (a commented `device-tests` job shows the shape).
+
+---
+
+## Layout
+
+```
+src/main/java/app/
+  api/               # DeviceStateVerifier + AtombergApiClient (state oracle)
+  Fan/ Lock/ Login/  # screen action classes ("page objects")
+  MoreTab/ sharing/ BLEOnlyFans/ WaterPurifier/ ...
+  resources/Locators/Android/   # By locators, grouped by screen
+  util/              # AppUtil, ActionsUtil, Navigation, ScreenRecording, ...
+  Main.java          # standalone runner
+src/test/java/com/appTest/
+  tests/             # TestNG test classes (BaseTest = driver lifecycle)
+  listeners/ models/ util/
+server-config.json   # Appium device-farm config
+testng.xml           # suite definition (device slots)
+test.env.example     # environment template (copy to test.env)
+```

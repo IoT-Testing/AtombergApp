@@ -1,0 +1,10 @@
+{
+    "listen_port": 5625,
+    "unicast_port": 5600,
+    "listen_timeout": 10,
+    "retry_limit": 10,
+    "state_verify_timeout": 5,
+    "iterations": 10,
+    "log_file_path": "data/results.csv",
+    "mac_ids_file_path": "data/mac_ids.txt"
+}

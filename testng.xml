@@ -1,20 +1,104 @@
-<suite name="AtombergApp" parallel="classes" thread-count="2">
-    <test name="Device1">
-        <parameter name="deviceSlot" value="1"/>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<!--
+  Atomberg Home App – TestNG Suite
+  ─────────────────────────────────────────────────────────────────
+  Parallel execution: one <test> block per device slot.
+
+  Device allocation is handled by the Appium Device Farm plugin
+  (appium-device-farm). Each <test> block opens a new session and the
+  plugin auto-allocates a free connected device — no IP/port needed.
+
+  Each <test> passes:
+    • deviceSlot – label used in the Extent report (required)
+    • deviceUdid – OPTIONAL; set only to pin a slot to a specific
+                   device UDID. Leave empty for auto-allocation.
+
+  For local single-device runs, only the first <test> block is needed.
+  For parallel runs, raise thread-count above and add one <test> block
+  per device (optionally pinning each with deviceUdid).
+
+  Optional test classes (ManageFamilyTest, ManageProfileTest,
+  QuickSmokeTest, DeviceProvTest) are in commented blocks below.
+  ─────────────────────────────────────────────────────────────────
+-->
+<suite name="Atomberg Home App – Test Suite"
+       parallel="tests"
+       thread-count="2"
+       verbose="2">
+
+    <!-- Listeners (TestListeners, DashboardReporter) are registered once via
+         @Listeners on BaseTest. Do NOT also declare them here — double
+         registration duplicates dashboard rows and log output. -->
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         DEVICE SLOT 1 — local / default device
+         Core regression: open app → login → app tabs → fan control
+         ══════════════════════════════════════════════════════════════════════ -->
+    <test name="Slot1 – All Tests">
+        <parameter name="deviceSlot" value="Local_Device_Slot1"/>
+        <!-- deviceUdid omitted → Appium Device Farm auto-allocates a device -->
         <classes>
-            <class name="Tests.AppTest"/>
+            <class name="com.appTest.tests.OpenAppTest"/>
+            <class name="com.appTest.tests.LoginTest"/>
+            <class name="com.appTest.tests.AppTest"/>
+            <class name="com.appTest.tests.FanTest"/>
+            <class name="com.appTest.tests.ManageProfileTest"/>
+            <class name="com.appTest.tests.ManageFamilyTest"/>
+            <class name="com.appTest.tests.QuickSmokeTest"/>
+            <class name="com.appTest.tests.DeviceProvTest"/>
+            <!-- SecondAppTest removed: constructor takes SoftAssert (not TestNG-
+                 injectable) so TestNG cannot instantiate it, and it redeclares
+                 @BeforeSuite/@AfterSuite that conflict with BaseTest. Quarantined
+                 pending a rewrite. -->
         </classes>
     </test>
-    <test name="Device2">
-        <parameter name="deviceSlot" value="2"/>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         DEVICE SLOT 1 — Profile & Family management (opt-in)
+         Uncomment to run profile/family tests after the core regression.
+         ══════════════════════════════════════════════════════════════════════ -->
+    <!--
+    <test name="Slot1 – Profile and Family">
+        <parameter name="deviceSlot" value="Local_Device_Slot1"/>
         <classes>
-            <class name="Tests.AppTest"/>
+            <class name="com.appTest.tests.ManageFamilyTest"/>
+            <class name="com.appTest.tests.ManageProfileTest"/>
         </classes>
     </test>
-<!--    <test name="Device3">-->
-<!--        <parameter name="deviceSlot" value="3"/>-->
-<!--        <classes>-->
-<!--            <class name="Tests.AppTest"/>-->
-<!--        </classes>-->
-<!--    </test>-->
+    -->
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         DEVICE SLOT 1 — Quick smoke / provisioning (opt-in)
+         Enable for device-farm sessions or hardware provisioning rigs.
+         Set -DDEVICE_PROV_HARDWARE_ENABLED=true for the full hardware loop.
+         ══════════════════════════════════════════════════════════════════════ -->
+    <!--
+    <test name="Slot1 – Smoke and Provisioning">
+        <parameter name="deviceSlot" value="Local_Device_Slot1"/>
+        <classes>
+            <class name="com.appTest.tests.QuickSmokeTest"/>
+            <class name="com.appTest.tests.DeviceProvTest"/>
+        </classes>
+    </test>
+    -->
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         DEVICE SLOT 2 — second device (uncomment to run in parallel).
+         Leave deviceUdid empty to let Device Farm auto-allocate, or set it
+         to a specific UDID (from `adb devices`) to pin this slot.
+         Remember to raise thread-count on <suite> above.
+         ══════════════════════════════════════════════════════════════════════ -->
+    <!--
+    <test name="Slot2 – Core Regression">
+        <parameter name="deviceSlot" value="Device_Slot2"/>
+        <parameter name="deviceUdid" value=""/>
+        <classes>
+            <class name="com.appTest.tests.OpenAppTest"/>
+            <class name="com.appTest.tests.LoginTest"/>
+            <class name="com.appTest.tests.AppTest"/>
+            <class name="com.appTest.tests.FanTest"/>
+        </classes>
+    </test>
+    -->
+
 </suite>

@@ -1,77 +1,127 @@
 package app.ScreenCheck;
 
-import app.Resources.CommonElements;
-import app.Resources.HomeELements;
-import app.ScreenCheckCallbackAction;
-import app.util.ActionsUtil;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
-/*
-    THIS CHECK IS FOR ALL THE MAIN SCREENS OF THE APP
-    HOME SCREEN CHECK & CLICK
-    MORE TAB CHECK & CLICK
-    ANALYTICS TAB CHECK & CLICK
-*/
+import static app.resources.Locators.Android.HomeLocators.*;
 
+/**
+ * ScreenCheck – verifies presence on and navigates to main app screens:
+ * Home, Analytics, and More tab.
+ *
+ * <p>Designed as a thin helper: each method ensures the correct screen is
+ * active and dismisses any transient popups (Rate Us, Alexa) that may block
+ * subsequent actions.</p>
+ */
 public class ScreenCheck {
-    public AndroidDriver atomberg;
-    CommonElements ce = new CommonElements();
-    HomeELements he = new HomeELements();
 
-    public ScreenCheck(AndroidDriver atomberg){
+    private final AndroidDriver atomberg;
+
+    public ScreenCheck(AndroidDriver atomberg) {
         this.atomberg = atomberg;
     }
 
-    public void moreTab(){
+    // ── Tab navigation ────────────────────────────────────────────────────────
 
-        //Check for More Tab Screen
-        WebElement moreTab = null;
+    /**
+     * Navigates to the More tab. If the tab is already selected, does nothing.
+     */
+    public void moreTab() {
+        ensureOnScreen(MORE_TAB, "More");
+        rateUsPopup();
+    }
+
+    /**
+     * Navigates to the Home (Devices) screen.
+     * Dismisses Rate Us popup if present.
+     */
+    public void homeScreen() {
+        rateUsPopup();
+        ensureOnScreen(DEVICES, "Home");
+    }
+
+    /**
+     * Navigates to the Analytics tab.
+     * Dismisses Rate Us popup if present.
+     */
+    public void analytics() {
+        ensureOnScreen(ANALYTICS_TAB, "Analytics");
+        rateUsPopup();
+    }
+
+    // ── Popup dismissal ───────────────────────────────────────────────────────
+
+    /**
+     * Dismisses a "Rate Us" popup if one is currently displayed.
+     * Failures are swallowed — the popup is optional and must not fail tests.
+     */
+    public void rateUsPopup() {
         try {
-            moreTab = atomberg.findElement(By.xpath(ce.moreTabId));
-        } catch (Exception ignored) {}
-        assert moreTab != null;
-        System.out.println(moreTab.isSelected());
-        if(!moreTab.isSelected()) moreTab.click();
-        rateUs();
-    }
+            List<WebElement> buttons = atomberg.findElements(AppiumBy.className("android.widget.Button"));
+            List<WebElement> cancelButtons = buttons.stream()
+                    .filter(btn -> "Cancel".equals(btn.getDomAttribute("content-desc")))
+                    .toList();
 
-    public void homeScreen(){
-        //Check for Home Screen
-        rateUs();
-        List<WebElement> elementList = atomberg.findElements(By.className("android.widget.ImageView"));
-        List<WebElement> tabs = elementList.stream().filter(webElement -> webElement.getDomAttribute("content-desc")!=null).collect(Collectors.toList());
-        List<WebElement> home = tabs.stream().filter(webElement -> Objects.requireNonNull(webElement.getDomAttribute("content-desc")).startsWith("Hi")).collect(Collectors.toList());
-        System.out.println(home.size());
-        assert !home.isEmpty();
-        home.get(home.size() - 1).click();
-        rateUs();
-    }
-
-    public void analytics(){
-        //Check for Analytics Screen
-        rateUs();
-        WebElement analytics = atomberg.findElement(By.xpath(ce.analyticsId));
-        System.out.println(analytics.isSelected());
-        if(!analytics.isSelected()){
-            analytics.click();
-        }
-        rateUs();
-    }
-
-    private void rateUs() {
-        List<WebElement> dialogueBox = atomberg.findElements(By.className("android.widget.Button"));
-        List<WebElement> cancel = dialogueBox.stream().filter(webElement -> Objects.equals(webElement.getDomAttribute("content-desc"), "Cancel")).collect(Collectors.toList());
-        for (WebElement ele : cancel) {
-            if (Objects.equals(ele.getDomAttribute("content-desc"), "Cancel")) { //checks for the cancel button and the clicks on it if there
-                ele.click();
-                System.out.println("Canceled Rate us");
+            for (WebElement cancelButton : cancelButtons) {
+                if (cancelButton.isDisplayed() && cancelButton.isEnabled()) {
+                    cancelButton.click();
+                    System.out.println("Rate Us popup dismissed.");
+                    break;
+                }
             }
+        } catch (Exception e) {
+            System.err.println("Error while dismissing Rate Us popup: " + e.getMessage());
+        }
+    }
+
+    // ── Internal helpers ──────────────────────────────────────────────────────
+
+    /**
+     * Ensures a tab is visible and selected. Clicks only if not already selected.
+     *
+     * @param locator  locator for the tab element
+     * @param label    human-readable tab name used in log messages
+     */
+    private void ensureOnScreen(By locator, String label) {
+        WebElement tab = waitForElement(locator);
+        System.out.println(label + " tab selected: " + tab.isSelected());
+        if (!tab.isSelected()) {
+            tab.click();
+            System.out.println(label + " tab clicked.");
+        }
+    }
+
+    /**
+     * Polls for an element until the timeout elapses, returning it if found.
+     *
+     * @param locator element locator
+     * @return the {@link WebElement} once visible
+     * @throws RuntimeException if the element is not found within the timeout
+     */
+    private WebElement waitForElement(By locator) {
+        long deadline = System.currentTimeMillis() + (long) 10 * 1_000L;
+        while (System.currentTimeMillis() < deadline) {
+            try {
+                return atomberg.findElement(locator);
+            } catch (NoSuchElementException ignored) {
+                app.util.ActionsUtil.sleep(500);
+            }
+        }
+        throw new RuntimeException(
+                "Element not found after " + (long) 10 + "s: " + locator);
+    }
+
+    @SuppressWarnings("unused")
+    private WebElement findOptionalElement(By locator) {
+        try {
+            return atomberg.findElement(locator);
+        } catch (NoSuchElementException e) {
+            return null;
         }
     }
 }

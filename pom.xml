@@ -1,111 +1,337 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0          http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atomberg.app</groupId>
     <artifactId>atombergapp-test</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <description>Atomberg App</description>
+    <version>1.0.0-SNAPSHOT</version>
+    <description>Atomberg Home App – Appium 3 + Device Farm</description>
+
     <properties>
-        <junit-bom-scope>import</junit-bom-scope>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <sonar.organization>app testing</sonar.organization>
-        <surefire.plugin.version>3.0.0.M5</surefire.plugin.version>
-        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.release>17</maven.compiler.release>
+
+        <!-- ── Core versions (single source of truth) ── -->
+        <!--
+            FIX C1+C2: All Selenium artifacts must share ONE version.
+            selenium-http-jdk-client 4.13 was incompatible with Appium 10.x.
+            FIX C4: jackson-databind 2.22.0 does not exist; pinned to 2.18.3.
+        -->
+        <appium.java.client.version>10.1.1</appium.java.client.version>
+        <selenium.version>4.45.0</selenium.version>
+        <testng.version>7.12.0</testng.version>
+        <cucumber.version>7.34.4</cucumber.version>
+        <flutter.finder.version>1.0.12</flutter.finder.version>
+        <extentreports.version>5.1.2</extentreports.version>
+        <lombok.version>1.18.38</lombok.version>
+        <surefire.plugin.version>3.5.3</surefire.plugin.version>
+
+        <!--
+            FIX C5: Allow suite file to be overridden from CLI:
+              mvn test -DsuiteFile=testng-smoke.xml
+        -->
+        <suiteFile>testng.xml</suiteFile>
     </properties>
+
     <dependencies>
+
+        <!-- ═══════════════════════════════════════════════════
+             APPIUM 3 – Java Client
+        ═══════════════════════════════════════════════════ -->
         <dependency>
             <groupId>io.appium</groupId>
             <artifactId>java-client</artifactId>
-            <version>9.4.0</version>
+            <version>${appium.java.client.version}</version>
+            <exclusions>
+                <!-- Exclude transitive Selenium pulled by java-client;
+                     we control it explicitly below -->
+                <exclusion>
+                    <groupId>org.seleniumhq.selenium</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- ═══════════════════════════════════════════════════
+             FLUTTER INTEGRATION DRIVER – locator library
+             FIX M1: was missing from original pom.xml
+        ═══════════════════════════════════════════════════ -->
+        <dependency>
+            <groupId>io.github.ashwithpoojary98</groupId>
+            <artifactId>appium_flutterfinder_java</artifactId>
+            <version>${flutter.finder.version}</version>
+        </dependency>
+
+        <!-- ═══════════════════════════════════════════════════
+             SELENIUM – single pinned version
+             FIX C1: All three artifacts at same version.
+             FIX C2: selenium-http-jdk-client removed (not needed
+                     with Appium 10.x which uses its own HTTP client).
+        ═══════════════════════════════════════════════════ -->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>${selenium.version}</version>
         </dependency>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-remote-driver</artifactId>
-            <version>4.33.0</version>
+            <version>${selenium.version}</version>
         </dependency>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-java</artifactId>
-            <version>4.33.0</version>
+            <artifactId>selenium-api</artifactId>
+            <version>${selenium.version}</version>
+        </dependency>
+
+        <!-- ═══════════════════════════════════════════════════
+             TESTNG
+        ═══════════════════════════════════════════════════ -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>${testng.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- ═══════════════════════════════════════════════════
+             CUCUMBER
+             FIX C3: Both artifacts pinned to same version.
+             cucumber-junit requires JUnit 4 – use cucumber-testng
+             if running exclusively with TestNG.
+        ═══════════════════════════════════════════════════ -->
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+            <version>${cucumber.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-chrome-driver</artifactId>
-            <version>4.33.0</version>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-testng</artifactId>
+            <version>${cucumber.version}</version>
+            <scope>test</scope>
         </dependency>
+
+        <!-- ═══════════════════════════════════════════════════
+             REPORTING
+        ═══════════════════════════════════════════════════ -->
+        <dependency>
+            <groupId>com.aventstack</groupId>
+            <artifactId>extentreports</artifactId>
+            <version>${extentreports.version}</version>
+        </dependency>
+
+        <!-- ═══════════════════════════════════════════════════
+             APPLITOOLS VISUAL AI
+        ═══════════════════════════════════════════════════ -->
+        <dependency>
+            <groupId>com.applitools</groupId>
+            <artifactId>eyes-appium-java5</artifactId>
+            <version>5.75.2</version>
+        </dependency>
+
+        <!-- ═══════════════════════════════════════════════════
+             APACHE COMMONS
+        ═══════════════════════════════════════════════════ -->
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.19.0</version>
+            <version>2.18.0</version>
         </dependency>
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>1.18.0</version>
+            <version>1.17.2</version>
         </dependency>
         <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <version>7.11.0</version>
-            <scope>test</scope>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.18.0</version>
         </dependency>
+
+        <!-- ═══════════════════════════════════════════════════
+             APACHE POI (Excel / CSV)
+        ═══════════════════════════════════════════════════ -->
         <dependency>
-            <groupId>com.aventstack</groupId>
-            <artifactId>extentreports</artifactId>
-            <version>5.1.2</version>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>5.4.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
-            <version>5.4.1</version>
+            <version>5.4.0</version>
+        </dependency>
+
+        <!-- ═══════════════════════════════════════════════════
+             JSON
+             FIX C4: jackson-databind 2.22.0 does not exist.
+        ═══════════════════════════════════════════════════ -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.11.0</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi</artifactId>
-            <version>5.4.1</version>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>3.2.1</version>
+            <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20240303</version>
+        </dependency>
+
+        <!-- ═══════════════════════════════════════════════════
+             AWAITILITY
+        ═══════════════════════════════════════════════════ -->
         <dependency>
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility</artifactId>
-            <version>4.3.0</version>
-            <scope>compile</scope>
+            <version>4.2.2</version>
         </dependency>
+
+        <!-- ═══════════════════════════════════════════════════
+             LOMBOK – reduces boilerplate
+             FIX M2: was missing from original pom.xml
+        ═══════════════════════════════════════════════════ -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- ═══════════════════════════════════════════════════
+             LOGGING
+        ═══════════════════════════════════════════════════ -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>2.0.16</version>
+        </dependency>
+
+        <!-- ═══════════════════════════════════════════════════
+             SERIAL COMMS (Arduino relay support)
+        ═══════════════════════════════════════════════════ -->
+        <dependency>
+            <groupId>com.fazecast</groupId>
+            <artifactId>jSerialComm</artifactId>
+            <version>2.11.0</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.11.4</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
+
     <build>
         <plugins>
+
+            <!-- ── Compiler ── -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.14.0</version>
+                <version>3.13.0</version>
                 <configuration>
-                    <source>9</source>
-                    <target>9</target><compilerArgs>--enable-preview</compilerArgs>
+                    <release>17</release>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                    <compilerArgs>
+                        <arg>-J--add-opens=java.base/sun.misc=ALL-UNNAMED</arg>
+                        <arg>-J--add-opens=java.base/java.lang=ALL-UNNAMED</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
-            <plugin>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.8.1</version>
-                <executions>
-                    <execution>
-                        <id>getClasspathFilenames</id>
-                        <goals>
-                            <goal>properties</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+
+            <!-- ── Surefire: FIX C5 – suiteFile overridable via -DsuiteFile ── -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.5.3</version>
+                <version>${surefire.plugin.version}</version>
+                <!-- FIX: junit-jupiter is on the test classpath (via Cucumber/JUnit5),
+                     so surefire auto-detected the JUnit Platform provider and IGNORED
+                     the TestNG <suiteXmlFiles> — every TestNG suite reported
+                     "Tests run: 0". Explicitly pinning the surefire-testng provider
+                     stops auto-detection and makes suiteXmlFiles run under TestNG. -->
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.surefire</groupId>
+                        <artifactId>surefire-testng</artifactId>
+                        <version>${surefire.plugin.version}</version>
+                    </dependency>
+                </dependencies>
                 <configuration>
                     <suiteXmlFiles>
-                        <suiteXmlFile>testng.xml</suiteXmlFile>
+                        <suiteXmlFile>${suiteFile}</suiteXmlFile>
                     </suiteXmlFiles>
+                    <argLine>
+                        --add-opens java.base/java.lang=ALL-UNNAMED
+                        --add-opens java.base/java.util=ALL-UNNAMED
+                        --add-opens java.base/java.io=ALL-UNNAMED
+                    </argLine>
+                    <forkCount>1</forkCount>
+                    <reuseForks>true</reuseForks>
+                    <testFailureIgnore>false</testFailureIgnore>
                 </configuration>
             </plugin>
+
+            <!-- ── Checkstyle: FIX M3 – was called in CI but not configured ── -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.6.0</version>
+                <configuration>
+                    <configLocation>google_checks.xml</configLocation>
+                    <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
+                    <failOnViolation>false</failOnViolation>
+                    <logViolationsToConsole>true</logViolationsToConsole>
+                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                </configuration>
+            </plugin>
+
+            <!-- ── SpotBugs: FIX M4 – was called in CI but not configured ── -->
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>4.9.3.0</version>
+                <configuration>
+                    <effort>Max</effort>
+                    <threshold>High</threshold>
+                    <failOnError>false</failOnError>
+                </configuration>
+            </plugin>
+
+            <!-- ── Surefire Report ── -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>${surefire.plugin.version}</version>
+            </plugin>
+
         </plugins>
     </build>
+
 </project>

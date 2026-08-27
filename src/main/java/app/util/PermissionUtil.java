@@ -1,108 +1,212 @@
 package app.util;
 
-import app.Resources.HomeELements;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
+import static app.resources.Locators.Android.DeviceAdditionScreen.Phoenix.*;
+import static app.resources.Locators.Android.HomeLocators.*;
 
+/**
+ * Utility class to handle Android runtime permissions and common startup popups.
+ *
+ * Refactored to:
+ * - Eliminate duplication between allow() and allowForBrowserStack()
+ * - Centralize locators
+ * - Improve error visibility
+ * - Follow single responsibility principle
+ */
 public class PermissionUtil {
 
-    public static void allow(AndroidDriver driver){
-        HomeELements he = new HomeELements();
-        WebElement permission = null;  // Check Direct allow button, when device is already present in the family
-        WebElement AddButton = null; // Check direct Add button"+" , When empty Family
+    // === Locator Constants ===
+    private static final By PERMISSION_ICON = By.id("com.android.permissioncontroller:id/permission_icon");
+    private static final By ALLOW_BUTTON = By.id("com.android.permissioncontroller:id/permission_allow_button");
+    private static final By ALLOW_FOREGROUND_ONLY_BUTTON = By.id("com.android.permissioncontroller:id/permission_allow_foreground_only_button");
+    private static final By EMPTY_FAMILY_ADD_BUTTON = By.xpath("//android.widget.ImageView[@content-desc=\"Add your first smart device\"]");
+    // Coordinate tap for Add button (fallback when no ID/XPath available)
+    private static final int ADD_BUTTON_X = 540;
+    private static final int ADD_BUTTON_Y = 1900;
 
-        try {
-            permission = driver.findElement(By.id("com.android.permissioncontroller:id/permission_icon"));
-        } catch (Exception ignored) {
-        }
-        try {
-            AddButton = driver.findElement(By.xpath(he.addButtonId));
-        } catch (Exception ignored) {}
-        if(permission != null){//Direct allow button available
-            WebElement allowButton = driver.findElement(By.id("com.android.permissioncontroller:id/permission_allow_button"));
-            allowButton.click();
-            System.out.println("Permissions");
-            driver.findElement(By.id("com.android.permissioncontroller:id/permission_allow_foreground_only_button")).click();
-            ActionsUtil.sleep(1000);
-            driver.findElement(By.id("com.android.permissioncontroller:id/permission_allow_button")).click();
-            System.out.println("All Permissions Granted");
-            alexaPopUp(driver);
-        }
-        else if(AddButton != null){//Direct add button available
-            System.out.println("No Device Present");
-            ActionsUtil.Tap.withCoordinates(driver, 540, 1900);// click on the Add button, No element id/xpath available
-
-            try {//checking the permissions, in case of logout and login again
-                permission = driver.findElement(By.id("com.android.permissioncontroller:id/permission_icon"));
-            }catch (Exception ignored){}
-            if(permission!=null) {
-                WebElement allowButton = driver.findElement(By.id("com.android.permissioncontroller:id/permission_allow_button"));
-                allowButton.click();
-                System.out.println("Permissions");
-                driver.findElement(By.id("com.android.permissioncontroller:id/permission_allow_foreground_only_button")).click();
-                ActionsUtil.sleep(1000);
-                driver.findElement(By.id("com.android.permissioncontroller:id/permission_allow_button")).click();
-                System.out.println("All Permissions Granted");
-                alexaPopUp(driver);
-            }
-            else
-            {
-                driver.navigate().back();
-            }
-        }
+    /**
+     * Main method to handle permissions flow for standard environment.
+     *
+     * @param driver AndroidDriver instance
+     */
+    public static void allow(AndroidDriver driver) {
+        new PermissionHandler(driver).handleStandardFlow();
     }
 
-    public static void allowForBrowserStack(AndroidDriver driver){
-        HomeELements he = new HomeELements();
-        WebElement permission = null;  // Check Direct allow button, when device is already present in the family
-        WebElement AddButton = null; // Check direct Add button"+" , When empty Family
-        try {
-            permission = driver.findElement(By.id("com.android.permissioncontroller:id/permission_icon"));
-        } catch (Exception ignored) {
-        }
-        try {
-            AddButton = driver.findElement(By.xpath(he.addYourFirstSmartDeviceId));
-        } catch (Exception ignored) {
-        }
-        if (permission != null)//Direct allow button available
-        {
-            System.out.println("Permissions");
-            WebElement allowButton = driver.findElement(By.id("com.android.permissioncontroller:id/permission_allow_button"));
-            allowButton.click();
-            ActionsUtil.sleep(1000);
-            System.out.println("All Permissions Granted");
-            alexaPopUp(driver);
-        }
-        else if(AddButton != null)//Direct add button available
-        {
-            System.out.println("No Device Present");
-            ActionsUtil.Tap.withCoordinates(driver, 540, 1900);// click on the Add button, No element id/xpath available
-            try {//checking the permissions, in case of logout and login again
-                permission = driver.findElement(By.id("com.android.permissioncontroller:id/permission_icon"));
-            }catch (Exception ignored){}
-            if(permission!=null) {
-                System.out.println("Permissions");
-                driver.findElement(By.id("com.android.permissioncontroller:id/permission_allow_foreground_only_button")).click();
-                ActionsUtil.sleep(1000);
-                System.out.println("All Permissions Granted");
-                alexaPopUp(driver);
-            }
-            else
-            {
-                driver.navigate().back();
-            }
-        }
+    /**
+     * Handles permission flow optimized for BrowserStack environment.
+     * @param driver AndroidDriver instance
+     */
+    public static void allowForBrowserStack(AndroidDriver driver) {
+        new PermissionHandler(driver).handleBrowserStackFlow();
     }
 
-    private static void alexaPopUp(AndroidDriver driver){
-        HomeELements he = new HomeELements();
-        WebElement alexaPopup = null;
-        try {
-            alexaPopup = driver.findElement(By.xpath(he.alexaPopupId));
-        }catch (Exception ignored){}
-        if(alexaPopup!=null){
-            driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]")).click();
+    // === Internal Handler Class (Encapsulates Logic) ===
+    private static class PermissionHandler {
+        private final AndroidDriver driver;
+
+        public PermissionHandler(AndroidDriver driver) {
+            if (driver == null) {
+                throw new IllegalArgumentException("AndroidDriver must not be null. Initialize driver before calling PermissionUtil.");
+            }
+            this.driver = driver;
+        }
+
+        /**
+         * Full permission flow: check if permission dialog appears,
+         * grant location + foreground access, handle enable button and Alexa popup.
+         */
+        public void handleStandardFlow() {
+            if (isPermissionDialogPresent()) {
+                System.out.println("Permissions dialog detected.");
+                clickAllowButton();           // First allow (full permission)
+                clickLocationPermission();    // Foreground only
+                clickAllowButton();           // Final allow
+                System.out.println("All Permissions Granted");
+                alexaPopUp();                 // Optional cancel
+                clickEnableIfPresent();       // Handle Enable button
+            } else if (isAddDeviceButtonPresent(EMPTY_FAMILY_ADD_BUTTON)) {
+                handleEmptyFamilyFlow();
+            } else {
+                System.out.println("No permissions dialog detected, and Add Device button not found. Assuming permissions already granted.");
+                alexaPopUp();
+                clickEnableIfPresent();
+            }
+        }
+
+        /**
+         * Simplified flow for BrowserStack: skips some steps assumed already granted.
+         */
+        public void handleBrowserStackFlow() {
+            if (isPermissionDialogPresent()) {
+                System.out.println("Permissions dialog detected (BrowserStack).");
+                clickAllowForegroundOnly();   // Only one prompt expected
+                System.out.println("Permissions Granted");
+                alexaPopUp();                 // Cancel Alexa
+            } else if (isAddDeviceButtonPresent(ADD_FIRST_DEVICE_ICON)) {
+                handleEmptyFamilyFlow();
+            }
+        }
+
+        // --- Helper Methods ---
+
+        /**
+         * Checks if system permission dialog is visible.
+         *
+         * @return true if permission icon is found
+         */
+        private boolean isPermissionDialogPresent() {
+            return findOptionalElement(PERMISSION_ICON) != null;
+        }
+
+        /**
+         * Clicks the main 'Allow' button.
+         */
+        private void clickAllowButton() {
+            clickElement(ALLOW_BUTTON, "Allow Button");
+        }
+
+        /**
+         * Clicks 'Allow only while using the app' (foreground).
+         */
+        private void clickLocationPermission() {
+            clickElement(ALLOW_FOREGROUND_ONLY_BUTTON, "Location Permission");
+        }
+
+        /**
+         * Clicks allow button used specifically in BrowserStack context.
+         */
+        private void clickAllowForegroundOnly() {
+            clickElement(ALLOW_FOREGROUND_ONLY_BUTTON, "Allow Foreground Only");
+        }
+
+        /**
+         * Navigates through empty family state: taps Add button and re-checks permissions.
+         */
+        private void handleEmptyFamilyFlow() {
+
+            System.out.println("No device present – navigating to Add Device.");
+            ActionsUtil.Tap.withCoordinates(driver, ADD_BUTTON_X, ADD_BUTTON_Y);
+
+            // Re-check for permissions after tapping Add
+            if (isPermissionDialogPresent()) {
+                handleStandardFlow(); // Re-enter full flow
+            } else {
+                driver.navigate().back();
+                System.out.println("Returned to previous screen.");
+            }
+        }
+
+        /**
+         * Looks for Alexa setup popup and cancels it.
+         */
+        private void alexaPopUp() {
+            WebElement alexaPopup = findOptionalElement(ALEXA_POPUP);
+            if (alexaPopup != null) {
+                try {driver.findElement(By.xpath("//android.widget.Button[@content-desc=\"Cancel\"]")).click();
+
+                    System.out.println("Alexa popup canceled.");
+                } catch (Exception e) {
+                    System.out.println("Failed to close Alexa popup: " + e.getMessage());
+                }
+            }
+        }
+
+        /**
+         * Clicks 'Enable' button if shown after permissions.
+         */
+        private void clickEnableIfPresent() {
+            try {
+                WebElement enableBtn = driver.findElement(By.xpath("//android.widget.Button[@content-desc='Enable']"));
+                if (enableBtn.isDisplayed()) {
+                    enableBtn.click();
+                    System.out.println("Enable button clicked.");
+                }
+            } catch (NoSuchElementException e) {
+                // Ignore: not always present
+            }
+        }
+
+        /**
+         * Checks if a specific Add Device button is visible.
+         *
+         * @param xpathLocator The dynamic XPath to test
+         * @return true if element exists
+         */
+        private boolean isAddDeviceButtonPresent(By xpathLocator) {
+            return findOptionalElement(xpathLocator) != null;
+        }
+
+        /**
+         * Safely finds an element without throwing exception.
+         *
+         * @param locator Element locator
+         * @return WebElement or null
+         */
+        private WebElement findOptionalElement(By locator) {
+            try {
+                return driver.findElement(locator);
+            } catch (NoSuchElementException e) {
+                return null;
+            }
+        }
+
+        /**
+         * Clicks an element with logging.
+         *
+         * @param locator By strategy
+         * @param label   Action label for logs
+         */
+        private void clickElement(By locator, String label) {
+            try {
+                driver.findElement(locator).click();
+                System.out.println(label + " clicked.");
+            } catch (Exception e) {
+                System.err.println("Failed to click " + label + ": " + e.getMessage());
+            }
         }
     }
 }
