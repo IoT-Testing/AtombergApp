@@ -1,24 +1,47 @@
-name: Build & Static Analysis
+name: Build, Static Analysis & Offline Tests
 
 # NOTE ON SCOPE:
 # GitHub-hosted runners have no Android device/emulator, so the Appium suite
-# CANNOT execute here. This workflow therefore does BUILD + STATIC ANALYSIS only
-# and does not pretend to run the device tests. Run the actual TestNG suite on a
-# self-hosted runner attached to the device host (see the commented job below).
+# CANNOT execute here. What CAN execute here, and now does:
+#   * compile (main + test) on JDK 17 and 21
+#   * 44 device-free TestNG assertions across three offline suites
+#   * 34 XPath replays against the checked-in uiautomator dumps
+#   * Checkstyle + SpotBugs (advisory)
+# The device suites run on a self-hosted runner attached to the phones
+# (see the commented job at the bottom).
 
 on:
   push:
-    branches: [ master, rb/BoF ]
+    branches: [ master, 'rb/**' ]
   pull_request:
-    branches: [ master, rb/BoF ]
+    branches: [ master, 'rb/**' ]
   schedule:
-    - cron: '0 2 * * *'  # Nightly at 02:00 UTC
+    # Nightly at 02:00 UTC. Worth keeping now that the job asserts something:
+    # it catches upstream dependency drift, not just "the code still compiles".
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+# Least privilege: nothing here writes to the repo.
+permissions:
+  contents: read
+
+# A new push to the same branch supersedes the in-flight run. PRs cancel;
+# master and the nightly are left alone so their history stays complete.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  # ---------------------------------------------------------------------------
+  # 1. COMPILE - the project builds on both supported JDKs.
+  # ---------------------------------------------------------------------------
   build:
     name: Compile (Java ${{ matrix.java-version }})
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     strategy:
+      # Do not let a failure on one JDK hide the result on the other.
+      fail-fast: false
       matrix:
         java-version: [ '17', '21' ]
     steps:
@@ -32,14 +55,29 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      # Compiles BOTH main and test sources. This is the real signal from CI:
-      # the project builds. It does not (and cannot) run the device tests here.
+      # Compiles BOTH main and test sources. It does not (and cannot) run the
+      # device tests here.
       - name: Compile (main + test)
         run: mvn -B clean test-compile
 
-  code-quality:
-    name: Static Analysis
+  # ---------------------------------------------------------------------------
+  # 2. OFFLINE TESTS - the real assertions that need no phone.
+  #
+  # These three suites are pure unit tests: none of them constructs an
+  # AndroidDriver or starts an Appium server, so they run anywhere.
+  #
+  #   testng-permission-flow-offline.xml   9  PermissionFlowOfflineTest
+  #   testng-permissions-offline.xml       9  PermissionProbeParsingTest
+  #   testng-sharing-offline.xml          26  PermissionModelTest
+  #
+  # Surefire has no user-property alias for reportsDirectory, so -D on the
+  # command line is silently ignored and every suite would overwrite the last
+  # one's reports. The directory is moved between runs instead.
+  # ---------------------------------------------------------------------------
+  offline-tests:
+    name: Offline suites (no device)
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -51,36 +89,153 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      # Advisory only — failOnViolation/failOnError are false in the pom.
+      # All three run even if an earlier one fails, so a red build reports
+      # every broken suite rather than only the first.
+      - name: Run offline suites
+        run: |
+          fail=0
+          for suite in permission-flow-offline permissions-offline sharing-offline; do
+            echo "::group::testng-$suite.xml"
+            if mvn -B test "-DsuiteFile=testng-$suite.xml"; then
+              echo "PASS  testng-$suite.xml"
+            else
+              echo "::error title=Offline suite failed::testng-$suite.xml"
+              fail=1
+            fi
+            if [ -d target/surefire-reports ]; then
+              mv target/surefire-reports "target/reports-$suite"
+            fi
+            echo "::endgroup::"
+          done
+          exit $fail
+
+      - name: Upload surefire reports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: offline-test-reports
+          path: target/reports-*/
+          if-no-files-found: warn
+          retention-days: 14
+
+  # ---------------------------------------------------------------------------
+  # 3. LOCATOR VERIFICATION - replays every pinned XPath against the checked-in
+  # uiautomator dumps in tools/locator-verify/captures/. This is what catches a
+  # locator edit that no longer matches the tree it was pinned against, without
+  # needing the phones. Exits non-zero when any check fails.
+  # ---------------------------------------------------------------------------
+  locator-verify:
+    name: Pinned XPaths vs captured dumps
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # lxml is the script's only non-stdlib dependency.
+      - name: Install lxml
+        run: pip install --disable-pip-version-check lxml
+
+      - name: Replay pinned XPaths
+        run: python tools/locator-verify/verify_xpaths.py
+
+  # ---------------------------------------------------------------------------
+  # 4. STATIC ANALYSIS - advisory. The pom sets failOnViolation=false and
+  # failOnError=false, so these steps cannot fail the build on their own;
+  # continue-on-error is therefore deliberately NOT set (it would be redundant
+  # and would also swallow a genuine plugin/config error). The reports are
+  # uploaded so the output is actually reviewable.
+  # ---------------------------------------------------------------------------
+  code-quality:
+    name: Static Analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      # checkstyle:check, not checkstyle:checkstyle - the latter is the site
+      # report goal and pulls in a Maven skin artifact it does not need. `check`
+      # honours logViolationsToConsole and still writes checkstyle-result.xml.
       - name: Checkstyle
         run: mvn -B checkstyle:check
-        continue-on-error: true
 
       - name: SpotBugs
+        if: ${{ !cancelled() }}
         run: mvn -B compile spotbugs:check
-        continue-on-error: true
 
-# ─────────────────────────────────────────────────────────────────────────────
-# DEVICE TESTS (run on a self-hosted runner on the laptop/Mac that has the phones
+      - name: Upload analysis reports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: static-analysis-reports
+          path: |
+            target/checkstyle-result.xml
+            target/site/**
+            target/spotbugsXml.xml
+          if-no-files-found: warn
+          retention-days: 14
+
+# -----------------------------------------------------------------------------
+# DEVICE TESTS (run on a self-hosted runner on the machine that has the phones
 # connected + Appium installed). Uncomment and register a self-hosted runner
 # labelled `device-host` to enable. Provide credentials via repo/organization
 # secrets mapped to the env vars in test.env.example.
 #
+# Note the suite file must be named explicitly. A bare `mvn test` uses the
+# ${suiteFile} default, testng.xml, which is the core regression only - the
+# sharing and permission suites each have their own XML and their own
+# preconditions (two phones, a pinned SHARING_MODE, a bench account).
+#
 #  device-tests:
 #    runs-on: [ self-hosted, device-host ]
+#    timeout-minutes: 120
 #    steps:
 #      - uses: actions/checkout@v4
-#      - name: Run TestNG suite
+#
+#      - name: Core regression (single phone)
 #        env:
 #          DEFAULT_EMAIL: ${{ secrets.DEFAULT_EMAIL }}
 #          DEFAULT_PASSWORD: ${{ secrets.DEFAULT_PASSWORD }}
 #          ATOMBERG_API_KEY: ${{ secrets.ATOMBERG_API_KEY }}
 #          ATOMBERG_REFRESH_TOKEN: ${{ secrets.ATOMBERG_REFRESH_TOKEN }}
 #          ATOMBERG_TEST_DEVICE_ID: ${{ secrets.ATOMBERG_TEST_DEVICE_ID }}
-#        run: mvn -B test
+#        run: mvn -B test "-DsuiteFile=testng.xml"
+#
+#      # Two-phone Device Sharing. Needs ADMIN_DEVICE_UDID / MEMBER_DEVICE_UDID
+#      # and the rest of sharing-test.properties present on the runner.
+#      - name: Device Sharing (two phones)
+#        if: ${{ !cancelled() }}
+#        run: mvn -B test "-DsuiteFile=testng-device-sharing.xml"
+#
+#      # New permission flow. Pin the mode so a missing sheet FAILS rather than
+#      # skipping - on a known build that is the signal you want.
+#      - name: Permission flow
+#        if: ${{ !cancelled() }}
+#        run: mvn -B test "-DsuiteFile=testng-permission-flow.xml" "-Dpermissionflow.mode=walkthrough"
+#
+#      # reports/, screenshots/ and test-results/ are gitignored, so uploading
+#      # them as artifacts is the only way they leave the runner.
 #      - uses: actions/upload-artifact@v4
 #        if: always()
 #        with:
-#          name: extent-reports
-#          path: reports/
-# ─────────────────────────────────────────────────────────────────────────────
+#          name: device-test-reports
+#          path: |
+#            reports/
+#            screenshots/
+#            target/surefire-reports/
+#            permission-flow-coverage.md
+#          retention-days: 30
+# -----------------------------------------------------------------------------
